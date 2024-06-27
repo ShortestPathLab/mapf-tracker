@@ -12,8 +12,8 @@
 
     "buildClient":  "cd ../client; npm run build",
 
-    "dev": "npm run install_all; concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-    "build": "npm run install_all; npm run buildClient",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "build": "npm run buildClient",
 
     "test": "echo \"Error: no test specified\" && exit 1"
   },
