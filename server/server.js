@@ -127,9 +127,8 @@ function makeEntry(info, callback) {
 app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
-// set port, listen for requests
-// var PORT = "" || 80;
-// const PORT = process.env.PORT || 80;
+
+// TODO: port 80 for prod
 if (process.env.NODE_ENV === 'development') {
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
