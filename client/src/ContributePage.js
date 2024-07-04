@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import FormHelperText from '@mui/material/FormHelperText';
+import {APIConfig} from "./config";
 
 
 
@@ -32,6 +33,47 @@ export default function Contribute() {
         githubLink: Yup.string().url('Invalid URL').required('Github Link is required'),
         comments: Yup.string().required('Comments are required'),
     });
+
+    const createNewRequester =  (values) =>{
+        console.log("in creatinggggg processs")
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                values
+            )
+        };
+        console.log(APIConfig.apiUrl)
+        fetch(APIConfig.apiUrl+'/requester/create', requestOptions)
+        .then(response => 
+            alert(response.json()))
+        .catch(error => console.error('Error:::::::::::::' , error ))
+    }
+
+    const handleSubmit = (values, { setSubmitting, resetForm  }) => {
+        console.log("values")
+        setTimeout(() => {
+            alert(JSON.stringify(values, null, 2));
+            createNewRequester(values)
+            setSubmitting(false);
+            resetForm({
+                requesterName: '',
+                requesterEmail: '',
+                requesterAffilation: '',
+                googleScholar: '',
+                dblp: '',
+                justification: '',
+                algorithmName: '',
+                authorName: '',
+                paperReference: '',
+                githubLink: '',
+                comments: '',
+            });
+          }, 400);
+    }
 
 
     const item_width = 300;
@@ -432,27 +474,7 @@ export default function Contribute() {
                         comments: '',
                     }}
                     validationSchema={validationSchema}
-                    onSubmit= {(values, { setSubmitting, resetForm  }) => {
-                        console.log("submit")
-                        setTimeout(() => {
-                            console.log("hiiiiiiii successs")
-                            alert(JSON.stringify(values, null, 2));
-                            setSubmitting(false);
-                            resetForm({
-                                requesterName: '',
-                                requesterEmail: '',
-                                requesterAffilation: '',
-                                googleScholar: '',
-                                dblp: '',
-                                justification: '',
-                                algorithmName: '',
-                                authorName: '',
-                                paperReference: '',
-                                githubLink: '',
-                                comments: '',
-                            });
-                          }, 400);
-                    }}
+                    onSubmit= {handleSubmit}
                 >
                     {({ isSubmitting }) => (
                         <Form>
