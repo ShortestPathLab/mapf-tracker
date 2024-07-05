@@ -16,7 +16,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-import {useLocation} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import TextField from "@mui/material/TextField";
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -33,7 +33,7 @@ import Button from "@mui/material/Button";
 import { DropzoneDialog } from "mui-file-dropzone";
 import HelpIcon from '@mui/icons-material/Help';
 import Papa from "papaparse";
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 
 function descendingComparator(a, b, orderBy) {
     if (orderBy === 'map_size'){

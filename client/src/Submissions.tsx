@@ -30,7 +30,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip} from "recharts";
 import Dialog from "@mui/material/Dialog";
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 
 const angle = {
     'Warehouse': -40,

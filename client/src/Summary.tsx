@@ -14,7 +14,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import Menu from "@mui/material/Menu";
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 
 const angle = {
     'Warehouse': -40,

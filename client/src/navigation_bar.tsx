@@ -26,7 +26,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import ArticleIcon from '@mui/icons-material/Article';
 import BackupIcon from '@mui/icons-material/Backup';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 import DownloadIcon from "@mui/icons-material/Download";
 const settings = ['Dashboard', 'Logout'];
 

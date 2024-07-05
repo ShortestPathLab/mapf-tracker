@@ -14,7 +14,7 @@ import ShutterSpeedIcon from '@mui/icons-material/ShutterSpeed';
 import Slider from '@mui/material/Slider';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 
 let max_time_step  = 0;
 let grid_size = 0;

@@ -15,7 +15,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
 import LinearProgress from '@mui/material/LinearProgress';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TextField from "@mui/material/TextField";
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -34,7 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Button from "@mui/material/Button";
 import { useConfirm } from "material-ui-confirm";
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 import CircularProgress from "@mui/material/CircularProgress";
 
 
