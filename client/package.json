@@ -36,7 +36,6 @@
     "react-markdown": "^8.0.7",
     "react-mui-confirm": "^1.0.1",
     "react-router-dom": "^6.4.1",
-    "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "recharts": "^2.1.15",
     "rehype-raw": "^6.1.1",
