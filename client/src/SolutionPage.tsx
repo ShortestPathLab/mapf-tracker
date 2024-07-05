@@ -47,9 +47,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CompareIcon from "@mui/icons-material/Compare";
 import randomColor from "randomcolor";
 import {APIConfig} from "./config";
-import async from "async";
-
-
 
 const angle = {
     'Warehouse': -40,
