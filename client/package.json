@@ -13,6 +13,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@vitejs/plugin-react": "^4.3.1",
     "axios": "^1.2.1",
     "bibtex-parser": "^0.0.0",
     "bootstrap": "^5.2.2",
@@ -42,6 +43,8 @@
     "remark-gfm": "^3.0.1",
     "remark-html": "^15.0.2",
     "tss-react": "^4.4.1",
+    "vite": "^5.3.3",
+    "vite-tsconfig-paths": "^4.3.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
