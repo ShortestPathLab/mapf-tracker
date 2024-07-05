@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import randomColor from "randomcolor";
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';

@@ -57,7 +57,7 @@ import Select from "@mui/material/Select";
 import { APIConfig } from './config.js';
 import Link from "@mui/material/Link";
 import InfoIcon from "@mui/icons-material/Info";
-import {MenuList, Popover} from "@mui/material";
+import { MenuList, Popover } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const angle = {

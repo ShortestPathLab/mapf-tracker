@@ -11,7 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TableViewIcon from '@mui/icons-material/TableView';
 import PeopleIcon from '@mui/icons-material/People';
 import Dialog from "@mui/material/Dialog";

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Avatar from '@mui/material/Avatar';
 import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { Tooltip } from "@mui/material";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { useState } from "react";
