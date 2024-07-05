@@ -47,7 +47,7 @@ db.mongoose
 
 app.use(function(request, response, next) {
 
-  if (process.env.NODE_ENV != 'development' && !request.secure) {
+  if (import.meta.env.NODE_ENV != 'development' && !request.secure) {
     if (!request.url.includes(".well-known"))
      return response.redirect("https://" + request.headers.host + request.url);
   }
@@ -129,9 +129,9 @@ app.get('*', function(req, res) {
 });
 // set port, listen for requests
 // var PORT = "" || 80;
-// const PORT = process.env.PORT || 80;
-if (process.env.NODE_ENV === 'development') {
-    const PORT = process.env.PORT || 80;
+// const PORT = import.meta.env.PORT || 80;
+if (import.meta.env.NODE_ENV === 'development') {
+    const PORT = import.meta.env.PORT || 80;
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}.`);
     });
@@ -151,7 +151,7 @@ if (process.env.NODE_ENV === 'development') {
   httpServer.listen(http_port, () => console.log(`Listening on port ${http_port} for http`));
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (import.meta.env.NODE_ENV === 'development') {
     console.log('Development mode');
 } else {
     console.log('Production mode');

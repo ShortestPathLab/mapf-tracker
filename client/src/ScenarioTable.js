@@ -1200,7 +1200,7 @@ export default function ScenarioTable() {
                         <Typography
                             sx={{ display: "inline-block", width : 50 ,verticalAlign: "middle"}}
                             component="img"
-                            src={`${process.env.PUBLIC_URL}/mapf-svg/`+ location.state.mapName+`.svg`}
+                            src={`${import.meta.env.PUBLIC_URL}/mapf-svg/`+ location.state.mapName+`.svg`}
                         >
 
                         </Typography>
@@ -1454,7 +1454,7 @@ export default function ScenarioTable() {
                                 {/*<Typography*/}
                                 {/*    sx={{ display: "inline-block", width : 50 ,verticalAlign: "middle"}}*/}
                                 {/*    component="img"*/}
-                                {/*    src={`${process.env.PUBLIC_URL}/mapf-svg/`+ location.state.mapName+`.svg`}*/}
+                                {/*    src={`${import.meta.env.PUBLIC_URL}/mapf-svg/`+ location.state.mapName+`.svg`}*/}
                                 {/*>*/}
 
                                 {/*</Typography>*/}

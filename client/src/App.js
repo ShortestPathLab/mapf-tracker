@@ -52,9 +52,9 @@ export default function App() {
     const fontSize2 = Math.max(screenWidth / 100, 13);
 
     return (
-        // src={`${process.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
+        // src={`${import.meta.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
         // <div style={{
-        //   backgroundImage: `url(${process.env.PUBLIC_URL}/warehourse.jpeg)`
+        //   backgroundImage: `url(${import.meta.env.PUBLIC_URL}/warehourse.jpeg)`
         // }}>
         <ThemeProvider theme={theme}>
             <ConfirmProvider>
