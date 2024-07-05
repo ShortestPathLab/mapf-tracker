@@ -1025,7 +1025,7 @@ export default function UserMapPage() {
                         gutterBottom
                     >
                         For each agent, we use a motion string to represent the path, where the symbol 'u', 'd', 'l' and 'r' represents moving up, down, left and right respectively,
-                        and 'w' represents waiting at its current location (eg., a path [(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)] is converted to a motion string  "urrdwl").
+                        and 'w' represents waiting at its current location (eg., a path [(0,0) -&gt; (0,1) -&gt; (1,1) -&gt; (2,1) -&gt; (2,0) -&gt; (2,0) -&gt; (1,0)] is converted to a motion string  "urrdwl").
                     </Typography>
 
                     <Typography
