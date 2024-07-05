@@ -2,6 +2,7 @@
   "name": "mapf_front",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@dropzone-ui/react": "^6.7.20",
     "@emotion/react": "^11.10.4",
