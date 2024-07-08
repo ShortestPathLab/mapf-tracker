@@ -13,6 +13,4 @@ db.submissions = require("./submission.model")(mongoose);
 db.algorithms = require("./algorithm.model")(mongoose);
 db.users = require("./user.model")(mongoose);
 db.solution_paths = require("./solution_path.model")(mongoose);
-db.requesters = require("./requester.model")(mongoose);
-
 module.exports = db;
