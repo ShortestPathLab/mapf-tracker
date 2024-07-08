@@ -129,7 +129,7 @@ app.get('*', function(req, res) {
 });
 // set port, listen for requests
 // var PORT = "" || 80;
-// const PORT = import.meta.env.PORT || 80;
+// const PORT = process.env.PORT || 80;
 if (process.env.NODE_ENV === 'development') {
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
