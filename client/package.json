@@ -16,6 +16,8 @@
     "axios": "^1.2.1",
     "bibtex-parser": "^0.0.0",
     "bootstrap": "^5.2.2",
+    "by": "^0.2.3",
+    "change": "^0.0.0",
     "chroma-js": "^2.4.2",
     "clipboard": "^2.0.11",
     "clipboardy": "^3.0.0",
