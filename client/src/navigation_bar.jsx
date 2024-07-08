@@ -165,7 +165,7 @@ function ResponsiveAppBar() {
                     {/*<Box sx={{ display: {  xs: 'none', md: 'flex' }, mr: 1 }}>*/}
                     {/*    <img*/}
                     {/*        // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"*/}
-                    {/*        src={`${import.meta.env.PUBLIC_URL}/monash_logo.png`}*/}
+                    {/*        src={`${process.env.PUBLIC_URL}/monash_logo.png`}*/}
                     {/*        alt = 'monash_logo'*/}
                     {/*        style={{ width: 90, height: 60}}*/}
                     {/*    />*/}
@@ -330,7 +330,7 @@ function ResponsiveAppBar() {
                     {/*<Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>*/}
                     {/*    <img*/}
                     {/*        // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"*/}
-                    {/*        src={`${import.meta.env.PUBLIC_URL}/monash_logo.png`}*/}
+                    {/*        src={`${process.env.PUBLIC_URL}/monash_logo.png`}*/}
                     {/*        alt = 'monash_logo'*/}
                     {/*        style={{ width: 90, height: 60}}*/}
                     {/*    />*/}

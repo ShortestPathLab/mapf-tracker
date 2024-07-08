@@ -1416,7 +1416,7 @@ export default function MapTable() {
                                             <TableCell align="center" >
                                                 <img
                                                     // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
-                                                    src={`${import.meta.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
+                                                    src={`${process.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
                                                     alt="Canvas Logo"
                                                     width = '100%'
                                                 />

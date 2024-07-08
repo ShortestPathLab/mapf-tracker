@@ -52,10 +52,6 @@ export default function App() {
     const fontSize2 = Math.max(screenWidth / 100, 13);
 
     return (
-        // src={`${import.meta.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
-        // <div style={{
-        //   backgroundImage: `url(${import.meta.env.PUBLIC_URL}/warehourse.jpeg)`
-        // }}>
         <ThemeProvider theme={theme}>
             <ConfirmProvider>
           <div style={{minWidth : 620}}>
