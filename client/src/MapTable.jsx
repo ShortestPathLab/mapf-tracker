@@ -54,7 +54,7 @@ import CompareIcon from '@mui/icons-material/Compare';
 import randomColor from "randomcolor";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { APIConfig } from './config.js';
+import { APIConfig } from './config';
 import Link from "@mui/material/Link";
 import InfoIcon from "@mui/icons-material/Info";
 import { MenuList, Popover } from "@mui/material";
