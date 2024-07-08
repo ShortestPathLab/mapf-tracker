@@ -11,7 +11,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TableViewIcon from '@mui/icons-material/TableView';
 import PeopleIcon from '@mui/icons-material/People';
 import Dialog from "@mui/material/Dialog";
@@ -26,7 +26,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import ArticleIcon from '@mui/icons-material/Article';
 import BackupIcon from '@mui/icons-material/Backup';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import {APIConfig} from "./config";
+import { APIConfig } from "./config";
 import DownloadIcon from "@mui/icons-material/Download";
 const settings = ['Dashboard', 'Logout'];
 

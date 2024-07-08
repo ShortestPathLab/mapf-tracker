@@ -131,7 +131,7 @@ app.get('*', function(req, res) {
 // var PORT = "" || 80;
 // const PORT = process.env.PORT || 80;
 if (process.env.NODE_ENV === 'development') {
-    const PORT = process.env.PORT || 50000;
+    const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}.`);
     });

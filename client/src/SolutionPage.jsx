@@ -16,15 +16,15 @@ import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
 import LinearProgress from '@mui/material/LinearProgress';
 import { Button } from '@mui/material';
-import {useNavigate,  useLocation } from 'react-router-dom';
+import { useNavigate,  useLocation } from 'react-router-dom';
 import DownloadIcon from '@mui/icons-material/Download';
 import TableViewIcon from '@mui/icons-material/TableView';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Link from '@mui/material/Link';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import {CSVLink} from 'react-csv';
-import {useRef} from 'react'
+import { CSVLink } from 'react-csv';
+import { useRef } from 'react'
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import SearchIcon from '@mui/icons-material/Search';
@@ -46,10 +46,7 @@ import ShowChartIcon from "@mui/icons-material/ShowChart";
 import MenuIcon from "@mui/icons-material/Menu";
 import CompareIcon from "@mui/icons-material/Compare";
 import randomColor from "randomcolor";
-import {APIConfig} from "./config";
-import async from "async";
-
-
+import { APIConfig } from "./config";
 
 const angle = {
     'Warehouse': -40,

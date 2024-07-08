@@ -6,7 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import Toolbar from '@mui/material/Toolbar';
 import { Tooltip } from '@mui/material';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {useState} from 'react';
+import { useState } from 'react';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import './BibTex.css'; // Import the CSS file for styling
 import ClipboardJS from 'clipboard';

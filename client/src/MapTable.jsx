@@ -16,10 +16,10 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DownloadIcon from "@mui/icons-material/Download";
-import {CSVLink} from "react-csv";
-import {useRef} from 'react';
+import { CSVLink } from "react-csv";
+import { useRef } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from "@mui/material/TextField";
 import SearchIcon from '@mui/icons-material/Search';
@@ -54,10 +54,10 @@ import CompareIcon from '@mui/icons-material/Compare';
 import randomColor from "randomcolor";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { APIConfig } from './config.js';
+import { APIConfig } from './config';
 import Link from "@mui/material/Link";
 import InfoIcon from "@mui/icons-material/Info";
-import {MenuList, Popover} from "@mui/material";
+import { MenuList, Popover } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const angle = {

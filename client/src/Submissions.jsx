@@ -15,7 +15,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import { visuallyHidden } from '@mui/utils';
 import LinearProgress from '@mui/material/LinearProgress';
-import {useNavigate} from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 import TextField from "@mui/material/TextField";
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -28,15 +28,19 @@ import Link from "@mui/material/Link";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import {Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip} from "recharts";
+import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from "recharts";
 import Dialog from "@mui/material/Dialog";
-import EditIcon from '@mui/icons-material/Edit';
-import Button from "@mui/material/Button";
-import { useConfirm } from "material-ui-confirm";
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import {APIConfig} from "./config";
-import CircularProgress from "@mui/material/CircularProgress";
+import { APIConfig } from "./config";
 
+const angle = {
+    'Warehouse': -40,
+    'City' : 0,
+    'Empty' : 50,
+    'Game' : 110,
+    'Maze' : 0,
+    'Random' : 0,
+    'Room' : -110
+}
 
 const infoDescriptionText = {
     'domainCompare-#Instances Closed':{
@@ -80,15 +84,6 @@ const infoDescriptionText = {
             "The percentage ratio is shown, calculated based on the total number of instances in each domain. "
             // "For instances where no solution is reported, no algorithm can achieve the best solution in such cases."
     },
-}
-const angle = {
-    'Warehouse': -40,
-    'City' : 0,
-    'Empty' : 50,
-    'Game' : 110,
-    'Maze' : 0,
-    'Random' : 0,
-    'Room' : -110
 }
 
 function CustomizedLabel(props) {
@@ -203,16 +198,6 @@ const headCells = [
         sortable: false,
         alignment: 'center'
     },
-
-    {
-        id: 'modify',
-        numeric: false,
-        disablePadding: false,
-        label: 'Modify',
-        sortable: false,
-        alignment: 'center'
-    },
-
 ];
 
 // function checkSortable(head, order ){
@@ -285,43 +270,10 @@ EnhancedTableHead.propTypes = {
 };
 
 
-async function checkNameExist(id, name) {
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': JSON.parse(localStorage.getItem('user')).accessToken
-        },
-        body: JSON.stringify(
-            {
-                algo_name: name
-            })
-    };
-    if(name ===''){
-        return false;
-    }
-    const response = await fetch(APIConfig.apiUrl+'/user/checkAlgo/' + id, requestOptions).catch(err => console.log(err));
-    return response.status === 200;
-}
-
-// const refreshAllAlgorithms = (callback)=>{
-//     fetch('http://localhost:8080/api/algorithm/all_detail', {method: 'GET'})
-//         .then(res => res.json())
-//         .then(data => {
-//             callback(data);
-//         })
-//         .catch(err => console.error(err));
-// }
 
 const refreshAlgorithms = (callback)=>{
-    const requestOptions = {
-        method: 'GET',
-        headers: { 'x-access-token': JSON.parse(localStorage.getItem('user')).accessToken }
-    };
-
-    // console.log(JSON.parse(localStorage.getItem('user')).id)
-    fetch(APIConfig.apiUrl+'/userAlgo/'+JSON.parse(localStorage.getItem('user')).id, requestOptions )
-        .then(response => response.json())
+    fetch(APIConfig.apiUrl+'/algorithm/all_detail', {method: 'GET'})
+        .then(res => res.json())
         .then(data => {
             callback(data);
         })
@@ -351,7 +303,7 @@ LinearProgressWithLabel.propTypes = {
      */
     value: PropTypes.number.isRequired,
 };
-//
+
 // const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
 //     height: 10,
 //     borderRadius: 5,
@@ -365,27 +317,20 @@ LinearProgressWithLabel.propTypes = {
 // }));
 
 
-export default function Dashboard() {
+export default function Submissions() {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('map_type');
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [data, setData] = React.useState([])
-    // const [csvData, setCsvData] = React.useState([]);
-    // // const [csvFilename, setCsvFilename] = React.useState([]);
-    // const csvLinkEl = useRef();
-    // const [query_id, setQuery_id] = React.useState('');
-    // const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState([]);
     const [searched, setSearched] = React.useState("");
     const [openAlgoDetail, setOpenAlgoDetail] = React.useState(false);
-    const [openAlgoModify, setOpenAlgoModify] = React.useState(false);
     const [scrollAlgoDetail, setScrollAlgoDetail] = React.useState('paper');
     const [domainQuery, setDomainQuery] = React.useState('#Instances Closed');
     const [algodata, setAlgodata] = React.useState([]);
     const [algoChartData, setAlgoChartData] = React.useState([]);
-    const [openAlgoCreate, setOpenAlgoCreate] = React.useState(false);
     const [domainLoading, setDomainLoading] =  React.useState(true);
     const [openMonitorDetail, setOpenMonitorDetail] =  React.useState(false);
     const [infoDescription, setInfoDescription] = React.useState(0);
@@ -394,8 +339,6 @@ export default function Dashboard() {
         setInfoDescription(infoDescriptionText[key]);
         setOpenMonitorDetail(true);
     };
-    const confirm = useConfirm();
-
     const requestSearch = (searchedVal) => {
         const filteredRows = data.filter((row) => {
             return row.algo_name.toLowerCase().includes(searchedVal.toLowerCase());
@@ -409,38 +352,8 @@ export default function Dashboard() {
         requestSearch("");
     };
 
-    // const navigateToDownload =  (event, object_id,filename) => {
-    //     setQuery_id(object_id);
-    //     setLoading(true);
-    //     setCsvFilename(filename);
-    //     event.stopPropagation();
-    // };
-    //
-    //
-    // React.useEffect(() => {
-    //     if(loading&&query_id !==''){
-    //         fetch(APIConfig.apiUrl+'/instance/DownloadMapByID/'+query_id, {method: 'GET'})
-    //             .then(res => res.json())
-    //             .then(data => {
-    //                 setCsvData(data);
-    //                 setQuery_id('');
-    //             });
-    //     }
-    // }, [loading]);
-    //
-    //
-    // React.useEffect(() => {
-    //     if(csvData.length !== 0){
-    //         setLoading(false);
-    //         csvLinkEl.current.link.click();
-    //         setCsvData([]);
-    //     }
-    // }, [csvData]);
-
-
 
     React.useEffect(() => {
-
         refreshAlgorithms((data)=>{
             setData(data);
             setRows(data);
@@ -448,6 +361,7 @@ export default function Dashboard() {
 
         const interval = setInterval(() => {
             refreshAlgorithms((data)=>{
+
                 setData(data);
                 setRows(data);
             })
@@ -455,109 +369,6 @@ export default function Dashboard() {
         return () => clearInterval(interval);
     }, []);
 
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // var valid = false;
-        checkNameExist(algodata.id,data.get('algoName')).then(result =>{
-            if(result){
-                const requestOptions = {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'x-access-token': JSON.parse(localStorage.getItem('user')).accessToken },
-                    body:JSON.stringify(
-                        { algo_name: data.get('algoName'),
-                            authors: data.get("algoAuthor"),
-                            github: data.get("algoGit"),
-                            papers: data.get("algoPaper"),
-                            comments: data.get("algoComments"),
-                        })
-                };
-                // console.log(JSON.parse(localStorage.getItem('user')).id)
-                fetch(APIConfig.apiUrl+'/user/updateAlgo/'+algodata.id, requestOptions )
-                    .then(response => {
-                        if(response.status === 200){
-                            // alert("Algorithm was updated successfully.")
-                            confirm({
-                                title :"",
-                                description: "Algorithm was updated successfully",
-                                cancellationButtonProps: { sx :{ display: 'none'}},
-                                dialogProps: {fullWidth: true, maxWidth: 'xs'}
-                            })
-                            // setConfirmOpen(true);
-                            refreshAlgorithms((data)=>{
-                                setData(data);
-                                setRows(data);
-                            });
-                            setOpenAlgoModify(false);
-                        }
-                    })
-                    .catch(err => console.error(err));
-            }else{
-                confirm({
-                    title :"",
-                    description: "Invalid algorithm name: " + data.get('algoName') ,
-                    cancellationButtonProps: { sx :{ display: 'none'}},
-                    dialogProps: {fullWidth: true, maxWidth: 'xs'}
-                })
-            }
-            }
-        )
-
-
-    }
-
-
-    const handleCreationSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // var valid = false;
-        checkNameExist("-1",data.get('algoName')).then(result =>{
-                if(result){
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json', 'x-access-token': JSON.parse(localStorage.getItem('user')).accessToken },
-                        body:JSON.stringify(
-                            { algo_name: data.get('algoName'),
-                                authors: data.get("algoAuthor"),
-                                github: data.get("algoGit"),
-                                papers: data.get("algoPaper"),
-                                comments: data.get("algoComments"),
-                                user_id: JSON.parse(localStorage.getItem('user')).id,
-                            })
-                    };
-                    fetch(APIConfig.apiUrl+'/user/createAlgo/', requestOptions )
-                        .then(response => {
-                            if(response.status === 200){
-                                // alert("Algorithm was updated successfully.")
-                                confirm({
-                                    title :"",
-                                    description: "Algorithm was created successfully",
-                                    cancellationButtonProps: { sx :{ display: 'none'}},
-                                    dialogProps: {fullWidth: true, maxWidth: 'xs'}
-                                })
-                                // setConfirmOpen(true);
-                                refreshAlgorithms((data)=>{
-                                    setData(data);
-                                    setRows(data);
-                                });
-                                setOpenAlgoCreate(false);
-                            }
-                        })
-                        .catch(err => console.error(err));
-                }else{
-                    confirm({
-                        title :"",
-                        description: "Invalid algorithm name: " + data.get('algoName') ,
-                        cancellationButtonProps: { sx :{ display: 'none'}},
-                        dialogProps: {fullWidth: true, maxWidth: 'xs'}
-                    })
-                }
-            }
-        )
-
-
-    }
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -579,34 +390,12 @@ export default function Dashboard() {
     //     setDense(!dense);
     // };
 
-    const navigate = useNavigate();
-
-    const navigateToMaps = (event, algo_id,algo_name) => {
-        // 👇️ navigate to /contacts
-        // // console.log(id)
-        // console.log(event.target);
-        // console.log(event.target.getAttribute('type'));
-        navigate('/user/maps',{ state: { algo_id: algo_id, algo_name: algo_name}, replace: false} )
-        event.stopPropagation();
-        // state={instance_id : id}, replace: false});
-    };
 
     const handleAlgoDetailClickOpen  = (event,scrollType, algo_data)  => {
         setOpenAlgoDetail(true);
         setScrollAlgoDetail(scrollType);
         setAlgodata(algo_data);
         event.stopPropagation();
-    };
-
-
-    const handleAlgoModifyClickOpen  = (event,scrollType, algo_data)  => {
-        setOpenAlgoModify(true);
-        setScrollAlgoDetail(scrollType);
-        setAlgodata(algo_data);
-        event.stopPropagation();
-    };
-    const handleAlgoModifyClose = () => {
-        setOpenAlgoModify(false);
     };
 
     const handleAlgoDetailClose = () => {
@@ -632,8 +421,6 @@ export default function Dashboard() {
 
         }
     }, [openAlgoDetail]);
-
-
 
 
 
@@ -674,41 +461,28 @@ export default function Dashboard() {
 
     return (
         <Box
-            sx={{
-                minWidth: 600, position: "absolute", width: '96%', paddingLeft: "2%", top: "300px", opacity: "0.95"
+            sx={{ minWidth : 600, position: "absolute", width: '96%', paddingLeft:"2%", top:"300px",opacity:"0.95"
             }}>
-            <Paper elevation={12} sx={{width: '100%', mb: 2, borderRadius: 5}}>
+            <Paper elevation={12} sx={{ width: '100%', mb: 2,borderRadius: 5}}>
                 <Toolbar
                     sx={{
-                        pl: {sm: 2},
-                        pr: {xs: 1, sm: 1}
+                        pl: { sm: 2 },
+                        pr: { xs: 1, sm: 1 }
                     }}
                 >
                     <IconButton
-                        size='medium'
-                        onClick={() => {
-                            setDense(!dense)
-                        }
-                        }>
-                        {dense ? <ZoomOutMapIcon fontSize='medium'/> : <ZoomInMapIcon fontSize='medium'/>}
-                    </IconButton>
-
-                    <IconButton
                         size ='medium'
-                        onClick={() => {
-                            setOpenAlgoCreate(true)
-                        }
-                        }>
-                        <LibraryAddIcon  fontSize ='medium'/>
+                        onClick={() => {setDense(!dense)}
+                        } >
+                        { dense ? <ZoomOutMapIcon fontSize='medium'/>:<ZoomInMapIcon fontSize='medium'/> }
                     </IconButton>
-
                     <Typography
-                        sx={{flex: '1 1 100%', paddingLeft: '10px'}}
+                        sx={{ flex: '1 1 100%',paddingLeft :'10px' }}
                         variant="h6"
                         id="tableTitle"
                         component="div"
                     >
-                        My Submissions
+                        Submissions
                     </Typography>
                     <TextField
                         id="outlined-basic"
@@ -720,13 +494,13 @@ export default function Dashboard() {
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <SearchIcon/>
+                                    <SearchIcon />
                                 </InputAdornment>
                             ),
                             endAdornment: (
                                 <InputAdornment position="end">
-                                    {searched === "" ? null :
-                                        <IconButton onClick={(searchVal) => cancelSearch(searchVal.target.value)}>
+                                    {searched ==="" ? null :
+                                        <IconButton onClick={(searchVal) => cancelSearch(searchVal.target.value)} >
                                             <CancelIcon/>
                                         </IconButton>}
                                 </InputAdornment>
@@ -734,23 +508,22 @@ export default function Dashboard() {
                         }}
                     />
                 </Toolbar>
-                <TableContainer sx={{width: "100%"}}>
+                <TableContainer sx = {{width : "100%"}}>
                     <Table
                         // frozen table set max-content
-                        sx={{minWidth: 600, width: "100%"}}
+                        sx={{ minWidth: 600, width : "100%"}}
                         aria-labelledby="tableTitle"
                         size={dense ? 'small' : 'medium'}
-                        style={{tableLayout: "auto"}}
+                        style={{ tableLayout: "auto" }}
                     >
                         <colgroup>
-                            <col style={{minWidth: "200px"}} width="15%"/>
-                            <col style={{minWidth: "200px"}} width="15%"/>
-                            <col style={{minWidth: "200px"}} width="15%"/>
-                            <col style={{minWidth: "200px"}} width="15%"/>
-                            <col style={{minWidth: "200px"}} width="15%"/>
-                            <col style={{minWidth: "200px"}} width="15%"/>
-                            <col style={{minWidth: "100px"}} width="5%"/>
-                            <col style={{minWidth: "100px"}} width="5%"/>
+                            <col style={{minWidth: "200px"}} width="20%" />
+                            <col style={{minWidth: "200px"}} width="20%" />
+                            <col style={{minWidth: "200px"}} width="15%" />
+                            <col style={{minWidth: "200px"}} width="15%" />
+                            <col style={{minWidth: "200px"}} width="15%" />
+                            <col style={{minWidth: "200px"}} width="15%" />
+                            <col style={{minWidth: "100px"}} width="10%" />
                         </colgroup>
                         <EnhancedTableHead
                             order={order}
@@ -759,7 +532,7 @@ export default function Dashboard() {
                         />
                         <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-             rows.slice().sort(getComparator(order, orderBy)) */}
+                 rows.slice().sort(getComparator(order, orderBy)) */}
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
@@ -769,31 +542,23 @@ export default function Dashboard() {
                                             hover
                                             tabIndex={-1}
                                             key={row.id}
-                                            onClick={(event) => navigateToMaps(event,row.id,row.algo_name)}
                                         >
                                             <TableCell
                                                 id={labelId}
                                                 scope="row"
                                                 padding="normal"
-                                                align="left"
+                                                align = "left"
                                             >
                                                 {row.algo_name}
                                             </TableCell>
-                                            <TableCell align="left">{row.authors}</TableCell>
-                                            <TableCell align="left">{row.best_lower}</TableCell>
-                                            <TableCell align="left">{row.best_solution}</TableCell>
-                                            <TableCell align="left">{row.instances_closed}</TableCell>
-                                            <TableCell align="left">{row.instances_solved}</TableCell>
-                                            <TableCell align="center">
-                                                <IconButton
-                                                    onClick={(event) => handleAlgoDetailClickOpen(event, 'paper', row)}>
-                                                    <InfoIcon/>
-                                                </IconButton>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <IconButton
-                                                    onClick={(event) => handleAlgoModifyClickOpen(event, 'paper', row)}>
-                                                    <EditIcon/>
+                                            <TableCell align="left"  >{row.authors}</TableCell>
+                                            <TableCell align="left" >{row.best_lower}</TableCell>
+                                            <TableCell align="left" >{row.best_solution}</TableCell>
+                                            <TableCell align="left" >{row.instances_closed}</TableCell>
+                                            <TableCell align="left" >{row.instances_solved}</TableCell>
+                                            <TableCell align="center" >
+                                                <IconButton onClick={(event) =>handleAlgoDetailClickOpen(event,'paper', row)}>
+                                                    <InfoIcon />
                                                 </IconButton>
                                             </TableCell>
                                         </TableRow>
@@ -805,7 +570,7 @@ export default function Dashboard() {
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={9}/>
+                                    <TableCell colSpan={9} />
                                 </TableRow>
                             )}
                         </TableBody>
@@ -820,8 +585,6 @@ export default function Dashboard() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-
-
                 <Dialog
                     open={openAlgoDetail}
                     onClose={handleAlgoDetailClose}
@@ -951,286 +714,6 @@ export default function Dashboard() {
                     {/*    <Button onClick={handleAlgoDetailClose}>Cancel</Button>*/}
                     {/*</DialogActions>*/}
                 </Dialog>
-
-                <Dialog
-                    open={openAlgoModify}
-                    onClose={handleAlgoModifyClose}
-                    scroll={scrollAlgoDetail}
-                    aria-labelledby="scroll-dialog-title"
-                    aria-describedby="scroll-dialog-description"
-                    // fullWidth={true}
-                    maxWidth={'md'}
-                    disableScrollLock={true}
-                    PaperProps={{
-                        style: {mb: 2, borderRadius: 10}
-                    }}
-                    // PaperProps={{ sx: { width: "100%"}}}
-                >
-                    <DialogContent dividers={scrollAlgoDetail === 'paper'} sx={{width: 470, display: 'flex'}}>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                            <Table sx={{width: 470}}>
-                                <colgroup>
-                                    <col width="120"/>
-                                    <col width="150"/>
-                                    <col width="50"/>
-                                    <col width="150"/>
-                                </colgroup>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell style={{paddingRight: 0, paddingLeft: 0}}>Algorithm Name:</TableCell>
-                                        <TableCell
-                                            style={{paddingRight: 10, paddingLeft: 10}}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoName"
-                                                name="algoName"
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                maxRows = {1}
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                                defaultValue={algodata.algo_name}
-                                            />
-                                        </TableCell>
-                                        <TableCell style={{paddingRight: 0, paddingLeft: 0}}> Authors: </TableCell>
-                                        <TableCell
-                                            style={{paddingRight: 10, paddingLeft:10}}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoAuthor"
-                                                name="algoAuthor"
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                maxRows = {1}
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                                defaultValue={algodata.authors}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell style={{paddingRight: 0, paddingLeft: 0}}> Github Link: </TableCell>
-                                        <TableCell style={{paddingRight: 10, paddingLeft: 10}} colSpan={3}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoGit"
-                                                name="algoGit"
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                maxRows = {1}
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                                defaultValue={algodata.github}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell
-                                            style={{paddingRight: 0, paddingLeft: 0, verticalAlign: "top"}}> Paper
-                                            Reference: </TableCell>
-                                        <TableCell style={{paddingRight: 10, paddingLeft:10, verticalAlign: "top"}}
-                                                   colSpan={3}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoPaper"
-                                                name="algoPaper"
-                                                maxRows = {4}
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                                defaultValue={algodata.papers}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell style={{
-                                            paddingRight: 0,
-                                            paddingLeft: 0,
-                                            verticalAlign: "top"
-                                        }}> Comments: </TableCell>
-                                        <TableCell style={{paddingRight: 10, paddingLeft: 10, verticalAlign: "top"}}
-                                                   colSpan={3}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoComments"
-                                                name="algoComments"
-                                                maxRows = {4}
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                                defaultValue={algodata.comments}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                            <Button
-                                type="submit"
-                                // fullWidth
-                                variant="contained"
-                                sx={{ mt: 2, mb: 2,mr:1}}
-                                style={{float : 'right'}}
-                            >
-                                Save Changes
-                            </Button>
-                        </Box>
-                    </DialogContent>
-                </Dialog>
-
-                <Dialog
-                    open={openAlgoCreate}
-                    onClose={ ()=>{setOpenAlgoCreate(false)}}
-                    scroll={scrollAlgoDetail}
-                    aria-labelledby="scroll-dialog-title"
-                    aria-describedby="scroll-dialog-description"
-                    // fullWidth={true}
-                    maxWidth={'md'}
-                    disableScrollLock={true}
-                    PaperProps={{
-                        style: {mb: 2, borderRadius: 10}
-                    }}
-                    // PaperProps={{ sx: { width: "100%"}}}
-                >
-                    <DialogContent dividers={scrollAlgoDetail === 'paper'} sx={{width: 470, display: 'flex'}}>
-                        <Box component="form" onSubmit={handleCreationSubmit} noValidate sx={{ mt: 1 }}>
-                            <Table sx={{width: 470}}>
-                                <colgroup>
-                                    <col width="120"/>
-                                    <col width="150"/>
-                                    <col width="50"/>
-                                    <col width="150"/>
-                                </colgroup>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell style={{paddingRight: 0, paddingLeft: 0}}>Algorithm Name:</TableCell>
-                                        <TableCell
-                                            style={{paddingRight: 10, paddingLeft: 10}}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoName"
-                                                name="algoName"
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                maxRows = {1}
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                            />
-                                        </TableCell>
-                                        <TableCell style={{paddingRight: 0, paddingLeft: 0}}> Authors: </TableCell>
-                                        <TableCell
-                                            style={{paddingRight: 10, paddingLeft:10}}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoAuthor"
-                                                name="algoAuthor"
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                maxRows = {1}
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell style={{paddingRight: 0, paddingLeft: 0}}> Github Link: </TableCell>
-                                        <TableCell style={{paddingRight: 10, paddingLeft: 10}} colSpan={3}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoGit"
-                                                name="algoGit"
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                maxRows = {1}
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell
-                                            style={{paddingRight: 0, paddingLeft: 0, verticalAlign: "top"}}> Paper
-                                            Reference: </TableCell>
-                                        <TableCell style={{paddingRight: 10, paddingLeft:10, verticalAlign: "top"}}
-                                                   colSpan={3}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoPaper"
-                                                name="algoPaper"
-                                                maxRows = {4}
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell style={{
-                                            paddingRight: 0,
-                                            paddingLeft: 0,
-                                            verticalAlign: "top"
-                                        }}> Comments: </TableCell>
-                                        <TableCell style={{paddingRight: 10, paddingLeft: 10, verticalAlign: "top"}}
-                                                   colSpan={3}>
-                                            <TextField
-                                                margin='none'
-                                                required
-                                                fullWidth
-                                                id="algoComments"
-                                                name="algoComments"
-                                                maxRows = {4}
-                                                size  = 'small'
-                                                autoFocus
-                                                multiline
-                                                inputProps={{style: {fontSize: 14}}}
-                                                // variant="standard"
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                            <Button
-                                type="submit"
-                                // fullWidth
-                                variant="contained"
-                                sx={{ mt: 2, mb: 2,mr:1}}
-                                style={{float : 'right'}}
-                            >
-                                Create Algorithm
-                            </Button>
-                        </Box>
-                    </DialogContent>
-                </Dialog>
                 <Dialog
                     open={openMonitorDetail}
                     onClose={()=>setOpenMonitorDetail(false)}
@@ -1303,6 +786,10 @@ export default function Dashboard() {
                     </DialogContent>
                 </Dialog>
             </Paper>
+            {/*<FormControlLabel*/}
+            {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
+            {/*    label="Dense padding"*/}
+            {/*/>*/}
         </Box>
     );
 }
