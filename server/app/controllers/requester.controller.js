@@ -49,7 +49,8 @@ exports.create = async (req, res) => {
       authorName: req.body.authorName,
       paperReference: req.body.paperReference,
       githubLink: req.body.githubLink,
-      comments: req.body.comments
+      comments: req.body.comments,
+      isApproved : false
     });
 
     requester.save(requester)

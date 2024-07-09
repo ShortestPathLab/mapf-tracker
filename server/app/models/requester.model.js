@@ -12,6 +12,7 @@ module.exports = mongoose => {
             paperReference: String,
             githubLink: String,
             comments: String,
+            isApproved: Boolean
         }
     );
 
