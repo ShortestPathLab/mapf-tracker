@@ -65,6 +65,8 @@ require("./app/routes/algorithm.routes")(app)
 require("./app/routes/auth.routes")(app)
 require("./app/routes/user.routes")(app)
 require("./app/routes/solution_path.routes")(app)
+require("./app/routes/requester.routes")(app)
+
 app.use(express.static(path.join(__dirname,'../client/build')));
 
 app.use('/quickDownload',express.static(path.join(__dirname,'../client/public/download')));
