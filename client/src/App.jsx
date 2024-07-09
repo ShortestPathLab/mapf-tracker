@@ -20,6 +20,8 @@ import SystemDemo from "./SystemDemo";
 import Contribute from "./ContributePage";
 import Download from "./DownloadPage";
 import Paper from "./PaperPage";
+import TrackSubmission from "./TrackSubmission";
+
 import { useLocation, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ConfirmProvider } from "material-ui-confirm";
@@ -84,6 +86,7 @@ export default function App() {
                   <Route path="/contributes" element={<Contribute/>} />
                   <Route path="/download" element={<Download/>} />
                   <Route path="/papers" element={<Paper/>} />
+                  <Route path="/trackSubmission" element={<TrackSubmission/>} />
                   <Route path="/dashboard" element={localStorage.getItem("user") !== null ? <Dashboard/> : <Navigate to='/'/>} />
                   <Route path="/user/maps" element={localStorage.getItem("user") !== null ? <UserMapPage/> : <Navigate to='/'/>} />
               </Routes>
