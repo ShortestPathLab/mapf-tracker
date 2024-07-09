@@ -66,6 +66,7 @@ require("./app/routes/auth.routes")(app)
 require("./app/routes/user.routes")(app)
 require("./app/routes/solution_path.routes")(app)
 require("./app/routes/requester.routes")(app)
+require("./app/routes/submission_key.routes")(app)
 
 app.use(express.static(path.join(__dirname,'../client/build')));
 
