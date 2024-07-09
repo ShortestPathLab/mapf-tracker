@@ -11,8 +11,8 @@
     "@mui/material": "^5.10.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@vitejs/plugin-react": "^4.3.1",
     "@testing-library/user-event": "^13.5.0",
+    "@vitejs/plugin-react": "^4.3.1",
     "axios": "^1.2.1",
     "bibtex-parser": "^0.0.0",
     "bootstrap": "^5.2.2",
@@ -20,6 +20,7 @@
     "change": "^0.0.0",
     "chroma-js": "^2.4.2",
     "clipboard": "^2.0.11",
+    "formik": "^2.4.6",
     "material-ui-confirm": "^3.0.7",
     "mui-file-dropzone": "^4.0.2",
     "papaparse": "^5.3.2",
@@ -32,7 +33,8 @@
     "recharts": "^2.1.15",
     "vite": "^5.3.3",
     "vite-tsconfig-paths": "^4.3.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.4.0"
   },
   "scripts": {
     "start": "vite",

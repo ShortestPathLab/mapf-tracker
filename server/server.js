@@ -65,6 +65,8 @@ require("./app/routes/algorithm.routes")(app)
 require("./app/routes/auth.routes")(app)
 require("./app/routes/user.routes")(app)
 require("./app/routes/solution_path.routes")(app)
+require("./app/routes/requester.routes")(app)
+
 app.use(express.static(path.join(__dirname,'../client/build')));
 
 app.use('/quickDownload',express.static(path.join(__dirname,'../client/public/download')));
@@ -131,7 +133,7 @@ app.get('*', function(req, res) {
 // var PORT = "" || 80;
 // const PORT = process.env.PORT || 80;
 if (process.env.NODE_ENV === 'development') {
-    const PORT = process.env.PORT || 3001;
+    const PORT = process.env.PORT || 50000;
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}.`);
     });
