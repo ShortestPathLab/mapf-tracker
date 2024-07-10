@@ -486,7 +486,6 @@ export default function Contribute() {
                                         label="Requester Name"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="requesterName" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -500,7 +499,6 @@ export default function Contribute() {
                                         label="Contact Email"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="requesterEmail" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -512,7 +510,6 @@ export default function Contribute() {
                                         label="Affilation"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="requesterAffilation" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -524,7 +521,6 @@ export default function Contribute() {
                                         label="Author's Name"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="authorName" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -549,7 +545,6 @@ export default function Contribute() {
                                         label="Algorithm Name"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="algorithmName" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -560,8 +555,8 @@ export default function Contribute() {
                                         name="paperReference"
                                         label="Paper References"
                                         variant="standard"
-                                        fullWidth
                                         multiline
+                                        fullWidth
                                         required
                                     />
                                     <ErrorMessage name="paperReference" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -586,7 +581,6 @@ export default function Contribute() {
                                         label="Google Scholar"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="googleScholar" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -598,7 +592,6 @@ export default function Contribute() {
                                         label="DBLP"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="dblp" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
@@ -611,7 +604,6 @@ export default function Contribute() {
                                         label="Github Link"
                                         variant="standard"
                                         fullWidth
-                                        multiline
                                         required
                                     />
                                     <ErrorMessage name="githubLink" component={FormHelperText} sx={{ color: 'red', fontSize: '0.8rem', marginTop: '8px' }} />
