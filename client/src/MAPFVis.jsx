@@ -21,21 +21,20 @@ let grid_size = 0;
 let grid_line_width = 0.05;
 let map_size = 0;
 
+/**
+ * parse a string derived from a .map file in public/assets/maps/
+ * @param {string} text 
+ * @returns 2d boolean array with true meaning obstacle, false meaning clear
+ */
 function parseMap(text) {
-    var lines = text.trim().split(/\r?\n/);
+    const lines = text.trim().split(/\r?\n/);
+    const height = parseInt(lines[1].split(" ")[1], 10);
+    const width = parseInt(lines[2].split(" ")[1], 10);
+    const map = Array.from({ length: height }, () => Array(width).fill(false));
 
-    var height = parseInt(lines[1].split(" ")[1]);
-    var width = parseInt(lines[2].split(" ")[1]);
-    var map = Array(height)
-        .fill()
-        .map(() =>
-            new Array(width).fill().map(() => false)
-        );
     lines.slice(4).forEach((line, i) => {
         [...line].forEach((char, j) => {
-            if (char === "@" || char === "T") {
-                map[i][j] = true;
-            }
+            map[i][j] = char === "@" || char === "T";
         });
     });
 
