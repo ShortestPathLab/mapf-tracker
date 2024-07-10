@@ -1,7 +1,7 @@
 module.exports = mongoose => {
     var schema = mongoose.Schema(
         {
-            algo_id: {type: mongoose.Schema.Types.ObjectId, ref: 'algorithm'},
+            request_id: {type: mongoose.Schema.Types.ObjectId, ref: 'request'},
             api_key: String,
             creationDate: Date,
             expirationDate: Date 

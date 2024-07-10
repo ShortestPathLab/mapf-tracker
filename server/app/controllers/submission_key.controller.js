@@ -36,6 +36,7 @@ exports.findByApiKey = (req, res) => {
         });
 };
 
+// return requester information (using the requestID )
 exports.create = async (req, res) => {
     if (!req.body.algo_id) {
       return res.status(400).send({ message: "Algorithm cannot be empty!" });
@@ -46,7 +47,7 @@ exports.create = async (req, res) => {
     expirationDate.setMonth(expirationDate.getMonth() + 1); // API key valid for one month
   
     const submission_key = new Submission_key({
-      algo_id: req.body.algo_id,
+      request_id : req.body.request_id,
       api_key : apiKey,
       creationDate : creationDate, 
       expirationDate : expirationDate
