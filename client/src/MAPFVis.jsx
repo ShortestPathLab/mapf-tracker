@@ -21,24 +21,21 @@ let grid_size = 0;
 let grid_line_width = 0.05;
 let map_size = 0;
 
-/**
- * parse a string derived from a .map file in public/assets/maps/
- * @param {string} text 
- * @returns 2d boolean array with true meaning obstacle, false meaning clear
+/** 
+ * Pre-processing step for visualising obstacles
+ * @param {string} text newline-delimited content of a `.scen` file
+ * @returns 
  */
 function parseMap(text) {
-    const lines = text.trim().split(/\r?\n/);
-    const height = parseInt(lines[1].split(" ")[1], 10);
-    const width = parseInt(lines[2].split(" ")[1], 10);
-    const map = Array.from({ length: height }, () => Array(width).fill(false));
-
-    lines.slice(4).forEach((line, i) => {
-        [...line].forEach((char, j) => {
-            map[i][j] = char === "@" || char === "T";
-        });
-    });
-
-    return map;
+    
+    // ignore the top 4 lines, we only want the map data...
+    // ...which is separated by rows: \n, columns: "" 
+    const map_content = text.trim().split(/\r?\n/).slice(4)
+    
+    // now convert any obstacles to "true" and free space to "false"
+    return map_content.map(row => 
+        [...row].map(val => val === "@" || val === "T")
+    );
 }
 
 function parseScen(text,num_of_agents, solution_string) {
