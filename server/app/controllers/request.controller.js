@@ -1,16 +1,16 @@
 const db = require("../models");
 const mongoose = require("mongoose");
-const Requester = db.requesters;
+const Request = db.requests;
 
 exports.findAll = (req, res) => {
-    Requester.find({})
+    Request.find({})
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving requesters."
+                    err.message || "Some error occurred while retrieving request."
             });
         });
 };
@@ -20,16 +20,16 @@ exports.findAll = (req, res) => {
 exports.findByInstance_id = (req, res) => {
     const id = req.params.id;
 
-    Requester.find({instance_id : id})
+    Request.find({instance_id : id})
         .then(data => {
             if (!data)
-                res.status(404).send({ message: "Not found Requester with id " + id });
+                res.status(404).send({ message: "Not found request with id " + id });
             else res.send(data);
         })
         .catch(err => {
             res
                 .status(500)
-                .send({ message: "Error retrieving Requester with id=" + id });
+                .send({ message: "Error retrieving request with id=" + id });
         });
 };
 
@@ -38,7 +38,7 @@ exports.create = async (req, res) => {
       return res.status(400).send({ message: "Requester name can not be empty!" });
     }
   
-    const requester = new Requester({
+    const request = new Request({
       requesterName: req.body.requesterName,
       requesterEmail: req.body.requesterEmail,
       requesterAffiliation: req.body.requesterAffiliation,
@@ -53,7 +53,7 @@ exports.create = async (req, res) => {
       isApproved : false
     });
 
-    requester.save(requester)
+    request.save(request)
     .then(data => {
         res.send(data);
     })

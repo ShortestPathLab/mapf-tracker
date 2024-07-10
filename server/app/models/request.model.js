@@ -24,6 +24,6 @@ module.exports = mongoose => {
     });
 
 
-    const Requester = mongoose.model("requester", schema);
-    return Requester;
+    const Request = mongoose.model("request", schema);
+    return Request;
 };

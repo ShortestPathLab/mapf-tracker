@@ -47,7 +47,7 @@ export default function Contribute() {
             )
         };
         console.log(APIConfig.apiUrl)
-        fetch(APIConfig.apiUrl+'/requester/create', requestOptions)
+        fetch(APIConfig.apiUrl+'/request/create', requestOptions)
         .then(response => 
             alert(response.json()))
         .catch(error => console.error('Error:::::::::::::' , error ))
