@@ -23,6 +23,7 @@ let map_size = 0;
 
 function parseMap(text) {
     var lines = text.trim().split(/\r?\n/);
+    console.log(lines)
     var height = parseInt(lines[1].split(" ")[1]);
     var width = parseInt(lines[2].split(" ")[1]);
     var map = Array(height)
@@ -199,7 +200,7 @@ const Visualization = () => {
             // var map_file = "warehouse-10-20-10-2-2.map"
             // var map_file = "w_woundedcoast.map"
             // var map_file = "orz900d.map"
-            var map_path = require("./assets/maps/" + map_file);
+            var map_path = "./assets/maps/" + map_file;
 
             var agent = location.state.num_agents;
             var color = Array(agent)
@@ -213,7 +214,8 @@ const Visualization = () => {
             var solution_string = data;
             // "uuuu\ndddd\nlllll\nrrrr"
             var scen = location.state.scen_string + ".scen";
-            var scen_path = require("./assets/scens/" + scen);
+            console.log(scen)
+            var scen_path = "./assets/scens/" + scen;
 
 
             Promise.all([fetch(map_path), fetch(scen_path)])

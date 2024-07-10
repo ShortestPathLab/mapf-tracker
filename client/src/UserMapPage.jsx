@@ -407,7 +407,7 @@ export default function UserMapPage() {
 
     const load_map = async function () {
         var map_file = selectedRow.map_name + ".map"
-        var map_path = require("./assets/maps/" + map_file);
+        var map_path = "./assets/maps/" + map_file;
         console.log( selectedRow.map_name)
         var map_text = await fetch(map_path).then(
             (r) => r.text()
@@ -417,7 +417,7 @@ export default function UserMapPage() {
 
     const load_scen = async function (scen_string,agent, solution_string) {
         var scen = selectedRow.map_name + "-"+scen_string + ".scen";
-        var scen_path = require("./assets/scens/" + scen);
+        var scen_path = "./assets/scens/" + scen;
         var  scen_text = await fetch(scen_path).then(
             (r) => r.text()
         ).catch(err => console.error(err));
