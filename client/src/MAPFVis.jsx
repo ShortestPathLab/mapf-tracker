@@ -23,7 +23,7 @@ let map_size = 0;
 
 function parseMap(text) {
     var lines = text.trim().split(/\r?\n/);
-    console.log(lines)
+
     var height = parseInt(lines[1].split(" ")[1]);
     var width = parseInt(lines[2].split(" ")[1]);
     var map = Array(height)
@@ -38,7 +38,7 @@ function parseMap(text) {
             }
         });
     });
-    // console.log('finish loading')
+
     return map;
 }
 
@@ -81,9 +81,9 @@ function parseScen(text,num_of_agents, solution_string) {
             previous_location = next_location;
         }
     }
-    // console.log('finish scenario');
+
     return agent_state;
-    // console.log(agent_state);
+
     // lines.slice(1).forEach((line, i) => {
     //     var entries  =  line.split('\t');
     //     solution[i][0].x = entries[4];
@@ -116,7 +116,7 @@ function render_map(ctx,map){
         }
         current_y  = current_y + grid_size;
     }
-    // console.log("Finishing drawing")
+
 }
 
 function render_agents_timesteps(ctx,solution,color,clear_timeSteps,render_timesteps){
@@ -214,7 +214,7 @@ const Visualization = () => {
             var solution_string = data;
             // "uuuu\ndddd\nlllll\nrrrr"
             var scen = location.state.scen_string + ".scen";
-            console.log(scen)
+
             var scen_path = "./assets/scens/" + scen;
 
 
