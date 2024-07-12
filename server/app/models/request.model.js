@@ -12,12 +12,13 @@ module.exports = mongoose => {
             paperReference: String,
             githubLink: String,
             comments: String,
-            isApproved: Boolean
+            isApproved: Boolean,
+            status: { type: String, enum: ["Not Reviewed", "Approved", "Rejected"], default: "Not Reviewed" }
         }
     );
 
 
-    schema.method("toJSON", function() {
+    schema.method("toJSON", function () {
         const { __v, _id, ...object } = this.toObject();
         object.id = _id;
         return object;
