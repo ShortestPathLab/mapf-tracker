@@ -13,7 +13,24 @@ module.exports = mongoose => {
             githubLink: String,
             comments: String,
             isApproved: Boolean,
-            status: { type: String, enum: ["Not Reviewed", "Approved", "Rejected"], default: "Not Reviewed" }
+            reviewStatus: {
+                type: {
+                    status: {
+                        type: String,
+                        enum: ["Not Reviewed", "Approved", "Rejected"],
+                        default: "Not Reviewed"
+                    },
+                    comments: {
+                        type: String,
+                        default: ""
+                    }
+                },
+                default: {
+                    status: "Not Reviewed",
+                    comments: ""
+                },
+                _id: false  // Disable _id for this subdocument
+            },
         }
     );
 

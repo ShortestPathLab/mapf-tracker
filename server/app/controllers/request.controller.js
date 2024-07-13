@@ -1,6 +1,8 @@
 const db = require("../models");
 const mongoose = require("mongoose");
 const Request = db.requests;
+const Submission_key = db.submission_keys;
+const crypto = require('crypto');
 
 exports.findAll = (req, res) => {
     Request.find({})
@@ -37,11 +39,10 @@ exports.create = async (req, res) => {
     if (!req.body.requesterName) {
       return res.status(400).send({ message: "Requester name can not be empty!" });
     }
-  
     const request = new Request({
       requesterName: req.body.requesterName,
       requesterEmail: req.body.requesterEmail,
-      requesterAffiliation: req.body.requesterAffiliation,
+      requesterAffilation: req.body.requesterAffilation,
       googleScholar: req.body.googleScholar,
       dblp: req.body.dblp,
       justification: req.body.justification,
@@ -65,3 +66,50 @@ exports.create = async (req, res) => {
 
 
   };
+
+exports.updateRequest = async (req, res) =>{
+const { id } = req.params;
+const { status, ...otherFields } = req.body;
+try {
+
+    const request = await Request.findById(id);
+    if (!request){
+        return res.status(404).send({ message: `Request with id ${id} not found` });
+    }
+
+    const previousStatus = request.status;
+
+    const updatedRequest = await Request.findByIdAndUpdate(
+        id, {status, ...otherFields}, {new:true}
+    );
+
+    // request was reviewed and approved
+    if (previousStatus === "Not Reviewed" && status ==="Approved" ){
+        // generate new submission key api for the user
+        const apiKey = crypto.randomBytes(16).toString('hex');
+        const creationDate = new Date();
+        const expirationDate = new Date();
+        expirationDate.setMonth(expirationDate.getMonth() + 1); // API key valid for one month
+        const submission_key = new Submission_key({
+          request_id : id,
+          api_key : apiKey,
+          creationDate : creationDate, 
+          expirationDate : expirationDate
+        });
+        console.log(submission_key)
+
+        submission_key.save(submission_key)
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the submission key."
+            });
+        });
+    }
+    res.send({ message: "Request updated successfully", updatedRequest });
+}
+catch (err){
+    res.status(500).send({ message: err.message || "Some error occurred while updating the request." });
+}
+
+};
