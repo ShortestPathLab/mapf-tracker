@@ -2,7 +2,9 @@ const db = require("../models");
 const mongoose = require("mongoose");
 const OngoingSubmission = db.ongoing_submissions;
 const Map = db.maps;
-
+const Scenario = db.scenarios;
+const Instance = db.instances;
+const SubmissionKey =db.submission_keys
 // find all submissions
 exports.findAll = (req, res) => {
     OngoingSubmission.find({})
@@ -22,7 +24,7 @@ exports.findAll = (req, res) => {
 exports.findByInstance_id = (req, res) => {
     const id = req.params.id;
 
-    OngoingSubmission.find({instance_id : id})
+    OngoingSubmission.find({ instance_id: id })
         .then(data => {
             if (!data)
                 res.status(404).send({ message: "Not found OngoingSubmission with id " + id });
@@ -73,41 +75,66 @@ exports.create = async (req, res) => {
             return res.status(400).send({ message: validation.message });
         }
     }
+    // check api key 
+    var api = await SubmissionKey.findOne({ "api_key": req.body.api_key })
+        .catch(err => {
+            res.status(400).send({
+                message:
+                    err.message || "Some error occurred while finding api key."
+            });
+        })
+    if (!api) {
+        res.status(400).send({ message: "Error: map not found" });
+        return;
+    }
+    else{
+        // check if is expired
+        const currentDate = new Date();
+        if (currentDate> api.expirationDate ){
+            // send error
+            res.status(400).send({ message: "Error: api key is expired" });
+            return; 
+        }
+
+    }
+
+
     // check if the map exist and retrieve map id 
-    var map = await Map.findOne({"map_name": req.body.map_name}).catch(err => {
+    var map = await Map.findOne({ "map_name": req.body.map_name }).catch(err => {
         res.status(400).send({
             message:
                 err.message || "Some error occurred while finding map."
         });
     });
-    if(!map){
-        res.status(400).send({message: "Error: map not found"});
+    if (!map) {
+        res.status(400).send({ message: "Error: map not found" });
         return;
     }
-    var map_id  = map._id
+    var map_id = map._id
+    console.log('pass this mdfk', map_id)
 
     // check if the scenario exist
-    var scen = await Scenario.findOne({"map_id": map_id, "scen_type": req.body.scen_type, "type_id": parseInt(req.body.type_id)}).catch(err => {
+    var scen = await Scenario.findOne({ "map_id": map_id, "scen_type": req.body.scen_type, "type_id": parseInt(req.body.type_id) }).catch(err => {
         res.status(400).send({
             message:
                 err.message || "Some error occurred while finding scenario."
         });
     });
-    if(!scen){
-        res.status(400).send({message: "Error: scenario not found"});
+    if (!scen) {
+        res.status(400).send({ message: "Error: scenario not found" });
         return;
     }
-    var scen_id  = scen._id
+    var scen_id = scen._id
 
     // check if instance ( agent exist)
-    var curr_instance = await Instance.findOne({"map_id": map_id, "scen_id": scen_id, "agents":parseInt(req.body.agents)}).catch(err => {
+    var curr_instance = await Instance.findOne({ "map_id": map_id, "scen_id": scen_id, "agents": parseInt(req.body.agents) }).catch(err => {
         res.status(400).send({
             message:
                 err.message || "Some error occurred while finding instance."
         });
     });
-    if(!curr_instance){
-        res.status(400).send({message: "Error: instance not found"});
+    if (!curr_instance) {
+        res.status(400).send({ message: "Error: instance not found" });
         return;
     }
     var instance_id = curr_instance._id;
@@ -115,23 +142,26 @@ exports.create = async (req, res) => {
     // create new ongoing submission data
     const new_ongoing_submission = new OngoingSubmission({
         "api_key": req.body.api_key,
-        "map_id" :  map_id,
-        "instance_id" :instance_id,
+        "map_id": map_id,
+        "instance_id": instance_id,
         "scen_id": scen_id,
-        "agents": parseInt(req.body.agents),    
-        "lower_cost": req.body.lower_cost ,
+        "agents": parseInt(req.body.agents),
+        "lower_cost": req.body.lower_cost,
         "solution_cost": req.body.solution_cost,
-        "error": {isError:false , errorMessage:''}
+        "error": { isError: false, errorMessage: '' }
     });
 
     new_ongoing_submission.save(new_ongoing_submission)
-    .then(data => {
-        res.send(data);
-    })
-    .catch(err => {
-        res.status(500).send({
-            message:
-                err.message || "Some error occurred while creating the ongoing submission ."
+        .then(data => {
+            res.send(data);
+            console.log(data)
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the ongoing submission ."
+            });
+            console.log(err)
+
         });
-    });
-  };
+};

@@ -40,6 +40,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { DialogActions, DialogTitle } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
+import SendIcon from '@mui/icons-material/Send';
 
 const infoDescriptionText = {
     'domainCompare-#Instances Closed': {
@@ -188,7 +189,15 @@ const headCells = [
         id: 'requestDetails',
         numeric: false,
         disablePadding: false,
-        label: 'Request Details',
+        label: 'Details',
+        sortable: false,
+        alignment: 'center'
+    },
+    {
+        id: 'sendResults',
+        numeric: false,
+        disablePadding: false,
+        label: 'Send Results',
         sortable: false,
         alignment: 'center'
     },
@@ -386,12 +395,7 @@ export default function Dashboard() {
 
     // for open request details -------------=================================
     const [openRequestDetail, setOpenRequestDetail] = React.useState(false);
-    const [requestData, setRequestData] = React.useState([]);
-    const [editable, setEditable] = React.useState(false)
-    const handleEditButtonOnCLick = () => {
-        setEditable(true)
-        console.log(editable)
-    }
+    const [requestData, setRequestData] = React.useState();
 
     const handleOpenRequestDetail = (event, data) => {
         setOpenRequestDetail(true)
@@ -402,6 +406,42 @@ export default function Dashboard() {
         setOpenRequestDetail(false)
     }
 
+    const handleRequestDetailUpdated = async (values, { setSubmitting }) => {
+        try {
+            const response = await fetch(`${APIConfig.apiUrl}/request/update/${values.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values)
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Request updated successfully:', data);
+            } else {
+                console.error('Error updating request:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }       
+        setSubmitting(false);
+        handleCloseRequestDetail();
+    }
+    // for open send results -------------=================================
+    const [openSendResults, setOpenSendResults] = React.useState(false);
+    const handleOpenSendResults = (event, data) => {
+        setOpenSendResults(true)
+        setRequestData(data)
+        event.stopPropagation()
+    }
+    const handleCloseSendResults = () => {
+        setOpenSendResults(false)
+    }
+
+
+
+    //=================================================================
     const handleOpenInfo = (key) => {
         setInfoDescription(infoDescriptionText[key]);
         setOpenMonitorDetail(true);
@@ -452,7 +492,6 @@ export default function Dashboard() {
 
 
     React.useEffect(() => {
-
         refreshRequests((data) => {
             setData(data);
             setRows(data);
@@ -763,6 +802,7 @@ export default function Dashboard() {
                             <col style={{ minWidth: "200px" }} width="15%" />
                             <col style={{ minWidth: "100px" }} width="15%" />
                             <col style={{ minWidth: "100px" }} width="15%" />
+                            <col style={{ minWidth: "100px" }} width="15%" />
                         </colgroup>
                         <EnhancedTableHead
                             order={order}
@@ -800,10 +840,10 @@ export default function Dashboard() {
                                                         padding: '4px 8px',
                                                         borderRadius: '4px',
                                                         color: 'white',
-                                                        backgroundColor: row.isApproved ? 'green' : 'red'
+                                                        backgroundColor: row.reviewStatus.status === "Approved" ? 'green' : row.reviewStatus.status=== "Rejected" ? 'red' : 'grey'
                                                     }}
                                                 >
-                                                    {row.isApproved ? "Approved" : "Not Approved"}
+                                                    {row.reviewStatus.status === "Approved" ? "Approved" : row.reviewStatus.status=== "Rejected" ? "Rejected" : "Not Reviewed"}
                                                 </Box>
                                                 {/* <IconButton
                                                     onClick={(event) => handleAlgoModifyClickOpen(event, 'paper', row)}>
@@ -814,6 +854,12 @@ export default function Dashboard() {
                                                 <IconButton
                                                     onClick={(event) => handleOpenRequestDetail(event, row)}>
                                                     <InfoIcon />
+                                                </IconButton>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <IconButton
+                                                    onClick={(event) => handleOpenSendResults(event, row)}>
+                                                    <SendIcon />
                                                 </IconButton>
                                             </TableCell>
                                         </TableRow>
@@ -853,12 +899,7 @@ export default function Dashboard() {
                     <DialogContent sx={{ width: 850, display: 'flex' }}>
                         <Formik
                             initialValues={requestData}
-                            onSubmit={(values, { setSubmitting }) => {
-                                // onSave(values);
-                                setSubmitting(false);
-                                setEditable(false);
-                                console.log(editable)
-                            }}
+                            onSubmit={handleRequestDetailUpdated}
                         >
                             {({ isSubmitting }) => (
                                 <Form style={{ width: '100%', marginTop: 10 }}>
@@ -869,7 +910,7 @@ export default function Dashboard() {
                                             label="Requester Name"
                                             variant="standard"
                                             fullWidth
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                         <Field
                                             as={TextField}
@@ -877,7 +918,7 @@ export default function Dashboard() {
                                             label="Requester Email"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
@@ -887,7 +928,7 @@ export default function Dashboard() {
                                             label="Affilation"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                         <Field
                                             as={TextField}
@@ -895,7 +936,7 @@ export default function Dashboard() {
                                             label="Author's Name"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
@@ -905,7 +946,7 @@ export default function Dashboard() {
                                             label="Justification"
                                             variant="outlined" fullWidth
                                             multiline
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
@@ -915,7 +956,7 @@ export default function Dashboard() {
                                             label="Algorithm Name"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                         <Field
                                             as={TextField}
@@ -923,7 +964,7 @@ export default function Dashboard() {
                                             label="Paper References"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
@@ -933,7 +974,7 @@ export default function Dashboard() {
                                             label="Comments"
                                             variant="outlined" fullWidth
                                             multiline
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
@@ -944,7 +985,7 @@ export default function Dashboard() {
                                             label="Google Scholar"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                         <Field
                                             as={TextField}
@@ -952,7 +993,7 @@ export default function Dashboard() {
                                             label="DBLP"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                         <Field
                                             as={TextField}
@@ -961,44 +1002,95 @@ export default function Dashboard() {
                                             label="Github Link"
                                             fullWidth
                                             variant="standard"
-                                            disabled={!editable}
+                                            disabled={true}
                                         />
                                     </Box>
                                     <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
                                         <FormControl fullWidth variant="standard">
-
-                                            <InputLabel id="approval-status-label">Approval Status</InputLabel>
+                                            <InputLabel id="status-label">Approval Status</InputLabel>
                                             <Field
                                                 as={Select}
-                                                name="isApproved"
-                                                label="Approve"
-                                                labelId="approval-status-label"
-                                                disabled={!editable}
+                                                name="reviewStatus.status"
+                                                labelId="status-label"
                                             >
-                                                <MenuItem value={true}>Approved</MenuItem>
-                                                <MenuItem value={false}>Not Approved</MenuItem>
+                                                <MenuItem value="Not Reviewed">Not Reviewed</MenuItem>
+                                                <MenuItem value="Approved">Approved</MenuItem>
+                                                <MenuItem value="Rejected">Rejected</MenuItem>
                                             </Field>
                                         </FormControl>
+                                        <Field
+                                            as={TextField}
+                                            name="reviewStatus.comments"
+                                            label="Comments"
+                                            variant="outlined" 
+                                            fullWidth
+                                            multiline
+                                        />
                                     </Box>
-                                    <Box sx={{ display: 'flex', justifyContent:'center'}}>
-                                    {editable && (
-                                        <Button type="submit" color="primary" disabled={isSubmitting}>
-                                            Save
-                                        </Button>
-                                    )}
-                                    {!editable && (<Button type="button" onClick={handleEditButtonOnCLick} disabled={editable} color="primary">
-                                        Edit
-                                    </Button>)}
-</Box>
-                                    {/* <Button onClick={() => { setEditable(true) }} color="primary"> 
-                                            Edit
-                                        </Button> */}
+                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                            <Button type="submit" color="primary" disabled={isSubmitting}>
+                                                Save
+                                            </Button>
+                                    </Box>
+
 
                                 </Form>
                             )}
                         </Formik>
                     </DialogContent>
                 </Dialog>
+
+                {/* -------------------for openning send results-------------------- */}
+                <Dialog
+                    open={openSendResults}
+                    onClose={handleCloseSendResults}
+                    scroll='paper'
+                    aria-labelledby="admin-dialog-title"
+                    fullWidth={true}
+                    maxWidth={'md'}
+                >
+                    <DialogTitle id="admin-dialog-title">Send Results</DialogTitle>
+                    <DialogContent sx={{ width: 850, display: 'flex', flexDirection: 'column', gap: 3  }}>
+                    {requestData ? (
+                    <>
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} >Status:</Typography>
+                            <Box
+                                                    sx={{
+                                                        display: 'inline-block',
+                                                        padding: '4px 8px',
+                                                        borderRadius: '4px',
+                                                        color: 'white',
+                                                        backgroundColor: requestData.reviewStatus.status === "Approved" ? 'green' : requestData.reviewStatus.status=== "Rejected" ? 'red' : 'grey'
+                                                    }}
+                                                >
+                                                    {requestData.reviewStatus.status === "Approved" ? "Approved" : requestData.reviewStatus.status=== "Rejected" ? "Rejected" : "Not Reviewed"}
+                                                </Box>                    
+                            </Box>
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Comments:</Typography>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    width: '500px', // Set a fixed width
+                                    whiteSpace: 'pre-wrap', // Allow wrapping at whitespace
+                                    overflowWrap: 'break-word' // Break long words if necessary
+                                }}
+                            >
+                                {requestData.reviewStatus.comments}
+                            </Typography>                        
+                            </Box>
+                    </>
+                ) : (
+                    <Typography variant="body1">No data available.</Typography>
+                )}
+                    </DialogContent>
+                </Dialog>
+
+
+
+
+                {/* -------------------for openning alg details-------------------- */}
 
                 <Dialog
                     open={openAlgoDetail}

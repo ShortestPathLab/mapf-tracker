@@ -482,7 +482,7 @@ export default function TrackSubmission() {
     // ----------------------------------------------------------------------------------------
     const checkApiKey =(apikey) =>{
         // api= apiKey
-        fetch(`${APIConfig.apiUrl}/submission_key/${apikey}`, {
+        fetch(`http://localhost:50000/api/submission_key/${apikey}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
@@ -527,7 +527,7 @@ export default function TrackSubmission() {
         const algo_details = []
 
         for (const algo_id of algoIdList) {
-            fetch(`${APIConfig.apiUrl}/algorithm/algo_detail/${algo_id}`, {method: 'GET'})
+            fetch(`http://localhost:50000/api/algorithm/algo_detail/${algo_id}`, {method: 'GET'})
                 .then(res => res.json())
                 .then(data => {
                     algo_details.push(data)

@@ -38,8 +38,8 @@ exports.findByApiKey = (req, res) => {
 
 // return requester information (using the requestID )
 exports.create = async (req, res) => {
-    if (!req.body.algo_id) {
-      return res.status(400).send({ message: "Algorithm cannot be empty!" });
+    if (!req.body.request_id) {
+      return res.status(400).send({ message: "Request id cannot be empty!" });
     }
     const apiKey = crypto.randomBytes(16).toString('hex');
     const creationDate = new Date();
