@@ -380,6 +380,7 @@ const Visualization = () => {
                                 borderRadius: "5px"
                             }}}
                     >
+                        <MenuItem value={5}>12x</MenuItem>
                         <MenuItem value={15}>4x</MenuItem>
                         <MenuItem value={30}>2x</MenuItem>
                         <MenuItem value={60}>1x</MenuItem>
