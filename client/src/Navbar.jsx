@@ -12,7 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import MenuIcon from "@mui/icons-material/MenuOutlined";
 import PeopleIcon from "@mui/icons-material/PeopleOutlined";
 import TableViewIcon from "@mui/icons-material/TableViewOutlined";
-import { ButtonBase, Divider, Stack } from "@mui/material";
+import { ButtonBase, Divider, Stack, alpha } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -164,7 +164,7 @@ function ResponsiveAppBar() {
       elevation={0}
       sx={{
         backdropFilter: "blur(16px)",
-        bgcolor: "background.paper",
+        bgcolor: (t) => alpha(t.palette.background.paper, 0.8),
         top: 0,
         bottom: "auto",
         position: "sticky",
