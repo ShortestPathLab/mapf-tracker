@@ -23,14 +23,14 @@ let map_size = 0;
 
 /** 
  * Pre-processing step for visualising obstacles
- * @param {string} text newline-delimited content of a `.scen` file
+ * @param {string} text newline-delimited content of a `.map` file
  * @returns 
  */
-function parseMap(text) {
+function parseMap(map) {
     
     // ignore the top 4 lines, we only want the map data...
     // ...which is separated by rows: \n, columns: "" 
-    const map_content = text.trim().split(/\r?\n/).slice(4)
+    const map_content = map.trim().split(/\r?\n/).slice(4)
     
     // now convert any obstacles to "true" and free space to "false"
     return map_content.map(row => 
@@ -38,57 +38,65 @@ function parseMap(text) {
     );
 }
 
-function parseScen(text,num_of_agents, solution_string) {
-    var lines = text.trim().split(/\r?\n/);
-    var agent_state = Array(num_of_agents)
-        .fill()
-        .map(() =>
-            new Array(1).fill().map(() => ({
-                x: 0,
-                y: 0
-            }))
-        );
+/**
+ * Expand RLE-encoded records before processing them
+ * @param {string} rle newline-delimited, RLE encoded
+ * @returns decoded string
+ */
+function decodeRLE(rle) {
+    return rle.replace(/(\d+)(\w)/g, 
+        (_, count, move) => move.repeat(parseInt(count))
+    );
+}
 
-    for(var i = 1; i < num_of_agents+1; i++){
-        var entries  =  lines[i].split('\t');
-        agent_state[i-1][0].x = parseInt(entries[4]);
-        agent_state[i-1][0].y = parseInt(entries[5]);
-    }
-    var solution = solution_string.trim().split('\n');
-    for (var i = 0; i < solution.length; i++){
-        var agent_solution = solution[i];
-        var previous_location =  agent_state[i][0];
-        max_time_step = max_time_step > agent_solution.length ? max_time_step : agent_solution.length;
-        for (var j = 0; j < agent_solution.length; j++ ){
-            var next_location = { x: previous_location.x, y: previous_location.y};
-            if( agent_solution[j] === 'u'){
-                next_location.y =  next_location.y + 1;
-            }
-            if( agent_solution[j] === 'd'){
-                next_location.y = next_location.y - 1;
-            }
-            if( agent_solution[j] === 'l'){
-                next_location.x = next_location.x - 1;
-            }
-            if( agent_solution[j] === 'r'){
-                next_location.x = next_location.x + 1;
-            }
-            agent_state[i].push(next_location);
-            previous_location = next_location;
-        }
-    }
+/**
+ * Pre-compute the action of every agent specified in text scene
+ * @param {string} text newline-delimited content of a `.scen` file
+ * @param {number} numAgents the number of agents in the solution path
+ * @param {string} solutionString newline-delimited solution path for a particular instance
+ */
+function parseScen(scen, numAgents, solutionString) {
+    
+    // TODO: change from math origin to pixel origin
+    const moves = {
+        'u': { x: 0, y: 1 },
+        'd': { x: 0, y: -1 },
+        'l': { x: -1, y: 0 },
+        'r': { x: 1, y: 0 }
+    };
+
+    // extract the content from the .scen file
+    var scen_content = scen.trim().split(/\r?\n/);
+    
+    // retrieve the x-y coordinates for each agent from the content
+    let agent_state = Array.from({ length: numAgents }, (_, i) => {
+        const [, , , , x, y] = scen_content[i + 1].split('\t');
+        return [{ x: parseInt(x), y: parseInt(y) }];
+    });
+
+    // len = `numAgents`
+    const movement_log = solutionString.trim().split('\n');
+
+    movement_log.forEach((agent_solution, i) => {
+
+        // this is a global variable, update it for vis purposes later
+        max_time_step = Math.max(max_time_step, agent_solution.length);
+
+        const decodedSolution = decodeRLE(agent_solution);
+        
+        // now track the actions of each agent at each 
+        agent_state[i] = decodedSolution.split('').reduce((path, move) => {
+            const last = path[path.length - 1];
+
+            // agent either moves or waits
+            const { x = 0, y = 0 } = moves[move] || {};
+            path.push({ x: last.x + x, y: last.y + y });
+
+            return path;
+        }, agent_state[i]);
+    });
 
     return agent_state;
-
-    // lines.slice(1).forEach((line, i) => {
-    //     var entries  =  line.split('\t');
-    //     solution[i][0].x = entries[4];
-    //     solution[i][0].y = entries[5];
-    //     if( i === num_of_agents-1){
-    //         return;
-    //     }
-    // });
-
 }
 
 function render_map(ctx,map){
