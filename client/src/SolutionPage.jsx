@@ -1278,9 +1278,7 @@ export default function SolutionPage() {
               }}
               component="img"
               src={
-                `${import.meta.env.PUBLIC_URL}/mapf-svg/` +
-                location.state.mapName +
-                `.svg`
+                `/mapf-svg/${location.state.mapName}.svg`
               }
             ></Typography>
           </Typography>

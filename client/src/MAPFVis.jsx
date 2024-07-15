@@ -330,10 +330,10 @@ const Visualization = () => {
                     </div>
                 </div>
             ) : (null)}
-        <div  style={{ backgroundColor: 'grey', width : "fit-content", height : "100%"
+        <div  style={{ width : "100%", height : "100%"
         }}>
 
-            <div style={{ display: "grid", minHeight: "calc(100vh - 100px)",minWidth: "calc(100vw - 100px)", paddingTop: "70px",paddingBottom: "70px",paddingRight: "70px",paddingLeft: "70px"}}>
+            <div style={{ display: "grid", margin: "0 auto"}}>
                 <canvas ref={invisiblecanvasRef} width={0} height= {0}
                         style={{zIndex: 0,
                             gridArea: "2 / 2 / 2 / 2"
