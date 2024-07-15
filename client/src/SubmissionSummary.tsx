@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { ReactNode } from "react";
+import PageHeader from "./PageHeader";
 
 export type Props = {
   extras?: ReactNode;
@@ -76,22 +77,19 @@ export default function SubmissionSummary({
         maxWidth: 960,
         mx: "auto",
         p: 8,
-        gap: 2,
+        gap: 4,
       }}
     >
-      <Button
-        sx={{ alignSelf: "flex-start", mb: 4, color: "text.primary" }}
-        startIcon={<ArrowBackOutlined />}
-      >
-        Back to Submissions
-      </Button>
-      <Typography variant="h4" component="h1">
-        Submission Summary
-      </Typography>
+      <PageHeader
+        current="Submission progress"
+        path={[
+          { name: "MAPF Tracker", url: "/" },
+          { name: "Submissions", url: "/submissions" },
+        ]}
+      />
       <Typography>
         API Key: <code>{apiKey}</code>
       </Typography>
-
       <Stack direction="row" sx={{ mt: 2, gap: 4, alignItems: "center" }}>
         {status}
         <Box sx={{ flex: 1 }}></Box>
@@ -104,6 +102,7 @@ export default function SubmissionSummary({
           p: 8,
           mt: 2,
           border: (t) => `1px solid ${t.palette.divider}`,
+          borderRadius: 1,
           justifyContent: "space-around",
         }}
       >
@@ -122,18 +121,18 @@ export default function SubmissionSummary({
             <Accordion
               sx={{
                 boxShadow: "none",
-                borderTop: (t) => `1px solid ${t.palette.divider}`,
               }}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreOutlined />}
-                sx={{ px: 0, py: 2 }}
+                sx={{ py: 2 }}
               >
                 <Typography sx={{ fontWeight: 500 }}>{name}</Typography>
               </AccordionSummary>
               <AccordionDetails
                 sx={{
                   px: 0,
+                  pb: 4,
                 }}
               >
                 <Stack
