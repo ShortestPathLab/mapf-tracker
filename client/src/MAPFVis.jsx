@@ -123,22 +123,6 @@ function render_map(ctx,map){
 
 }
 
-function render_agents_timesteps(ctx,solution,color,clear_timeSteps,render_timesteps){
-    for(var i = 0; i < solution.length;i++){
-        var agent_solution = solution[i];
-        var clear_location = clear_timeSteps >agent_solution.length-1 ? agent_solution[agent_solution.length-1] : agent_solution[clear_timeSteps];
-        var render_location = render_timesteps >agent_solution.length-1 ? agent_solution[agent_solution.length-1] : agent_solution[render_timesteps];
-        if(clear_location !== render_location){
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = grid_line_width;
-            ctx.clearRect(clear_location.x * grid_size, clear_location.y * grid_size, grid_size, grid_size);
-            ctx.strokeRect(clear_location.x * grid_size, clear_location.y * grid_size, grid_size, grid_size);
-            ctx.fillStyle = color[i];
-            ctx.fillRect(render_location.x * grid_size, render_location.y*grid_size, grid_size, grid_size);
-        }
-    }
-}
-
 function render_agents(ctx,solution,color,timeSteps,total_width, total_height){
     ctx.clearRect(0,0,total_width, total_height);
     for(var i = 0; i < solution.length;i++){
