@@ -61,11 +61,11 @@ function decodeRLE(rle) {
  * @param {string} solutionString newline-delimited solution path for a particular instance
  */
 function parseScen(scen, numAgents, solutionString) {
-    
-    // TODO: change from math origin to pixel origin
+
+    // utilise pixel origin
     const moves = {
-        'u': { x: 0, y: 1 },
-        'd': { x: 0, y: -1 },
+        'u': { x: 0, y: -1 },
+        'd': { x: 0, y: 1 },
         'l': { x: -1, y: 0 },
         'r': { x: 1, y: 0 }
     };
