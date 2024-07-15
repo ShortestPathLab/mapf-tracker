@@ -4,7 +4,7 @@ module.exports = app => {
     // Retrieve all requester
     router.get("/", request.findAll);
     // Retrieve a single requester with id
-    router.get("/:id", request.findByInstance_id);
+    router.get("/id/:id", request.findByInstance_id);
     // create new request
     router.post("/create",  request.create);
     //update request 

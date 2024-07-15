@@ -970,93 +970,98 @@ export default function UserMapPage() {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow hover tabIndex={-1} key={row.map_name}>
-                      <TableCell
-                        id={labelId}
-                        scope="row"
-                        padding="normal"
-                        align="left"
-                      >
-                        {row.map_name}
-                      </TableCell>
-                      <TableCell align="center">
-                        <img
-                          // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
-                          src={
-                            `${process.env.PUBLIC_URL}/mapf-svg/` +
-                            row.map_name +
-                            `.svg`
-                          }
-                          alt="Canvas Logo"
-                          width="100%"
-                        />
-                        {/*<img src={'/public/logo192.png'} alt="logo" />*/}
-                      </TableCell>
-                      <TableCell align="left">{row.map_size}</TableCell>
-                      <TableCell align="left">{row.map_type}</TableCell>
-                      <TableCell align="left">{row.scens}</TableCell>
-                      <TableCell align="left">{row.instances}</TableCell>
-                      <TableCell align="left">{row.best_lower}</TableCell>
-                      <TableCell align="left">{row.best_solution}</TableCell>
-                      <TableCell align="left">{row.closed}</TableCell>
-                      <TableCell align="left">{row.solved}</TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          onClick={() => {
-                            setOpenUpload(true);
-                            setSelectedRow(row);
-                          }}
-                        >
-                          <AddCircleIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={9} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <Dialog
-        open={openExplanation}
-        onClose={() => {
-          setOpenExplanation(false);
-        }}
-        scroll={scrollDetail}
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
-        fullWidth={true}
-        maxWidth={"md"}
-        disableScrollLock={true}
-        PaperProps={{
-          style: { mb: 2, borderRadius: 10 },
-        }}
-        // PaperProps={{ sx: { width: "100%"}}}
-      >
-        <DialogTitle>Submission File Format</DialogTitle>
+                            {stableSort(rows, getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    const labelId = `enhanced-table-checkbox-${index}`;
+                                    return (
+                                        <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            key={row.map_name}
+                                        >
+                                            <TableCell
+                                                id={labelId}
+                                                scope="row"
+                                                padding="normal"
+                                                align = "left"
+                                            >
+                                                {row.map_name}
+                                            </TableCell>
+                                            <TableCell align="center" >
+                                                {/* <img
+                                                    // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
+                                                    src={`${process.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
+                                                    alt="Canvas Logo"
+                                                    width = '100%'
+                                                /> */}
+                                                {/*<img src={'/public/logo192.png'} alt="logo" />*/}
+                                            </TableCell>
+                                            <TableCell align="left"  >{row.map_size}</TableCell>
+                                            <TableCell align="left" >{row.map_type}</TableCell>
+                                            <TableCell align="left" >{row.scens}</TableCell>
+                                            <TableCell align="left" >{row.instances}</TableCell>
+                                            <TableCell align="left" >
+                                                {row.best_lower}
+                                            </TableCell>
+                                            <TableCell align="left" >
+                                                {row.best_solution}
+                                            </TableCell>
+                                            <TableCell align="left" >
+                                                {row.closed}
+                                            </TableCell>
+                                            <TableCell align="left" >
+                                                {row.solved}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <IconButton onClick= {()=>{
+                                                    setOpenUpload(true)
+                                                    setSelectedRow(row)
+                                                }}
+                                                >
+                                                    <AddCircleIcon/>
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow
+                                    style={{
+                                        height: (dense ? 33 : 53) * emptyRows,
+                                    }}
+                                >
+                                    <TableCell colSpan={9} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[10, 25, 50]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Paper>
+            <Dialog
+                open={openExplanation}
+                onClose={ ()=>{setOpenExplanation(false)}}
+                scroll={scrollDetail}
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                fullWidth={true}
+                maxWidth={'md'}
+                disableScrollLock={true}
+                PaperProps={{
+                    style: {mb: 2, borderRadius: 10}
+                }}
+                // PaperProps={{ sx: { width: "100%"}}}
+            >
+                <DialogTitle>Submission File Format</DialogTitle>
 
         <DialogContent dividers>
           <Typography

@@ -18,7 +18,27 @@ exports.findAll = (req, res) => {
 };
 
 
-
+exports.findByRequestId = (req, res) => {
+    const requestId = req.params.request_id; // or req.query.request_id if it's a query parameter
+    console.log(requestId)
+    Submission_key.find({ request_id: requestId })
+      .then(data => {
+        if (!data) {
+          res.status(404).send({
+            message: `No submission found with request_id ${requestId}`
+          });
+        } else {
+          res.send(data);
+          console.log(data)
+        }
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: err.message || "Some error occurred while retrieving the submission."
+        });
+      });
+  };
+  
 
 // Find a single Submission_key by apiKey
 exports.findByApiKey = (req, res) => {
@@ -35,6 +55,11 @@ exports.findByApiKey = (req, res) => {
             res.status(500).send({ message: "Error retrieving Submission_key with apiKey=" + apiKey });
         });
 };
+
+
+// find by api key and retrive the 
+
+
 
 // return requester information (using the requestID )
 exports.create = async (req, res) => {
