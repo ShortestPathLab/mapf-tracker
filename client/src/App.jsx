@@ -25,12 +25,14 @@ import TrackSubmission from "./TrackSubmission";
 import { useLocation, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ConfirmProvider } from "material-ui-confirm";
+import SubmissionSummary from './SubmissionSummary';
 
 const theme = createTheme({
   typography: {
     allVariants: {
-        fontFamily: '"Roboto Slab", "Helvetica", "Arial", sans-serif'
+        fontFamily: '"Inter", "Roboto Slab", "Helvetica", "Arial", sans-serif'
     },
+    h4: {fontWeight:500, letterSpacing: -0.4},
   },
 })
 
@@ -83,6 +85,7 @@ export default function App() {
                   <Route path="/aboutUs" element={<AboutUs/>} />
                   <Route path="/systemDemo" element={<SystemDemo/>} />
                   <Route path="/submissions" element={<Submissions/>} />
+                  <Route path="/submissionSummary" element={<SubmissionSummary/>} />
                   <Route path="/contributes" element={<Contribute/>} />
                   <Route path="/download" element={<Download/>} />
                   <Route path="/papers" element={<Paper/>} />

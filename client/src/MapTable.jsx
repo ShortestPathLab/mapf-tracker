@@ -559,7 +559,7 @@ export default function MapTable() {
     };
 
     const handleDownload = async (fileName) => {
-        var filePath = require("./assets/download/" + fileName);
+        var filePath = "./assets/download/" + fileName;
         await fetch(filePath)
             .then(response => response.blob())
             .then(async blob => {

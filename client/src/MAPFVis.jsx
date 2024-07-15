@@ -16,148 +16,146 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { APIConfig } from "./config";
 
-let max_time_step  = 0;
-let grid_size = 0;
-let grid_line_width = 0.05;
-let map_size = 0;
 
-function parseMap(text) {
-    var lines = text.trim().split(/\r?\n/);
-    var height = parseInt(lines[1].split(" ")[1]);
-    var width = parseInt(lines[2].split(" ")[1]);
-    var map = Array(height)
-        .fill()
-        .map(() =>
-            new Array(width).fill().map(() => false)
-        );
-    lines.slice(4).forEach((line, i) => {
-        [...line].forEach((char, j) => {
-            if (char === "@" || char === "T") {
-                map[i][j] = true;
+const GRIDLINEWIDTH = 0.05;
+
+let maxTime  = 0;
+let gridSize = 0;
+let mapSize = 0;
+
+
+/** 
+ * pre-processing step for visualising obstacles
+ * @param {string} text newline-delimited content of a `.map` file
+ * @returns 
+ */
+function parseMap(map) {
+    
+    // ignore the top 4 lines, we only want the map data...
+    // ...which is separated by rows: \n, columns: "" 
+    const mapContent = map.trim().split(/\r?\n/).slice(4)
+    
+    // now convert any obstacles to "true" and free space to "false"
+    return mapContent.map(row => 
+        [...row].map(val => val === "@" || val === "T")
+    );
+}
+
+
+/**
+ * expand RLE-encoded records before processing them
+ * @param {string} rle newline-delimited, RLE encoded
+ * @returns decoded string
+ */
+function decodeRLE(rle) {
+    return rle.replace(/(\d+)(\w)/g, 
+        (_, count, move) => move.repeat(parseInt(count))
+    );
+}
+
+
+/**
+ * Pre-compute the action of every agent specified in text scene
+ * @param {string} text newline-delimited content of a `.scen` file
+ * @param {number} numAgents the number of agents in the solution path
+ * @param {string} solutionString newline-delimited solution path for a particular instance
+ */
+function parseScen(scen, numAgents, solutionString) {
+    
+    // TODO: change from math origin to pixel origin
+    const moves = {
+        'u': { x: 0, y: 1 },
+        'd': { x: 0, y: -1 },
+        'l': { x: -1, y: 0 },
+        'r': { x: 1, y: 0 }
+    };
+
+    // extract the content from the .scen file
+    var scenContent = scen.trim().split(/\r?\n/);
+    
+    // retrieve the x-y coordinates for each agent from the content
+    let agentState = Array.from({ length: numAgents }, (_, i) => {
+        const [, , , , x, y] = scenContent[i + 1].split('\t');
+        return [{ x: parseInt(x), y: parseInt(y) }];
+    });
+
+    // len = `numAgents`
+    const movementLog = solutionString.trim().split('\n');
+
+    movementLog.forEach((agentSolution, i) => {
+
+        // this is a global variable, update it for vis purposes later
+        maxTime = Math.max(maxTime, agentSolution.length);
+
+        const decodedSolution = decodeRLE(agentSolution);
+        
+        // now track the actions of each agent at each 
+        agentState[i] = decodedSolution.split('').reduce((path, move) => {
+            const last = path[path.length - 1];
+
+            // agent either moves or waits
+            const { x = 0, y = 0 } = moves[move] || {};
+            path.push({ x: last.x + x, y: last.y + y });
+
+            return path;
+        }, agentState[i]);
+    });
+
+    return agentState;
+}
+
+
+/**
+ * draw the map with specified GRIDLINEWIDTH\
+ * obstacles are black, empty spaces are white
+ * @param {*} ctx canvas context
+ * @param {string} map produced by parseMap
+ */
+function renderMap(ctx, map) {
+    ctx.lineWidth = GRIDLINEWIDTH;
+    
+    map.forEach((row, i) => {
+        row.forEach((isObstacle, j) => {
+            const x = j * gridSize;
+            const y = i * gridSize;
+            
+            if (isObstacle) {
+                ctx.fillRect(x, y, gridSize, gridSize);
+            } else {
+                ctx.strokeRect(x, y, gridSize, gridSize);
             }
         });
     });
-    // console.log('finish loading')
-    return map;
 }
 
-function parseScen(text,num_of_agents, solution_string) {
-    var lines = text.trim().split(/\r?\n/);
-    var agent_state = Array(num_of_agents)
-        .fill()
-        .map(() =>
-            new Array(1).fill().map(() => ({
-                x: 0,
-                y: 0
-            }))
-        );
 
-    for(var i = 1; i < num_of_agents+1; i++){
-        var entries  =  lines[i].split('\t');
-        agent_state[i-1][0].x = parseInt(entries[4]);
-        agent_state[i-1][0].y = parseInt(entries[5]);
-    }
-    var solution = solution_string.trim().split('\n');
-    for (var i = 0; i < solution.length; i++){
-        var agent_solution = solution[i];
-        var previous_location =  agent_state[i][0];
-        max_time_step = max_time_step > agent_solution.length ? max_time_step : agent_solution.length;
-        for (var j = 0; j < agent_solution.length; j++ ){
-            var next_location = { x: previous_location.x, y: previous_location.y};
-            if( agent_solution[j] === 'u'){
-                next_location.y =  next_location.y + 1;
-            }
-            if( agent_solution[j] === 'd'){
-                next_location.y = next_location.y - 1;
-            }
-            if( agent_solution[j] === 'l'){
-                next_location.x = next_location.x - 1;
-            }
-            if( agent_solution[j] === 'r'){
-                next_location.x = next_location.x + 1;
-            }
-            agent_state[i].push(next_location);
-            previous_location = next_location;
-        }
-    }
-    // console.log('finish scenario');
-    return agent_state;
-    // console.log(agent_state);
-    // lines.slice(1).forEach((line, i) => {
-    //     var entries  =  line.split('\t');
-    //     solution[i][0].x = entries[4];
-    //     solution[i][0].y = entries[5];
-    //     if( i === num_of_agents-1){
-    //         return;
-    //     }
-    // });
-
+/**
+ * 
+ * @param {*} ctx canvas context
+ * @param {string} solution generated by parseScen 
+ * @param {string[]} color random colors, one per agent
+ * @param {number} time current timestep
+ * @param {number} width
+ * @param {number} height 
+ */
+function renderAgents(ctx, solution, color, time, canvasConfig) {
+    ctx.clearRect(0, 0, canvasConfig['width'], canvasConfig['height']);
+    
+    solution.forEach((agentSolution, i) => {
+        if (agentSolution.length === 0) return;
+        
+        // prevent reading outside solution array
+        const pos = agentSolution[Math.min(time, agentSolution.length - 1)];
+        ctx.fillStyle = color[i];
+        ctx.fillRect(pos.x * gridSize, pos.y * gridSize, gridSize, gridSize);
+    });
 }
 
-function render_map(ctx,map){
-    var current_y = 0;
-    for(var i = 0; i < map.length; i++){
-        var current_x = 0;
-        for(var j = 0; j < map[i].length; j++){
-            // ctx.fillStyle = 'white'
-
-            var state = map[i][j]
-            if(state){
-                ctx.lineWidth = grid_line_width;
-                ctx.fillStyle = 'black'
-                ctx.fillRect(current_x,current_y,grid_size,grid_size);
-            }else{
-                ctx.lineWidth = grid_line_width;
-                ctx.strokeStyle = 'black'
-                ctx.strokeRect(current_x,current_y,grid_size,grid_size);
-            }
-            current_x = current_x + grid_size;
-        }
-        current_y  = current_y + grid_size;
-    }
-    // console.log("Finishing drawing")
-}
-
-function render_agents_timesteps(ctx,solution,color,clear_timeSteps,render_timesteps){
-    for(var i = 0; i < solution.length;i++){
-        var agent_solution = solution[i];
-        var clear_location = clear_timeSteps >agent_solution.length-1 ? agent_solution[agent_solution.length-1] : agent_solution[clear_timeSteps];
-        var render_location = render_timesteps >agent_solution.length-1 ? agent_solution[agent_solution.length-1] : agent_solution[render_timesteps];
-        if(clear_location !== render_location){
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = grid_line_width;
-            ctx.clearRect(clear_location.x * grid_size, clear_location.y * grid_size, grid_size, grid_size);
-            ctx.strokeRect(clear_location.x * grid_size, clear_location.y * grid_size, grid_size, grid_size);
-            ctx.fillStyle = color[i];
-            ctx.fillRect(render_location.x * grid_size, render_location.y*grid_size, grid_size, grid_size);
-        }
-    }
-}
-
-function render_agents(ctx,solution,color,timeSteps,total_width, total_height){
-    ctx.clearRect(0,0,total_width, total_height);
-    for(var i = 0; i < solution.length;i++){
-        var agent_solution = solution[i];
-        if(agent_solution.length > timeSteps){
-            ctx.fillStyle = color[i];
-            ctx.fillRect(agent_solution[timeSteps].x * grid_size, agent_solution[timeSteps].y*grid_size, grid_size, grid_size);
-        }else{
-            if(agent_solution.length !== 0){
-                ctx.fillStyle = color[i];
-                ctx.fillRect(agent_solution[agent_solution.length - 1].x * grid_size, agent_solution[agent_solution.length - 1].y*grid_size, grid_size, grid_size);
-            }
-        }
-    }
-}
 
 const Visualization = () => {
-
-    // get canvas
     const canvasRef = useRef()
     const agentcanvasRef = useRef()
     const invisiblecanvasRef = useRef()
-
-    // set frame counter
     const [counter, setCounter] = useState(0)
     const [shouldStop, setShouldStop] = useState(true)
     const [data, setData] = useState("")
@@ -165,24 +163,16 @@ const Visualization = () => {
     const [solution, setSolution] = useState([[]])
     const [color, setColor] = useState([])
     const [speed, setSpeed] = useState(60)
-
     const [timeSteps, setTimeSteps] = useState(0)
-
-    const navigate = useNavigate();
     const location = useLocation();
-    const [canvas_setting, setCanvas_setting] = useState({width : 750, height : 750})
+    const [currCanvasConfig, setCurrCanvasConfig] = useState({width : 750, height : 750})
     const [scale, setScale] = useState(1)
     const [imageData, setImageData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [original_canvas_setting, setOriginal_canvas_setting] = useState({width : 750, height : 750})
+    const [canvasConfig, setCanvasConfig] = useState({width : 750, height : 750})
 
-    //
     useEffect(() => {
-        max_time_step  = 0;
-        grid_size = 0;
-        grid_line_width = 0.05;
-        map_size = 0;
-        fetch(APIConfig.apiUrl+'/solution_path/'+location.state.path_id, {method: 'GET'})
+        fetch(`${APIConfig.apiUrl}/solution_path/${location.state.path_id}`, {method: 'GET'})
             .then(res => res.json())
             .then(data => {
                 setData(data.solution_path);
@@ -191,68 +181,51 @@ const Visualization = () => {
     );
 
     useEffect(() => {
-        if(data.length !== 0 ) {
-
-            var map_file = location.state.map_name + ".map"
-            // var map_file = "brc202d.map"
-            // var map_file = "empty-48-48.map"
-            // var map_file = "warehouse-10-20-10-2-2.map"
-            // var map_file = "w_woundedcoast.map"
-            // var map_file = "orz900d.map"
-            var map_path = require("./assets/maps/" + map_file);
-
-            var agent = location.state.num_agents;
-            var color = Array(agent)
-                .fill()
-                .map((currElement, index) =>
-                    currElement=randomColor({seed :  100*index})
-                );
-            setColor(color);
-
-
-            var solution_string = data;
-            // "uuuu\ndddd\nlllll\nrrrr"
-            var scen = location.state.scen_string + ".scen";
-            var scen_path = require("./assets/scens/" + scen);
-
-
-            Promise.all([fetch(map_path), fetch(scen_path)])
-                .then((values) => {
-                    return Promise.all(values.map((r) => r.text()))
-                })
-                .then(([map_text, scen_text]) => {
-                    setMap(parseMap(map_text));
-                    setSolution(parseScen(scen_text, agent, solution_string));
-                }).catch(err => console.error(err));
-        }
-        }, [data]
-    );
-
+        if (data.length === 0) return;
+    
+        const numAgents = location.state.num_agents;
+        const mapPath = `./assets/maps/${location.state.map_name}.map`;
+        const scenPath = `./assets/scens/${location.state.scen_string}.scen`;
+    
+        // generate one random color per agent
+        setColor(Array.from({ length: numAgents }, (_, index) =>
+            randomColor({ seed: 100 * index })
+        ));
+    
+        Promise.all([
+            fetch(mapPath).then(r => r.text()),
+            fetch(scenPath).then(r => r.text())
+        ])
+            .then(([map_text, scen_text]) => {
+                setMap(parseMap(map_text));
+                setSolution(parseScen(scen_text, numAgents, data));
+            })
+            .catch(console.error);
+    }, [data, location.state]);
 
     useEffect(() => {
         if(map.length > 1){
             const canvas = canvasRef.current;
             const ctx = canvas.getContext('2d');
-            ctx.clearRect(0,0,canvas_setting.width,canvas_setting.height);
+            ctx.clearRect(0,0,currCanvasConfig.width,currCanvasConfig.height);
             var map_height= map.length;
             var map_width = map[0].length;
-            var grid_height = canvas_setting.height/map_height;
-            var grid_width = canvas_setting.width/map_width;
-            grid_size =  grid_height < grid_width ? grid_height : grid_width;
-            map_size = map_height*map_width;
-            if(grid_size > 1){
+            var grid_height = currCanvasConfig.height/map_height;
+            var grid_width = currCanvasConfig.width/map_width;
+            gridSize =  grid_height < grid_width ? grid_height : grid_width;
+            mapSize = map_height*map_width;
+            if(gridSize > 1){
                 // round to int if possible.
-                grid_size = Math.floor(grid_size);
+                gridSize = Math.floor(gridSize);
             }else{
-                grid_size = 1;
+                gridSize = 1;
             }
-            grid_height = grid_size * map_height;
-            grid_width = grid_size * map_width;
-            setCanvas_setting({width: grid_width, height: grid_height});
-            setOriginal_canvas_setting({width: grid_width, height: grid_height});
+            grid_height = gridSize * map_height;
+            grid_width = gridSize * map_width;
+            setCurrCanvasConfig({width: grid_width, height: grid_height});
+            setCanvasConfig({width: grid_width, height: grid_height});
         }
     }, [map]);
-
 
     const usePrevious = (value) => {
         const ref = useRef();
@@ -262,74 +235,64 @@ const Visualization = () => {
         return ref.current;
     };
 
-    const previousTimeSteps = usePrevious(timeSteps);
     const previousShouldStop = usePrevious(shouldStop);
     useEffect(
         () => {
             if(imageData === null && map.length > 1){
                 const canvas = canvasRef.current;
                 const ctx = canvas.getContext('2d');
-                ctx.clearRect(0,0,canvas_setting.width,canvas_setting.height);
-                render_map(ctx,map);
-                var image = ctx.getImageData(0, 0, canvas_setting.width , canvas_setting.height);
+                ctx.clearRect(0,0,currCanvasConfig.width,currCanvasConfig.height);
+                renderMap(ctx,map);
+                var image = ctx.getImageData(0, 0, currCanvasConfig.width , currCanvasConfig.height);
                 setImageData(image);
                 const agent_canvas = agentcanvasRef.current;
                 const agent_context = agent_canvas.getContext('2d');
-                render_agents( agent_context, solution, color,timeSteps,canvas_setting.width,canvas_setting.height);
+                renderAgents( agent_context, solution, color,timeSteps,currCanvasConfig);
                 setLoading(false);
             }else if (!loading){
-                grid_size = canvas_setting.height/ map.length;
+                gridSize = currCanvasConfig.height/ map.length;
                 const canvas = canvasRef.current;
                 const ctx = canvas.getContext('2d');
-                if (map_size < 100000){
-                    ctx.clearRect(0,0,canvas_setting.width,canvas_setting.height);
-                    render_map(ctx,map);
+                if (mapSize < 100000){
+                    ctx.clearRect(0,0,currCanvasConfig.width,currCanvasConfig.height);
+                    renderMap(ctx,map);
                 }else{
                     const  newCanvas= invisiblecanvasRef.current;
-                    newCanvas.width = original_canvas_setting.width;
-                    newCanvas.height = original_canvas_setting.height;
+                    newCanvas.width = canvasConfig.width;
+                    newCanvas.height = canvasConfig.height;
                     newCanvas.getContext("2d").putImageData(imageData, 0, 0);
                     ctx.scale(scale,scale);
                     ctx.drawImage(newCanvas, 0, 0);
-                    newCanvas.width = canvas_setting.width;
-                    newCanvas.height = canvas_setting.height;
+                    newCanvas.width = currCanvasConfig.width;
+                    newCanvas.height = currCanvasConfig.height;
                 }
                 const agent_canvas = agentcanvasRef.current;
                 const agent_context = agent_canvas.getContext('2d');
-                render_agents( agent_context, solution, color,timeSteps,canvas_setting.width,canvas_setting.height);
+                renderAgents( agent_context, solution, color,timeSteps,currCanvasConfig);
                 setShouldStop(previousShouldStop);
             }
 
-        } , [canvas_setting]
+        } , [currCanvasConfig]
     )
 
-
-
-        // output graphics
+    // output graphics
     useEffect(() => {
         if(timeSteps >= 0 ) {
             const canvas = agentcanvasRef.current
             const context = canvas.getContext('2d')
-            render_agents(context, solution, color,timeSteps,canvas_setting.width,canvas_setting.height);
-            // render_agents_timesteps(context, solution, color,previousTimeSteps, timeSteps);
+            renderAgents(context, solution, color,timeSteps,currCanvasConfig);
         }
     }, [timeSteps])
-
-
-
 
     useEffect(() => {
         if(counter === speed){
             setCounter(0);
             setTimeSteps(t => t +1);
-            if(timeSteps === max_time_step){
+            if(timeSteps === maxTime){
                 setTimeSteps(0);
             }
         }
     }, [counter])
-
-
-
 
     // update the counter
     useLayoutEffect(() => {
@@ -345,7 +308,6 @@ const Visualization = () => {
         }
     }, [shouldStop])
 
-
     const handleChange = (event) => {
         setSpeed(event.target.value);
         setCounter(0);
@@ -356,7 +318,7 @@ const Visualization = () => {
         var current_scale = scale + value;
         if(current_scale > 0){
             setScale(current_scale);
-            setCanvas_setting({width: original_canvas_setting.width*(current_scale), height: original_canvas_setting.height*(current_scale )});
+            setCurrCanvasConfig({width: canvasConfig.width*(current_scale), height: canvasConfig.height*(current_scale )});
         }
     }
 
@@ -376,12 +338,12 @@ const Visualization = () => {
                         style={{zIndex: 0,
                             gridArea: "2 / 2 / 2 / 2"
                         }}/>
-                <canvas ref={canvasRef} width={canvas_setting.width} height={canvas_setting.height}
+                <canvas ref={canvasRef} width={currCanvasConfig.width} height={currCanvasConfig.height}
                         style={{ backgroundColor: 'white',zIndex: 1,
                             gridArea: "2 / 2 / 2 / 2"
                     }}
                 />
-                <canvas ref={agentcanvasRef} width={canvas_setting.width} height={canvas_setting.height}
+                <canvas ref={agentcanvasRef} width={currCanvasConfig.width} height={currCanvasConfig.height}
                         style={{zIndex: 2,
                             gridArea: "2 / 2 / 2 / 2"
                 }}/>
@@ -390,7 +352,7 @@ const Visualization = () => {
             <AppBar position="fixed" color="grey" sx={{ top: 'auto', bottom: 0 }}>
                 <Toolbar>
                     <IconButton
-                        onClick={() => setTimeSteps(t => t - 1 < 0 ?  max_time_step : t-1)}
+                        onClick={() => setTimeSteps(t => t - 1 < 0 ?  maxTime : t-1)}
                     >
                         <SkipPreviousIcon />
                     </IconButton>
@@ -402,12 +364,12 @@ const Visualization = () => {
                     </IconButton>
 
                     <IconButton
-                        onClick={() => setTimeSteps(t => t + 1 > max_time_step ?  0 : t+1)}
+                        onClick={() => setTimeSteps(t => t + 1 > maxTime ?  0 : t+1)}
                     >
                         <SkipNextIcon />
                     </IconButton>
                     <Slider value={timeSteps} min={0}
-                            max={max_time_step} valueLabelDisplay="on"/>
+                            max={maxTime} valueLabelDisplay="on"/>
                     <Select
                         IconComponent = {ShutterSpeedIcon}
                         value={speed}
@@ -441,5 +403,6 @@ const Visualization = () => {
         </div>
     )
 }
+
 
 export default Visualization ;

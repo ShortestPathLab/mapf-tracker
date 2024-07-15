@@ -537,7 +537,7 @@ export default function ScenarioTable() {
     };
 
     const handleDownload = async (fileName) => {
-        var filePath = require("./assets/scens/" + fileName);
+        var filePath = "./assets/scens/" + fileName;
         await fetch(filePath)
             .then(response => response.blob())
             .then(async blob => {

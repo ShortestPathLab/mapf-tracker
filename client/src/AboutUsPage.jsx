@@ -79,7 +79,7 @@ export default function AboutUs() {
                             >
                                 <Avatar
                                     alt="Daniel Harabor"
-                                    src= {require("./assets/photo/daniel.jpg")}
+                                    src={"/assets/photo/daniel.jpg"}
                                     sx={{ width : item_width-100,  height: item_width-100 }}
                                 />
                                 <Typography
@@ -110,7 +110,7 @@ export default function AboutUs() {
                             >
                                 <Avatar
                                     alt="Peter Stuckey"
-                                    src= {require("./assets/photo/Peter.jpg")}
+                                    src={"/assets/photo/Peter.jpg"}
                                     sx={{width : item_width-100, height: item_width-100 }}
                                 />
 
@@ -141,7 +141,7 @@ export default function AboutUs() {
                             >
                                 <Avatar
                                     alt="Muhammad Aamir Cheema"
-                                    src= {require("./assets/photo/Aamir.jpeg")}
+                                    src={"/assets/photo/Aamir.jpeg"}
                                     sx={{ width: item_width-100, height: item_width-100}}
                                 />
                                 <Typography
@@ -193,8 +193,10 @@ export default function AboutUs() {
                                 alignItems="center"
                                 width={item_width}
                             >
-                                <Avatar alt="Bojie Shen" src= {require("./assets/photo/Bojie.jpg")}
-                                        sx={{width: item_width-100, height: item_width-100 }}
+                                <Avatar 
+                                    alt="Bojie Shen" 
+                                    src={'/assets/photo/Bojie.jpg'}
+                                    sx={{width: item_width-100, height: item_width-100 }}
                                 />
                                 <Typography
                                     sx={{ fontSize: 16, width :item_width,  m: 2,  textAlign: 'center'}}
@@ -222,7 +224,7 @@ export default function AboutUs() {
                             >
                                 <Avatar
                                     alt="Zhe Chen"
-                                    src= {require("./assets/photo/zhe_chen.jpg")}
+                                    src={"/assets/photo/zhe_chen.jpg"}
                                     sx={{ width: item_width-100, height: item_width-100 }}
                                 />
                                 <Typography
