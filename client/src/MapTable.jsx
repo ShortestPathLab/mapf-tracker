@@ -1,7 +1,43 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import { styled } from "@mui/material/styles";
+import {
+  CancelOutlined,
+  FilterListOutlined,
+  RouteOutlined,
+} from "@mui/icons-material";
+import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
+import CompareIcon from "@mui/icons-material/CompareOutlined";
+import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import FilterListIcon from "@mui/icons-material/FilterListOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import MenuIcon from "@mui/icons-material/MenuOutlined";
+import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import {
+  ButtonBase,
+  Collapse,
+  Divider,
+  MenuList,
+  Popover,
+  Stack,
+} from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,28 +46,17 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
+import { styled } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { useNavigate } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/Download";
-import { CSVLink } from "react-csv";
+import PropTypes from "prop-types";
+import randomColor from "randomcolor";
+import * as React from "react";
 import { useRef } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
+import { CSVLink } from "react-csv";
+import { useNavigate } from "react-router-dom";
 import {
   Area,
   AreaChart,
@@ -51,36 +76,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Checkbox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
-import Button from "@mui/material/Button";
-import DatasetLinkedIcon from "@mui/icons-material/DatasetLinked";
-import MenuIcon from "@mui/icons-material/Menu";
-import CompareIcon from "@mui/icons-material/Compare";
-import randomColor from "randomcolor";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { APIConfig } from "./config";
-import Link from "@mui/material/Link";
-import InfoIcon from "@mui/icons-material/Info";
-import {
-  ButtonBase,
-  Collapse,
-  Divider,
-  MenuList,
-  Popover,
-  Stack,
-} from "@mui/material";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import PageHeader from "./PageHeader";
-import {
-  CancelOutlined,
-  FilterListOutlined,
-  RouteOutlined,
-} from "@mui/icons-material";
+import { APIConfig } from "./config";
 
 const angle = {
   Warehouse: -40,
@@ -389,14 +386,13 @@ function EnhancedTableHead(props) {
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow sx={{ cursor: "pointer" }}>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -474,13 +470,12 @@ LinearProgressWithLabel.propTypes = {
 
 const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
   height: 10,
-  borderRadius: 5,
+
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor:
       theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
   },
   [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
     backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
   },
 }));
@@ -815,22 +810,6 @@ export default function MapTable({ showHeader = true }) {
                 total
               )})`}
             </li>
-
-            {/*<li key={`item-1`} style={{color: entry.color}}>*/}
-
-            {/*    { `${entry.name}: ${Math.round(entry.value*total)} (${getPercent(Math.round(entry.value*total), total)})`}*/}
-            {/*</li>*/}
-            {/*<li key={`item-2`} style={{color: entry.color}}>*/}
-
-            {/*    { `${entry.name}: ${Math.round(entry.value*total)} (${getPercent(Math.round(entry.value*total), total)})`}*/}
-            {/*</li>*/}
-
-            {/*{payload.map((entry, index) => (*/}
-            {/*    <li key={`item-${index}`} style={{color: entry.color}}>*/}
-
-            {/*        { `${entry.name}: ${Math.round(entry.value*total)} (${getPercent(Math.round(entry.value*total), total)})`}*/}
-            {/*    </li>*/}
-            {/*))}*/}
           </ul>
         </div>
       );
@@ -1181,31 +1160,6 @@ export default function MapTable({ showHeader = true }) {
     setProgressChartData(progressChartData);
     event.stopPropagation();
   };
-
-  // React.useEffect(() => {
-  //     if(algorithm_name.length > 0) {
-  //         setDomainLoading(true);
-  //         setMapLoading(true);
-  //         setDomainQuery('#Instances Closed');
-  //         setMapQuery('#Instances Closed');
-  //         var closed_API = APIConfig.apiUrl + '/algorithm/getClosedInfo';
-  //         var domain_chart_API = APIConfig.apiUrl +'/algorithm/getDomainClosedInfo';
-  //         Promise.all([
-  //             fetch(closed_API, {method: 'GET'}),
-  //             fetch(domain_chart_API  , {method: 'GET'})
-  //         ])
-  //             .then((values) => {
-  //                 return Promise.all(values.map((r) => r.json()))
-  //             })
-  //             .then(([closed_data,
-  //                        domain_chart_data
-  //                    ]) => {
-  //                 setMapQueryResult(closed_data);
-  //                 setDomainQueryResult(domain_chart_data);
-  //                 // console.log(domain_chart_data);
-  //             }).catch(err => console.error(err));
-  //     }
-  // }, [algorithm_name]);
   const handleClickOpenDomainComparator = async (event, scrollType) => {
     setDomainCompareOpen(true);
     setDomainLoading(true);
@@ -1307,7 +1261,10 @@ export default function MapTable({ showHeader = true }) {
           path={[{ name: "MAPF Tracker", url: "/" }]}
         />
         <Paper>
-          <Stack direction="row-reverse" sx={{ p: 2, gap: 4 }}>
+          <Stack
+            direction="row-reverse"
+            sx={{ alignItems: "center", p: 2, gap: 4 }}
+          >
             <IconButton
               aria-controls="domain-filter-menu"
               aria-haspopup="true"
@@ -1565,6 +1522,7 @@ export default function MapTable({ showHeader = true }) {
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                       <TableRow
+                        sx={{ cursor: "pointer" }}
                         hover
                         tabIndex={-1}
                         key={row.id}
@@ -1583,9 +1541,7 @@ export default function MapTable({ showHeader = true }) {
                         <TableCell align="center">
                           <img
                             // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
-                            src={
-                              `/mapf-svg/${row.map_name}.svg`
-                            }
+                            src={`/mapf-svg/${row.map_name}.svg`}
                             alt="Canvas Logo"
                             width="100%"
                           />
@@ -1661,6 +1617,7 @@ export default function MapTable({ showHeader = true }) {
                   })}
                 {emptyRows > 0 && (
                   <TableRow
+                    sx={{ cursor: "pointer" }}
                     style={{
                       height: (dense ? 33 : 53) * emptyRows,
                     }}
@@ -1707,7 +1664,7 @@ export default function MapTable({ showHeader = true }) {
             sx={{ width: 750, height: 500, display: "flex" }}
           >
             <Box sx={{ width: "100%" }}>
-              {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+              {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
               <Toolbar
                 sx={{
                   pl: { sm: 1 },
@@ -1911,7 +1868,7 @@ export default function MapTable({ showHeader = true }) {
             sx={{ width: 850, height: 500, display: "flex" }}
           >
             <Box sx={{ width: "100%" }}>
-              {/*<Paper  sx={{width: '100%', mb: 2, borderRadius: 5}}>*/}
+              {/*<Paper  sx={{width: '100%', mb: 2, }}>*/}
               <Toolbar
                 sx={{
                   pl: { sm: 2 },
@@ -2117,7 +2074,7 @@ export default function MapTable({ showHeader = true }) {
             sx={{ width: 700, height: 500, display: "flex" }}
           >
             <Box sx={{ width: "100%" }}>
-              {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+              {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
               <Toolbar
                 sx={{
                   pl: { sm: 1 },
@@ -2249,7 +2206,7 @@ export default function MapTable({ showHeader = true }) {
           >
             {/*<ResponsiveContainer width="98%"  height={400}>*/}
             <Box sx={{ width: "100%" }}>
-              {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+              {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
               <Toolbar
                 sx={{
                   pl: { sm: 1 },
@@ -2415,7 +2372,7 @@ export default function MapTable({ showHeader = true }) {
                 <col width="50" />
               </colgroup>
               <TableBody>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     Name:
                   </TableCell>
@@ -2441,7 +2398,7 @@ export default function MapTable({ showHeader = true }) {
                     </IconButton>
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     #Scenarios:
                   </TableCell>
@@ -2457,7 +2414,7 @@ export default function MapTable({ showHeader = true }) {
                     {mapdata.instances}
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     {" "}
                     Snapshot Date:{" "}
@@ -2469,7 +2426,7 @@ export default function MapTable({ showHeader = true }) {
                     15 May 2023 08:42:36 UTC
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     {" "}
                     Original Link:{" "}
@@ -2483,7 +2440,7 @@ export default function MapTable({ showHeader = true }) {
                     </Link>
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2541,7 +2498,7 @@ export default function MapTable({ showHeader = true }) {
                 <col width="50" />
               </colgroup>
               <TableBody>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2564,7 +2521,7 @@ export default function MapTable({ showHeader = true }) {
                   </TableCell>
                 </TableRow>
                 {infoDescription.c_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -2588,7 +2545,7 @@ export default function MapTable({ showHeader = true }) {
                   </TableRow>
                 ) : null}
                 {infoDescription.v_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -2613,7 +2570,7 @@ export default function MapTable({ showHeader = true }) {
                 ) : null}
 
                 {infoDescription.x_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -2637,7 +2594,7 @@ export default function MapTable({ showHeader = true }) {
                   </TableRow>
                 ) : null}
                 {infoDescription.y_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -2661,7 +2618,7 @@ export default function MapTable({ showHeader = true }) {
                   </TableRow>
                 ) : null}
                 {infoDescription.comment != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,

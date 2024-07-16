@@ -229,7 +229,7 @@ function ResponsiveAppBar() {
                 onClick={() => handleCloseNavMenu("BenchmarkResults")}
               >
                 <Button
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<TableViewIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -243,7 +243,7 @@ function ResponsiveAppBar() {
                 onClick={() => handleCloseNavMenu("Submissions")}
               >
                 <Button
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<AssignmentIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -257,7 +257,7 @@ function ResponsiveAppBar() {
                 onClick={() => handleCloseNavMenu("SystemDemo")}
               >
                 <Button
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ArticleIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -272,7 +272,7 @@ function ResponsiveAppBar() {
                 onClick={() => handleCloseNavMenu("Download")}
               >
                 <Button
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<DownloadIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -286,7 +286,7 @@ function ResponsiveAppBar() {
                 onClick={() => handleCloseNavMenu("AboutUs")}
               >
                 <Button
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<PeopleIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -300,7 +300,7 @@ function ResponsiveAppBar() {
                 onClick={() => handleCloseNavMenu("GitHub")}
               >
                 <Button
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<GitHubIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation

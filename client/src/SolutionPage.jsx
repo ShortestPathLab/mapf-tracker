@@ -17,22 +17,22 @@ import { visuallyHidden } from "@mui/utils";
 import LinearProgress from "@mui/material/LinearProgress";
 import { Button } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/Download";
-import TableViewIcon from "@mui/icons-material/TableView";
+import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import TableViewIcon from "@mui/icons-material/TableViewOutlined";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Link from "@mui/material/Link";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityIcon from "@mui/icons-material/VisibilityOutlined";
 import { CSVLink } from "react-csv";
 import { useRef } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
 import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import InfoIcon from "@mui/icons-material/Info";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
 import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
@@ -56,11 +56,11 @@ import {
 } from "recharts";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import Menu from "@mui/material/Menu";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
-import MenuIcon from "@mui/icons-material/Menu";
-import CompareIcon from "@mui/icons-material/Compare";
+import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
+import MenuIcon from "@mui/icons-material/MenuOutlined";
+import CompareIcon from "@mui/icons-material/CompareOutlined";
 import randomColor from "randomcolor";
 import { APIConfig } from "./config";
 
@@ -306,8 +306,8 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
-      <TableRow sx={{}}>
+    <TableHead>
+      <TableRow sx={{ cursor: "pointer" }}>
         <TableCell
           key={"agents"}
           align={"left"}
@@ -402,7 +402,7 @@ function EnhancedTableHead(props) {
           Results
         </TableCell>
       </TableRow>
-      <TableRow sx={{}}>
+      <TableRow sx={{ cursor: "pointer" }}>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -411,7 +411,6 @@ function EnhancedTableHead(props) {
             sortDirection={orderBy === headCell.id ? order : false}
             rowSpan={headCell.rowspan}
             style={{ paddingTop: 10, paddingBottom: 10, fontWeight: "bold" }}
-            sx={{}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -503,12 +502,12 @@ LinearProgressWithLabel.propTypes = {
 
 // const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
 //     height: 10,
-//     borderRadius: 5,
+//
 //     [`&.${linearProgressClasses.colorPrimary}`]: {
 //         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
 //     },
 //     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
+//
 //         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
 //     },
 // }));
@@ -1175,7 +1174,7 @@ export default function SolutionPage() {
 
   return (
     <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -1210,7 +1209,7 @@ export default function SolutionPage() {
             >
               <Button
                 key="Dense"
-                sx={{ color: "black", textTransform: "none" }}
+                sx={{ textTransform: "none" }}
                 startIcon={dense ? <ZoomOutMapIcon /> : <ZoomInMapIcon />}
                 style={{ backgroundColor: "transparent" }}
                 disableElevation
@@ -1229,7 +1228,7 @@ export default function SolutionPage() {
             >
               <Button
                 key="Progress"
-                sx={{ color: "black", textTransform: "none" }}
+                sx={{ textTransform: "none" }}
                 startIcon={<ShowChartIcon />}
                 style={{ backgroundColor: "transparent" }}
                 disableElevation
@@ -1247,7 +1246,7 @@ export default function SolutionPage() {
             >
               <Button
                 key="Comparator"
-                sx={{ color: "black", textTransform: "none" }}
+                sx={{ textTransform: "none" }}
                 startIcon={<CompareIcon />}
                 style={{ backgroundColor: "transparent" }}
                 disableElevation
@@ -1277,9 +1276,7 @@ export default function SolutionPage() {
                 verticalAlign: "middle",
               }}
               component="img"
-              src={
-                `/mapf-svg/${location.state.mapName}.svg`
-              }
+              src={`/mapf-svg/${location.state.mapName}.svg`}
             ></Typography>
           </Typography>
 
@@ -1345,6 +1342,7 @@ export default function SolutionPage() {
 
                   return (
                     <TableRow
+                      sx={{ cursor: "pointer" }}
                       hover
                       tabIndex={-1}
                       key={row.id}
@@ -1440,6 +1438,7 @@ export default function SolutionPage() {
                 })}
               {emptyRows > 0 && (
                 <TableRow
+                  sx={{ cursor: "pointer" }}
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
@@ -1482,8 +1481,8 @@ export default function SolutionPage() {
               <col width="200" />
               <col width="200" />
             </colgroup>
-            <TableHead sx={{}}>
-              <TableRow sx={{}}>
+            <TableHead>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   align="left"
                   sx={{
@@ -1512,7 +1511,7 @@ export default function SolutionPage() {
             </TableHead>
             <TableBody>
               {selectedAlgo.map((algo) => (
-                <TableRow key={algo.algo_id}>
+                <TableRow sx={{ cursor: "pointer" }} key={algo.algo_id}>
                   <TableCell>{algo.algo_name}</TableCell>
                   <TableCell> {algo.date}</TableCell>
                   <TableCell>
@@ -1561,7 +1560,7 @@ export default function SolutionPage() {
               <col width="150" />
             </colgroup>
             <TableBody>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                   Algorithm Name:
                 </TableCell>
@@ -1578,7 +1577,7 @@ export default function SolutionPage() {
                   {algodata.authors}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                   {" "}
                   Github Link:{" "}
@@ -1592,7 +1591,7 @@ export default function SolutionPage() {
                   </Link>
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -1615,7 +1614,7 @@ export default function SolutionPage() {
                   {algodata.papers}{" "}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -1642,7 +1641,7 @@ export default function SolutionPage() {
           </Table>
           {/*<ResponsiveContainer width={500} height={380}>*/}
           <div style={{ width: 30 }} />
-          {/*<Paper   sx={{  width : 350, height: 464, mb: 2, borderRadius: 5}}>*/}
+          {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
           <Box sx={{ width: 350, height: 464 }}>
             <Toolbar
               sx={{
@@ -1774,7 +1773,7 @@ export default function SolutionPage() {
           sx={{ width: 850, height: 430, display: "flex" }}
         >
           <Box sx={{ width: "100%" }}>
-            {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+            {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
             <Toolbar
               sx={{
                 pl: { sm: 1 },
@@ -1963,7 +1962,7 @@ export default function SolutionPage() {
           sx={{ width: 850, height: 430, display: "flex" }}
         >
           <Box sx={{ width: "100%" }}>
-            {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+            {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
             <Toolbar
               sx={{
                 pl: { sm: 1 },
@@ -2207,7 +2206,7 @@ export default function SolutionPage() {
               <col width="50" />
             </colgroup>
             <TableBody>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2230,7 +2229,7 @@ export default function SolutionPage() {
                 </TableCell>
               </TableRow>
               {infoDescription.c_axis != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2254,7 +2253,7 @@ export default function SolutionPage() {
                 </TableRow>
               ) : null}
               {infoDescription.v_axis != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2279,7 +2278,7 @@ export default function SolutionPage() {
               ) : null}
 
               {infoDescription.x_axis != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2303,7 +2302,7 @@ export default function SolutionPage() {
                 </TableRow>
               ) : null}
               {infoDescription.y_axis != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2327,7 +2326,7 @@ export default function SolutionPage() {
                 </TableRow>
               ) : null}
               {infoDescription.comment != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,

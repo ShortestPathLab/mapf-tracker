@@ -19,16 +19,16 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { useNavigate, useLocation } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/Download";
+import DownloadIcon from "@mui/icons-material/DownloadOutlined";
 import { CSVLink } from "react-csv";
 import { useRef } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
 import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import {
@@ -45,25 +45,25 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
-import MenuIcon from "@mui/icons-material/Menu";
+import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
+import MenuIcon from "@mui/icons-material/MenuOutlined";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import CompareIcon from "@mui/icons-material/Compare";
+import CompareIcon from "@mui/icons-material/CompareOutlined";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import randomColor from "randomcolor";
 import { APIConfig } from "./config";
 import { MenuList, ListItemIcon, Popover } from "@mui/material";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import InfoIcon from "@mui/icons-material/Info";
+import InboxIcon from "@mui/icons-material/InboxOutlined";
+import DraftsIcon from "@mui/icons-material/DraftsOutlined";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMoreOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
 
 const infoDescriptionText = {
   scenProgress: {
@@ -326,8 +326,8 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
-      <TableRow>
+    <TableHead>
+      <TableRow sx={{ cursor: "pointer" }}>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -414,13 +414,12 @@ LinearProgressWithLabel.propTypes = {
 
 const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
   height: 10,
-  borderRadius: 5,
+
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor:
       theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
   },
   [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
     backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
   },
 }));
@@ -1107,7 +1106,7 @@ export default function ScenarioTable() {
 
   return (
     <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         {/*<EnhancedTableToolbar numSelected={selected.length}/>*/}
         <Toolbar
           sx={{
@@ -1157,7 +1156,7 @@ export default function ScenarioTable() {
             >
               <Button
                 key="Dense"
-                sx={{ color: "black", textTransform: "none" }}
+                sx={{ textTransform: "none" }}
                 startIcon={dense ? <ZoomOutMapIcon /> : <ZoomInMapIcon />}
                 style={{ backgroundColor: "transparent" }}
                 disableElevation
@@ -1175,7 +1174,7 @@ export default function ScenarioTable() {
             >
               <Button
                 key="Progress"
-                sx={{ color: "black", textTransform: "none" }}
+                sx={{ textTransform: "none" }}
                 startIcon={<ShowChartIcon />}
                 style={{ backgroundColor: "transparent" }}
                 disableElevation
@@ -1195,7 +1194,7 @@ export default function ScenarioTable() {
             >
               <Button
                 key="Comparator"
-                sx={{ color: "black", textTransform: "none" }}
+                sx={{ textTransform: "none" }}
                 startIcon={<CompareIcon />}
                 style={{ backgroundColor: "transparent" }}
                 disableElevation
@@ -1230,7 +1229,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="M_scen"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1249,7 +1248,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="M_agents"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1285,7 +1284,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="C_scen"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1304,7 +1303,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="C_agents"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1334,9 +1333,7 @@ export default function ScenarioTable() {
                 verticalAlign: "middle",
               }}
               component="img"
-              src={
-                `/mapf-svg/${location.state.mapName}.svg`
-              }
+              src={`/mapf-svg/${location.state.mapName}.svg`}
             ></Typography>
           </Typography>
           <TextField
@@ -1400,6 +1397,7 @@ export default function ScenarioTable() {
 
                   return (
                     <TableRow
+                      sx={{ cursor: "pointer" }}
                       hover
                       tabIndex={-1}
                       key={row.id}
@@ -1487,6 +1485,7 @@ export default function ScenarioTable() {
                 })}
               {emptyRows > 0 && (
                 <TableRow
+                  sx={{ cursor: "pointer" }}
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
@@ -1678,7 +1677,7 @@ export default function ScenarioTable() {
           dividers={scroll === "paper"}
           sx={{ width: 850, height: 440 }}
         >
-          {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+          {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
           <Toolbar
             sx={{
               pl: { sm: 1 },
@@ -1851,7 +1850,7 @@ export default function ScenarioTable() {
           sx={{ width: 850, height: 455, display: "flex" }}
         >
           <Box sx={{ width: "100%" }}>
-            {/*<div  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+            {/*<div  sx={{ width: '100%', mb: 2,}}>*/}
             <Toolbar
               sx={{
                 pl: { sm: 1 },
@@ -2065,7 +2064,7 @@ export default function ScenarioTable() {
           sx={{ width: 850, height: 455, display: "flex" }}
         >
           <Box sx={{ width: "100%" }}>
-            {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+            {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
             <Toolbar
               sx={{
                 pl: { sm: 1 },
@@ -2290,7 +2289,7 @@ export default function ScenarioTable() {
               <col width="50" />
             </colgroup>
             <TableBody>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2312,7 +2311,7 @@ export default function ScenarioTable() {
                   {infoDescription.description}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2334,7 +2333,7 @@ export default function ScenarioTable() {
                   {infoDescription.x_axis}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2357,7 +2356,7 @@ export default function ScenarioTable() {
                 </TableCell>
               </TableRow>
               {infoDescription.comment != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,

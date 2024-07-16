@@ -20,20 +20,20 @@ import LinearProgress, {
 } from "@mui/material/LinearProgress";
 import { useLocation } from "react-router-dom";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
 import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import CloseIcon from "@mui/icons-material/Close";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import CloseIcon from "@mui/icons-material/CloseOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import AddCircleIcon from "@mui/icons-material/AddCircleOutlined";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { DropzoneDialog } from "mui-file-dropzone";
-import HelpIcon from "@mui/icons-material/Help";
+import HelpIcon from "@mui/icons-material/HelpOutlined";
 import Papa from "papaparse";
 import { APIConfig } from "./config";
 
@@ -187,7 +187,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
+    <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -280,13 +280,12 @@ LinearProgressWithLabel.propTypes = {
 
 const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
   height: 20,
-  borderRadius: 5,
+
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor:
       theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
   },
   [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
     backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
   },
 }));
@@ -886,7 +885,7 @@ export default function UserMapPage() {
 
   return (
     <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -987,9 +986,7 @@ export default function UserMapPage() {
                       <TableCell align="center">
                         <img
                           // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
-                          src={
-                            `/mapf-svg/${row.map_name}.svg`
-                          }
+                          src={`/mapf-svg/${row.map_name}.svg`}
                           alt="Canvas Logo"
                           width="100%"
                         />

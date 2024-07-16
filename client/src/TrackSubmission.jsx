@@ -17,12 +17,12 @@ import { visuallyHidden } from "@mui/utils";
 import LinearProgress from "@mui/material/LinearProgress";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
 import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import InfoIcon from "@mui/icons-material/Info";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
 import DialogContent from "@mui/material/DialogContent";
 import Link from "@mui/material/Link";
 import FormControl from "@mui/material/FormControl";
@@ -40,7 +40,7 @@ import {
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import { APIConfig } from "./config";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import LibraryAddIcon from "@mui/icons-material/LibraryAddOutlined";
 import { Formik, Form, Field } from "formik";
 import Button from "@mui/material/Button";
 
@@ -247,8 +247,8 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
-      <TableRow>
+    <TableHead>
+      <TableRow sx={{ cursor: "pointer" }}>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -329,12 +329,12 @@ LinearProgressWithLabel.propTypes = {
 
 // const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
 //     height: 10,
-//     borderRadius: 5,
+//
 //     [`&.${linearProgressClasses.colorPrimary}`]: {
 //         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
 //     },
 //     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
+//
 //         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
 //     },
 // }));
@@ -560,8 +560,8 @@ export default function TrackSubmission() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+    <Box sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <Paper>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -690,7 +690,12 @@ export default function TrackSubmission() {
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow hover tabIndex={-1} key={row.id}>
+                    <TableRow
+                      sx={{ cursor: "pointer" }}
+                      hover
+                      tabIndex={-1}
+                      key={row.id}
+                    >
                       <TableCell
                         id={labelId}
                         scope="row"
@@ -718,6 +723,7 @@ export default function TrackSubmission() {
                 })}
               {emptyRows > 0 && (
                 <TableRow
+                  sx={{ cursor: "pointer" }}
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
@@ -767,7 +773,7 @@ export default function TrackSubmission() {
                 <col width="150" />
               </colgroup>
               <TableBody>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     Algorithm Name:
                   </TableCell>
@@ -784,7 +790,7 @@ export default function TrackSubmission() {
                     {algodata.authors}
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     {" "}
                     Github Link:{" "}
@@ -798,7 +804,7 @@ export default function TrackSubmission() {
                     </Link>
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -821,7 +827,7 @@ export default function TrackSubmission() {
                     {algodata.papers}{" "}
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -848,7 +854,7 @@ export default function TrackSubmission() {
             </Table>
             {/*<ResponsiveContainer width={500} height={380}>*/}
             <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, borderRadius: 5}}>*/}
+            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
             <Box sx={{ width: 350, height: 464 }}>
               <Toolbar
                 sx={{
@@ -994,7 +1000,7 @@ export default function TrackSubmission() {
                 <col width="50" />
               </colgroup>
               <TableBody>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -1017,7 +1023,7 @@ export default function TrackSubmission() {
                   </TableCell>
                 </TableRow>
                 {infoDescription.c_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1041,7 +1047,7 @@ export default function TrackSubmission() {
                   </TableRow>
                 ) : null}
                 {infoDescription.v_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1066,7 +1072,7 @@ export default function TrackSubmission() {
                 ) : null}
 
                 {infoDescription.x_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1090,7 +1096,7 @@ export default function TrackSubmission() {
                   </TableRow>
                 ) : null}
                 {infoDescription.y_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1114,7 +1120,7 @@ export default function TrackSubmission() {
                   </TableRow>
                 ) : null}
                 {infoDescription.comment != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,

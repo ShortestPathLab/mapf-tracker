@@ -28,7 +28,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import IconButton from "@mui/material/IconButton";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import Menu from "@mui/material/Menu";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
@@ -431,7 +431,7 @@ export default function Summary() {
   return (
     <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
       <Box sx={{ width: "100%", display: "flex" }}>
-        <Paper sx={{ width: "68%", mb: 2, borderRadius: 5 }}>
+        <Paper sx={{ width: "68%", mb: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -517,7 +517,7 @@ export default function Summary() {
         </Paper>
         <div style={{ width: "2%" }} />
 
-        <Paper sx={{ width: "38%", mb: 2, borderRadius: 5 }}>
+        <Paper sx={{ width: "38%", mb: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -636,7 +636,7 @@ export default function Summary() {
         </Paper>
       </Box>
       <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+        <Paper sx={{ width: "100%", mb: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },

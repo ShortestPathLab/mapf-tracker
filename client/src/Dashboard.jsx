@@ -17,12 +17,12 @@ import { visuallyHidden } from "@mui/utils";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
 import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import InfoIcon from "@mui/icons-material/Info";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
 import DialogContent from "@mui/material/DialogContent";
 import Link from "@mui/material/Link";
 import FormControl from "@mui/material/FormControl";
@@ -38,17 +38,17 @@ import {
   Tooltip,
 } from "recharts";
 import Dialog from "@mui/material/Dialog";
-import EditIcon from "@mui/icons-material/Edit";
+import EditIcon from "@mui/icons-material/EditOutlined";
 import Button from "@mui/material/Button";
 import { useConfirm } from "material-ui-confirm";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import LibraryAddIcon from "@mui/icons-material/LibraryAddOutlined";
 import { APIConfig } from "./config";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { DialogActions, DialogTitle } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
-import SendIcon from "@mui/icons-material/Send";
+import SendIcon from "@mui/icons-material/SendOutlined";
 
 const infoDescriptionText = {
   "domainCompare-#Instances Closed": {
@@ -245,7 +245,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
+    <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -383,12 +383,12 @@ LinearProgressWithLabel.propTypes = {
 //
 // const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
 //     height: 10,
-//     borderRadius: 5,
+//
 //     [`&.${linearProgressClasses.colorPrimary}`]: {
 //         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
 //     },
 //     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
+//
 //         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
 //     },
 // }));
@@ -762,7 +762,7 @@ export default function Dashboard() {
         opacity: "0.95",
       }}
     >
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -1280,7 +1280,7 @@ export default function Dashboard() {
             </Table>
             {/*<ResponsiveContainer width={500} height={380}>*/}
             <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, borderRadius: 5}}>*/}
+            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
             <Box sx={{ width: 350, height: 464 }}>
               <Toolbar
                 sx={{
