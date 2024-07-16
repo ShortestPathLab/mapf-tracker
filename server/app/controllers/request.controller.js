@@ -22,7 +22,7 @@ exports.findAll = (req, res) => {
 exports.findByInstance_id = (req, res) => {
     const id = req.params.id;
 
-    Request.find({instance_id : id})
+    Request.findById(id)
         .then(data => {
             if (!data)
                 res.status(404).send({ message: "Not found request with id " + id });
@@ -69,22 +69,24 @@ exports.create = async (req, res) => {
 
 exports.updateRequest = async (req, res) =>{
 const { id } = req.params;
-const { status, ...otherFields } = req.body;
+const { reviewStatus, ...otherFields } = req.body;
 try {
 
     const request = await Request.findById(id);
+    console.log(request)
     if (!request){
         return res.status(404).send({ message: `Request with id ${id} not found` });
     }
 
-    const previousStatus = request.status;
+    const previousStatus = request.reviewStatus.status;
 
     const updatedRequest = await Request.findByIdAndUpdate(
-        id, {status, ...otherFields}, {new:true}
+        id, {reviewStatus, ...otherFields}, {new:true}
     );
 
     // request was reviewed and approved
-    if (previousStatus === "Not Reviewed" && status ==="Approved" ){
+    if (previousStatus === "Not Reviewed" && reviewStatus.status ==="Approved" ){
+        console.log('innnnnn here')
         // generate new submission key api for the user
         const apiKey = crypto.randomBytes(16).toString('hex');
         const creationDate = new Date();
