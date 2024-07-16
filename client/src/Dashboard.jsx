@@ -253,9 +253,7 @@ function EnhancedTableHead(props) {
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              fontWeight: "bold",
-            }}
+            sx={{}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -1121,7 +1119,7 @@ export default function Dashboard() {
             {requestData ? (
               <>
                 <Box sx={{ display: "flex", gap: 4 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  <Typography variant="subtitle1" sx={{}}>
                     Status:
                   </Typography>
                   <Box
@@ -1146,7 +1144,7 @@ export default function Dashboard() {
                   </Box>
                 </Box>
                 <Box sx={{ display: "flex", gap: 4 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                  <Typography variant="subtitle2" sx={{}}>
                     Comments:
                   </Typography>
                   <Typography

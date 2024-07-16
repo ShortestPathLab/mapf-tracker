@@ -92,7 +92,6 @@ export default function App() {
   }, (localStorage.getItem("theme") || "dark") as any);
   const [mode] = themeState;
   const t = useMemo(() => theme(mode), [mode]);
-  console.log(t);
   const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {

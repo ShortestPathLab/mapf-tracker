@@ -1,6 +1,26 @@
-import * as React from "react";
-import PropTypes from "prop-types";
+import { ExpandMoreOutlined, FilterListOutlined } from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import FilterListIcon from "@mui/icons-material/FilterListOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import TableViewIcon from "@mui/icons-material/TableViewOutlined";
+import VisibilityIcon from "@mui/icons-material/VisibilityOutlined";
+import { Button, MenuList, Stack, capitalize } from "@mui/material";
 import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,59 +29,33 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress from "@mui/material/LinearProgress";
-import { Button } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/DownloadOutlined";
-import TableViewIcon from "@mui/icons-material/TableViewOutlined";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import Link from "@mui/material/Link";
-import VisibilityIcon from "@mui/icons-material/VisibilityOutlined";
-import { CSVLink } from "react-csv";
+import PropTypes from "prop-types";
+import randomColor from "randomcolor";
+import * as React from "react";
 import { useRef } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/SearchOutlined";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/CancelOutlined";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
-import MenuItem from "@mui/material/MenuItem";
-import Checkbox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
+import { CSVLink } from "react-csv";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Brush,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  AreaChart,
   Area,
+  AreaChart,
+  Brush,
+  CartesianGrid,
   Label,
-} from "recharts";
-import {
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
   Radar,
   RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import FilterListIcon from "@mui/icons-material/FilterListOutlined";
-import Menu from "@mui/material/Menu";
-import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
-import MenuIcon from "@mui/icons-material/MenuOutlined";
-import CompareIcon from "@mui/icons-material/CompareOutlined";
-import randomColor from "randomcolor";
+import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
 
 const angle = {
@@ -314,7 +308,7 @@ function EnhancedTableHead(props) {
           padding={"normal"}
           sortDirection={orderBy === "agents" ? order : false}
           rowSpan={2}
-          sx={{ fontWeight: "bold" }}
+          sx={{}}
         >
           <TableSortLabel
             active={orderBy === "agents"}
@@ -343,7 +337,6 @@ function EnhancedTableHead(props) {
           style={{ paddingBottom: 0, paddingTop: 10 }}
           sx={{
             border: "none",
-            fontWeight: "bold",
           }}
         >
           Lower Bound Record
@@ -366,7 +359,6 @@ function EnhancedTableHead(props) {
           style={{ paddingBottom: 0, paddingTop: 10 }}
           sx={{
             border: "none",
-            fontWeight: "bold",
           }}
         >
           Solution Record
@@ -388,7 +380,7 @@ function EnhancedTableHead(props) {
           align={"center"}
           padding={"normal"}
           rowSpan={2}
-          sx={{ fontWeight: "bold" }}
+          sx={{}}
         >
           View
         </TableCell>
@@ -397,7 +389,7 @@ function EnhancedTableHead(props) {
           align={"center"}
           padding={"normal"}
           rowSpan={2}
-          sx={{ fontWeight: "bold" }}
+          sx={{}}
         >
           Results
         </TableCell>
@@ -410,7 +402,7 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
             rowSpan={headCell.rowspan}
-            style={{ paddingTop: 10, paddingBottom: 10, fontWeight: "bold" }}
+            style={{ paddingTop: 10, paddingBottom: 10 }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -935,80 +927,6 @@ export default function SolutionPage() {
     }
   }, [algorithm_name]);
 
-  // React.useEffect(() => {
-  //     if(agentQueryResult.length >0){
-  //         console.log(agentQueryResult)
-  //         var agentChartData = []
-  //         for(var i = 1; i < location.state.numAgents +1; i ++){
-  //             agentChartData.push(
-  //                 {
-  //                     "name" :   i.toString(),
-  //                 }
-  //             )
-  //         }
-  //         const algorithm = new Set();
-  //         for( var i = 0; i < agentQueryResult.length; i ++){
-  //             // iterate map
-  //             var agentIndex = agentQueryResult[i].agents -1;
-  //
-  //             for(var j = 0 ; j < agentQueryResult[i].record.length; j ++){
-  //                 var algo =  agentQueryResult[i].record[j]
-  //                 algorithm.add(algo.algo_name);
-  //                 agentChartData[agentIndex][algo.algo_name] = parseInt(algo.cost);
-  //             }
-  //         }
-  //         var unique_key = [];
-  //         var check_box_state={};
-  //         algorithm.forEach(function(algo){
-  //             unique_key.push(algo);
-  //             check_box_state[algo]= true;
-  //             agentChartData.forEach(function(element){
-  //                 if( element[algo] === undefined){
-  //                     element[algo] = -1;
-  //                 }
-  //             });
-  //         })
-  //         unique_key.sort();
-  //         setAgentFilterState(check_box_state);
-  //         setAgentChartAlgorithms(unique_key);
-  //         setAgentChartDisplayAlgorithms(unique_key);
-  //         var max_value  = 0 ;
-  //
-  //         for( var i = 0; i < data.length; i ++){
-  //             if(agentQuery === "Solution Cost"){
-  //                 unique_key.forEach(function (element) {
-  //                     if(data[i]["solution_cost"] === null || agentChartData[parseInt(data[i]["agents"] )- 1][element] === -1){
-  //                         agentChartData[parseInt(data[i]["agents"] )- 1][element] = -1;
-  //                     }else{
-  //                         agentChartData[parseInt(data[i]["agents"] ) - 1][element] =  (agentChartData[parseInt(data[i]["agents"] ) -1][element]- data[i]["solution_cost"])/ data[i]["solution_cost"];
-  //                         max_value = max_value >  agentChartData[parseInt(data[i]["agents"] ) - 1][element]? max_value :  agentChartData[parseInt(data[i]["agents"] ) - 1][element];
-  //                     }
-  //                 })
-  //             }else{
-  //                 unique_key.forEach(function (element) {
-  //                     if(data[i]["lower_cost"] === null || data[i]["lower_algos"] === 0  || agentChartData[parseInt(data[i]["agents"] )- 1][element] === -1){
-  //                         agentChartData[parseInt(data[i]["agents"] )- 1][element] = -1;
-  //                     }else{
-  //                         agentChartData[parseInt(data[i]["agents"] ) - 1][element] =  ( data[i]["lower_cost"] - agentChartData[parseInt(data[i]["agents"] ) -1][element])/ data[i]["lower_cost"];
-  //                         max_value = max_value >  agentChartData[parseInt(data[i]["agents"] ) - 1][element]? max_value :  agentChartData[parseInt(data[i]["agents"] ) - 1][element];
-  //                     }
-  //                 })
-  //             }
-  //         }
-  //         for( var i = 0; i < agentChartData.length; i ++){
-  //             unique_key.forEach(function (element) {
-  //                 if( agentChartData[i][element]  < 0){
-  //                     agentChartData[i][element] = (1+0.5)* max_value
-  //                 }
-  //             })
-  //         }
-  //         setMaxAgentResults(max_value);
-  //         setAgentChartDisplayData(agentChartData);
-  //         setAgentChartOriData(agentChartData);
-  //         setAgentLoading(false);
-  //     }
-  // }, [agentQueryResult]);
-
   React.useEffect(() => {
     if (agentQueryResult.length > 0) {
       var agentChartData = [];
@@ -1172,125 +1090,104 @@ export default function SolutionPage() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+  const scenarioString = capitalize(
+    `${location.state.scenType}-${location.state.scenTypeID}`
+  );
+
   return (
-    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <Stack direction="row">
+        <PageHeader
+          current={scenarioString}
+          path={[
+            { name: "MAPF Tracker", url: "/" },
+            { name: "Benchmarks", url: "/benchmarks" },
+            {
+              name: capitalize(location.state.mapName),
+              url: "/scenarios",
+              state: location.state,
+            },
+          ]}
+        />
+        <Box flex={1}></Box>
+        <Box
+          component="img"
+          sx={{ height: 83, borderRadius: 1 }}
+          src={`/mapf-svg/${location.state.mapName}.svg`}
+        />
+      </Stack>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <Toolbar
-          sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
-          }}
+        <Stack
+          direction="row-reverse"
+          sx={{ alignItems: "center", p: 2, gap: 2 }}
         >
-          <IconButton
+          <Button
+            variant="contained"
+            sx={{ px: 2, py: 1, mr: 1 }}
             aria-controls="domain-filter-menu"
             aria-haspopup="true"
             onClick={(event) => {
               setMenuAnchorEl(event.currentTarget);
             }}
+            endIcon={<ExpandMoreOutlined />}
           >
-            <MenuIcon />
-          </IconButton>
+            Analyse
+          </Button>
+          <Button
+            sx={{ minWidth: "max-content" }}
+            size="medium"
+            onClick={() => {
+              setDense(!dense);
+            }}
+          >
+            {dense ? "Comfortable margins" : "Compact margins"}
+          </Button>
           <Menu
             id="simple-menu"
             anchorEl={menuAnchorEl}
             keepMounted
             open={Boolean(menuAnchorEl)}
-            // onClick ={handleDomainFilterChange}
             onClose={() => {
               setMenuAnchorEl(null);
             }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
           >
-            <MenuItem
-              key="Dense"
-              onClick={() => {
-                setDense(!dense);
-                setMenuAnchorEl(null);
-              }}
-            >
-              <Button
-                key="Dense"
-                sx={{ textTransform: "none" }}
-                startIcon={dense ? <ZoomOutMapIcon /> : <ZoomInMapIcon />}
-                style={{ backgroundColor: "transparent" }}
-                disableElevation
-                disableRipple
-              >
-                {dense ? "Sparse Margin" : "Densify Margin "}
-              </Button>
-            </MenuItem>
-
-            <MenuItem
-              key="Progress"
-              onClick={(event) => {
-                handleChartClickOpen(event, "paper");
-                setMenuAnchorEl(null);
-              }}
-            >
-              <Button
+            <MenuList>
+              <MenuItem
                 key="Progress"
-                sx={{ textTransform: "none" }}
-                startIcon={<ShowChartIcon />}
-                style={{ backgroundColor: "transparent" }}
-                disableElevation
-                disableRipple
+                onClick={(event) => {
+                  handleChartClickOpen(event, "paper");
+                  setMenuAnchorEl(null);
+                }}
               >
-                Monitor Progress
-              </Button>
-            </MenuItem>
-            <MenuItem
-              key="Comparator"
-              onClick={(event) => {
-                handleClickOpenComparator(event, "paper");
-                setMenuAnchorEl(null);
-              }}
-            >
-              <Button
+                <ListItemText>Suboptimality by agent count</ListItemText>
+              </MenuItem>
+              <MenuItem
                 key="Comparator"
-                sx={{ textTransform: "none" }}
-                startIcon={<CompareIcon />}
-                style={{ backgroundColor: "transparent" }}
-                disableElevation
-                disableRipple
+                onClick={(event) => {
+                  handleClickOpenComparator(event, "paper");
+                  setMenuAnchorEl(null);
+                }}
               >
-                Compare Algorithms
-              </Button>
-            </MenuItem>
+                <ListItemText>
+                  Success rates between algorithms by agent count
+                </ListItemText>
+              </MenuItem>
+            </MenuList>
           </Menu>
-          <Typography
-            sx={{ flex: "1 1 100%", paddingLeft: "10px" }}
-            component="div"
-          >
-            <Typography
-              sx={{ display: "inline-block", verticalAlign: "middle" }}
-              variant="h6"
-              component="div"
-            >
-              {capitalizeFirstLetter(location.state.mapName)} (
-              {location.state.scenType}-{location.state.scenTypeID} scenario)
-              &nbsp;
-            </Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                width: 50,
-                verticalAlign: "middle",
-              }}
-              component="img"
-              src={`/mapf-svg/${location.state.mapName}.svg`}
-            ></Typography>
-          </Typography>
-
+          <Box flex={1}></Box>
           <TextField
             id="outlined-basic"
             onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="outlined"
-            placeholder="#Agents"
-            size="small"
+            variant="filled"
+            label="Filter by number of agents"
             value={searched}
+            sx={{ width: 420 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <FilterListOutlined />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -1308,7 +1205,7 @@ export default function SolutionPage() {
               ),
             }}
           />
-        </Toolbar>
+        </Stack>
         <TableContainer sx={{ width: "100%" }}>
           <Table
             // frozen table set max-content
@@ -1483,28 +1380,13 @@ export default function SolutionPage() {
             </colgroup>
             <TableHead>
               <TableRow sx={{ cursor: "pointer" }}>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontWeight: "bold",
-                  }}
-                >
+                <TableCell align="left" sx={{}}>
                   Algorithm Name
                 </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontWeight: "bold",
-                  }}
-                >
+                <TableCell align="left" sx={{}}>
                   Submitted Date
                 </TableCell>
-                <TableCell
-                  align="left"
-                  sx={{
-                    fontWeight: "bold",
-                  }}
-                >
+                <TableCell align="left" sx={{}}>
                   Detail
                 </TableCell>
               </TableRow>
@@ -2353,6 +2235,6 @@ export default function SolutionPage() {
           </Table>
         </DialogContent>
       </Dialog>
-    </Box>
+    </Stack>
   );
 }

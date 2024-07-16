@@ -525,7 +525,7 @@ export default function Submissions() {
               setDense(!dense);
             }}
           >
-            {dense ? "Show sparse" : "Show dense"}
+            {dense ? "Comfortable margins" : "Compact margins"}
           </Button>
         </Stack>
         <TableContainer sx={{ width: "100%" }}>

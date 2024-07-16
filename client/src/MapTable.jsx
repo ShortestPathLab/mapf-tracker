@@ -1,6 +1,8 @@
 import {
   CancelOutlined,
+  ExpandMoreOutlined,
   FilterListOutlined,
+  NavigateNextOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
@@ -16,6 +18,7 @@ import {
   ButtonBase,
   Collapse,
   Divider,
+  ListItemIcon,
   MenuList,
   Popover,
   Stack,
@@ -1263,18 +1266,29 @@ export default function MapTable({ showHeader = true }) {
         <Paper>
           <Stack
             direction="row-reverse"
-            sx={{ alignItems: "center", p: 2, gap: 4 }}
+            sx={{ alignItems: "center", p: 2, gap: 2 }}
           >
-            <IconButton
+            <Button
+              variant="contained"
+              sx={{ px: 2, py: 1, mr: 1 }}
               aria-controls="domain-filter-menu"
               aria-haspopup="true"
               onClick={(event) => {
                 setMenuAnchorEl(event.currentTarget);
               }}
+              endIcon={<ExpandMoreOutlined />}
             >
-              <MenuIcon />
-            </IconButton>
-
+              Analyse
+            </Button>
+            <Button
+              sx={{ minWidth: "max-content" }}
+              size="medium"
+              onClick={() => {
+                setDense(!dense);
+              }}
+            >
+              {dense ? "Comfortable margins" : "Compact margins"}
+            </Button>
             <Menu
               anchorEl={menuAnchorEl}
               keepMounted
@@ -1288,65 +1302,38 @@ export default function MapTable({ showHeader = true }) {
                 setOpenMenuIndex(null);
               }}
             >
-              <MenuItem style={{ display: "none" }}>
-                {/* Dummy option to prevent automatic selection */}
-                Select an option
-              </MenuItem>
-              <MenuItem
-                key="Dense"
-                onClick={() => {
-                  setDense(!dense);
-                  setMenuAnchorEl(null);
-                }}
-              >
-                <Button
-                  key="Dense"
-                  sx={{ color: "text.primary" }}
-                  startIcon={dense ? <ZoomOutMapIcon /> : <ZoomInMapIcon />}
-                  style={{ backgroundColor: "transparent" }}
-                  disableElevation
-                  disableRipple
-                >
-                  {dense ? "Sparse Margin" : "Densify Margin "}
-                </Button>
-              </MenuItem>
-              <MenuItem
-                key="Progress"
-                onClick={(event) => {
-                  handleMenuOpen(event, 1);
-                }}
-              >
-                <Button
+              <MenuList>
+                <MenuItem
                   key="Progress"
-                  sx={{ color: "text.primary" }}
-                  startIcon={<ShowChartIcon />}
-                  style={{ backgroundColor: "transparent" }}
-                  disableElevation
-                  disableRipple
+                  onClick={(event) => {
+                    handleMenuOpen(event, 1);
+                  }}
                 >
-                  Monitor Progress
-                </Button>
-              </MenuItem>
-
-              <MenuItem
-                key="Comparator"
-                onClick={(event) => {
-                  handleMenuOpen(event, 2);
-                  // handleClickOpenComparator(event,'paper');
-                  // setMenuAnchorEl(null);
-                }}
-              >
-                <Button
+                  <ListItemIcon>
+                    <ShowChartIcon />
+                  </ListItemIcon>
+                  <ListItemText>Show success rates by</ListItemText>
+                  <NavigateNextOutlined
+                    sx={{ color: "text.secondary", ml: 4 }}
+                  />
+                </MenuItem>
+                <MenuItem
                   key="Comparator"
-                  sx={{ color: "text.primary" }}
-                  startIcon={<CompareIcon />}
-                  style={{ backgroundColor: "transparent" }}
-                  disableElevation
-                  disableRipple
+                  onClick={(event) => {
+                    handleMenuOpen(event, 2);
+                    // handleClickOpenComparator(event,'paper');
+                    // setMenuAnchorEl(null);
+                  }}
                 >
-                  Compare Algorithms
-                </Button>
-              </MenuItem>
+                  <ListItemIcon />
+                  <ListItemText>
+                    Compare success rates between algorithms by
+                  </ListItemText>
+                  <NavigateNextOutlined
+                    sx={{ color: "text.secondary", ml: 4 }}
+                  />
+                </MenuItem>
+              </MenuList>
             </Menu>
 
             <Popover
