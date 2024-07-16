@@ -7,7 +7,7 @@ import Toolbar from "@mui/material/Toolbar";
 import { Tooltip } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { useState } from "react";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
+import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
 import "./BibTex.css"; // Import the CSS file for styling
 import ClipboardJS from "clipboard";
 import Divider from "@mui/material/Divider";
@@ -71,7 +71,7 @@ export default function PaperPage() {
 
   return (
     <Box sx={{ mx: "auto", maxWidth: 960 }}>
-      <Paper sx={{ width: "100%", mt: 2, mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mt: 2, mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },

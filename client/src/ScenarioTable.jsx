@@ -1,7 +1,38 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import { styled } from "@mui/material/styles";
+import {
+  ExpandMoreOutlined,
+  FilterListOutlined,
+  NavigateNextOutlined,
+} from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
+import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import FilterListIcon from "@mui/icons-material/FilterListOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
+import {
+  ListItemIcon,
+  MenuList,
+  Popover,
+  Stack,
+  capitalize,
+} from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
+import ListItemText from "@mui/material/ListItemText";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,27 +41,17 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
+import { styled } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { useNavigate, useLocation } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/Download";
-import { CSVLink } from "react-csv";
+import PropTypes from "prop-types";
+import randomColor from "randomcolor";
+import * as React from "react";
 import { useRef } from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
+import { CSVLink } from "react-csv";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Area,
   AreaChart,
@@ -45,25 +66,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
-import MenuIcon from "@mui/icons-material/Menu";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import CompareIcon from "@mui/icons-material/Compare";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import Checkbox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
-import randomColor from "randomcolor";
+import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
-import { MenuList, ListItemIcon, Popover } from "@mui/material";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import InfoIcon from "@mui/icons-material/Info";
 
 const infoDescriptionText = {
   scenProgress: {
@@ -326,17 +330,15 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
-      <TableRow>
+    <TableHead>
+      <TableRow sx={{ cursor: "pointer" }}>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              fontWeight: "bold",
-            }}
+            sx={{}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -414,13 +416,12 @@ LinearProgressWithLabel.propTypes = {
 
 const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
   height: 10,
-  borderRadius: 5,
+
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor:
       theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
   },
   [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
     backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
   },
 }));
@@ -616,16 +617,6 @@ export default function ScenarioTable() {
     event.stopPropagation();
   };
 
-  // const navigateToDownload =  (object_id,scen_type,type_id) => {
-  //     // const data = await getCSVData();
-  //
-  //     setCsvFilename(`${location.state.mapName}_${scen_type}_${type_id}`);
-  //     fetch('http://localhost:8080/api/instance/DownloadInstance/'+object_id, {method: 'GET'})
-  //         .then(res => res.json())
-  //         .then(data => {
-  //             setCsvData(data);
-  //         });
-  // };
   React.useEffect(() => {
     if (loading && query_id !== "") {
       fetch(APIConfig.apiUrl + "/instance/DownloadInstance/" + query_id, {
@@ -1081,66 +1072,56 @@ export default function ScenarioTable() {
     event.stopPropagation();
   };
 
-  // React.useEffect(() => {
-  //     if(algorithm_name.length > 0) {
-  //         setAgentLoading(true);
-  //         setMapLoading(true);
-  //         setAgentQuery('#Instances Closed');
-  //         setMapQuery('#Instances Closed');
-  //         var closed_API = APIConfig.apiUrl+'/algorithm/getScenClosedInfo/' + location.state.mapId;
-  //         var agent_chart_API = APIConfig.apiUrl+'/algorithm/getAgentClosedInfo/' + location.state.mapId;
-  //         Promise.all([
-  //             fetch(closed_API, {method: 'GET'}),
-  //             fetch(agent_chart_API, {method: 'GET'})
-  //         ])
-  //             .then((values) => {
-  //                 return Promise.all(values.map((r) => r.json()))
-  //             })
-  //             .then(([closed_data,
-  //                        agent_closed_data
-  //                    ]) => {
-  //                 setMapQueryResult(closed_data);
-  //                 setAgentQueryResult(agent_closed_data);
-  //             }).catch(err => console.error(err));
-  //     }
-  // }, [algorithm_name]);
-
   return (
-    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
-        {/*<EnhancedTableToolbar numSelected={selected.length}/>*/}
-        <Toolbar
-          sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
-          }}
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <Stack direction="row">
+        <PageHeader
+          current={capitalize(location.state.mapName)}
+          path={[
+            { name: "MAPF Tracker", url: "/" },
+            { name: "Benchmarks", url: "/benchmarks" },
+          ]}
+        />
+        <Box flex={1}></Box>
+        <Box
+          component="img"
+          sx={{ height: 83, borderRadius: 1 }}
+          src={`/mapf-svg/${location.state.mapName}.svg`}
+        />
+      </Stack>
+      <Paper sx={{ width: "100%", mb: 2 }}>
+        <Stack
+          direction="row-reverse"
+          sx={{ alignItems: "center", p: 2, gap: 2 }}
         >
-          {/*<IconButton*/}
-          {/*    size ='medium'*/}
-          {/*    onClick={() => {setDense(!dense)}*/}
-          {/*    } >*/}
-          {/*    { dense ? <ZoomOutMapIcon fontSize='medium'/>:<ZoomInMapIcon fontSize='medium'/> }*/}
-          {/*</IconButton>*/}
-          {/*<IconButton*/}
-          {/*    size ='medium'*/}
-          {/*    onClick={(event) =>handleClickOpen(event,'paper') } >*/}
-          {/*    <ShowChartIcon fontSize ='medium'/>*/}
-          {/*</IconButton>*/}
-
-          <IconButton
+          <Button
+            variant="contained"
+            sx={{ px: 2, py: 1, mr: 1 }}
             aria-controls="domain-filter-menu"
             aria-haspopup="true"
             onClick={(event) => {
               setMenuAnchorEl(event.currentTarget);
             }}
+            endIcon={<ExpandMoreOutlined />}
           >
-            <MenuIcon />
-          </IconButton>
+            Analyse
+          </Button>
+          <Button
+            sx={{ minWidth: "max-content" }}
+            size="medium"
+            onClick={() => {
+              setDense(!dense);
+            }}
+          >
+            {dense ? "Comfortable margins" : "Compact margins"}
+          </Button>
           <Menu
             id="simple-menu"
             anchorEl={menuAnchorEl}
             keepMounted
-            open={Boolean(menuAnchorEl)}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            open={!!menuAnchorEl}
             // onClick ={handleDomainFilterChange}
             onClose={() => {
               setMenuAnchorEl(null);
@@ -1148,62 +1129,32 @@ export default function ScenarioTable() {
               setOpenMenuIndex(null);
             }}
           >
-            <MenuItem
-              key="Dense"
-              onClick={() => {
-                setDense(!dense);
-                setMenuAnchorEl(null);
-              }}
-            >
-              <Button
-                key="Dense"
-                sx={{ color: "black", textTransform: "none" }}
-                startIcon={dense ? <ZoomOutMapIcon /> : <ZoomInMapIcon />}
-                style={{ backgroundColor: "transparent" }}
-                disableElevation
-                disableRipple
-              >
-                {dense ? "Sparse Margin" : "Densify Margin "}
-              </Button>
-            </MenuItem>
-
-            <MenuItem
-              key="Progress"
-              onClick={(event) => {
-                handleMenuOpen(event, 1);
-              }}
-            >
-              <Button
+            <MenuList>
+              <MenuItem
                 key="Progress"
-                sx={{ color: "black", textTransform: "none" }}
-                startIcon={<ShowChartIcon />}
-                style={{ backgroundColor: "transparent" }}
-                disableElevation
-                disableRipple
+                onClick={(event) => {
+                  handleMenuOpen(event, 1);
+                }}
               >
-                Monitor Progress
-              </Button>
-            </MenuItem>
-
-            <MenuItem
-              key="Comparator"
-              onClick={(event) => {
-                handleMenuOpen(event, 2);
-                // handleClickOpenComparator(event,'paper');
-                // setMenuAnchorEl(null);
-              }}
-            >
-              <Button
+                <ListItemIcon>
+                  <ShowChartIcon />
+                </ListItemIcon>
+                <ListItemText>Show success rates by</ListItemText>
+                <NavigateNextOutlined sx={{ color: "text.secondary", ml: 4 }} />
+              </MenuItem>
+              <MenuItem
                 key="Comparator"
-                sx={{ color: "black", textTransform: "none" }}
-                startIcon={<CompareIcon />}
-                style={{ backgroundColor: "transparent" }}
-                disableElevation
-                disableRipple
+                onClick={(event) => {
+                  handleMenuOpen(event, 2);
+                }}
               >
-                Compare Algorithms
-              </Button>
-            </MenuItem>
+                <ListItemIcon />
+                <ListItemText>
+                  Compare success rates between algorithms by
+                </ListItemText>
+                <NavigateNextOutlined sx={{ color: "text.secondary", ml: 4 }} />
+              </MenuItem>
+            </MenuList>
           </Menu>
 
           <Popover
@@ -1230,7 +1181,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="M_scen"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1249,7 +1200,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="M_agents"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1285,7 +1236,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="C_scen"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1304,7 +1255,7 @@ export default function ScenarioTable() {
               >
                 <Button
                   key="C_agents"
-                  sx={{ color: "black", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<ChevronRightIcon />}
                   style={{ backgroundColor: "transparent" }}
                   disableElevation
@@ -1315,41 +1266,18 @@ export default function ScenarioTable() {
               </MenuItem>
             </MenuList>
           </Popover>
-
-          <Typography
-            sx={{ flex: "1 1 100%", paddingLeft: "10px" }}
-            component="div"
-          >
-            <Typography
-              sx={{ display: "inline-block", verticalAlign: "middle" }}
-              variant="h6"
-              component="div"
-            >
-              {capitalizeFirstLetter(location.state.mapName)}&nbsp;
-            </Typography>
-            <Typography
-              sx={{
-                display: "inline-block",
-                width: 50,
-                verticalAlign: "middle",
-              }}
-              component="img"
-              src={
-                `/mapf-svg/${location.state.mapName}.svg`
-              }
-            ></Typography>
-          </Typography>
+          <Box flex={1}></Box>
           <TextField
             id="outlined-basic"
             onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="outlined"
-            placeholder="Scenario ID"
-            size="small"
+            variant="filled"
+            label="Filter by scenario ID"
             value={searched}
+            sx={{ width: 420 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <FilterListOutlined />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -1367,7 +1295,7 @@ export default function ScenarioTable() {
               ),
             }}
           />
-        </Toolbar>
+        </Stack>
 
         <TableContainer sx={{ width: "100%" }}>
           <Table
@@ -1400,6 +1328,7 @@ export default function ScenarioTable() {
 
                   return (
                     <TableRow
+                      sx={{ cursor: "pointer" }}
                       hover
                       tabIndex={-1}
                       key={row.id}
@@ -1437,11 +1366,6 @@ export default function ScenarioTable() {
                         {/*<ProgressBar animated now={row.solution_uploaded/row.problems*100} label={`${row.solution_uploaded/row.problems*100}%`} />*/}
                       </TableCell>
                       <TableCell align="center">
-                        {/*<Button variant="contained" onClick={routeChange}>View</Button>*/}
-                        {/*<Button variant="contained" onClick={() => navigateToInstance(row.id,row.type_id,row.scen_type)}>View</Button>*/}
-                        {/*<IconButton onClick={(event) => navigateToInstance(event, row.id,row.type_id,row.scen_type)}>*/}
-                        {/*    <VisibilityIcon/>*/}
-                        {/*</IconButton>*/}
                         <IconButton
                           onClick={(event) =>
                             navigateToDownload_Benchmark(
@@ -1487,6 +1411,7 @@ export default function ScenarioTable() {
                 })}
               {emptyRows > 0 && (
                 <TableRow
+                  sx={{ cursor: "pointer" }}
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
@@ -1678,7 +1603,7 @@ export default function ScenarioTable() {
           dividers={scroll === "paper"}
           sx={{ width: 850, height: 440 }}
         >
-          {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+          {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
           <Toolbar
             sx={{
               pl: { sm: 1 },
@@ -1851,7 +1776,7 @@ export default function ScenarioTable() {
           sx={{ width: 850, height: 455, display: "flex" }}
         >
           <Box sx={{ width: "100%" }}>
-            {/*<div  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+            {/*<div  sx={{ width: '100%', mb: 2,}}>*/}
             <Toolbar
               sx={{
                 pl: { sm: 1 },
@@ -2065,7 +1990,7 @@ export default function ScenarioTable() {
           sx={{ width: 850, height: 455, display: "flex" }}
         >
           <Box sx={{ width: "100%" }}>
-            {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5}}>*/}
+            {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
             <Toolbar
               sx={{
                 pl: { sm: 1 },
@@ -2290,7 +2215,7 @@ export default function ScenarioTable() {
               <col width="50" />
             </colgroup>
             <TableBody>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2312,7 +2237,7 @@ export default function ScenarioTable() {
                   {infoDescription.description}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2334,7 +2259,7 @@ export default function ScenarioTable() {
                   {infoDescription.x_axis}
                 </TableCell>
               </TableRow>
-              <TableRow>
+              <TableRow sx={{ cursor: "pointer" }}>
                 <TableCell
                   style={{
                     paddingRight: 0,
@@ -2357,7 +2282,7 @@ export default function ScenarioTable() {
                 </TableCell>
               </TableRow>
               {infoDescription.comment != null ? (
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -2384,6 +2309,6 @@ export default function ScenarioTable() {
           </Table>
         </DialogContent>
       </Dialog>
-    </Box>
+    </Stack>
   );
 }

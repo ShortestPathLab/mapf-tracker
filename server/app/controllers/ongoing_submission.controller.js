@@ -66,7 +66,8 @@ exports.create = async (req, res) => {
         { field: 'solution_cost', message: 'Solution cost cannot be empty!' },
         { field: 'map_name', message: 'Map name cannot be empty!' },
         { field: 'scen_type', message: 'Scenario type (even or random)cannot be empty!' },
-        { field: 'type_id', message: 'Type id cannot be empty!' }
+        { field: 'type_id', message: 'Type id cannot be empty!' },
+        { field: 'solution_path', message: 'Solution path cannot be empty!' }
     ];
 
     // Iterate through validation rules ( ensure all parameters was defined)
@@ -111,7 +112,6 @@ exports.create = async (req, res) => {
         return;
     }
     var map_id = map._id
-    console.log('pass this mdfk', map_id)
 
     // check if the scenario exist
     var scen = await Scenario.findOne({ "map_id": map_id, "scen_type": req.body.scen_type, "type_id": parseInt(req.body.type_id) }).catch(err => {
@@ -126,28 +126,24 @@ exports.create = async (req, res) => {
     }
     var scen_id = scen._id
 
-    // check if instance ( agent exist)
-    var curr_instance = await Instance.findOne({ "map_id": map_id, "scen_id": scen_id, "agents": parseInt(req.body.agents) }).catch(err => {
-        res.status(400).send({
-            message:
-                err.message || "Some error occurred while finding instance."
-        });
-    });
-    if (!curr_instance) {
-        res.status(400).send({ message: "Error: instance not found" });
-        return;
-    }
-    var instance_id = curr_instance._id;
+    // chck if the solution_path consist invalid letters 
+    var solution_path = req.body.solution_path
+    // Regular expression to check if solution_path contains only 'l', 'r', 'u', 'd'
+    const validPattern = /^[lrud]*$/;
 
+    if (!validPattern.test(solution_path)) {
+        return res.status(400).json({ error: 'Invalid solution_path. Only letters l, r, u, d are allowed.' });
+    }
+    
     // create new ongoing submission data
     const new_ongoing_submission = new OngoingSubmission({
         "api_key": req.body.api_key,
         "map_id": map_id,
-        "instance_id": instance_id,
         "scen_id": scen_id,
         "agents": parseInt(req.body.agents),
         "lower_cost": req.body.lower_cost,
         "solution_cost": req.body.solution_cost,
+        "solution_path": solution_path, 
         "error": { isError: false, errorMessage: '' }
     });
 

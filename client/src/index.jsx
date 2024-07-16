@@ -4,6 +4,8 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "@fontsource/roboto-slab";
 import "./index.css";
+import "overlayscrollbars/overlayscrollbars.css";
+import { OverlayScrollbars } from "overlayscrollbars";
 // const rootElement = document.getElementById('root');
 // const root = createRoot(rootElement);
 
@@ -27,6 +29,7 @@ root.render(
     <App />
   </BrowserRouter>
 );
+OverlayScrollbars(document.body, {});
 
 // // If you want to start measuring performance in your app, pass a function
 // // to log results (for example: reportWebVitals(console.log))
