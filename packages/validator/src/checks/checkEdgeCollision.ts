@@ -1,6 +1,5 @@
 import { CheckParameters, CheckResult } from "core/Check";
-import { Domain } from "core/Domain";
-import { serialisePoint as $, Point } from "core/Point";
+import { serialisePoint as $ } from "core/Point";
 import { chain as _, find } from "lodash-es";
 
 export function checkEdgeCollision({

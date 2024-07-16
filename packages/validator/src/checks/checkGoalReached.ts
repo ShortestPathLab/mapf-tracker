@@ -6,7 +6,6 @@ export function checkGoalReached({
   current,
   goals,
 }: FinalCheckParameters): CheckResult {
-  console.log(current, goals);
   const fail = find(zip(current, goals), ([p1, p2]) => $(p1) !== $(p2));
   return fail ? { errors: ["agent did not reach goal"] } : {};
 }
