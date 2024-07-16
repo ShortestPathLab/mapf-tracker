@@ -1,5 +1,5 @@
-import { Chunk } from "./Chunk";
-import { DoneException } from "./DoneException";
+import { Chunk } from "Chunk";
+import { DoneException } from "exceptions/DoneException";
 
 export interface Reader {
   read(): Chunk | undefined;

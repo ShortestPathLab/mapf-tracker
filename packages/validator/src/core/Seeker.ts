@@ -1,9 +1,9 @@
 import { List } from "linked-list";
 import { times } from "lodash-es";
-import { checkRange } from "./validate";
-import { Chunk } from "./Chunk";
-import { LowerOutOfRangeException } from "./LowerOutOfRangeException";
-import { Reader } from "./Reader";
+import { checkRange } from "validate";
+import { Chunk } from "Chunk";
+import { LowerOutOfRangeException } from "exceptions/LowerOutOfRangeException";
+import { Reader } from "Reader";
 
 export class Seeker {
   cache = new List<Chunk>();

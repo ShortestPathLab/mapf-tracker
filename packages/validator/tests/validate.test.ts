@@ -1,5 +1,11 @@
 import { test, suite, it, expect, vitest } from "vitest";
-import { DoneException, Reader, Seeker, validate } from "./validate";
+import {
+  DoneException,
+  Reader,
+  Seeker,
+  checkImmediateCollision,
+  validate,
+} from "index";
 
 test("Sanity", () => expect(1).toEqual(1));
 
@@ -72,5 +78,20 @@ suite("validate", () => {
     });
 
     expect(onError).toBeCalledTimes(1);
+  });
+  it("should detect simple collision", () => {
+    const onError = vitest.fn(() => true);
+
+    validate({
+      paths: ["u", "r"],
+      domain: "",
+      sources: [
+        { x: 1, y: 1 },
+        { x: 0, y: 0 },
+      ],
+      checks: [checkImmediateCollision],
+      onError: onError,
+    });
+    expect(onError).toBeCalled();
   });
 });

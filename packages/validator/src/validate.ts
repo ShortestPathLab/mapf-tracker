@@ -1,15 +1,15 @@
-import { chain, groupBy, some, zip } from "lodash-es";
+import { checkImmediateCollision } from "checks/checkImmediateCollision";
+import { Chunk } from "core/Chunk";
+import { Point } from "core/Point";
+import { Reader } from "core/Reader";
+import { Seeker } from "core/Seeker";
+import { DoneException } from "exceptions/DoneException";
 import type { Dictionary } from "lodash";
-import { Seeker } from "./Seeker";
-import { Reader } from "./Reader";
-import { DoneException } from "./DoneException";
-import { Chunk } from "./Chunk";
+import { some, zip } from "lodash-es";
 
 type CheckResult = {
   errors?: string[];
 };
-
-type Point = { x: number; y: number };
 
 type ValidationParameters = {
   paths: string[];
@@ -51,26 +51,9 @@ function processAgent(agent: string) {
   };
 }
 
-const serialisePoint = ({ x, y }: Point): string => `${x}.${y}`;
-
-function checkImmediateCollision(
-  prev: Point[],
-  next: Point[],
-  actions: string[],
-  domain: string
-) {
-  const nextSet = groupBy(next);
-  // if (intersection(nextSet)) {
-  //   return {
-  //     errors: [""],
-  //   };
-  // }
-  return {};
-}
-
 export const defaultOffsetMap = {
-  u: { x: 0, y: 1 },
-  d: { x: 0, y: -1 },
+  u: { x: 0, y: -1 },
+  d: { x: 0, y: 1 },
   l: { x: -1, y: 0 },
   r: { x: 1, y: 0 },
 };
