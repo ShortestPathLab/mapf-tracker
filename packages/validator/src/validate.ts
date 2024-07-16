@@ -1,6 +1,5 @@
 import { CheckParameters, CheckResult, FinalCheckParameters } from "core/Check";
 import { checkImmediateCollision } from "checks/checkImmediateCollision";
-import { Chunk } from "core/Chunk";
 import { Domain } from "core/Domain";
 import { Point } from "core/Point";
 import { Reader } from "core/Reader";
@@ -22,12 +21,6 @@ type ValidationParameters = {
    */
   onError?: (c: CheckResult) => boolean;
 };
-
-export function checkRange(n: number, chunk: Chunk) {
-  const min = chunk.offset;
-  const max = chunk.offset + chunk.count;
-  return n < min ? "low" : min <= n && n < max ? "in-range" : "high";
-}
 
 function processAgent(agent: string) {
   const reader = new Reader(agent);

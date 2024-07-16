@@ -1,9 +1,10 @@
 import { List } from "linked-list";
 import { times } from "lodash-es";
-import { checkRange } from "validate";
+import { checkRange } from "./Seeker";
 import { Chunk } from "Chunk";
 import { LowerOutOfRangeException } from "exceptions/LowerOutOfRangeException";
 import { Reader } from "Reader";
+import { Chunk } from "./Chunk";
 
 export class Seeker {
   cache = new List<Chunk>();
@@ -57,4 +58,10 @@ export class Seeker {
       }
     }
   }
+}
+
+export function checkRange(n: number, chunk: Chunk) {
+  const min = chunk.offset;
+  const max = chunk.offset + chunk.count;
+  return n < min ? "low" : min <= n && n < max ? "in-range" : "high";
 }
