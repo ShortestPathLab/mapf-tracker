@@ -1,11 +1,9 @@
-import React from 'react';
-import {
-    BrowserRouter,
-} from "react-router-dom";
-import { createRoot } from 'react-dom/client';
-import App from './App';
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { createRoot } from "react-dom/client";
+import App from "./App";
 import "@fontsource/roboto-slab";
-import './index.css';
+import "./index.css";
 // const rootElement = document.getElementById('root');
 // const root = createRoot(rootElement);
 
@@ -22,14 +20,12 @@ import './index.css';
 //     </Router>
 // );
 
-
-
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 root.render(
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
 );
 
 // // If you want to start measuring performance in your app, pass a function

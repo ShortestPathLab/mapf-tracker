@@ -6,10 +6,17 @@ const Solution_path = db.solution_paths;
 const Map = db.maps;
 const Scenario = db.scenarios;
 const Submission = db.submissions;
+const Request = db.requests;
 const { authJwt } = require("../middlewares");
 const {ObjectID: ObjectId} = require("mongodb");
 // database changed. we had to insert agents and scen_id in submission
 // database changed. we need to insert path to solution_path, but keep solution_path_id in instance.
+
+
+
+
+
+
 
 exports.findSubmittedAlgoByID = (req, res) => {
     const id = req.params.id;
@@ -24,6 +31,8 @@ exports.findSubmittedAlgoByID = (req, res) => {
             });
         });
 };
+
+
 
 
 exports.updateAlgoByID = (req, res) => {

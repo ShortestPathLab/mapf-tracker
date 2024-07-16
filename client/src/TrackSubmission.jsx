@@ -1,19 +1,6 @@
-import CancelIcon from "@mui/icons-material/Cancel";
-import InfoIcon from "@mui/icons-material/Info";
-import SearchIcon from "@mui/icons-material/Search";
-import { Button, Stack } from "@mui/material";
+import * as React from "react";
+import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import LinearProgress from "@mui/material/LinearProgress";
-import Link from "@mui/material/Link";
-import MenuItem from "@mui/material/MenuItem";
-import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -22,12 +9,25 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
-import PropTypes from "prop-types";
-import * as React from "react";
+import LinearProgress from "@mui/material/LinearProgress";
+import CircularProgress from "@mui/material/CircularProgress";
+import TextField from "@mui/material/TextField";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+import CancelIcon from "@mui/icons-material/Cancel";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import InfoIcon from "@mui/icons-material/Info";
+import DialogContent from "@mui/material/DialogContent";
+import Link from "@mui/material/Link";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import {
   Legend,
   PolarAngleAxis,
@@ -37,14 +37,12 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import PageHeader from "./PageHeader";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
 import { APIConfig } from "./config";
-import {
-  CancelOutlined,
-  FilterListOutlined,
-  FilterOutlined,
-  SearchOutlined,
-} from "@mui/icons-material";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import { Formik, Form, Field } from "formik";
+import Button from "@mui/material/Button";
 
 const angle = {
   Warehouse: -40,
@@ -130,6 +128,7 @@ function CustomizedLabel(props) {
     </g>
   );
 }
+
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {
     var string_a = a[orderBy].split("x");
@@ -248,7 +247,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead>
+    <TableHead sx={{}}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -257,7 +256,7 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{
-              color: "text.primary",
+              fontWeight: "bold",
             }}
           >
             <TableSortLabel
@@ -271,7 +270,9 @@ function EnhancedTableHead(props) {
                 },
                 "&.MuiTableSortLabel-root:hover": {},
                 "&.Mui-active": {},
-                "& .MuiTableSortLabel-icon": {},
+                "& .MuiTableSortLabel-icon": {
+                  color: "white !important",
+                },
               }}
             >
               {headCell.label}
@@ -338,7 +339,25 @@ LinearProgressWithLabel.propTypes = {
 //     },
 // }));
 
-export default function Submissions() {
+const createNewApiKey = () => {
+  const values = {
+    algo_id: "667d55013ecdbb93c0d02196",
+  };
+  console.log("in creating process");
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  };
+  console.log(APIConfig.apiUrl);
+  fetch("http://localhost:50000/api/submission_key/create", requestOptions)
+    .then((response) => response.json())
+    .catch((error) => console.error("Error:", error));
+};
+
+export default function TrackSubmission() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("map_type");
   const [page, setPage] = React.useState(0);
@@ -355,6 +374,8 @@ export default function Submissions() {
   const [domainLoading, setDomainLoading] = React.useState(true);
   const [openMonitorDetail, setOpenMonitorDetail] = React.useState(false);
   const [infoDescription, setInfoDescription] = React.useState(0);
+  const [openApiForm, setOpenApiForm] = React.useState(false);
+  const [algoIdList, setAlgoIdList] = React.useState([]);
 
   const handleOpenInfo = (key) => {
     setInfoDescription(infoDescriptionText[key]);
@@ -372,21 +393,6 @@ export default function Submissions() {
     setSearched("");
     requestSearch("");
   };
-
-  React.useEffect(() => {
-    refreshAlgorithms((data) => {
-      setData(data);
-      setRows(data);
-    });
-
-    const interval = setInterval(() => {
-      refreshAlgorithms((data) => {
-        setData(data);
-        setRows(data);
-      });
-    }, 1200000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -406,6 +412,21 @@ export default function Submissions() {
   // const handleChangeDense = () => {
   //     setDense(!dense);
   // };
+
+  React.useEffect(() => {
+    refresh_algo_details((data) => {
+      setData(data);
+      setRows(data);
+    });
+
+    const interval = setInterval(() => {
+      refresh_algo_details((data) => {
+        setData(data);
+        setRows(data);
+      });
+    }, 1200000);
+    return () => clearInterval(interval);
+  }, [algoIdList]);
 
   const handleAlgoDetailClickOpen = (event, scrollType, algo_data) => {
     setOpenAlgoDetail(true);
@@ -474,32 +495,153 @@ export default function Submissions() {
       .catch((err) => console.error(err));
   };
 
+  // ----------------------------------------------------------------------------------------
+  const checkApiKey = (apikey) => {
+    // api= apiKey
+    fetch(`http://localhost:50000/api/submission_key/${apikey}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Add any other headers as needed
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Submission key data:", data);
+        setAlgoIdList((prevList) => [...prevList, data.algo_id]);
+        // Handle data as needed here
+      })
+      .catch((error) => {
+        console.error("Error fetching submission key:", error);
+        // Handle error scenarios here
+      });
+  };
+
+  const handleOpenApiForm = () => {
+    setOpenApiForm(true);
+    console.log(open);
+  };
+  const handleCloseApiForm = () => {
+    setOpenApiForm(false);
+  };
+
+  const handleApiFormSubmit = (values, { setSubmitting }) => {
+    console.log("Uploading API key:", values.apiKey);
+    setSubmitting(false);
+    setOpenApiForm(false); // Close the dialog after submission
+    checkApiKey(values.apiKey);
+    // createNewApiKey()
+  };
+
+  const refresh_algo_details = (callback) => {
+    const algo_details = [];
+
+    for (const algo_id of algoIdList) {
+      fetch(`http://localhost:50000/api/algorithm/algo_detail/${algo_id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          algo_details.push(data);
+        })
+        .catch((err) => console.error(err));
+    }
+    console.log(algo_details);
+    callback(algo_details);
+  };
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
-      <Stack sx={{ maxWidth: 960 }}>
-        <PageHeader
-          current="Submissions"
-          path={[{ name: "MAPF Tracker", url: "/" }]}
-        />
-      </Stack>
+    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
+      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+        <Toolbar
+          sx={{
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          }}
+        >
+          <IconButton
+            size="medium"
+            onClick={() => {
+              setDense(!dense);
+            }}
+          >
+            {dense ? (
+              <ZoomOutMapIcon fontSize="medium" />
+            ) : (
+              <ZoomInMapIcon fontSize="medium" />
+            )}
+          </IconButton>
 
-      <Paper>
-        <Stack direction="row" sx={{ p: 2, gap: 4 }}>
+          <IconButton aria-label="Add to Library" onClick={handleOpenApiForm}>
+            <LibraryAddIcon />
+          </IconButton>
+          <Dialog open={openApiForm} onClose={handleCloseApiForm}>
+            <DialogTitle>Upload Your API Key</DialogTitle>
+            <DialogContent>
+              <Formik
+                initialValues={{ apiKey: "" }}
+                onSubmit={handleApiFormSubmit}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <Box
+                      sx={{
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <Field
+                        as={TextField}
+                        name="apiKey"
+                        label="API key"
+                        variant="standard"
+                        fullWidth
+                        required
+                      />
+                    </Box>
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="success"
+                      disabled={isSubmitting}
+                    >
+                      Done
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </DialogContent>
+          </Dialog>
+
+          <Typography
+            sx={{ flex: "1 1 100%", paddingLeft: "10px" }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Tracking Submissions
+          </Typography>
+
           <TextField
             id="outlined-basic"
             onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="filled"
-            label="Filter by algorithm name"
+            variant="outlined"
+            placeholder="Name"
+            size="small"
             value={searched}
-            sx={{ width: 420 }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <FilterListOutlined />
+                  <SearchIcon />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -510,24 +652,14 @@ export default function Submissions() {
                         cancelSearch(searchVal.target.value)
                       }
                     >
-                      <CancelOutlined />
+                      <CancelIcon />
                     </IconButton>
                   )}
                 </InputAdornment>
               ),
             }}
           />
-          <Box flex={1}></Box>
-          <Button
-            sx={{ minWidth: "max-content" }}
-            size="medium"
-            onClick={() => {
-              setDense(!dense);
-            }}
-          >
-            {dense ? "Show sparse" : "Show dense"}
-          </Button>
-        </Stack>
+        </Toolbar>
         <TableContainer sx={{ width: "100%" }}>
           <Table
             // frozen table set max-content
@@ -1014,6 +1146,6 @@ export default function Submissions() {
       {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
       {/*    label="Dense padding"*/}
       {/*/>*/}
-    </Stack>
+    </Box>
   );
 }
