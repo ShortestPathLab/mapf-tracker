@@ -1,4 +1,4 @@
-import { Chunk } from "Chunk";
+import { Chunk } from "core/Chunk";
 import { DoneException } from "exceptions/DoneException";
 
 export interface Reader {

@@ -1,26 +1,22 @@
+import { CheckParameters, CheckResult, FinalCheckParameters } from "core/Check";
 import { checkImmediateCollision } from "checks/checkImmediateCollision";
 import { Chunk } from "core/Chunk";
+import { Domain } from "core/Domain";
 import { Point } from "core/Point";
 import { Reader } from "core/Reader";
 import { Seeker } from "core/Seeker";
 import { DoneException } from "exceptions/DoneException";
 import type { Dictionary } from "lodash";
 import { some, zip } from "lodash-es";
-
-type CheckResult = {
-  errors?: string[];
-};
+import { checkEdgeCollision } from "checks/checkEdgeCollision";
 
 type ValidationParameters = {
   paths: string[];
-  domain: string;
+  domain: Domain;
   sources: Point[];
-  checks?: ((
-    prev: Point[],
-    next: Point[],
-    actions: string[],
-    domain: string
-  ) => CheckResult)[];
+  goals?: Point[];
+  checks?: ((args: CheckParameters) => CheckResult)[];
+  finalChecks?: ((args: FinalCheckParameters) => CheckResult)[];
   /**
    * @returns Stops validation if return value is true, otherwise continue validation
    */
@@ -70,15 +66,17 @@ export const createOffsetMap = (
 
 export const sumPositions = (as: Point[], bs: Point[]) =>
   zip(as, bs).map(([a, b]) => ({
-    x: a!.x + b!.x,
-    y: a!.y + b!.y,
+    x: a.x + b.x,
+    y: a.y + b.y,
   }));
 
 export function validate({
   paths,
   domain,
   sources,
-  checks = [checkImmediateCollision],
+  goals = [],
+  checks = [checkImmediateCollision, checkEdgeCollision],
+  finalChecks = [],
   onError = () => false,
 }: ValidationParameters) {
   const as = paths.map(processAgent);
@@ -88,10 +86,30 @@ export function validate({
     const actions = createActionMap(i, as);
     const next = sumPositions(prev, createOffsetMap(actions));
     for (const check of checks) {
-      const result = check(prev, next, actions, domain);
+      const result = check({
+        timestep: i,
+        prev,
+        next,
+        actions,
+        domain,
+        sources,
+        goals,
+      });
       // Stop validation if onError returns true.
       if (result.errors?.length && onError(result)) return false;
     }
+    prev = next;
     i++;
+  }
+  for (const check of finalChecks) {
+    const result = check({
+      timestep: i,
+      current: prev,
+      domain,
+      sources,
+      goals,
+    });
+    // Stop validation if onError returns true.
+    if (result.errors?.length && onError(result)) return false;
   }
 }

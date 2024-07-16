@@ -1,62 +1,30 @@
-import { test, suite, it, expect, vitest } from "vitest";
-import {
-  DoneException,
-  Reader,
-  Seeker,
-  checkImmediateCollision,
-  validate,
-} from "index";
+import { checkDomainCollision } from "checks/checkDomainCollision";
+import { checkDomainOutOfBounds } from "checks/checkDomainOutOfBounds";
+import { checkEdgeCollision } from "checks/checkEdgeCollision";
+import { checkGoalReached } from "checks/checkGoalReached";
+import { checkImmediateCollision, validate } from "index";
+import { expect, it, suite, vitest } from "vitest";
 
-test("Sanity", () => expect(1).toEqual(1));
+const T = true;
+const _ = false;
+const domain = {
+  width: 2,
+  height: 2,
+  cells: [
+    [T, _],
+    [_, _],
+  ],
+};
 
-suite("Reader", () => {
-  it("should read a chunk correctly", () => {
-    const input = "d3l";
-    const reader = new Reader(input);
-    {
-      const chunk = reader.read();
-      expect(chunk.count).toEqual(1);
-      expect(chunk.symbol).toEqual("d");
-    }
-    {
-      const chunk = reader.read();
-      expect(chunk.count).toEqual(3);
-      expect(chunk.symbol).toEqual("l");
-    }
-    {
-      expect(() => reader.read()).toThrow(DoneException);
-    }
-  });
-});
-
-suite("Seeker", () => {
-  it("should seek an element correctly", () => {
-    // dlll
-    const input = "d3l";
-    const reader = new Reader(input);
-    const seeker = new Seeker(reader);
-    // Seek forwards
-    expect(seeker.seek(0)).toEqual("d");
-    expect(seeker.seek(1)).toEqual("l");
-    expect(seeker.seek(2)).toEqual("l");
-    expect(seeker.seek(3)).toEqual("l");
-    // Seek backwards
-    expect(seeker.seek(1)).toEqual("l");
-    expect(seeker.seek(0)).toEqual("d");
-    // Seek past end
-    expect(() => seeker.seek(4)).toThrow(DoneException);
-  });
-});
-
-suite("validate", () => {
-  it("should validate a single agent without error", () => {
+suite("validate (simple)", () => {
+  it("should validate a single agent without any checks", () => {
     const input = ["d3l"];
 
     const onError = vitest.fn(() => false);
 
     validate({
       paths: input,
-      domain: "",
+      domain,
       sources: [{ x: 0, y: 0 }],
       checks: [],
       onError: onError,
@@ -64,14 +32,14 @@ suite("validate", () => {
 
     expect(onError).toBeCalledTimes(0);
   });
-  it("should always error", () => {
+  it("should error given a mock always-error check", () => {
     const input = ["d3l"];
 
     const onError = vitest.fn(() => true);
 
     validate({
       paths: input,
-      domain: "",
+      domain,
       sources: [{ x: 0, y: 0 }],
       checks: [() => ({ errors: ["sample error"] })],
       onError: onError,
@@ -79,12 +47,15 @@ suite("validate", () => {
 
     expect(onError).toBeCalledTimes(1);
   });
+});
+
+suite("validate (collisions)", () => {
   it("should detect simple collision", () => {
     const onError = vitest.fn(() => true);
 
     validate({
       paths: ["u", "r"],
-      domain: "",
+      domain,
       sources: [
         { x: 1, y: 1 },
         { x: 0, y: 0 },
@@ -92,6 +63,131 @@ suite("validate", () => {
       checks: [checkImmediateCollision],
       onError: onError,
     });
+
     expect(onError).toBeCalled();
+  });
+  it("should not error on valid paths (direct collision)", () => {
+    const onError = vitest.fn(() => true);
+
+    validate({
+      paths: ["u", "u"],
+      domain,
+      sources: [
+        { x: 1, y: 1 },
+        { x: 0, y: 0 },
+      ],
+      checks: [checkImmediateCollision],
+      onError: onError,
+    });
+
+    expect(onError).toBeCalledTimes(0);
+  });
+  it("should detect edge collision", () => {
+    const onError = vitest.fn(() => true);
+
+    validate({
+      paths: ["u", "r"],
+      domain,
+      sources: [
+        { x: 0, y: 1 },
+        { x: 0, y: 0 },
+      ],
+      checks: [checkEdgeCollision],
+      onError: onError,
+    });
+
+    expect(onError).toBeCalled();
+  });
+  it("should not error on valid paths (edge collision)", () => {
+    const onError = vitest.fn(() => true);
+
+    validate({
+      paths: ["u", "u"],
+      domain,
+      sources: [
+        { x: 0, y: 1 },
+        { x: 0, y: 0 },
+      ],
+      checks: [checkEdgeCollision],
+      onError: onError,
+    });
+
+    expect(onError).toBeCalledTimes(0);
+  });
+});
+
+suite("validate (domain)", () => {
+  it("should detect domain collision", () => {
+    const onError = vitest.fn(() => true);
+    validate({
+      paths: ["u"],
+      domain,
+      sources: [{ x: 0, y: 1 }],
+      checks: [checkDomainCollision],
+      onError: onError,
+    });
+    expect(onError).toBeCalled();
+  });
+  it("should not error on non-collision", () => {
+    const onError = vitest.fn(() => true);
+    validate({
+      paths: ["u"],
+      domain,
+      sources: [{ x: 1, y: 1 }],
+      checks: [checkDomainCollision],
+      onError: onError,
+    });
+    expect(onError).toBeCalledTimes(0);
+  });
+  it("should detect out of bounds", () => {
+    const onError = vitest.fn(() => true);
+    validate({
+      paths: ["2u"],
+      domain,
+      sources: [{ x: 0, y: 1 }],
+      checks: [checkDomainOutOfBounds],
+      onError: onError,
+    });
+    expect(onError).toBeCalled();
+  });
+  it("should not error on non-collision", () => {
+    const onError = vitest.fn(() => true);
+    validate({
+      paths: ["u"],
+      domain,
+      sources: [{ x: 1, y: 1 }],
+      checks: [checkDomainOutOfBounds],
+      onError: onError,
+    });
+    expect(onError).toBeCalledTimes(0);
+  });
+});
+
+suite("validate (goal)", () => {
+  it("should error on goal not reached", () => {
+    const onError = vitest.fn(() => true);
+    validate({
+      paths: ["2r"],
+      domain,
+      sources: [{ x: 0, y: 0 }],
+      goals: [{ x: 1, y: 1 }],
+      checks: [],
+      finalChecks: [checkGoalReached],
+      onError,
+    });
+    expect(onError).toBeCalled();
+  });
+  it("should not error on goal reached", () => {
+    const onError = vitest.fn(() => true);
+    validate({
+      paths: ["rd"],
+      domain,
+      sources: [{ x: 0, y: 0 }],
+      goals: [{ x: 1, y: 1 }],
+      checks: [],
+      finalChecks: [checkGoalReached],
+      onError,
+    });
+    expect(onError).toBeCalledTimes(0);
   });
 });
