@@ -123,7 +123,7 @@ export default function App() {
             <Navbar />
 
             <Box
-              sx={{ px: 2 }}
+              sx={{ px: 4, pb: 32 }}
               key={pathname === "/" ? "/benchmarks" : pathname}
             >
               <Fade in={true}>

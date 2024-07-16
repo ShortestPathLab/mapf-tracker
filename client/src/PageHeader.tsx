@@ -6,7 +6,7 @@ export default function PageHeader({
   path = [],
   current,
 }: {
-  path?: { name: string; url: string; state: any }[];
+  path?: { name: string; url: string; state?: any }[];
   current?: string;
 }) {
   const navigate = useNavigate();
