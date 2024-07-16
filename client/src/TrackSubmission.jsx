@@ -1,6 +1,21 @@
-import * as React from "react";
-import PropTypes from "prop-types";
+import { Add } from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import FilterListOutlined from "@mui/icons-material/FilterListOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,25 +24,13 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress from "@mui/material/LinearProgress";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import InfoIcon from "@mui/icons-material/Info";
-import DialogContent from "@mui/material/DialogContent";
-import Link from "@mui/material/Link";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import { Field, Form, Formik } from "formik";
+import PropTypes from "prop-types";
+import * as React from "react";
 import {
   Legend,
   PolarAngleAxis,
@@ -37,12 +40,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
+import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import { Formik, Form, Field } from "formik";
-import Button from "@mui/material/Button";
 
 const angle = {
   Warehouse: -40,
@@ -216,7 +215,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{ backgroundColor: "black" }}>
+    <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -224,11 +223,6 @@ function EnhancedTableHead(props) {
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              backgroundColor: "black",
-              color: "white",
-              fontWeight: "bold",
-            }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -237,18 +231,11 @@ function EnhancedTableHead(props) {
               hideSortIcon={!headCell.sortable}
               sx={{
                 "&.MuiTableSortLabel-root": {
-                  color: "white",
                   pointerEvents: headCell.sortable ? "auto" : "none",
                 },
-                "&.MuiTableSortLabel-root:hover": {
-                  color: "white",
-                },
-                "&.Mui-active": {
-                  color: "white",
-                },
-                "& .MuiTableSortLabel-icon": {
-                  color: "white !important",
-                },
+                "&.MuiTableSortLabel-root:hover": {},
+                "&.Mui-active": {},
+                "& .MuiTableSortLabel-icon": {},
               }}
             >
               {headCell.label}
@@ -294,6 +281,36 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
+// const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
+//     height: 10,
+//
+//     [`&.${linearProgressClasses.colorPrimary}`]: {
+//         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+//     },
+//     [`& .${linearProgressClasses.bar}`]: {
+//
+//         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+//     },
+// }));
+
+const createNewApiKey = () => {
+  const values = {
+    algo_id: "667d55013ecdbb93c0d02196",
+  };
+  console.log("in creating process");
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(values),
+  };
+  console.log(APIConfig.apiUrl);
+  fetch("http://localhost:50000/api/submission_key/create", requestOptions)
+    .then((response) => response.json())
+    .catch((error) => console.error("Error:", error));
+};
+
 export default function TrackSubmission() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("map_type");
@@ -301,9 +318,19 @@ export default function TrackSubmission() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [data, setData] = React.useState([]);
+
+  const [openAlgoDetail, setOpenAlgoDetail] = React.useState(false);
+  const [scrollAlgoDetail, setScrollAlgoDetail] = React.useState("paper");
+  const [domainQuery, setDomainQuery] = React.useState("#Instances Closed");
+  const [algodata, setAlgodata] = React.useState([]);
+  const [algoChartData, setAlgoChartData] = React.useState([]);
+  const [domainLoading, setDomainLoading] = React.useState(true);
+  const [openMonitorDetail, setOpenMonitorDetail] = React.useState(false);
+  const [infoDescription, setInfoDescription] = React.useState(0);
   const [rows, setRows] = React.useState([]);
   const [searched, setSearched] = React.useState("");
   const [openApiForm, setOpenApiForm] = React.useState(false);
+  const [algoIdList, setAlgoIdList] = React.useState([]);
 
   // for retriveing all the requests api insert from the user
   const [requestIdList, setRequestIdList] = React.useState([]);
@@ -338,7 +365,125 @@ export default function TrackSubmission() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  // const handleChangeDense = () => {
+  //     setDense(!dense);
+  // };
 
+  React.useEffect(() => {
+    refresh_algo_details((data) => {
+      setData(data);
+      setRows(data);
+    });
+
+    const interval = setInterval(() => {
+      refresh_algo_details((data) => {
+        setData(data);
+        setRows(data);
+      });
+    }, 1200000);
+    return () => clearInterval(interval);
+  }, [algoIdList]);
+
+  const handleAlgoDetailClickOpen = (event, scrollType, algo_data) => {
+    setOpenAlgoDetail(true);
+    setScrollAlgoDetail(scrollType);
+    setAlgodata(algo_data);
+    event.stopPropagation();
+  };
+
+  const handleAlgoDetailClose = () => {
+    setOpenAlgoDetail(false);
+    setDomainQuery("#Instances Closed");
+  };
+  React.useEffect(() => {
+    if (openAlgoDetail) {
+      setDomainLoading(true);
+      fetch(
+        APIConfig.apiUrl + "/algorithm/getClosedInfoGroup/" + algodata["id"],
+        { method: "GET" }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          data.forEach(function (element) {
+            if (element[algodata.algo_name] === undefined) {
+              element[algodata.algo_name] = 0;
+            }
+            element.name =
+              element.name.charAt(0).toUpperCase() + element.name.slice(1);
+          });
+          setAlgoChartData(data);
+          setDomainLoading(false);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [openAlgoDetail]);
+
+  const handleDomainQueryChange = (event) => {
+    setDomainQuery(event.target.value);
+    setDomainLoading(true);
+    var domain_API = "";
+    if (event.target.value === "#Instances Closed") {
+      domain_API =
+        APIConfig.apiUrl + "/algorithm/getClosedInfoGroup/" + algodata["id"];
+    } else if (event.target.value === "#Instances Solved") {
+      domain_API =
+        APIConfig.apiUrl + "/algorithm/getSolvedInfoGroup/" + algodata["id"];
+    } else if (event.target.value === "#Best Lower-bounds") {
+      domain_API =
+        APIConfig.apiUrl + "/algorithm/getLowerInfoGroup/" + algodata["id"];
+    } else {
+      domain_API =
+        APIConfig.apiUrl + "/algorithm/getSolutionInfoGroup/" + algodata["id"];
+    }
+    fetch(domain_API, { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach(function (element) {
+          if (element[algodata.algo_name] === undefined) {
+            element[algodata.algo_name] = 0;
+          }
+          element.name =
+            element.name.charAt(0).toUpperCase() + element.name.slice(1);
+        });
+        setAlgoChartData(data);
+        setDomainLoading(false);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  // ----------------------------------------------------------------------------------------
+
+  const handleOpenApiForm = () => {
+    setOpenApiForm(true);
+    console.log(open);
+  };
+  const handleCloseApiForm = () => {
+    setOpenApiForm(false);
+  };
+
+  const handleApiFormSubmit = (values, { setSubmitting }) => {
+    console.log("Uploading API key:", values.api_key);
+    setSubmitting(false);
+    setOpenApiForm(false); // Close the dialog after submission
+    checkApiKey(values.api_key);
+  };
+
+  const refresh_algo_details = (callback) => {
+    const algo_details = [];
+
+    for (const algo_id of algoIdList) {
+      fetch(`${url}/algorithm/algo_detail/${algo_id}`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          algo_details.push(data);
+        })
+        .catch((err) => console.error(err));
+    }
+    console.log(algo_details);
+    callback(algo_details);
+  };
   // ----------------------------------------------------------------------------------------
   const checkApiKey = async (api_key) => {
     try {
@@ -360,20 +505,6 @@ export default function TrackSubmission() {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
-
-  const handleOpenApiForm = () => {
-    setOpenApiForm(true);
-  };
-  const handleCloseApiForm = () => {
-    setOpenApiForm(false);
-  };
-
-  const handleApiFormSubmit = async (values, { setSubmitting }) => {
-    setSubmitting(false);
-    setOpenApiForm(false); // Close the dialog after submission
-    await checkApiKey(values.api_key);
-    // createNewApiKey()
   };
 
   const refreshRequests = async (callback) => {
@@ -414,39 +545,30 @@ export default function TrackSubmission() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Box
-      sx={{
-        minWidth: 600,
-        position: "absolute",
-        width: "96%",
-        paddingLeft: "2%",
-        top: "300px",
-        opacity: "0.95",
-      }}
-    >
-      <Paper elevation={12} sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
-        <Toolbar
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <PageHeader
+        current="Manage submissions"
+        path={[
+          { name: "MAPF Tracker", url: "/" },
+          { name: "Submit an algorithm", url: "/contributes" },
+        ]}
+      />
+      <Paper>
+        <Stack
+          direction="row"
           sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
+            gap: 2,
+            p: 2,
           }}
         >
-          <IconButton
-            size="medium"
-            onClick={() => {
-              setDense(!dense);
-            }}
+          <Button
+            variant="contained"
+            sx={{ minWidth: "max-content", px: 2, py: 1 }}
+            onClick={handleOpenApiForm}
+            startIcon={<Add />}
           >
-            {dense ? (
-              <ZoomOutMapIcon fontSize="medium" />
-            ) : (
-              <ZoomInMapIcon fontSize="medium" />
-            )}
-          </IconButton>
-
-          <IconButton aria-label="Add to Library" onClick={handleOpenApiForm}>
-            <LibraryAddIcon />
-          </IconButton>
+            Add submission (API) key
+          </Button>
           <Dialog open={openApiForm} onClose={handleCloseApiForm}>
             <DialogContent>
               <Formik
@@ -491,26 +613,16 @@ export default function TrackSubmission() {
             </DialogContent>
           </Dialog>
 
-          <Typography
-            sx={{ flex: "1 1 100%", paddingLeft: "10px" }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Tracking Submissions
-          </Typography>
-
           <TextField
             id="outlined-basic"
             onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="outlined"
-            placeholder="Name"
+            placeholder="Filter by name"
             size="small"
             value={searched}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <FilterListOutlined />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -528,8 +640,17 @@ export default function TrackSubmission() {
               ),
             }}
           />
-        </Toolbar>
-        {/* ============================= start table================================  */}
+          <Box flex={1}></Box>
+          <Button
+            sx={{ minWidth: "max-content" }}
+            size="medium"
+            onClick={() => {
+              setDense(!dense);
+            }}
+          >
+            {dense ? "Comfortable margins" : "Compact margins"}
+          </Button>
+        </Stack>
         <TableContainer sx={{ width: "100%" }}>
           <Table
             // frozen table set max-content
@@ -557,7 +678,12 @@ export default function TrackSubmission() {
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow hover tabIndex={-1} key={row.id}>
+                    <TableRow
+                      sx={{ cursor: "pointer" }}
+                      hover
+                      tabIndex={-1}
+                      key={row.id}
+                    >
                       <TableCell
                         id={labelId}
                         scope="row"
@@ -569,7 +695,11 @@ export default function TrackSubmission() {
                       <TableCell align="center">{row.requesterEmail}</TableCell>
                       <TableCell align="center">{row.algorithmName}</TableCell>
                       <TableCell align="center">
-                        <IconButton>
+                        <IconButton
+                          onClick={(event) =>
+                            handleAlgoDetailClickOpen(event, "paper", row)
+                          }
+                        >
                           <InfoIcon />
                         </IconButton>
                       </TableCell>
@@ -578,6 +708,7 @@ export default function TrackSubmission() {
                 })}
               {emptyRows > 0 && (
                 <TableRow
+                  sx={{ cursor: "pointer" }}
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
@@ -597,11 +728,415 @@ export default function TrackSubmission() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        <Dialog
+          open={openAlgoDetail}
+          onClose={handleAlgoDetailClose}
+          scroll={scrollAlgoDetail}
+          aria-labelledby="scroll-dialog-title"
+          aria-describedby="scroll-dialog-description"
+          fullWidth={true}
+          maxWidth={"md"}
+          disableScrollLock={true}
+          PaperProps={{
+            style: { mb: 2, borderRadius: 10 },
+          }}
+          // PaperProps={{ sx: { width: "100%"}}}
+        >
+          <DialogContent
+            dividers={scrollAlgoDetail === "paper"}
+            sx={{ width: 850, display: "flex" }}
+          >
+            <Table sx={{ width: 500 }}>
+              <colgroup>
+                {/*<col width="120" />*/}
+                {/*<col width="150" />*/}
+                {/*<col width="65" />*/}
+                {/*<col width="200" />*/}
+                <col width="120" />
+                <col width="150" />
+                <col width="50" />
+                <col width="150" />
+              </colgroup>
+              <TableBody>
+                <TableRow sx={{ cursor: "pointer" }}>
+                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                    Algorithm Name:
+                  </TableCell>
+                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                    {" "}
+                    {algodata.algo_name}
+                  </TableCell>
+                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                    {" "}
+                    Authors:{" "}
+                  </TableCell>
+                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                    {" "}
+                    {algodata.authors}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
+                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                    {" "}
+                    Github Link:{" "}
+                  </TableCell>
+                  <TableCell
+                    style={{ paddingRight: 0, paddingLeft: 0 }}
+                    colSpan={3}
+                  >
+                    <Link href={algodata.github} underline="hover">
+                      {algodata.github}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
+                  <TableCell
+                    style={{
+                      paddingRight: 0,
+                      paddingLeft: 0,
+                      verticalAlign: "top",
+                    }}
+                  >
+                    {" "}
+                    Paper Reference:{" "}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      paddingRight: 0,
+                      paddingLeft: 0,
+                      verticalAlign: "top",
+                    }}
+                    colSpan={3}
+                  >
+                    {" "}
+                    {algodata.papers}{" "}
+                  </TableCell>
+                </TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
+                  <TableCell
+                    style={{
+                      paddingRight: 0,
+                      paddingLeft: 0,
+                      verticalAlign: "top",
+                    }}
+                  >
+                    {" "}
+                    Comments:{" "}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      paddingRight: 0,
+                      paddingLeft: 0,
+                      verticalAlign: "top",
+                    }}
+                    colSpan={3}
+                  >
+                    {" "}
+                    {algodata.comments}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            {/*<ResponsiveContainer width={500} height={380}>*/}
+            <div style={{ width: 30 }} />
+            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
+            <Box sx={{ width: 350, height: 464 }}>
+              <Toolbar
+                sx={{
+                  pl: { sm: 2 },
+                  pr: { xs: 1, sm: 1 },
+                }}
+              >
+                <Typography
+                  sx={{ flex: "1 1 100%" }}
+                  variant="h8"
+                  id="tableTitle"
+                  component="div"
+                >
+                  Summary
+                  <IconButton
+                    onClick={() => {
+                      handleOpenInfo("domainCompare-" + domainQuery);
+                    }}
+                  >
+                    <InfoIcon />
+                  </IconButton>
+                </Typography>
+                <FormControl
+                  sx={{ m: 1, minWidth: 120, width: 300 }}
+                  size="small"
+                >
+                  <Select
+                    displayEmpty={true}
+                    value={domainQuery}
+                    onChange={handleDomainQueryChange}
+                    inputProps={{ "aria-label": "Without label" }}
+                  >
+                    <MenuItem value={"#Instances Closed"}>
+                      Instances Closed
+                    </MenuItem>
+                    <MenuItem value={"#Instances Solved"}>
+                      Instances Solved
+                    </MenuItem>
+                    <MenuItem value={"#Best Lower-bounds"}>
+                      Best Lower Bound
+                    </MenuItem>
+                    <MenuItem value={"#Best Solutions"}>Best Solution</MenuItem>
+                  </Select>
+                </FormControl>
+              </Toolbar>
+              {domainLoading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  width={350}
+                  height={400}
+                >
+                  <CircularProgress size={80} />
+                </Box>
+              ) : (
+                <RadarChart
+                  width={350}
+                  height={400}
+                  cx="50%"
+                  cy="60%"
+                  outerRadius="80%"
+                  data={algoChartData}
+                >
+                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+                  <Legend
+                    verticalAlign="top"
+                    align="center"
+                    wrapperStyle={{
+                      fontFamily: "Roboto Slab",
+                    }}
+                  />
+                  <PolarGrid />
+                  <PolarAngleAxis
+                    dataKey="name"
+                    tick={<CustomizedLabel />}
+                    style={{
+                      fontFamily: "Roboto Slab",
+                    }}
+                  />
+                  <Tooltip
+                    wrapperStyle={{ fontFamily: "Roboto Slab" }}
+                    formatter={(tick) => {
+                      var value = tick * 100;
+                      return `${value.toFixed(2)}%`;
+                    }}
+                  />
+                  <PolarRadiusAxis
+                    angle={38.5}
+                    domain={[0, algoChartData.length > 0 ? "dataMax" : 1]}
+                    tickFormatter={(tick) => {
+                      var value = tick * 100;
+                      return `${value.toFixed(0)}%`;
+                    }}
+                  />
+                  <Radar
+                    key={"State of The Art"}
+                    dataKey={"State of The Art"}
+                    fillOpacity={0.6}
+                    stroke={`#87ceeb`}
+                    fill={`#87ceeb`}
+                  />
+                  <Radar
+                    key={algodata.algo_name}
+                    dataKey={algodata.algo_name}
+                    fillOpacity={0.6}
+                    stroke={`#ff4500`}
+                    fill={`#ff4500`}
+                  />
+                </RadarChart>
+              )}
+            </Box>
+            {/*</Paper>*/}
+            {/*</ResponsiveContainer>*/}
+          </DialogContent>
+          {/*<DialogActions>*/}
+          {/*    <Button onClick={handleAlgoDetailClose}>Cancel</Button>*/}
+          {/*</DialogActions>*/}
+        </Dialog>
+        <Dialog
+          open={openMonitorDetail}
+          onClose={() => setOpenMonitorDetail(false)}
+          fullWidth={true}
+          aria-labelledby="scroll-dialog-title"
+          aria-describedby="scroll-dialog-description"
+          maxWidth={"sm"}
+          disableScrollLock={true}
+          PaperProps={{
+            style: { mb: 2, borderRadius: 10 },
+          }}
+          // PaperProps={{ sx: { width: "100%"}}}
+        >
+          <DialogContent sx={{ width: 550, display: "flex" }}>
+            <Table sx={{ width: 550 }}>
+              <colgroup>
+                {/*<col width="120" />*/}
+                {/*<col width="150" />*/}
+                {/*<col width="65" />*/}
+                {/*<col width="200" />*/}
+                <col width="150" />
+                <col width="150" />
+                <col width="150" />
+                <col width="50" />
+              </colgroup>
+              <TableBody>
+                <TableRow sx={{ cursor: "pointer" }}>
+                  <TableCell
+                    style={{
+                      paddingRight: 0,
+                      paddingLeft: 0,
+                      verticalAlign: "top",
+                    }}
+                  >
+                    {" "}
+                    Description:{" "}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      paddingRight: 0,
+                      paddingLeft: 0,
+                      verticalAlign: "top",
+                    }}
+                    colSpan={3}
+                  >
+                    {infoDescription.description}
+                  </TableCell>
+                </TableRow>
+                {infoDescription.c_axis != null ? (
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {" "}
+                      Category-axis:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                      colSpan={3}
+                    >
+                      {infoDescription.c_axis}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {infoDescription.v_axis != null ? (
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {" "}
+                      Value-axis:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                      colSpan={3}
+                    >
+                      {infoDescription.v_axis}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+
+                {infoDescription.x_axis != null ? (
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {" "}
+                      X-axis:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                      colSpan={3}
+                    >
+                      {infoDescription.x_axis}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {infoDescription.y_axis != null ? (
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {" "}
+                      Y-axis:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                      colSpan={3}
+                    >
+                      {infoDescription.y_axis}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {infoDescription.comment != null ? (
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {" "}
+                      Comments:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                      colSpan={3}
+                    >
+                      {infoDescription.comment}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+          </DialogContent>
+        </Dialog>
       </Paper>
       {/*<FormControlLabel*/}
       {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
       {/*    label="Dense padding"*/}
       {/*/>*/}
-    </Box>
+    </Stack>
   );
 }

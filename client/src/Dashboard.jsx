@@ -1,6 +1,25 @@
-import * as React from "react";
-import PropTypes from "prop-types";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import LibraryAddIcon from "@mui/icons-material/LibraryAddOutlined";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
+import SendIcon from "@mui/icons-material/Send";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import { DialogTitle } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,25 +28,15 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress from "@mui/material/LinearProgress";
+import { Field, Form, Formik } from "formik";
+import { useConfirm } from "material-ui-confirm";
+import PropTypes from "prop-types";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import InfoIcon from "@mui/icons-material/Info";
-import DialogContent from "@mui/material/DialogContent";
-import Link from "@mui/material/Link";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import {
   Legend,
   PolarAngleAxis,
@@ -37,19 +46,7 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import Dialog from "@mui/material/Dialog";
-import EditIcon from "@mui/icons-material/Edit";
-import Button from "@mui/material/Button";
-import { useConfirm } from "material-ui-confirm";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { APIConfig } from "./config";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { DialogActions, DialogTitle } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import SendIcon from '@mui/icons-material/Send';
-import KeyIcon from '@mui/icons-material/Key';
 
 const infoDescriptionText = {
   "domainCompare-#Instances Closed": {
@@ -246,7 +243,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
+    <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -254,9 +251,7 @@ function EnhancedTableHead(props) {
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              fontWeight: "bold",
-            }}
+            sx={{}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -384,12 +379,12 @@ LinearProgressWithLabel.propTypes = {
 //
 // const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
 //     height: 10,
-//     borderRadius: 5,
+//
 //     [`&.${linearProgressClasses.colorPrimary}`]: {
 //         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
 //     },
 //     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
+//
 //         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
 //     },
 // }));
@@ -432,69 +427,70 @@ export default function Dashboard() {
     setOpenRequestDetail(false);
   };
 
-    const handleRequestDetailUpdated = async (values, { setSubmitting }) => {
-        try {
-            const response = await fetch(`${APIConfig.apiUrl}/request/update/${values.id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values)
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                console.log('Request updated successfully:', data);
-            } else {
-                console.error('Error updating request:', data);
-            }
-        } catch (error) {
-            console.error('Error:', error);
+  const handleRequestDetailUpdated = async (values, { setSubmitting }) => {
+    try {
+      const response = await fetch(
+        `${APIConfig.apiUrl}/request/update/${values.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
         }
-        setSubmitting(false);
-        handleCloseRequestDetail();
-    }
-    // for open send results -------------=================================
-    const [submissionKey, setSubmissionKey] = React.useState(); 
-    const [openSendResults, setOpenSendResults] = React.useState(false);
-    const handleOpenSendResults = (event, data) => {
-        setOpenSendResults(true)
-        setRequestData(data)
-        // check api keys exists
-        if (data.reviewStatus.status === "Approved"){
-            findSubmissionKey(data.id)
+      );
 
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Request updated successfully:", data);
+      } else {
+        console.error("Error updating request:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    setSubmitting(false);
+    handleCloseRequestDetail();
+  };
+  // for open send results -------------=================================
+  const [submissionKey, setSubmissionKey] = React.useState();
+  const [openSendResults, setOpenSendResults] = React.useState(false);
+  const handleOpenSendResults = (event, data) => {
+    setOpenSendResults(true);
+    setRequestData(data);
+    // check api keys exists
+    if (data.reviewStatus.status === "Approved") {
+      findSubmissionKey(data.id);
+    }
+    event.stopPropagation();
+  };
+  const handleCloseSendResults = () => {
+    setOpenSendResults(false);
+  };
+
+  const findSubmissionKey = async (req_id) => {
+    try {
+      const response = await fetch(
+        `${APIConfig.apiUrl}/submission_key/find/${req_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-        event.stopPropagation()
+      );
+      const data = await response.json();
+      if (response.ok) {
+        console.log("API keys found successfully:", data);
+        console.log(data[0]);
+        setSubmissionKey(data[0]);
+      } else {
+        console.error("Error updating request:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-    const handleCloseSendResults = () => {
-        setOpenSendResults(false)
-    }
-    
-    const findSubmissionKey = async (req_id)=>{
-        try {
-            const response = await fetch(`${APIConfig.apiUrl}/submission_key/find/${req_id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            const data = await response.json();
-            if (response.ok) {
-                console.log('API keys found successfully:', data);
-                console.log(data[0])
-                setSubmissionKey(data[0]);
-
-            } else {
-                console.error('Error updating request:', data);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-
-
+  };
 
   //=================================================================
   const handleOpenInfo = (key) => {
@@ -550,15 +546,14 @@ export default function Dashboard() {
       setRows(data);
     });
 
-        const interval = setInterval(() => {
-            refreshRequests((data) => {
-                setData(data);
-                setRows(data);
-            })
-        }, 12000);
-        return () => clearInterval(interval);
-    }, [data]);
-
+    const interval = setInterval(() => {
+      refreshRequests((data) => {
+        setData(data);
+        setRows(data);
+      });
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [data]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -792,7 +787,7 @@ export default function Dashboard() {
         opacity: "0.95",
       }}
     >
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -883,318 +878,449 @@ export default function Dashboard() {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
              rows.slice().sort(getComparator(order, orderBy)) */}
-                            {stableSort(rows, getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-                                    return (
-                                        <TableRow
-                                            hover
-                                            tabIndex={-1}
-                                            key={row.id}
-                                            onClick={(event) => navigateToMaps(event, row.id, row.algo_name)}
-                                        >
-                                            <TableCell
-                                                id={labelId}
-                                                scope="row"
-                                                padding="normal"
-                                                align="center"
-                                            >
-                                                {row.requesterName}
-                                            </TableCell>
-                                            <TableCell align="center">{row.requesterEmail}</TableCell>
-                                            <TableCell align="center">{row.algorithmName}</TableCell>
-                                            <TableCell align="center">
-                                                <Box
-                                                    sx={{
-                                                        display: 'inline-block',
-                                                        padding: '4px 8px',
-                                                        borderRadius: '4px',
-                                                        color: 'white',
-                                                        backgroundColor: row.reviewStatus.status === "Approved" ? 'green' : row.reviewStatus.status === "Rejected" ? 'red' : 'grey'
-                                                    }}
-                                                >
-                                                    {row.reviewStatus.status === "Approved" ? "Approved" : row.reviewStatus.status === "Rejected" ? "Rejected" : "Not Reviewed"}
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <IconButton
-                                                    onClick={(event) => handleOpenRequestDetail(event, row)}>
-                                                    <InfoIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <IconButton
-                                                    onClick={(event) => handleOpenSendResults(event, row)}>
-                                                    <SendIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow
-                                    style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
-                                    }}
-                                >
-                                    <TableCell colSpan={9} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 50]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-                {/* -------------------for openning request details-------------------- */}
-                <Dialog
-                    open={openRequestDetail}
-                    onClose={handleCloseRequestDetail}
-                    scroll='paper'
-                    aria-labelledby="form-dialog-title"
-                    fullWidth={true}
-                    maxWidth={'md'}
-                >
-                    <DialogTitle id="form-dialog-title">Request Details</DialogTitle>
-                    <DialogContent sx={{ width: 850, display: 'flex' }}>
-                        <Formik
-                            initialValues={requestData}
-                            onSubmit={handleRequestDetailUpdated}
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const labelId = `enhanced-table-checkbox-${index}`;
+                  return (
+                    <TableRow
+                      hover
+                      tabIndex={-1}
+                      key={row.id}
+                      onClick={(event) =>
+                        navigateToMaps(event, row.id, row.algo_name)
+                      }
+                    >
+                      <TableCell
+                        id={labelId}
+                        scope="row"
+                        padding="normal"
+                        align="center"
+                      >
+                        {row.requesterName}
+                      </TableCell>
+                      <TableCell align="center">{row.requesterEmail}</TableCell>
+                      <TableCell align="center">{row.algorithmName}</TableCell>
+                      <TableCell align="center">
+                        <Box
+                          sx={{
+                            display: "inline-block",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            color: "white",
+                            backgroundColor:
+                              row.reviewStatus.status === "Approved"
+                                ? "green"
+                                : row.reviewStatus.status === "Rejected"
+                                ? "red"
+                                : "grey",
+                          }}
                         >
-                            {({ isSubmitting }) => (
-                                <Form style={{ width: '100%', marginTop: 10 }}>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <Field
-                                            as={TextField}
-                                            name="requesterName"
-                                            label="Requester Name"
-                                            variant="standard"
-                                            fullWidth
-                                            disabled={true}
-                                        />
-                                        <Field
-                                            as={TextField}
-                                            name="requesterEmail"
-                                            label="Requester Email"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <Field
-                                            as={TextField}
-                                            name="requesterAffilation"
-                                            label="Affilation"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                        <Field
-                                            as={TextField}
-                                            name="authorName"
-                                            label="Author's Name"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <Field
-                                            as={TextField}
-                                            name="justification"
-                                            label="Justification"
-                                            variant="outlined" fullWidth
-                                            multiline
-                                            disabled={true}
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <Field
-                                            as={TextField}
-                                            name="algorithmName"
-                                            label="Algorithm Name"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                        <Field
-                                            as={TextField}
-                                            name="paperReference"
-                                            label="Paper References"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <Field
-                                            as={TextField}
-                                            name="comments"
-                                            label="Comments"
-                                            variant="outlined" fullWidth
-                                            multiline
-                                            disabled={true}
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <Field
-                                            as={TextField}
-                                            name="googleScholar"
-                                            type="url"
-                                            label="Google Scholar"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                        <Field
-                                            as={TextField}
-                                            name="dblp"
-                                            label="DBLP"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                        <Field
-                                            as={TextField}
-                                            name="githubLink"
-                                            type="url"
-                                            label="Github Link"
-                                            fullWidth
-                                            variant="standard"
-                                            disabled={true}
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                                        <FormControl fullWidth variant="standard">
-                                            <InputLabel id="status-label">Approval Status</InputLabel>
-                                            <Field
-                                                as={Select}
-                                                name="reviewStatus.status"
-                                                labelId="status-label"
-                                            >
-                                                <MenuItem value="Not Reviewed">Not Reviewed</MenuItem>
-                                                <MenuItem value="Approved">Approved</MenuItem>
-                                                <MenuItem value="Rejected">Rejected</MenuItem>
-                                            </Field>
-                                        </FormControl>
-                                        <Field
-                                            as={TextField}
-                                            name="reviewStatus.comments"
-                                            label="Comments"
-                                            variant="outlined"
-                                            fullWidth
-                                            multiline
-                                        />
-                                    </Box>
-                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                        <Button type="submit" color="primary" disabled={isSubmitting}>
-                                            Save
-                                        </Button>
-                                    </Box>
-
-
-                                </Form>
-                            )}
-                        </Formik>
-                    </DialogContent>
-                </Dialog>
-
-                {/* -------------------for openning send results-------------------- */}
-                <Dialog
-                    open={openSendResults}
-                    onClose={handleCloseSendResults}
-                    scroll='paper'
-                    aria-labelledby="admin-dialog-title"
-                    fullWidth={true}
-                    maxWidth={'md'}
+                          {row.reviewStatus.status === "Approved"
+                            ? "Approved"
+                            : row.reviewStatus.status === "Rejected"
+                            ? "Rejected"
+                            : "Not Reviewed"}
+                        </Box>
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={(event) =>
+                            handleOpenRequestDetail(event, row)
+                          }
+                        >
+                          <InfoIcon />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={(event) => handleOpenSendResults(event, row)}
+                        >
+                          <SendIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * emptyRows,
+                  }}
                 >
-                    <DialogTitle id="admin-dialog-title">Send Results</DialogTitle>
-                    <DialogContent sx={{ width: 850, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                        {requestData ? (
-                            <>
-                                <Box sx={{ display: 'flex', gap: 2 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Email: </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            whiteSpace: 'pre-wrap', // Allow wrapping at whitespace
-                                        }}
-                                    >
-                                        {requestData.requesterEmail}
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', gap: 2 }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} >Status:</Typography>
-                                    <Box
-                                        sx={{
-                                            display: 'inline-block',
-                                            padding: '4px 8px',
-                                            borderRadius: '4px',
-                                            color: 'white',
-                                            backgroundColor: requestData.reviewStatus.status === "Approved" ? 'green' : requestData.reviewStatus.status === "Rejected" ? 'red' : 'grey'
-                                        }}
-                                    >
-                                        {requestData.reviewStatus.status === "Approved" ? "Approved" : requestData.reviewStatus.status === "Rejected" ? "Rejected" : "Not Reviewed"}
-                                    </Box>
-                                </Box>
-                                <Box sx={{ display: 'flex', gap: 2 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>Comments:</Typography>
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            width: '500px', // Set a fixed width
-                                            whiteSpace: 'pre-wrap', // Allow wrapping at whitespace
-                                            overflowWrap: 'break-word' // Break long words if necessary
-                                        }}
-                                    >
-                                        {requestData.reviewStatus.comments}
-                                    </Typography>
-                                </Box>
-                                {requestData.reviewStatus.status === "Approved" && submissionKey && (
+                  <TableCell colSpan={9} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        {/* -------------------for openning request details-------------------- */}
+        <Dialog
+          open={openRequestDetail}
+          onClose={handleCloseRequestDetail}
+          scroll="paper"
+          aria-labelledby="form-dialog-title"
+          fullWidth={true}
+          maxWidth={"md"}
+        >
+          <DialogTitle id="form-dialog-title">Request Details</DialogTitle>
+          <DialogContent sx={{ width: 850, display: "flex" }}>
+            <Formik
+              initialValues={requestData}
+              onSubmit={handleRequestDetailUpdated}
+            >
+              {({ isSubmitting }) => (
+                <Form style={{ width: "100%", marginTop: 10 }}>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <Field
+                      as={TextField}
+                      name="requesterName"
+                      label="Requester Name"
+                      variant="standard"
+                      fullWidth
+                      disabled={true}
+                    />
+                    <Field
+                      as={TextField}
+                      name="requesterEmail"
+                      label="Requester Email"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <Field
+                      as={TextField}
+                      name="requesterAffilation"
+                      label="Affilation"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                    <Field
+                      as={TextField}
+                      name="authorName"
+                      label="Author's Name"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <Field
+                      as={TextField}
+                      name="justification"
+                      label="Justification"
+                      variant="outlined"
+                      fullWidth
+                      multiline
+                      disabled={true}
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <Field
+                      as={TextField}
+                      name="algorithmName"
+                      label="Algorithm Name"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                    <Field
+                      as={TextField}
+                      name="paperReference"
+                      label="Paper References"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <Field
+                      as={TextField}
+                      name="comments"
+                      label="Comments"
+                      variant="outlined"
+                      fullWidth
+                      multiline
+                      disabled={true}
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <Field
+                      as={TextField}
+                      name="googleScholar"
+                      type="url"
+                      label="Google Scholar"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                    <Field
+                      as={TextField}
+                      name="dblp"
+                      label="DBLP"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                    <Field
+                      as={TextField}
+                      name="githubLink"
+                      type="url"
+                      label="Github Link"
+                      fullWidth
+                      variant="standard"
+                      disabled={true}
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
+                    <FormControl fullWidth variant="standard">
+                      <InputLabel id="status-label">Approval Status</InputLabel>
+                      <Field
+                        as={Select}
+                        name="reviewStatus.status"
+                        labelId="status-label"
+                      >
+                        <MenuItem value="Not Reviewed">Not Reviewed</MenuItem>
+                        <MenuItem value="Approved">Approved</MenuItem>
+                        <MenuItem value="Rejected">Rejected</MenuItem>
+                      </Field>
+                    </FormControl>
+                    <Field
+                      as={TextField}
+                      name="reviewStatus.comments"
+                      label="Comments"
+                      variant="outlined"
+                      fullWidth
+                      multiline
+                    />
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      disabled={isSubmitting}
+                    >
+                      Save
+                    </Button>
+                  </Box>
+                </Form>
+              )}
+            </Formik>
+          </DialogContent>
+        </Dialog>
 
-                                <TableContainer component={Paper} sx={{ marginTop: 2 ,  boxShadow: 3 }}>
-                                <Table>
-                                  <TableHead>
-                                    <TableRow >
-                                      <TableCell sx={{ fontWeight: 'bold' }}>API Key</TableCell>
-                                      <TableCell sx={{ fontWeight: 'bold' }}>Creation Date</TableCell>
-                                      <TableCell sx={{ fontWeight: 'bold' }}>Expiration Date</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                      <TableRow key={submissionKey}>
-                                        <TableCell>{submissionKey.api_key}</TableCell>
-                                        <TableCell>{new Date(submissionKey.creationDate).toLocaleString()}</TableCell>
-                                        <TableCell>{new Date(submissionKey.expirationDate).toLocaleString()}</TableCell>
-                                      </TableRow>
-                                  </TableBody>
-                                </Table>
-                              </TableContainer>
+        {/* -------------------for openning send results-------------------- */}
+        <Dialog
+          open={openSendResults}
+          onClose={handleCloseSendResults}
+          scroll="paper"
+          aria-labelledby="admin-dialog-title"
+          fullWidth={true}
+          maxWidth={"md"}
+        >
+          <DialogTitle id="admin-dialog-title">Send Results</DialogTitle>
+          <DialogContent
+            sx={{
+              width: 850,
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+            }}
+          >
+            {requestData ? (
+              <>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                    Email:{" "}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      whiteSpace: "pre-wrap", // Allow wrapping at whitespace
+                    }}
+                  >
+                    {requestData.requesterEmail}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                    Status:
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "inline-block",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      color: "white",
+                      backgroundColor:
+                        requestData.reviewStatus.status === "Approved"
+                          ? "green"
+                          : requestData.reviewStatus.status === "Rejected"
+                          ? "red"
+                          : "grey",
+                    }}
+                  >
+                    {requestData.reviewStatus.status === "Approved"
+                      ? "Approved"
+                      : requestData.reviewStatus.status === "Rejected"
+                      ? "Rejected"
+                      : "Not Reviewed"}
+                  </Box>
+                </Box>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                    Comments:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      width: "500px", // Set a fixed width
+                      whiteSpace: "pre-wrap", // Allow wrapping at whitespace
+                      overflowWrap: "break-word", // Break long words if necessary
+                    }}
+                  >
+                    {requestData.reviewStatus.comments}
+                  </Typography>
+                </Box>
+                {requestData.reviewStatus.status === "Approved" &&
+                  submissionKey && (
+                    <TableContainer
+                      component={Paper}
+                      sx={{ marginTop: 2, boxShadow: 3 }}
+                    >
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell sx={{ fontWeight: "bold" }}>
+                              API Key
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>
+                              Creation Date
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: "bold" }}>
+                              Expiration Date
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow key={submissionKey}>
+                            <TableCell>{submissionKey.api_key}</TableCell>
+                            <TableCell>
+                              {new Date(
+                                submissionKey.creationDate
+                              ).toLocaleString()}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(
+                                submissionKey.expirationDate
+                              ).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
+                <Box
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 100,
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    style={{ width: "200px" }}
+                    endIcon={<SendIcon />}
+                  >
+                    Send
+                  </Button>
+                </Box>
+              </>
+            ) : (
+              <Typography variant="body1">No data available.</Typography>
+            )}
+          </DialogContent>
+        </Dialog>
 
+        {/* -------------------for openning send results-------------------- */}
+        <Dialog
+          open={openSendResults}
+          onClose={handleCloseSendResults}
+          scroll="paper"
+          aria-labelledby="admin-dialog-title"
+          fullWidth={true}
+          maxWidth={"md"}
+        >
+          <DialogTitle id="admin-dialog-title">Send Results</DialogTitle>
+          <DialogContent
+            sx={{
+              width: 850,
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+            }}
+          >
+            {requestData ? (
+              <>
+                <Box sx={{ display: "flex", gap: 4 }}>
+                  <Typography variant="subtitle1" sx={{}}>
+                    Status:
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "inline-block",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
 
-                                    )}
-                                <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' , gap: 100}}>
-                                    <Button variant="contained" style={{ width: '200px' }} endIcon={<SendIcon />}>
-                                        Send
-                                    </Button>
-                                </Box>
-                            </>
-                        ) : (
-                            <Typography variant="body1">No data available.</Typography>
-                        )}
-                    </DialogContent>
-                </Dialog>
-
-
-
+                      backgroundColor:
+                        requestData.reviewStatus.status === "Approved"
+                          ? "green"
+                          : requestData.reviewStatus.status === "Rejected"
+                          ? "red"
+                          : "grey",
+                    }}
+                  >
+                    {requestData.reviewStatus.status === "Approved"
+                      ? "Approved"
+                      : requestData.reviewStatus.status === "Rejected"
+                      ? "Rejected"
+                      : "Not Reviewed"}
+                  </Box>
+                </Box>
+                <Box sx={{ display: "flex", gap: 4 }}>
+                  <Typography variant="subtitle2" sx={{}}>
+                    Comments:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      width: "500px", // Set a fixed width
+                      whiteSpace: "pre-wrap", // Allow wrapping at whitespace
+                      overflowWrap: "break-word", // Break long words if necessary
+                    }}
+                  >
+                    {requestData.reviewStatus.comments}
+                  </Typography>
+                </Box>
+              </>
+            ) : (
+              <Typography variant="body1">No data available.</Typography>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* -------------------for openning alg details-------------------- */}
 
@@ -1309,7 +1435,7 @@ export default function Dashboard() {
             </Table>
             {/*<ResponsiveContainer width={500} height={380}>*/}
             <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, borderRadius: 5}}>*/}
+            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
             <Box sx={{ width: 350, height: 464 }}>
               <Toolbar
                 sx={{

@@ -1,7 +1,22 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import { styled } from "@mui/material/styles";
+import AddCircleIcon from "@mui/icons-material/AddCircleOutlined";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import CloseIcon from "@mui/icons-material/CloseOutlined";
+import HelpIcon from "@mui/icons-material/HelpOutlined";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,31 +25,16 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
+import { styled } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { useLocation } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import CloseIcon from "@mui/icons-material/Close";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
 import { DropzoneDialog } from "mui-file-dropzone";
-import HelpIcon from "@mui/icons-material/Help";
 import Papa from "papaparse";
+import PropTypes from "prop-types";
+import * as React from "react";
+import { useLocation } from "react-router-dom";
 import { APIConfig } from "./config";
 
 function descendingComparator(a, b, orderBy) {
@@ -187,7 +187,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
+    <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -195,9 +195,7 @@ function EnhancedTableHead(props) {
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              fontWeight: "bold",
-            }}
+            sx={{}}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -280,13 +278,12 @@ LinearProgressWithLabel.propTypes = {
 
 const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
   height: 20,
-  borderRadius: 5,
+
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor:
       theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
   },
   [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
     backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
   },
 }));
@@ -886,7 +883,7 @@ export default function UserMapPage() {
 
   return (
     <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -970,98 +967,81 @@ export default function UserMapPage() {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-                            {stableSort(rows, getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-                                    return (
-                                        <TableRow
-                                            hover
-                                            tabIndex={-1}
-                                            key={row.map_name}
-                                        >
-                                            <TableCell
-                                                id={labelId}
-                                                scope="row"
-                                                padding="normal"
-                                                align = "left"
-                                            >
-                                                {row.map_name}
-                                            </TableCell>
-                                            <TableCell align="center" >
-                                                {/* <img
-                                                    // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
-                                                    src={`${process.env.PUBLIC_URL}/mapf-svg/`+ row.map_name+`.svg`}
-                                                    alt="Canvas Logo"
-                                                    width = '100%'
-                                                /> */}
-                                                {/*<img src={'/public/logo192.png'} alt="logo" />*/}
-                                            </TableCell>
-                                            <TableCell align="left"  >{row.map_size}</TableCell>
-                                            <TableCell align="left" >{row.map_type}</TableCell>
-                                            <TableCell align="left" >{row.scens}</TableCell>
-                                            <TableCell align="left" >{row.instances}</TableCell>
-                                            <TableCell align="left" >
-                                                {row.best_lower}
-                                            </TableCell>
-                                            <TableCell align="left" >
-                                                {row.best_solution}
-                                            </TableCell>
-                                            <TableCell align="left" >
-                                                {row.closed}
-                                            </TableCell>
-                                            <TableCell align="left" >
-                                                {row.solved}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <IconButton onClick= {()=>{
-                                                    setOpenUpload(true)
-                                                    setSelectedRow(row)
-                                                }}
-                                                >
-                                                    <AddCircleIcon/>
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow
-                                    style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
-                                    }}
-                                >
-                                    <TableCell colSpan={9} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 50]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Paper>
-            <Dialog
-                open={openExplanation}
-                onClose={ ()=>{setOpenExplanation(false)}}
-                scroll={scrollDetail}
-                aria-labelledby="scroll-dialog-title"
-                aria-describedby="scroll-dialog-description"
-                fullWidth={true}
-                maxWidth={'md'}
-                disableScrollLock={true}
-                PaperProps={{
-                    style: {mb: 2, borderRadius: 10}
-                }}
-                // PaperProps={{ sx: { width: "100%"}}}
-            >
-                <DialogTitle>Submission File Format</DialogTitle>
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const labelId = `enhanced-table-checkbox-${index}`;
+                  return (
+                    <TableRow hover tabIndex={-1} key={row.map_name}>
+                      <TableCell
+                        id={labelId}
+                        scope="row"
+                        padding="normal"
+                        align="left"
+                      >
+                        {row.map_name}
+                      </TableCell>
+                      <TableCell align="center"></TableCell>
+                      <TableCell align="left">{row.map_size}</TableCell>
+                      <TableCell align="left">{row.map_type}</TableCell>
+                      <TableCell align="left">{row.scens}</TableCell>
+                      <TableCell align="left">{row.instances}</TableCell>
+                      <TableCell align="left">{row.best_lower}</TableCell>
+                      <TableCell align="left">{row.best_solution}</TableCell>
+                      <TableCell align="left">{row.closed}</TableCell>
+                      <TableCell align="left">{row.solved}</TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          onClick={() => {
+                            setOpenUpload(true);
+                            setSelectedRow(row);
+                          }}
+                        >
+                          <AddCircleIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={9} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+      <Dialog
+        open={openExplanation}
+        onClose={() => {
+          setOpenExplanation(false);
+        }}
+        scroll={scrollDetail}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+        fullWidth={true}
+        maxWidth={"md"}
+        disableScrollLock={true}
+        PaperProps={{
+          style: { mb: 2, borderRadius: 10 },
+        }}
+        // PaperProps={{ sx: { width: "100%"}}}
+      >
+        <DialogTitle>Submission File Format</DialogTitle>
 
         <DialogContent dividers>
           <Typography

@@ -1,0 +1,19 @@
+{
+  "name": "validator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "linked-list": "^3.1.0",
+    "lodash-es": "^4.17.21",
+    "vite-node": "^2.0.3",
+    "vite-test": "^0.4.0",
+    "vitest": "^2.0.3"
+  }
+}
