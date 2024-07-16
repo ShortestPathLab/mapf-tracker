@@ -15,8 +15,6 @@ import Slider from "@mui/material/Slider";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import { APIConfig } from "./config";
-import { useTheme } from "@mui/material";
-import React from "react";
 
 const GRIDLINEWIDTH = 0.05;
 
@@ -40,6 +38,11 @@ function parseMap(map) {
   );
 }
 
+/**
+ * expand RLE-encoded records before processing them
+ * @param {string} rle newline-delimited, RLE encoded
+ * @returns decoded string
+ */
 function decodeRLE(rle) {
   return rle.replace(/(\d+)(\w)/g, (_, count, move) =>
     move.repeat(parseInt(count))

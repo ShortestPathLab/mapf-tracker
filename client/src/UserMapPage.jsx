@@ -981,7 +981,15 @@ export default function UserMapPage() {
                       >
                         {row.map_name}
                       </TableCell>
-                      <TableCell align="center"></TableCell>
+                      <TableCell align="center">
+                        <img
+                          // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
+                          src={`/mapf-svg/${row.map_name}.svg`}
+                          alt="Canvas Logo"
+                          width="100%"
+                        />
+                        {/*<img src={'/public/logo192.png'} alt="logo" />*/}
+                      </TableCell>
                       <TableCell align="left">{row.map_size}</TableCell>
                       <TableCell align="left">{row.map_type}</TableCell>
                       <TableCell align="left">{row.scens}</TableCell>
