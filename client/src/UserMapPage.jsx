@@ -988,9 +988,7 @@ export default function UserMapPage() {
                         <img
                           // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
                           src={
-                            `${process.env.PUBLIC_URL}/mapf-svg/` +
-                            row.map_name +
-                            `.svg`
+                            `/mapf-svg/${row.map_name}.svg`
                           }
                           alt="Canvas Logo"
                           width="100%"

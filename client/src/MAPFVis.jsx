@@ -61,11 +61,11 @@ function decodeRLE(rle) {
  * @param {string} solutionString newline-delimited solution path for a particular instance
  */
 function parseScen(scen, numAgents, solutionString) {
-    
-    // TODO: change from math origin to pixel origin
+
+    // utilise pixel origin
     const moves = {
-        'u': { x: 0, y: 1 },
-        'd': { x: 0, y: -1 },
+        'u': { x: 0, y: -1 },
+        'd': { x: 0, y: 1 },
         'l': { x: -1, y: 0 },
         'r': { x: 1, y: 0 }
     };
@@ -330,10 +330,10 @@ const Visualization = () => {
                     </div>
                 </div>
             ) : (null)}
-        <div  style={{ backgroundColor: 'grey', width : "fit-content", height : "100%"
+        <div  style={{ width : "100%", height : "100%"
         }}>
 
-            <div style={{ display: "grid", minHeight: "calc(100vh - 100px)",minWidth: "calc(100vw - 100px)", paddingTop: "70px",paddingBottom: "70px",paddingRight: "70px",paddingLeft: "70px"}}>
+            <div style={{ display: "grid", margin: "0 auto"}}>
                 <canvas ref={invisiblecanvasRef} width={0} height= {0}
                         style={{zIndex: 0,
                             gridArea: "2 / 2 / 2 / 2"
@@ -380,6 +380,7 @@ const Visualization = () => {
                                 borderRadius: "5px"
                             }}}
                     >
+                        <MenuItem value={5}>12x</MenuItem>
                         <MenuItem value={15}>4x</MenuItem>
                         <MenuItem value={30}>2x</MenuItem>
                         <MenuItem value={60}>1x</MenuItem>
