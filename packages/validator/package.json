@@ -2,7 +2,7 @@
   "name": "validator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "vitest"
   },
@@ -16,5 +16,6 @@
     "vite-test": "^0.4.0",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.3"
-  }
+  },
+  "type": "module"
 }
