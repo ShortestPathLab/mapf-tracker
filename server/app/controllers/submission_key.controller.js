@@ -43,13 +43,15 @@ exports.findByRequestId = (req, res) => {
 // Find a single Submission_key by apiKey
 exports.findByApiKey = (req, res) => {
     const apiKey = req.params.apiKey; // Assuming apiKey is passed in req.params
-
-    Submission_key.findOne({ apiKey: apiKey })
+    console.log('request api key : ', apiKey)
+    Submission_key.findOne({ api_key: apiKey })
         .then(data => {
             if (!data)
                 res.status(404).send({ message: "Not found Submission_key with apiKey " + apiKey });
-            else
+            else{
                 res.send(data);
+                console.log('data for aubmission key is : ', data)
+            }
         })
         .catch(err => {
             res.status(500).send({ message: "Error retrieving Submission_key with apiKey=" + apiKey });

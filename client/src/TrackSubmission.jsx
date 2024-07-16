@@ -190,13 +190,7 @@ const headCells = [
     },
 ];
 
-// function checkSortable(head, order ){
-//     if(headCell.sortable){
-//         return  order === 'desc' ? 'sorted descending' : 'sorted ascending'
-//     }else{
-//         return 'disableSortBy
-//     }
-// }
+
 
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } = props;
@@ -258,16 +252,6 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
 };
 
-// const refreshAlgorithms = (callback) => {
-//     fetch(APIConfig.apiUrl + '/algorithm/all_detail', { method: 'GET' })
-//         .then(res => res.json())
-//         .then(data => {
-//             callback(data);
-//         })
-//         .catch(err => console.error(err));
-// }
-
-
 function LinearProgressWithLabel(props) {
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -291,35 +275,6 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-// const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
-//     height: 10,
-//     borderRadius: 5,
-//     [`&.${linearProgressClasses.colorPrimary}`]: {
-//         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
-//     },
-//     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
-//         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
-//     },
-// }));
-
-const createNewApiKey = () => {
-  const values = {
-    algo_id: "667d55013ecdbb93c0d02196",
-  };
-  console.log("in creating process");
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(values),
-  };
-  console.log(APIConfig.apiUrl);
-  fetch("http://localhost:50000/api/submission_key/create", requestOptions)
-    .then((response) => response.json())
-    .catch((error) => console.error("Error:", error));
-};
 
 export default function TrackSubmission() {
     const [order, setOrder] = React.useState('asc');
@@ -330,29 +285,16 @@ export default function TrackSubmission() {
     const [data, setData] = React.useState([])
     const [rows, setRows] = React.useState([]);
     const [searched, setSearched] = React.useState("");
-    const [openAlgoDetail, setOpenAlgoDetail] = React.useState(false);
-    const [scrollAlgoDetail, setScrollAlgoDetail] = React.useState('paper');
-    const [domainQuery, setDomainQuery] = React.useState('#Instances Closed');
-    const [algodata, setAlgodata] = React.useState([]);
-    const [algoChartData, setAlgoChartData] = React.useState([]);
-    const [domainLoading, setDomainLoading] = React.useState(true);
-    const [openMonitorDetail, setOpenMonitorDetail] = React.useState(false);
-    const [infoDescription, setInfoDescription] = React.useState(0);
     const [openApiForm, setOpenApiForm] = React.useState(false);
-    const [algoIdList, setAlgoIdList] = React.useState([]);
 
 
     // for retriveing all the requests api insert from the user
     const [requestIdList, setRequestIdList] = React.useState([]);
 
-
-    const handleOpenInfo = (key) => {
-        setInfoDescription(infoDescriptionText[key]);
-        setOpenMonitorDetail(true);
-    };
+    // for searching by name or whatever
     const requestSearch = (searchedVal) => {
         const filteredRows = data.filter((row) => {
-            return row.algo_name.toLowerCase().includes(searchedVal.toLowerCase());
+            return row.requesterName.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
         setSearched(searchedVal);
@@ -378,74 +320,6 @@ export default function TrackSubmission() {
     setPage(0);
   };
 
-    // const handleChangeDense = () => {
-    //     setDense(!dense);
-    // };
-
-
-
-    const handleAlgoDetailClickOpen = (event, scrollType, algo_data) => {
-        setOpenAlgoDetail(true);
-        setScrollAlgoDetail(scrollType);
-        setAlgodata(algo_data);
-        event.stopPropagation();
-    };
-
-    const handleAlgoDetailClose = () => {
-        setOpenAlgoDetail(false);
-        setDomainQuery('#Instances Closed');
-    };
-    React.useEffect(() => {
-        if (openAlgoDetail) {
-            setDomainLoading(true);
-            fetch(APIConfig.apiUrl + '/algorithm/getClosedInfoGroup/' + algodata['id'], { method: 'GET' })
-                .then(res => res.json())
-                .then(data => {
-                    data.forEach(function (element) {
-                        if (element[algodata.algo_name] === undefined) {
-                            element[algodata.algo_name] = 0;
-                        }
-                        element.name = element.name.charAt(0).toUpperCase() + element.name.slice(1)
-                    })
-                    setAlgoChartData(data);
-                    setDomainLoading(false);
-                })
-                .catch(err => console.error(err));
-
-        }
-    }, [openAlgoDetail]);
-
-
-
-    const handleDomainQueryChange = (event) => {
-        setDomainQuery(event.target.value);
-        setDomainLoading(true);
-        var domain_API = '';
-        if (event.target.value === '#Instances Closed') {
-            domain_API = APIConfig.apiUrl + '/algorithm/getClosedInfoGroup/' + algodata['id'];
-        } else if (event.target.value === '#Instances Solved') {
-            domain_API = APIConfig.apiUrl + '/algorithm/getSolvedInfoGroup/' + algodata['id'];
-        }
-        else if (event.target.value === '#Best Lower-bounds') {
-            domain_API = APIConfig.apiUrl + '/algorithm/getLowerInfoGroup/' + algodata['id'];
-        } else {
-            domain_API = APIConfig.apiUrl + '/algorithm/getSolutionInfoGroup/' + algodata['id'];
-        }
-        fetch(domain_API, { method: 'GET' })
-            .then(res => res.json())
-            .then(data => {
-                data.forEach(function (element) {
-                    if (element[algodata.algo_name] === undefined) {
-                        element[algodata.algo_name] = 0;
-                    }
-                    element.name = element.name.charAt(0).toUpperCase() + element.name.slice(1)
-                })
-                setAlgoChartData(data);
-                setDomainLoading(false);
-            })
-            .catch(err => console.error(err));
-    }
-
 
     // ----------------------------------------------------------------------------------------
     const checkApiKey = async (api_key) => {
@@ -458,7 +332,6 @@ export default function TrackSubmission() {
             });
             const data = await response.json();
             if (response.ok) {
-                console.log('Submission key for the api found successfully:', data);
                 setRequestIdList((prevList) => [...prevList, data.request_id]);
             } else {
                 console.error('Error finding the submission key', data);
@@ -477,24 +350,21 @@ export default function TrackSubmission() {
         setOpenApiForm(false)
     }
 
-    const handleApiFormSubmit = (values, { setSubmitting }) => {
-        console.log('Uploading API key:', values.api_key);
+    const handleApiFormSubmit = async (values, { setSubmitting }) => {
         setSubmitting(false);
         setOpenApiForm(false); // Close the dialog after submission
-        checkApiKey(values.api_key)
+        await checkApiKey(values.api_key)
         // createNewApiKey()
     }
 
 
     const refreshRequests = async (callback) => {
         const request_details = [];
-
         const fetchPromises = requestIdList.map(request_id =>
             fetch(`${APIConfig.apiUrl}/request/id/${request_id}`, { method: 'GET' })
                 .then(res => res.json())
                 .then(data => {
                     request_details.push(data);
-                    console.log(data);
                 })
                 .catch(err => console.error(err))
         );
@@ -693,206 +563,7 @@ export default function TrackSubmission() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-                <Dialog
-                    open={openAlgoDetail}
-                    onClose={handleAlgoDetailClose}
-                    scroll={scrollAlgoDetail}
-                    aria-labelledby="scroll-dialog-title"
-                    aria-describedby="scroll-dialog-description"
-                    fullWidth={true}
-                    maxWidth={'md'}
-                    disableScrollLock={true}
-                    PaperProps={{
-                        style: { mb: 2, borderRadius: 10 }
-                    }}
-                // PaperProps={{ sx: { width: "100%"}}}
-                >
-                    <DialogContent dividers={scrollAlgoDetail === 'paper'} sx={{ width: 850, display: 'flex' }}>
 
-                        <Table sx={{ width: 500 }}>
-                            <colgroup>
-                                {/*<col width="120" />*/}
-                                {/*<col width="150" />*/}
-                                {/*<col width="65" />*/}
-                                {/*<col width="200" />*/}
-                                <col width="120" />
-                                <col width="150" />
-                                <col width="50" />
-                                <col width="150" />
-                            </colgroup>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }} >Algorithm Name:</TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}> {algodata.algo_name}</TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}> Authors: </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}> {algodata.authors}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>  Github Link: </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }} colSpan={3}>
-                                        <Link href={algodata.github} underline="hover">
-                                            {algodata.github}
-                                        </Link>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: "top" }} > Paper Reference: </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: "top" }} colSpan={3} > {algodata.papers} </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: "top" }}> Comments: </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: "top" }} colSpan={3}> {algodata.comments}</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                        {/*<ResponsiveContainer width={500} height={380}>*/}
-                        <div style={{ width: 30 }} />
-                        {/*<Paper  elevation={12} sx={{  width : 350, height: 464, mb: 2, borderRadius: 5}}>*/}
-                        <Box sx={{ width: 350, height: 464 }}>
-                            <Toolbar
-                                sx={{
-                                    pl: { sm: 2 },
-                                    pr: { xs: 1, sm: 1 }
-                                }}
-                            >
-                                <Typography
-                                    sx={{ flex: '1 1 100%' }}
-                                    variant="h8"
-                                    id="tableTitle"
-                                    component="div"
-                                >
-                                    Summary
-                                    <IconButton onClick={() => { handleOpenInfo('domainCompare-' + domainQuery) }}>
-                                        <InfoIcon />
-                                    </IconButton>
-                                </Typography>
-                                <FormControl sx={{ m: 1, minWidth: 120, width: 300 }} size='small' >
-                                    <Select
-                                        displayEmpty={true}
-                                        value={domainQuery}
-                                        onChange={handleDomainQueryChange}
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                    >
-                                        <MenuItem value={"#Instances Closed"}>Instances Closed</MenuItem>
-                                        <MenuItem value={"#Instances Solved"}>Instances Solved</MenuItem>
-                                        <MenuItem value={"#Best Lower-bounds"}>Best Lower Bound</MenuItem>
-                                        <MenuItem value={"#Best Solutions"}>Best Solution</MenuItem>
-                                    </Select>
-
-                                </FormControl>
-                            </Toolbar>
-                            {domainLoading ? <Box display="flex"
-                                justifyContent="center"
-                                alignItems="center" width={350} height={400}><CircularProgress
-                                    size={80} /></Box> :
-                                <RadarChart width={350} height={400} cx="50%" cy="60%" outerRadius="80%"
-                                    data={algoChartData}>
-                                    {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
-                                    <Legend verticalAlign="top" align="center" wrapperStyle={{
-                                        fontFamily: "Roboto Slab"
-                                    }} />
-                                    <PolarGrid />
-                                    <PolarAngleAxis dataKey="name"
-                                        tick={<CustomizedLabel />}
-                                        style={{
-                                            fontFamily: "Roboto Slab"
-                                        }} />
-                                    <Tooltip wrapperStyle={{ fontFamily: "Roboto Slab" }} formatter={(tick) => {
-                                        var value = tick * 100
-                                        return `${value.toFixed(2)}%`;
-                                    }}
-                                    />
-                                    <PolarRadiusAxis angle={38.5} domain={[0, algoChartData.length > 0 ? 'dataMax' : 1]}
-                                        tickFormatter={(tick) => {
-                                            var value = tick * 100
-                                            return `${value.toFixed(0)}%`;
-                                        }}
-                                    />
-                                    <Radar key={'State of The Art'} dataKey={'State of The Art'} fillOpacity={0.6}
-                                        stroke={`#87ceeb`} fill={`#87ceeb`} />
-                                    <Radar key={algodata.algo_name} dataKey={algodata.algo_name} fillOpacity={0.6}
-                                        stroke={`#ff4500`} fill={`#ff4500`} />
-                                </RadarChart>
-                            }
-                        </Box>
-                        {/*</Paper>*/}
-                        {/*</ResponsiveContainer>*/}
-                    </DialogContent>
-                    {/*<DialogActions>*/}
-                    {/*    <Button onClick={handleAlgoDetailClose}>Cancel</Button>*/}
-                    {/*</DialogActions>*/}
-                </Dialog>
-                <Dialog
-                    open={openMonitorDetail}
-                    onClose={() => setOpenMonitorDetail(false)}
-                    fullWidth={true}
-                    aria-labelledby="scroll-dialog-title"
-                    aria-describedby="scroll-dialog-description"
-                    maxWidth={'sm'}
-                    disableScrollLock={true}
-                    PaperProps={{
-                        style: { mb: 2, borderRadius: 10 }
-                    }}
-                // PaperProps={{ sx: { width: "100%"}}}
-                >
-                    <DialogContent sx={{ width: 550, display: 'flex' }}>
-                        <Table sx={{ width: 550 }}>
-                            <colgroup>
-                                {/*<col width="120" />*/}
-                                {/*<col width="150" />*/}
-                                {/*<col width="65" />*/}
-                                {/*<col width="200" />*/}
-                                <col width="150" />
-                                <col width="150" />
-                                <col width="150" />
-                                <col width="50" />
-                            </colgroup>
-                            <TableBody>
-                                <TableRow >
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }}>  Description:  </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }} colSpan={3}>
-                                        {infoDescription.description}
-                                    </TableCell>
-                                </TableRow>
-                                {infoDescription.c_axis != null ? <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }}>  Category-axis:  </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }} colSpan={3}>
-                                        {infoDescription.c_axis}
-                                    </TableCell>
-                                </TableRow> : null}
-                                {infoDescription.v_axis != null ? <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }}>  Value-axis:  </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }} colSpan={3}>
-                                        {infoDescription.v_axis}
-                                    </TableCell>
-                                </TableRow> : null}
-
-                                {infoDescription.x_axis != null ? <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }}>  X-axis:  </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }} colSpan={3}>
-                                        {infoDescription.x_axis}
-                                    </TableCell>
-                                </TableRow> : null}
-                                {infoDescription.y_axis != null ? <TableRow>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }}>  Y-axis:  </TableCell>
-                                    <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }} colSpan={3}>
-                                        {infoDescription.y_axis}
-                                    </TableCell>
-                                </TableRow> : null}
-                                {infoDescription.comment != null ?
-                                    <TableRow>
-                                        <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }}> Comments:  </TableCell>
-                                        <TableCell style={{ paddingRight: 0, paddingLeft: 0, verticalAlign: 'top' }} colSpan={3}>
-                                            {infoDescription.comment}
-                                        </TableCell>
-                                    </TableRow>
-                                    : null
-                                }
-
-                            </TableBody>
-                        </Table>
-                    </DialogContent>
-                </Dialog>
             </Paper>
             {/*<FormControlLabel*/}
             {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
