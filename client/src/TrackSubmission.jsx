@@ -326,19 +326,6 @@ LinearProgressWithLabel.propTypes = {
    */
   value: PropTypes.number.isRequired,
 };
-
-// const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
-//     height: 10,
-//     borderRadius: 5,
-//     [`&.${linearProgressClasses.colorPrimary}`]: {
-//         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
-//     },
-//     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
-//         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
-//     },
-// }));
-
 const createNewApiKey = () => {
   const values = {
     algo_id: "667d55013ecdbb93c0d02196",
@@ -352,7 +339,7 @@ const createNewApiKey = () => {
     body: JSON.stringify(values),
   };
   console.log(APIConfig.apiUrl);
-  fetch("http://localhost:50000/api/submission_key/create", requestOptions)
+  fetch(`${url}/submission_key/create`, requestOptions)
     .then((response) => response.json())
     .catch((error) => console.error("Error:", error));
 };
@@ -498,7 +485,7 @@ export default function TrackSubmission() {
   // ----------------------------------------------------------------------------------------
   const checkApiKey = (apikey) => {
     // api= apiKey
-    fetch(`http://localhost:50000/api/submission_key/${apikey}`, {
+    fetch(`${url}/submission_key/${apikey}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -535,14 +522,13 @@ export default function TrackSubmission() {
     setSubmitting(false);
     setOpenApiForm(false); // Close the dialog after submission
     checkApiKey(values.apiKey);
-    // createNewApiKey()
   };
 
   const refresh_algo_details = (callback) => {
     const algo_details = [];
 
     for (const algo_id of algoIdList) {
-      fetch(`http://localhost:50000/api/algorithm/algo_detail/${algo_id}`, {
+      fetch(`${url}/algorithm/algo_detail/${algo_id}`, {
         method: "GET",
       })
         .then((res) => res.json())
