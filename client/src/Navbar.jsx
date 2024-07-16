@@ -467,7 +467,7 @@ function ResponsiveAppBar() {
                           state.close();
                         }}
                       >
-                        <ListItemText>Manage my submissions</ListItemText>
+                        <ListItemText>Manage submissions</ListItemText>
                       </MenuItem>
                     </MenuList>
                   </Menu>

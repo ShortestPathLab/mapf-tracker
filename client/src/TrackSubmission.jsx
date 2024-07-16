@@ -1,6 +1,22 @@
-import * as React from "react";
-import PropTypes from "prop-types";
+import { Add } from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import FilterListOutlined from "@mui/icons-material/FilterListOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,25 +25,13 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress from "@mui/material/LinearProgress";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/SearchOutlined";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/CancelOutlined";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
-import DialogContent from "@mui/material/DialogContent";
-import Link from "@mui/material/Link";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import { Field, Form, Formik } from "formik";
+import PropTypes from "prop-types";
+import * as React from "react";
 import {
   Legend,
   PolarAngleAxis,
@@ -37,14 +41,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import { APIConfig } from "./config";
-import LibraryAddIcon from "@mui/icons-material/LibraryAddOutlined";
-import { Formik, Form, Field } from "formik";
-import Button from "@mui/material/Button";
 import PageHeader from "./PageHeader";
-import { Stack } from "@mui/material";
+import { APIConfig } from "./config";
 
 const angle = {
   Warehouse: -40,
@@ -569,28 +567,21 @@ export default function TrackSubmission() {
         ]}
       />
       <Paper>
-        <Toolbar
+        <Stack
+          direction="row"
           sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
+            gap: 2,
+            p: 2,
           }}
         >
-          <IconButton
-            size="medium"
-            onClick={() => {
-              setDense(!dense);
-            }}
+          <Button
+            variant="contained"
+            sx={{ minWidth: "max-content", px: 2, py: 1 }}
+            onClick={handleOpenApiForm}
+            startIcon={<Add />}
           >
-            {dense ? (
-              <ZoomOutMapIcon fontSize="medium" />
-            ) : (
-              <ZoomInMapIcon fontSize="medium" />
-            )}
-          </IconButton>
-
-          <IconButton aria-label="Add to Library" onClick={handleOpenApiForm}>
-            <LibraryAddIcon />
-          </IconButton>
+            Add submission (API) key
+          </Button>
           <Dialog open={openApiForm} onClose={handleCloseApiForm}>
             <DialogTitle>Upload Your API Key</DialogTitle>
             <DialogContent>
@@ -629,26 +620,16 @@ export default function TrackSubmission() {
             </DialogContent>
           </Dialog>
 
-          <Typography
-            sx={{ flex: "1 1 100%", paddingLeft: "10px" }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Tracking Submissions
-          </Typography>
-
           <TextField
             id="outlined-basic"
             onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="outlined"
-            placeholder="Name"
+            placeholder="Filter by name"
             size="small"
             value={searched}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <FilterListOutlined />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -666,7 +647,17 @@ export default function TrackSubmission() {
               ),
             }}
           />
-        </Toolbar>
+          <Box flex={1}></Box>
+          <Button
+            sx={{ minWidth: "max-content" }}
+            size="medium"
+            onClick={() => {
+              setDense(!dense);
+            }}
+          >
+            {dense ? "Comfortable margins" : "Compact margins"}
+          </Button>
+        </Stack>
         <TableContainer sx={{ width: "100%" }}>
           <Table
             // frozen table set max-content
