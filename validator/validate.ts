@@ -1,6 +1,9 @@
-import { Item, List } from "linked-list";
-import { chain, groupBy, some, times, zip } from "lodash-es";
+import { chain, groupBy, some, zip } from "lodash-es";
 import type { Dictionary } from "lodash";
+import { Seeker } from "./Seeker";
+import { Reader } from "./Reader";
+import { DoneException } from "./DoneException";
+import { Chunk } from "./Chunk";
 
 type CheckResult = {
   errors?: string[];
@@ -24,100 +27,10 @@ type ValidationParameters = {
   onError?: (c: CheckResult) => boolean;
 };
 
-class Chunk extends Item {
-  constructor(
-    public count: number,
-    public symbol: string,
-    public offset: number
-  ) {
-    super();
-  }
-}
-export class DoneException extends Error {}
-export class LowerOutOfRangeException extends Error {}
-
-export interface Reader {
-  read(): Chunk | undefined;
-}
-
-export class Reader {
-  chunks: IterableIterator<RegExpExecArray>;
-  offset = 0;
-  constructor(agent: string) {
-    this.chunks = agent.matchAll(/(\d*)([a-z])/g);
-  }
-  read() {
-    const { value, done } = this.chunks.next();
-    if (!done) {
-      const [_, count, symbol] = value;
-      const o = count ? +count : 1;
-      const out = new Chunk(o, symbol, this.offset);
-      this.offset += o;
-      return out;
-    } else {
-      throw new DoneException();
-    }
-  }
-}
-
-function checkRange(n: number, chunk: Chunk) {
+export function checkRange(n: number, chunk: Chunk) {
   const min = chunk.offset;
   const max = chunk.offset + chunk.count;
   return n < min ? "low" : min <= n && n < max ? "in-range" : "high";
-}
-
-export class Seeker {
-  cache = new List<Chunk>();
-  current: Chunk;
-  /**
-   * @param reader
-   * @param history How many previous chunks to store.
-   */
-  constructor(public reader: Reader, public history = 2) {
-    this.current = reader.read();
-    this.cache.append(this.current);
-  }
-  prune() {
-    let c = this.current;
-    times(
-      this.history,
-      () => this.current.prev && (c = this.current.prev as Chunk)
-    );
-    if (c.prev) c.prev = null;
-  }
-  seek(n: number): string {
-    const status = checkRange(n, this.current);
-    switch (status) {
-      case "in-range": {
-        // In the right chunk
-        return this.current.symbol;
-      }
-      case "low": {
-        // Decrement chunk
-        if (this.current.prev) {
-          this.current = this.current.prev as Chunk;
-          return this.seek(n);
-        } else {
-          // Ran out of previous chunks
-          throw new LowerOutOfRangeException();
-        }
-      }
-      case "high": {
-        // Increment chunk
-        if (this.current.next) {
-          // Navigate forward in cache
-          // Considering pruning cache here
-          this.prune();
-          this.current = this.current.next as Chunk;
-          return this.seek(n);
-        } else {
-          // Can throw DoneException
-          this.cache.append(this.reader.read());
-          return this.seek(n);
-        }
-      }
-    }
-  }
 }
 
 function processAgent(agent: string) {
