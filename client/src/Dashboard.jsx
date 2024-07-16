@@ -5,7 +5,7 @@ import SearchIcon from "@mui/icons-material/SearchOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
-import { DialogTitle } from "@mui/material";
+import { DialogTitle, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -47,6 +47,7 @@ import {
   Tooltip,
 } from "recharts";
 import { APIConfig } from "./config";
+import PageHeader from "./PageHeader";
 
 const infoDescriptionText = {
   "domainCompare-#Instances Closed": {
@@ -778,16 +779,12 @@ export default function Dashboard() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        width: "96%",
-        paddingLeft: "2%",
-        top: "300px",
-        opacity: "0.95",
-      }}
-    >
-      <Paper sx={{ width: "100%", mb: 2 }}>
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <PageHeader
+        current="Dashboard"
+        path={[{ name: "MAPF Tracker", url: "/" }]}
+      />
+      <Paper>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -884,6 +881,7 @@ export default function Dashboard() {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <TableRow
+                      sx={{ cursor: "pointer" }}
                       hover
                       tabIndex={-1}
                       key={row.id}
@@ -2092,6 +2090,6 @@ export default function Dashboard() {
           </DialogContent>
         </Dialog>
       </Paper>
-    </Box>
+    </Stack>
   );
 }

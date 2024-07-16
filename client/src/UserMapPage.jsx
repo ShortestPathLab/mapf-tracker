@@ -36,6 +36,8 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { useLocation } from "react-router-dom";
 import { APIConfig } from "./config";
+import { Stack } from "@mui/material";
+import PageHeader from "./PageHeader";
 
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {
@@ -882,7 +884,14 @@ export default function UserMapPage() {
   );
 
   return (
-    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <PageHeader
+        current={`Submission ${location.state.algo_id.slice(0, 5)}`}
+        path={[
+          { name: "MAPF Tracker", url: "/" },
+          { name: "Dashboard", url: "/dashboard" },
+        ]}
+      />
       <Paper sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
@@ -1270,6 +1279,6 @@ export default function UserMapPage() {
       {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
       {/*    label="Dense padding"*/}
       {/*/>*/}
-    </Box>
+    </Stack>
   );
 }
