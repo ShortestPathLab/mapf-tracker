@@ -1,5 +1,5 @@
 import React, { useMemo, useReducer } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import MapTable from "./MapTable";
 import Navbar from "./Navbar";
@@ -18,7 +18,7 @@ import SystemDemo from "./SystemDemo";
 import TrackSubmission from "./TrackSubmission";
 import UserMapPage from "./UserMapPage";
 
-import { Box, Stack, alpha, colors } from "@mui/material";
+import { Box, Fade, Stack, alpha, colors } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ConfirmProvider } from "material-ui-confirm";
 import { Navigate } from "react-router-dom";
@@ -107,6 +107,8 @@ export default function App() {
     };
   }, []);
 
+  const { pathname } = useLocation();
+
   return (
     <ThemeContext.Provider value={themeState}>
       <ThemeProvider theme={t}>
@@ -120,49 +122,59 @@ export default function App() {
           >
             <Navbar />
 
-            <Box sx={{ px: 2 }}>
-              <Routes>
-                <Route path="/" element={<MapTable />} />
-                <Route
-                  path="/benchmarks"
-                  element={<MapTable showHeader={false} />}
-                />
-                <Route path="/scenarios" element={<ScenarioTable />} />
-                <Route path="/instances" element={<SolutionPage />} />
-                <Route path="/visualization" element={<Visualizer />} />
-                <Route path="/summary" element={<Summary />} />
-                <Route path="/aboutUs" element={<AboutUs />} />
-                <Route path="/systemDemo" element={<SystemDemo />} />
-                <Route path="/submissions" element={<Submissions />} />
-                <Route
-                  path="/submissionSummary"
-                  element={<SubmissionSummaryPage />}
-                />
-                <Route path="/contributes" element={<Contribute />} />
-                <Route path="/download" element={<Download />} />
-                <Route path="/papers" element={<Paper />} />
-                <Route path="/trackSubmission" element={<TrackSubmission />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    localStorage.getItem("user") !== null ? (
-                      <Dashboard />
-                    ) : (
-                      <Navigate to="/" />
-                    )
-                  }
-                />
-                <Route
-                  path="/user/maps"
-                  element={
-                    localStorage.getItem("user") !== null ? (
-                      <UserMapPage />
-                    ) : (
-                      <Navigate to="/" />
-                    )
-                  }
-                />
-              </Routes>
+            <Box
+              sx={{ px: 2 }}
+              key={pathname === "/" ? "/benchmarks" : pathname}
+            >
+              <Fade in={true}>
+                <Stack>
+                  <Routes>
+                    <Route path="/" element={<MapTable />} />
+                    <Route
+                      path="/benchmarks"
+                      element={<MapTable showHeader={false} />}
+                    />
+                    <Route path="/scenarios" element={<ScenarioTable />} />
+                    <Route path="/instances" element={<SolutionPage />} />
+                    <Route path="/visualization" element={<Visualizer />} />
+                    <Route path="/summary" element={<Summary />} />
+                    <Route path="/aboutUs" element={<AboutUs />} />
+                    <Route path="/systemDemo" element={<SystemDemo />} />
+                    <Route path="/submissions" element={<Submissions />} />
+                    <Route
+                      path="/submissionSummary"
+                      element={<SubmissionSummaryPage />}
+                    />
+                    <Route path="/contributes" element={<Contribute />} />
+                    <Route path="/download" element={<Download />} />
+                    <Route path="/papers" element={<Paper />} />
+                    <Route
+                      path="/trackSubmission"
+                      element={<TrackSubmission />}
+                    />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        localStorage.getItem("user") !== null ? (
+                          <Dashboard />
+                        ) : (
+                          <Navigate to="/" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/user/maps"
+                      element={
+                        localStorage.getItem("user") !== null ? (
+                          <UserMapPage />
+                        ) : (
+                          <Navigate to="/" />
+                        )
+                      }
+                    />
+                  </Routes>
+                </Stack>
+              </Fade>
             </Box>
           </Stack>
         </ConfirmProvider>

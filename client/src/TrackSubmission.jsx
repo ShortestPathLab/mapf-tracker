@@ -43,6 +43,8 @@ import { APIConfig } from "./config";
 import LibraryAddIcon from "@mui/icons-material/LibraryAddOutlined";
 import { Formik, Form, Field } from "formik";
 import Button from "@mui/material/Button";
+import PageHeader from "./PageHeader";
+import { Stack } from "@mui/material";
 
 const angle = {
   Warehouse: -40,
@@ -558,7 +560,14 @@ export default function TrackSubmission() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Box sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <PageHeader
+        current="Manage submissions"
+        path={[
+          { name: "MAPF Tracker", url: "/" },
+          { name: "Submit an algorithm", url: "/contributes" },
+        ]}
+      />
       <Paper>
         <Toolbar
           sx={{
@@ -1150,6 +1159,6 @@ export default function TrackSubmission() {
       {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
       {/*    label="Dense padding"*/}
       {/*/>*/}
-    </Box>
+    </Stack>
   );
 }

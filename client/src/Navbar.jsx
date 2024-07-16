@@ -1,5 +1,6 @@
 import {
   DarkModeOutlined,
+  ExpandMoreOutlined,
   LightModeOutlined,
   RouteOutlined,
   SortOutlined,
@@ -12,7 +13,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import MenuIcon from "@mui/icons-material/MenuOutlined";
 import PeopleIcon from "@mui/icons-material/PeopleOutlined";
 import TableViewIcon from "@mui/icons-material/TableViewOutlined";
-import { ButtonBase, Divider, Stack, alpha } from "@mui/material";
+import {
+  ButtonBase,
+  ButtonGroup,
+  Divider,
+  ListItemText,
+  MenuList,
+  Stack,
+  alpha,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -29,10 +38,12 @@ import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import * as React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ThemeContext } from "./ThemeProvider";
 import { APIConfig } from "./config";
+
 const settings = ["Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
@@ -418,20 +429,52 @@ function ResponsiveAppBar() {
               {mode === "light" ? <DarkModeOutlined /> : <LightModeOutlined />}
             </IconButton>
           </Stack>
-          <Button
-            key="Contribute"
-            onClick={() => handleCloseNavMenu("Contribute")}
-            variant="contained"
+          <ButtonGroup
             sx={{
               justifySelf: "flex-end",
               my: 2,
-              px: 2,
-              py: 1,
               mr: 4,
             }}
           >
-            Submit an algorithm
-          </Button>
+            <Button
+              key="Contribute"
+              onClick={() => handleCloseNavMenu("Contribute")}
+              variant="contained"
+              sx={{ px: 2, py: 1 }}
+            >
+              Submit an algorithm
+            </Button>
+            <PopupState variant="popover">
+              {(state) => (
+                <>
+                  <Button
+                    {...bindTrigger(state)}
+                    size="small"
+                    sx={{ px: 0, py: 1 }}
+                    variant="contained"
+                  >
+                    <ExpandMoreOutlined />
+                  </Button>
+                  <Menu
+                    {...bindMenu(state)}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  >
+                    <MenuList>
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/trackSubmission");
+                          state.close();
+                        }}
+                      >
+                        <ListItemText>Manage my submissions</ListItemText>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </>
+              )}
+            </PopupState>
+          </ButtonGroup>
           <Box>
             {/*<Tooltip title="Login">*/}
             {login ? (
