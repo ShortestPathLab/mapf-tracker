@@ -1,6 +1,21 @@
-import * as React from "react";
-import PropTypes from "prop-types";
+import { Add } from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import FilterListOutlined from "@mui/icons-material/FilterListOutlined";
+import InfoIcon from "@mui/icons-material/InfoOutlined";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,25 +24,13 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress from "@mui/material/LinearProgress";
-import CircularProgress from "@mui/material/CircularProgress";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMap";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import InfoIcon from "@mui/icons-material/Info";
-import DialogContent from "@mui/material/DialogContent";
-import Link from "@mui/material/Link";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import { Field, Form, Formik } from "formik";
+import PropTypes from "prop-types";
+import * as React from "react";
 import {
   Legend,
   PolarAngleAxis,
@@ -37,12 +40,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
+import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import { Formik, Form, Field } from "formik";
-import Button from "@mui/material/Button";
 
 const angle = {
   Warehouse: -40,
@@ -175,55 +174,32 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
+    id: "requesterName",
+    numeric: false,
+    disablePadding: false,
+    label: "Requester Name",
+    sortable: false,
+    alignment: "center",
+  },
+  {
+    id: "requesterEmail",
+    numeric: false,
+    disablePadding: false,
+    label: "Email",
+    sortable: false,
+    alignment: "center",
+  },
+
+  {
     id: "algo_name",
     numeric: false,
     disablePadding: false,
     label: "Algorithm Name",
-    sortable: true,
-    alignment: "left",
+    sortable: false,
+    alignment: "center",
   },
   {
-    id: "authors",
-    numeric: false,
-    disablePadding: false,
-    label: "Authors' Name",
-    sortable: true,
-    alignment: "left",
-  },
-  {
-    id: "best_lower",
-    numeric: true,
-    disablePadding: false,
-    label: "#Best Lower-bound",
-    sortable: true,
-    alignment: "left",
-  },
-  {
-    id: "best_solution",
-    numeric: true,
-    disablePadding: false,
-    label: "#Best Solutions",
-    sortable: true,
-    alignment: "left",
-  },
-  {
-    id: "instances_closed",
-    numeric: true,
-    disablePadding: false,
-    label: "#Instances Closed",
-    sortable: true,
-    alignment: "left",
-  },
-  {
-    id: "instances_solved",
-    numeric: true,
-    disablePadding: false,
-    label: "#Instances Solved",
-    sortable: true,
-    alignment: "left",
-  },
-  {
-    id: "_id",
+    id: "requestDetails",
     numeric: false,
     disablePadding: false,
     label: "Details",
@@ -232,14 +208,6 @@ const headCells = [
   },
 ];
 
-// function checkSortable(head, order ){
-//     if(headCell.sortable){
-//         return  order === 'desc' ? 'sorted descending' : 'sorted ascending'
-//     }else{
-//         return 'disableSortBy
-//     }
-// }
-
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
@@ -247,7 +215,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead sx={{}}>
+    <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
@@ -255,9 +223,6 @@ function EnhancedTableHead(props) {
             align={headCell.alignment}
             padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{
-              fontWeight: "bold",
-            }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -270,9 +235,7 @@ function EnhancedTableHead(props) {
                 },
                 "&.MuiTableSortLabel-root:hover": {},
                 "&.Mui-active": {},
-                "& .MuiTableSortLabel-icon": {
-                  color: "white !important",
-                },
+                "& .MuiTableSortLabel-icon": {},
               }}
             >
               {headCell.label}
@@ -293,15 +256,6 @@ EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
-};
-
-const refreshAlgorithms = (callback) => {
-  fetch(APIConfig.apiUrl + "/algorithm/all_detail", { method: "GET" })
-    .then((res) => res.json())
-    .then((data) => {
-      callback(data);
-    })
-    .catch((err) => console.error(err));
 };
 
 function LinearProgressWithLabel(props) {
@@ -329,12 +283,12 @@ LinearProgressWithLabel.propTypes = {
 
 // const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
 //     height: 10,
-//     borderRadius: 5,
+//
 //     [`&.${linearProgressClasses.colorPrimary}`]: {
 //         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
 //     },
 //     [`& .${linearProgressClasses.bar}`]: {
-//         borderRadius: 5,
+//
 //         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
 //     },
 // }));
@@ -364,8 +318,7 @@ export default function TrackSubmission() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [data, setData] = React.useState([]);
-  const [rows, setRows] = React.useState([]);
-  const [searched, setSearched] = React.useState("");
+
   const [openAlgoDetail, setOpenAlgoDetail] = React.useState(false);
   const [scrollAlgoDetail, setScrollAlgoDetail] = React.useState("paper");
   const [domainQuery, setDomainQuery] = React.useState("#Instances Closed");
@@ -374,16 +327,20 @@ export default function TrackSubmission() {
   const [domainLoading, setDomainLoading] = React.useState(true);
   const [openMonitorDetail, setOpenMonitorDetail] = React.useState(false);
   const [infoDescription, setInfoDescription] = React.useState(0);
+  const [rows, setRows] = React.useState([]);
+  const [searched, setSearched] = React.useState("");
   const [openApiForm, setOpenApiForm] = React.useState(false);
   const [algoIdList, setAlgoIdList] = React.useState([]);
 
-  const handleOpenInfo = (key) => {
-    setInfoDescription(infoDescriptionText[key]);
-    setOpenMonitorDetail(true);
-  };
+  // for retriveing all the requests api insert from the user
+  const [requestIdList, setRequestIdList] = React.useState([]);
+
+  // for searching by name or whatever
   const requestSearch = (searchedVal) => {
     const filteredRows = data.filter((row) => {
-      return row.algo_name.toLowerCase().includes(searchedVal.toLowerCase());
+      return row.requesterName
+        .toLowerCase()
+        .includes(searchedVal.toLowerCase());
     });
     setRows(filteredRows);
     setSearched(searchedVal);
@@ -408,7 +365,6 @@ export default function TrackSubmission() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
   // const handleChangeDense = () => {
   //     setDense(!dense);
   // };
@@ -496,31 +452,6 @@ export default function TrackSubmission() {
   };
 
   // ----------------------------------------------------------------------------------------
-  const checkApiKey = (apikey) => {
-    // api= apiKey
-    fetch(`http://localhost:50000/api/submission_key/${apikey}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        // Add any other headers as needed
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Submission key data:", data);
-        setAlgoIdList((prevList) => [...prevList, data.algo_id]);
-        // Handle data as needed here
-      })
-      .catch((error) => {
-        console.error("Error fetching submission key:", error);
-        // Handle error scenarios here
-      });
-  };
 
   const handleOpenApiForm = () => {
     setOpenApiForm(true);
@@ -531,18 +462,17 @@ export default function TrackSubmission() {
   };
 
   const handleApiFormSubmit = (values, { setSubmitting }) => {
-    console.log("Uploading API key:", values.apiKey);
+    console.log("Uploading API key:", values.api_key);
     setSubmitting(false);
     setOpenApiForm(false); // Close the dialog after submission
-    checkApiKey(values.apiKey);
-    // createNewApiKey()
+    checkApiKey(values.api_key);
   };
 
   const refresh_algo_details = (callback) => {
     const algo_details = [];
 
     for (const algo_id of algoIdList) {
-      fetch(`http://localhost:50000/api/algorithm/algo_detail/${algo_id}`, {
+      fetch(`${url}/algorithm/algo_detail/${algo_id}`, {
         method: "GET",
       })
         .then((res) => res.json())
@@ -554,41 +484,95 @@ export default function TrackSubmission() {
     console.log(algo_details);
     callback(algo_details);
   };
+  // ----------------------------------------------------------------------------------------
+  const checkApiKey = async (api_key) => {
+    try {
+      const response = await fetch(
+        `${APIConfig.apiUrl}/submission_key/${api_key}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setRequestIdList((prevList) => [...prevList, data.request_id]);
+      } else {
+        console.error("Error finding the submission key", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const refreshRequests = async (callback) => {
+    const request_details = [];
+    const fetchPromises = requestIdList.map((request_id) =>
+      fetch(`${APIConfig.apiUrl}/request/id/${request_id}`, { method: "GET" })
+        .then((res) => res.json())
+        .then((data) => {
+          request_details.push(data);
+        })
+        .catch((err) => console.error(err))
+    );
+
+    // Wait for all fetch operations to complete
+    await Promise.all(fetchPromises);
+
+    // Call the callback with the collected request details
+    callback(request_details);
+  };
+
+  React.useEffect(() => {
+    refreshRequests((d) => {
+      setData(d);
+      setRows(d);
+    });
+
+    const interval = setInterval(() => {
+      refreshRequests((d) => {
+        setData(d);
+        setRows(d);
+      });
+    }, 1200000);
+    return () => clearInterval(interval);
+  }, [requestIdList]);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Paper sx={{ width: "100%", mb: 2, borderRadius: 5 }}>
-        <Toolbar
+    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <PageHeader
+        current="Manage submissions"
+        path={[
+          { name: "MAPF Tracker", url: "/" },
+          { name: "Submit an algorithm", url: "/contributes" },
+        ]}
+      />
+      <Paper>
+        <Stack
+          direction="row"
           sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
+            gap: 2,
+            p: 2,
           }}
         >
-          <IconButton
-            size="medium"
-            onClick={() => {
-              setDense(!dense);
-            }}
+          <Button
+            variant="contained"
+            sx={{ minWidth: "max-content", px: 2, py: 1 }}
+            onClick={handleOpenApiForm}
+            startIcon={<Add />}
           >
-            {dense ? (
-              <ZoomOutMapIcon fontSize="medium" />
-            ) : (
-              <ZoomInMapIcon fontSize="medium" />
-            )}
-          </IconButton>
-
-          <IconButton aria-label="Add to Library" onClick={handleOpenApiForm}>
-            <LibraryAddIcon />
-          </IconButton>
+            Add submission (API) key
+          </Button>
           <Dialog open={openApiForm} onClose={handleCloseApiForm}>
-            <DialogTitle>Upload Your API Key</DialogTitle>
             <DialogContent>
               <Formik
-                initialValues={{ apiKey: "" }}
+                initialValues={{ api_key: "" }}
                 onSubmit={handleApiFormSubmit}
               >
                 {({ isSubmitting }) => (
@@ -600,48 +584,45 @@ export default function TrackSubmission() {
                     >
                       <Field
                         as={TextField}
-                        name="apiKey"
-                        label="API key"
+                        name="api_key"
+                        label="Enter your API key"
                         variant="standard"
                         fullWidth
                         required
                       />
                     </Box>
-
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="success"
-                      disabled={isSubmitting}
+                    <Box
+                      sx={{
+                        justifyContent: "center",
+                        alignContent: "center",
+                      }}
                     >
-                      Done
-                    </Button>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="success"
+                        sx={{ width: "50px" }}
+                        disabled={isSubmitting}
+                      >
+                        Show
+                      </Button>
+                    </Box>
                   </Form>
                 )}
               </Formik>
             </DialogContent>
           </Dialog>
 
-          <Typography
-            sx={{ flex: "1 1 100%", paddingLeft: "10px" }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Tracking Submissions
-          </Typography>
-
           <TextField
             id="outlined-basic"
             onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="outlined"
-            placeholder="Name"
+            placeholder="Filter by name"
             size="small"
             value={searched}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <FilterListOutlined />
                 </InputAdornment>
               ),
               endAdornment: (
@@ -659,11 +640,21 @@ export default function TrackSubmission() {
               ),
             }}
           />
-        </Toolbar>
+          <Box flex={1}></Box>
+          <Button
+            sx={{ minWidth: "max-content" }}
+            size="medium"
+            onClick={() => {
+              setDense(!dense);
+            }}
+          >
+            {dense ? "Comfortable margins" : "Compact margins"}
+          </Button>
+        </Stack>
         <TableContainer sx={{ width: "100%" }}>
           <Table
             // frozen table set max-content
-            sx={{ width: "100%" }}
+            sx={{ minWidth: 600, width: "100%" }}
             aria-labelledby="tableTitle"
             size={dense ? "small" : "medium"}
             style={{ tableLayout: "auto" }}
@@ -671,9 +662,6 @@ export default function TrackSubmission() {
             <colgroup>
               <col style={{ minWidth: "200px" }} width="20%" />
               <col style={{ minWidth: "200px" }} width="20%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
               <col style={{ minWidth: "200px" }} width="15%" />
               <col style={{ minWidth: "100px" }} width="10%" />
             </colgroup>
@@ -690,20 +678,22 @@ export default function TrackSubmission() {
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow hover tabIndex={-1} key={row.id}>
+                    <TableRow
+                      sx={{ cursor: "pointer" }}
+                      hover
+                      tabIndex={-1}
+                      key={row.id}
+                    >
                       <TableCell
                         id={labelId}
                         scope="row"
                         padding="normal"
-                        align="left"
+                        align="center"
                       >
-                        {row.algo_name}
+                        {row.requesterName}
                       </TableCell>
-                      <TableCell align="left">{row.authors}</TableCell>
-                      <TableCell align="left">{row.best_lower}</TableCell>
-                      <TableCell align="left">{row.best_solution}</TableCell>
-                      <TableCell align="left">{row.instances_closed}</TableCell>
-                      <TableCell align="left">{row.instances_solved}</TableCell>
+                      <TableCell align="center">{row.requesterEmail}</TableCell>
+                      <TableCell align="center">{row.algorithmName}</TableCell>
                       <TableCell align="center">
                         <IconButton
                           onClick={(event) =>
@@ -718,6 +708,7 @@ export default function TrackSubmission() {
                 })}
               {emptyRows > 0 && (
                 <TableRow
+                  sx={{ cursor: "pointer" }}
                   style={{
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
@@ -767,7 +758,7 @@ export default function TrackSubmission() {
                 <col width="150" />
               </colgroup>
               <TableBody>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     Algorithm Name:
                   </TableCell>
@@ -784,7 +775,7 @@ export default function TrackSubmission() {
                     {algodata.authors}
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
                     {" "}
                     Github Link:{" "}
@@ -798,7 +789,7 @@ export default function TrackSubmission() {
                     </Link>
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -821,7 +812,7 @@ export default function TrackSubmission() {
                     {algodata.papers}{" "}
                   </TableCell>
                 </TableRow>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -848,7 +839,7 @@ export default function TrackSubmission() {
             </Table>
             {/*<ResponsiveContainer width={500} height={380}>*/}
             <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, borderRadius: 5}}>*/}
+            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
             <Box sx={{ width: 350, height: 464 }}>
               <Toolbar
                 sx={{
@@ -994,7 +985,7 @@ export default function TrackSubmission() {
                 <col width="50" />
               </colgroup>
               <TableBody>
-                <TableRow>
+                <TableRow sx={{ cursor: "pointer" }}>
                   <TableCell
                     style={{
                       paddingRight: 0,
@@ -1017,7 +1008,7 @@ export default function TrackSubmission() {
                   </TableCell>
                 </TableRow>
                 {infoDescription.c_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1041,7 +1032,7 @@ export default function TrackSubmission() {
                   </TableRow>
                 ) : null}
                 {infoDescription.v_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1066,7 +1057,7 @@ export default function TrackSubmission() {
                 ) : null}
 
                 {infoDescription.x_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1090,7 +1081,7 @@ export default function TrackSubmission() {
                   </TableRow>
                 ) : null}
                 {infoDescription.y_axis != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1114,7 +1105,7 @@ export default function TrackSubmission() {
                   </TableRow>
                 ) : null}
                 {infoDescription.comment != null ? (
-                  <TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
                         paddingRight: 0,
@@ -1146,6 +1137,6 @@ export default function TrackSubmission() {
       {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
       {/*    label="Dense padding"*/}
       {/*/>*/}
-    </Box>
+    </Stack>
   );
 }

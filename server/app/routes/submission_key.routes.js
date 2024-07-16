@@ -9,6 +9,12 @@ module.exports = app => {
     // Retrieve a single submission_key with api key
     router.get("/:apiKey", submission_key.findByApiKey);
 
+    // Create a submission_key with new api key 
     router.post("/create",  submission_key.create);
+
+    // retrieve api key for the request id
+    router.get("/find/:request_id",  submission_key.findByRequestId);
+
+
     app.use("/api/submission_key", router);
 };

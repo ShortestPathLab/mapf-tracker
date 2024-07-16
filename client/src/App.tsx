@@ -1,5 +1,5 @@
 import React, { useMemo, useReducer } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import MapTable from "./MapTable";
 import Navbar from "./Navbar";
@@ -18,7 +18,7 @@ import SystemDemo from "./SystemDemo";
 import TrackSubmission from "./TrackSubmission";
 import UserMapPage from "./UserMapPage";
 
-import { Box, Stack, colors } from "@mui/material";
+import { Box, Fade, Stack, alpha, colors } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ConfirmProvider } from "material-ui-confirm";
 import { Navigate } from "react-router-dom";
@@ -44,7 +44,7 @@ const theme = (t: "light" | "dark") =>
       "none",
       "none",
       "none",
-      "none",
+      `0px 0px 0px 1px ${alpha("#111317", 0.1)}`,
       "none",
       "none",
       "none",
@@ -64,16 +64,18 @@ const theme = (t: "light" | "dark") =>
     ],
     typography: {
       allVariants: {
-        fontFamily: '"Inter", "Roboto Slab", "Helvetica", "Arial", sans-serif',
-        letterSpacing: -0.15,
+        fontFamily:
+          '"Inter Tight", "Inter", "Roboto Slab", "Helvetica", "Arial", sans-serif',
+        letterSpacing: "0px",
+        fontWeight: 450,
       },
-      h1: { fontWeight: 500, fontSize: 42 },
-      h2: { fontWeight: 500, fontSize: 36, letterSpacing: -1 },
-      h3: { fontWeight: 500, fontSize: 24 },
-      h4: { fontWeight: 500, letterSpacing: -0.4, fontSize: 24 },
-      h5: { fontWeight: 500, letterSpacing: -0.4, fontSize: 20 },
-      h6: { fontWeight: 500, letterSpacing: -0.4, fontSize: 18 },
-      button: { textTransform: "none" },
+      h1: { fontWeight: 550, fontSize: 42 },
+      h2: { fontWeight: 550, fontSize: 36 },
+      h3: { fontWeight: 550, fontSize: 24 },
+      h4: { fontWeight: 550, fontSize: 24 },
+      h5: { fontWeight: 550, fontSize: 20 },
+      h6: { fontWeight: 550, fontSize: 18 },
+      button: { textTransform: "none", fontWeight: 550 },
     },
     components: {
       MuiButton: {
@@ -90,7 +92,6 @@ export default function App() {
   }, (localStorage.getItem("theme") || "dark") as any);
   const [mode] = themeState;
   const t = useMemo(() => theme(mode), [mode]);
-  console.log(t);
   const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -106,6 +107,8 @@ export default function App() {
     };
   }, []);
 
+  const { pathname } = useLocation();
+
   return (
     <ThemeContext.Provider value={themeState}>
       <ThemeProvider theme={t}>
@@ -119,49 +122,59 @@ export default function App() {
           >
             <Navbar />
 
-            <Box sx={{ px: 2 }}>
-              <Routes>
-                <Route path="/" element={<MapTable />} />
-                <Route
-                  path="/benchmarks"
-                  element={<MapTable showHeader={false} />}
-                />
-                <Route path="/scenarios" element={<ScenarioTable />} />
-                <Route path="/instances" element={<SolutionPage />} />
-                <Route path="/visualization" element={<Visualizer />} />
-                <Route path="/summary" element={<Summary />} />
-                <Route path="/aboutUs" element={<AboutUs />} />
-                <Route path="/systemDemo" element={<SystemDemo />} />
-                <Route path="/submissions" element={<Submissions />} />
-                <Route
-                  path="/submissionSummary"
-                  element={<SubmissionSummaryPage />}
-                />
-                <Route path="/contributes" element={<Contribute />} />
-                <Route path="/download" element={<Download />} />
-                <Route path="/papers" element={<Paper />} />
-                <Route path="/trackSubmission" element={<TrackSubmission />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    localStorage.getItem("user") !== null ? (
-                      <Dashboard />
-                    ) : (
-                      <Navigate to="/" />
-                    )
-                  }
-                />
-                <Route
-                  path="/user/maps"
-                  element={
-                    localStorage.getItem("user") !== null ? (
-                      <UserMapPage />
-                    ) : (
-                      <Navigate to="/" />
-                    )
-                  }
-                />
-              </Routes>
+            <Box
+              sx={{ px: 4, pb: 32 }}
+              key={pathname === "/" ? "/benchmarks" : pathname}
+            >
+              <Fade in={true}>
+                <Stack>
+                  <Routes>
+                    <Route path="/" element={<MapTable />} />
+                    <Route
+                      path="/benchmarks"
+                      element={<MapTable showHeader={false} />}
+                    />
+                    <Route path="/scenarios" element={<ScenarioTable />} />
+                    <Route path="/instances" element={<SolutionPage />} />
+                    <Route path="/visualization" element={<Visualizer />} />
+                    <Route path="/summary" element={<Summary />} />
+                    <Route path="/aboutUs" element={<AboutUs />} />
+                    <Route path="/systemDemo" element={<SystemDemo />} />
+                    <Route path="/submissions" element={<Submissions />} />
+                    <Route
+                      path="/submissionSummary"
+                      element={<SubmissionSummaryPage />}
+                    />
+                    <Route path="/contributes" element={<Contribute />} />
+                    <Route path="/download" element={<Download />} />
+                    <Route path="/papers" element={<Paper />} />
+                    <Route
+                      path="/trackSubmission"
+                      element={<TrackSubmission />}
+                    />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        localStorage.getItem("user") !== null ? (
+                          <Dashboard />
+                        ) : (
+                          <Navigate to="/" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/user/maps"
+                      element={
+                        localStorage.getItem("user") !== null ? (
+                          <UserMapPage />
+                        ) : (
+                          <Navigate to="/" />
+                        )
+                      }
+                    />
+                  </Routes>
+                </Stack>
+              </Fade>
             </Box>
           </Stack>
         </ConfirmProvider>

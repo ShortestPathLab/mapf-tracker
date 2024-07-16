@@ -16,6 +16,7 @@ import { SubmissionFileFormat } from "./SubmissionFileFormat";
 import { APIConfig } from "./config";
 import Faq from "./Faq";
 import PageHeader from "./PageHeader";
+import { useNavigate } from "react-router-dom";
 
 export default function Contribute() {
   const validationSchema = Yup.object({
@@ -75,6 +76,8 @@ export default function Contribute() {
       });
     }, 400);
   };
+
+  const navigate = useNavigate();
 
   const item_width = 300;
   return (
@@ -143,7 +146,13 @@ export default function Contribute() {
                       submission key.
                     </Typography>
                     <Typography variant="body1">
-                      Already have a submission key? <Link>Continue here.</Link>
+                      Already have a submission key?{" "}
+                      <Link
+                        onClick={() => navigate("/trackSubmission")}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        Continue here.
+                      </Link>
                     </Typography>
                   </Stack>
                   {renderLabel("About You")}

@@ -7,7 +7,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { Link, Stack, Tooltip } from "@mui/material";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
+import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
 import { useState } from "react";
 import "./BibTex.css"; // Import the CSS file for styling
 import ClipboardJS from "clipboard";
@@ -178,7 +178,6 @@ export default function SystemDemo() {
               paddingLeft: "5%",
               paddingRight: "5%",
               paddingBottom: "5%",
-              borderRadius: 5,
             }}
             width="90%"
             height="720"
@@ -190,7 +189,7 @@ export default function SystemDemo() {
           ></iframe>
         </Box>
       </Paper>
-      {/*<Paper  sx={{ width: '100%', mb: 2,borderRadius: 5 }}>*/}
+      {/*<Paper  sx={{ width: '100%', mb: 2, }}>*/}
       {/*    <Toolbar*/}
       {/*        sx={{*/}
       {/*            pl: { sm: 2 },*/}
@@ -210,11 +209,11 @@ export default function SystemDemo() {
       {/*    /!*    gridTemplateColumns: "repeat(auto-fill,minmax(320px, 1fr))",*!/*/}
       {/*    /!*    paddingTop:50*!/*/}
       {/*    /!*}}>*!/*/}
-      {/*        /!* <video style = {{paddingTop: "5%", paddingLeft: "5%",paddingRight: "5%",paddingBottom: "5%",borderRadius: 5 }} width="90%" height="600" controls>*/}
+      {/*        /!* <video style = {{paddingTop: "5%", paddingLeft: "5%",paddingRight: "5%",paddingBottom: "5%", }} width="90%" height="600" controls>*/}
       {/*            <source src= {import("./assets/videos/demo_video.mp4")} type="video/mp4" />*/}
       {/*            Your browser does not support the video tag.*/}
       {/*        </video> *!/*/}
-      {/*        <iframe style = {{paddingTop: "5%", paddingLeft: "5%",paddingRight: "5%",paddingBottom: "5%",borderRadius: 5 }} width="90%" height="720" src="https://www.youtube.com/embed/qtG6-h4FZxU" title="Tracking Progress in MAPF - ICAPS 2023 System Demonstration" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>*/}
+      {/*        <iframe style = {{paddingTop: "5%", paddingLeft: "5%",paddingRight: "5%",paddingBottom: "5%", }} width="90%" height="720" src="https://www.youtube.com/embed/qtG6-h4FZxU" title="Tracking Progress in MAPF - ICAPS 2023 System Demonstration" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>*/}
       {/*    /!*</div>*!/*/}
       {/*</Paper>*/}
     </Stack>

@@ -3,11 +3,11 @@ module.exports = mongoose => {
         {
             api_key: {type: String, required: true,  ref: "submission_key"},
             map_id: {type: mongoose.Schema.Types.ObjectId, ref: "map" ,  required: true},
-            instance_id: {type: mongoose.Schema.Types.ObjectId, ref: "instance",  required: true},
             scen_id: {type: mongoose.Schema.Types.ObjectId, ref: "scenario",  required: true},
             agents: Number,
             lower_cost: Number,
             solution_cost: Number,
+            solution_path : String, 
             error: {isError : Boolean , errorMessage: String }
         }
     );

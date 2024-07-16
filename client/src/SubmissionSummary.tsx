@@ -75,8 +75,9 @@ export default function SubmissionSummary({
     <Stack
       sx={{
         maxWidth: 960,
+        width: "100%",
         mx: "auto",
-        p: 8,
+        py: 8,
         gap: 4,
       }}
     >
@@ -84,7 +85,8 @@ export default function SubmissionSummary({
         current="Submission progress"
         path={[
           { name: "MAPF Tracker", url: "/" },
-          { name: "Submissions", url: "/submissions" },
+          { name: "Submit an algorithm", url: "/contributes" },
+          { name: "Manage submissions", url: "/trackSubmission" },
         ]}
       />
       <Typography>
