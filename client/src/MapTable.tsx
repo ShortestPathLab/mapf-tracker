@@ -49,7 +49,6 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
-import PropTypes from "prop-types";
 import randomColor from "randomcolor";
 import * as React from "react";
 import { useRef } from "react";
@@ -430,12 +429,6 @@ function EnhancedTableHead(props) {
   );
 }
 
-EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-};
-
 const refreshLeader = (callback) => {
   fetch(APIConfig.apiUrl + "/map", { method: "GET" })
     .then((res) => res.json())
@@ -465,14 +458,6 @@ function LinearProgressWithLabel(props) {
     </Box>
   );
 }
-
-LinearProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate and buffer variants.
-   * Value between 0 and 100.
-   */
-  value: PropTypes.number.isRequired,
-};
 
 const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
   height: 10,

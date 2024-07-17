@@ -23,33 +23,6 @@ const bibtexEntry = `@misc{MAPF_Tracker,
 export default function PaperPage() {
   const item_width = 300;
   const [copySuccess, setCopySuccess] = useState(false);
-
-  // const handleCopyClick = async () => {
-  //     try {
-  //         await navigator.clipboard.writeText(bibtexEntry);
-  //         setCopySuccess(true);
-  //     } catch (error) {
-  //         console.error('Failed to copy BibTeX code:', error);
-  //     }
-  // };
-  // const handleCopyClick = async () => {
-  //     try {
-  //         await clipboardy.write(bibtexEntry);
-  //         setCopySuccess(true);
-  //     } catch (error) {
-  //         console.error('Failed to copy BibTeX code:', error);
-  //     }
-  // };
-
-  // const handleCopyClick = () => {
-  //     try {
-  //         copyPaste.copy(bibtexEntry);
-  //         setCopySuccess(true);
-  //     } catch (error) {
-  //         console.error('Failed to copy BibTeX code:', error);
-  //     }
-  // };
-
   const handleCopyClick = () => {
     const copyButton = document.createElement("button");
     copyButton.setAttribute("data-clipboard-text", bibtexEntry);

@@ -8,7 +8,6 @@ import AboutUs from "./AboutUsPage";
 import Contribute from "./ContributePage";
 import Dashboard from "./Dashboard";
 import Download from "./DownloadPage";
-import Visualizer from "./MAPFVis";
 import Paper from "./PaperPage";
 import ScenarioTable from "./ScenarioTable";
 import SolutionPage from "./SolutionPage";
@@ -17,6 +16,7 @@ import Summary from "./Summary";
 import SystemDemo from "./SystemDemo";
 import TrackSubmission from "./TrackSubmission";
 import UserMapPage from "./UserMapPage";
+import { Visualiser } from "./visualiser";
 
 import { Box, Fade, Stack, alpha } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -24,8 +24,8 @@ import { ConfirmProvider } from "material-ui-confirm";
 import { Navigate } from "react-router-dom";
 import SubmissionSummary from "./SubmissionSummary";
 
-import { ThemeContext } from "./ThemeProvider";
 import { SnackbarProvider } from "./Snackbar";
+import { ThemeContext } from "./ThemeProvider";
 
 const theme = (t: "light" | "dark") =>
   createTheme({
@@ -138,7 +138,7 @@ export default function App() {
                       />
                       <Route path="/scenarios" element={<ScenarioTable />} />
                       <Route path="/instances" element={<SolutionPage />} />
-                      <Route path="/visualization" element={<Visualizer />} />
+                      <Route path="/visualization" element={<Visualiser />} />
                       <Route path="/summary" element={<Summary />} />
                       <Route path="/aboutUs" element={<AboutUs />} />
                       <Route path="/systemDemo" element={<SystemDemo />} />

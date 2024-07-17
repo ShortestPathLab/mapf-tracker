@@ -14,24 +14,26 @@ import {
   Stack,
   Tooltip,
   Typography,
-  colors,
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
-import { capitalize, clamp, each, min, range, trim, values } from "lodash";
+import { capitalize, clamp, each, min, range, trim } from "lodash";
 import { Graphics as PixiGraphics } from "pixi.js";
 import React, { useMemo, useReducer } from "react";
 import { useLocation } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
+import PageHeader from "../PageHeader";
+import { colors } from "./accentColorsList";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
-import PageHeader from "./PageHeader";
-
-export const { common, ...accentColors } = colors;
-
-const accentColorsList = values(accentColors);
 
 const LINE_WIDTH = 0.05;
+const WHITE = "#ffffff";
+const BLACK = "#000000";
+
+function hexToInt(s: string) {
+  return parseInt(trim(s, "#"), 16);
+}
 
 const $grid =
   ({ x: width, y: height }: { x: number; y: number }, color: string) =>
@@ -62,12 +64,15 @@ const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
   });
 };
 
-const Visualization = () => {
-  const theme = useTheme();
+export default function Visualiser() {
   const location = useLocation();
+  const theme = useTheme();
+  const dark = theme.palette.mode === "dark";
 
-  const [scale1, zoom] = useReducer(
-    (prev, next: "in" | "out") =>
+  // ─────────────────────────────────────────────────────────────────────
+
+  const [zoom, setZoom] = useReducer(
+    (prev: number, next: "in" | "out") =>
       clamp(next === "in" ? prev * 1.25 : prev / 1.25, 0.1, 1.5),
     0.8
   );
@@ -84,15 +89,14 @@ const Visualization = () => {
   const { step, backwards, forwards, play, pause, paused } =
     usePlayback(timespan);
 
+  // ─────────────────────────────────────────────────────────────────────
+
   const drawGrid = useMemo(
-    () =>
-      $grid({ x, y }, theme.palette.mode === "dark" ? "#ffffff" : "#000000"),
+    () => $grid({ x, y }, dark ? WHITE : BLACK),
     [x, y, theme.palette.mode]
   );
-  const drawMap = useMemo(
-    () => $map(map, theme.palette.mode === "dark" ? "#ffffff" : "#000000"),
-    [map, theme.palette.mode]
-  );
+
+  const drawMap = useMemo(() => $map(map, dark ? WHITE : BLACK), [map, dark]);
 
   const drawAgents = useMemo(() => {
     const positions = getAgentPosition(step);
@@ -100,16 +104,15 @@ const Visualization = () => {
       positions.map(({ x, y }, i) => ({
         x,
         y,
-        color:
-          accentColorsList[i % accentColorsList.length][
-            theme.palette.mode === "dark" ? "300" : "A100"
-          ],
+        color: colors[i % colors.length][dark ? "300" : "A100"],
       }))
     );
-  }, [getAgentPosition, step, theme.palette.mode]);
+  }, [getAgentPosition, step, dark]);
+
+  // ─────────────────────────────────────────────────────────────────────
 
   const scale = (width: number, height: number) =>
-    (min([width, height])! / min([x, y])!) * scale1;
+    (min([width, height])! / min([x, y])!) * zoom;
 
   const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
   const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
@@ -203,12 +206,12 @@ const Visualization = () => {
               {
                 name: "Zoom in",
                 icon: <ZoomInOutlined />,
-                action: () => zoom("in"),
+                action: () => setZoom("in"),
               },
               {
                 name: "Zoom out",
                 icon: <ZoomOutOutlined />,
-                action: () => zoom("out"),
+                action: () => setZoom("out"),
               },
             ].map(({ name, icon, action }) => (
               <Tooltip title={name}>
@@ -220,10 +223,4 @@ const Visualization = () => {
       </Stack>
     </Box>
   );
-};
-
-export default Visualization;
-
-function hexToInt(s: string) {
-  return parseInt(trim(s, "#"), 16);
 }
