@@ -479,7 +479,7 @@ export default function Submissions() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
       <Stack sx={{ maxWidth: 960 }}>
         <PageHeader
           current="Submissions"

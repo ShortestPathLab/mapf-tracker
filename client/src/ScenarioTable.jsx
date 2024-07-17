@@ -1083,7 +1083,7 @@ export default function ScenarioTable() {
   };
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
       <Stack direction="row">
         <PageHeader
           current={capitalize(location.state.mapName)}
@@ -1106,7 +1106,7 @@ export default function ScenarioTable() {
         >
           <Button
             variant="contained"
-            sx={{ px: 2, py: 1, mr: 1 }}
+            sx={{ px: 2, py: 1, mr: 1, minWidth: "max-content" }}
             aria-controls="domain-filter-menu"
             aria-haspopup="true"
             onClick={(event) => {

@@ -884,7 +884,7 @@ export default function UserMapPage() {
   );
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
       <PageHeader
         current={`Submission ${location.state.algo_id.slice(0, 5)}`}
         path={[

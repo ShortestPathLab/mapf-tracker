@@ -1089,7 +1089,7 @@ export default function SolutionPage() {
   );
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
       <Stack direction="row">
         <PageHeader
           current={scenarioString}
@@ -1117,7 +1117,7 @@ export default function SolutionPage() {
         >
           <Button
             variant="contained"
-            sx={{ px: 2, py: 1, mr: 1 }}
+            sx={{ px: 2, py: 1, mr: 1, minWidth: "max-content" }}
             aria-controls="domain-filter-menu"
             aria-haspopup="true"
             onClick={(event) => {

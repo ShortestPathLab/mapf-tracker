@@ -408,7 +408,7 @@ export default function TrackSubmission() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Stack sx={{ maxWidth: 960, mx: "auto", gap: 4, py: 6 }}>
+    <Stack sx={{ maxWidth: "100%", width: 960, mx: "auto", gap: 4, py: 6 }}>
       <PageHeader
         current="Track Submissions"
         path={[{ name: "MAPF Tracker", url: "/" }]}

@@ -229,7 +229,6 @@ const headCells = [
   },
 ];
 
-
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
@@ -303,8 +302,6 @@ async function checkNameExist(id, name) {
   ).catch((err) => console.log(err));
   return response.status === 200;
 }
-
-
 
 const refreshAlgorithms = (callback) => {
   const requestOptions = {
@@ -498,7 +495,6 @@ export default function Dashboard() {
     setSearched("");
     requestSearch("");
   };
-
 
   React.useEffect(() => {
     refreshRequests((data) => {
@@ -738,7 +734,7 @@ export default function Dashboard() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
       <PageHeader
         current="Dashboard"
         path={[{ name: "MAPF Tracker", url: "/" }]}

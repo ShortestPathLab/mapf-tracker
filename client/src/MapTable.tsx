@@ -1204,7 +1204,7 @@ export default function MapTable({ showHeader = true }) {
 
   return (
     <>
-      <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
+      <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
         <Collapse in={showHeader} sx={{ mb: -4 }}>
           <Stack
             sx={{
@@ -1258,7 +1258,7 @@ export default function MapTable({ showHeader = true }) {
           >
             <Button
               variant="contained"
-              sx={{ px: 2, py: 1, mr: 1 }}
+              sx={{ px: 2, py: 1, mr: 1, minWidth: "max-content" }}
               aria-controls="domain-filter-menu"
               aria-haspopup="true"
               onClick={(event) => {
