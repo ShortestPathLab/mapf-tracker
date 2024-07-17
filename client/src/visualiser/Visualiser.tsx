@@ -105,7 +105,7 @@ export default function Visualiser() {
   // ─────────────────────────────────────────────────────────────────────
 
   const scale = (width: number, height: number) =>
-    (min([width, height])! / min([x, y])!) * 0.8;
+    (min([width, height])! / min([x, y])!) * 0.7;
 
   const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
   const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
@@ -117,12 +117,10 @@ export default function Visualiser() {
     <Box
       sx={{
         width: "100vw",
-        //TODO: actual height
-        height: "calc(100vh - 88px)",
+        height: "100vh",
         position: "fixed",
         left: 0,
-        //TODO: don't hardcode position
-        top: 88,
+        top: 0,
       }}
     >
       <Stack sx={{ position: "fixed", p: 4, top: 88, left: 0 }}>
