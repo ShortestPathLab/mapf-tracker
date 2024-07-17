@@ -18,7 +18,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
-import { capitalize, clamp, min, range, trim, values } from "lodash";
+import { capitalize, clamp, each, min, range, trim, values } from "lodash";
 import { Graphics as PixiGraphics } from "pixi.js";
 import React, { useMemo, useReducer } from "react";
 import { useLocation } from "react-router-dom";
@@ -33,7 +33,7 @@ const accentColorsList = values(accentColors);
 
 const LINE_WIDTH = 0.05;
 
-const drawGrid =
+const $grid =
   ({ x: width, y: height }: { x: number; y: number }, color: string) =>
   (g: PixiGraphics) => {
     g.clear();
@@ -46,7 +46,7 @@ const drawGrid =
     }
   };
 
-const drawAgents =
+const $agents =
   (agents: { color: string; x: number; y: number }[]) => (g: PixiGraphics) => {
     g.clear();
     for (const { x, y, color } of agents) {
@@ -54,13 +54,21 @@ const drawAgents =
     }
   };
 
+const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
+  each(map, (row, y) => {
+    each(row, (b, x) => {
+      if (b) g.beginFill(hexToInt(color)).drawRect(x, y, 1, 1).endFill();
+    });
+  });
+};
+
 const Visualization = () => {
   const theme = useTheme();
   const location = useLocation();
 
   const [scale1, zoom] = useReducer(
     (prev, next: "in" | "out") =>
-      clamp(next === "in" ? prev + 0.1 : prev - 0.1, 0, 1.5),
+      clamp(next === "in" ? prev * 1.25 : prev / 1.25, 0.1, 1.5),
     0.8
   );
 
@@ -76,15 +84,19 @@ const Visualization = () => {
   const { step, backwards, forwards, play, pause, paused } =
     usePlayback(timespan);
 
-  const grid = useMemo(
+  const drawGrid = useMemo(
     () =>
-      drawGrid({ x, y }, theme.palette.mode === "dark" ? "#ffffff" : "#000000"),
+      $grid({ x, y }, theme.palette.mode === "dark" ? "#ffffff" : "#000000"),
     [x, y, theme.palette.mode]
   );
+  const drawMap = useMemo(
+    () => $map(map, theme.palette.mode === "dark" ? "#ffffff" : "#000000"),
+    [map, theme.palette.mode]
+  );
 
-  const agents = useMemo(() => {
+  const drawAgents = useMemo(() => {
     const positions = getAgentPosition(step);
-    return drawAgents(
+    return $agents(
       positions.map(({ x, y }, i) => ({
         x,
         y,
@@ -151,8 +163,9 @@ const Visualization = () => {
               x={offsetX(size.width, size.height)}
               y={offsetY(size.width, size.height)}
             >
-              <Graphics draw={agents} />
-              <Graphics draw={grid} alpha={0.7} />
+              <Graphics draw={drawAgents} />
+              <Graphics draw={drawMap} />
+              <Graphics draw={drawGrid} alpha={0.7} />
             </Container>
           </Stage>
         )}
@@ -210,6 +223,7 @@ const Visualization = () => {
 };
 
 export default Visualization;
+
 function hexToInt(s: string) {
   return parseInt(trim(s, "#"), 16);
 }

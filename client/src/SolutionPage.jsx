@@ -1244,7 +1244,13 @@ export default function SolutionPage() {
                       hover
                       tabIndex={-1}
                       key={row.id}
-                      // onClick={(event) => navigateToVisualization(event,row.id,row.agents,row.solution_path)}
+                      onClick={(event) =>
+                        navigateToVisualization(
+                          event,
+                          row.solution_path_id,
+                          row.agents
+                        )
+                      }
                     >
                       <TableCell
                         component="th"
