@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require("../models/index.ts");
 const Tutorial = db.tutorials;
 
 // Create and Save a new Tutorial
@@ -13,19 +13,19 @@ exports.create = (req, res) => {
   const tutorial = new Tutorial({
     title: req.body.title,
     description: req.body.description,
-    published: req.body.published ? req.body.published : false
+    published: req.body.published ? req.body.published : false,
   });
 
   // Save Tutorial in the database
   tutorial
     .save(tutorial)
-    .then(data => {
+    .then((data) => {
       res.send(data);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Tutorial."
+          err.message || "Some error occurred while creating the Tutorial.",
       });
     });
 };
@@ -33,16 +33,18 @@ exports.create = (req, res) => {
 // Retrieve all Tutorials from the database.
 exports.findAll = (req, res) => {
   const title = req.query.title;
-  var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+  var condition = title
+    ? { title: { $regex: new RegExp(title), $options: "i" } }
+    : {};
 
   Tutorial.find(condition)
-    .then(data => {
+    .then((data) => {
       res.send(data);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving tutorials.",
       });
     });
 };
@@ -52,12 +54,12 @@ exports.findOne = (req, res) => {
   const id = req.params.id;
 
   Tutorial.findById(id)
-    .then(data => {
+    .then((data) => {
       if (!data)
         res.status(404).send({ message: "Not found Tutorial with id " + id });
       else res.send(data);
     })
-    .catch(err => {
+    .catch((err) => {
       res
         .status(500)
         .send({ message: "Error retrieving Tutorial with id=" + id });
@@ -68,23 +70,23 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
-      message: "Data to update can not be empty!"
+      message: "Data to update can not be empty!",
     });
   }
 
   const id = req.params.id;
 
   Tutorial.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-    .then(data => {
+    .then((data) => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`,
         });
       } else res.send({ message: "Tutorial was updated successfully." });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
-        message: "Error updating Tutorial with id=" + id
+        message: "Error updating Tutorial with id=" + id,
       });
     });
 };
@@ -94,20 +96,20 @@ exports.delete = (req, res) => {
   const id = req.params.id;
 
   Tutorial.findByIdAndRemove(id, { useFindAndModify: false })
-    .then(data => {
+    .then((data) => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`,
         });
       } else {
         res.send({
-          message: "Tutorial was deleted successfully!"
+          message: "Tutorial was deleted successfully!",
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
-        message: "Could not delete Tutorial with id=" + id
+        message: "Could not delete Tutorial with id=" + id,
       });
     });
 };
@@ -115,15 +117,15 @@ exports.delete = (req, res) => {
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
   Tutorial.deleteMany({})
-    .then(data => {
+    .then((data) => {
       res.send({
-        message: `${data.deletedCount} Tutorials were deleted successfully!`
+        message: `${data.deletedCount} Tutorials were deleted successfully!`,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all tutorials."
+          err.message || "Some error occurred while removing all tutorials.",
       });
     });
 };
@@ -131,13 +133,13 @@ exports.deleteAll = (req, res) => {
 // Find all published Tutorials
 exports.findAllPublished = (req, res) => {
   Tutorial.find({ published: true })
-    .then(data => {
+    .then((data) => {
       res.send(data);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials."
+          err.message || "Some error occurred while retrieving tutorials.",
       });
     });
 };

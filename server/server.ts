@@ -8,6 +8,7 @@ import mime = require("mime-types");
 var bodyParser = require("body-parser");
 var https = require("https");
 var http = require("http");
+import db from "./app/models/index.ts";
 
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(
@@ -31,7 +32,6 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-import db = require("./app/models");
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
@@ -59,19 +59,19 @@ app.use(function (request, response, next) {
   next();
 });
 
-require("./app/routes/turorial.routes")(app);
-require("./app/routes/map.routes")(app);
-require("./app/routes/instance.routes")(app);
-require("./app/routes/submission.routes")(app);
-require("./app/routes/solution_submission.routes")(app);
-require("./app/routes/scenario.routes")(app);
-require("./app/routes/algorithm.routes")(app);
-require("./app/routes/auth.routes")(app);
-require("./app/routes/user.routes")(app);
-require("./app/routes/solution_path.routes")(app);
-require("./app/routes/request.routes")(app);
-require("./app/routes/submission_key.routes")(app);
-require("./app/routes/ongoing_submission.routes")(app);
+require("./app/routes/turorial.routes.ts")(app);
+require("./app/routes/map.routes.ts")(app);
+require("./app/routes/instance.routes.ts")(app);
+require("./app/routes/submission.routes.ts")(app);
+require("./app/routes/solution_submission.routes.ts")(app);
+require("./app/routes/scenario.routes.ts")(app);
+require("./app/routes/algorithm.routes.ts")(app);
+require("./app/routes/auth.routes.ts")(app);
+require("./app/routes/user.routes.ts")(app);
+require("./app/routes/solution_path.routes.ts")(app);
+require("./app/routes/request.routes.ts")(app);
+require("./app/routes/submission_key.routes.ts")(app);
+require("./app/routes/ongoing_submission.routes.ts")(app);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 

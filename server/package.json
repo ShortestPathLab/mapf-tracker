@@ -46,5 +46,6 @@
     "vite-node": "^2.0.3",
     "vite-tsconfig-paths": "^4.3.2",
     "yarn": "^1.22.19"
-  }
+  },
+  "type": "module"
 }
