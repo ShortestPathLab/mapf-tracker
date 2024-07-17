@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import React, { ReactNode } from "react";
 import PageHeader from "./PageHeader";
+import { useLocation } from 'react-router-dom';
 
 export type Props = {
   extras?: ReactNode;
@@ -25,7 +26,9 @@ export type Props = {
   detailStats?: { name: string; stats: { name: string; count: number }[] }[];
 };
 
-export default function SubmissionSummary({
+
+export default function SubmissionSummary(
+  {
   extras = [
     <Button startIcon={<DownloadOutlined />}>Download</Button>,
     <Button startIcon={<RefreshOutlined />}>Refresh</Button>,
@@ -71,6 +74,8 @@ export default function SubmissionSummary({
     },
   ],
 }: Props) {
+  const location = useLocation();
+  apiKey = location.state?.apiKey || "sample_api_key";
   return (
     <Stack
       sx={{

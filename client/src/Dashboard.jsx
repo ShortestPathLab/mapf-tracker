@@ -229,13 +229,6 @@ const headCells = [
   },
 ];
 
-// function checkSortable(head, order ){
-//     if(headCell.sortable){
-//         return  order === 'desc' ? 'sorted descending' : 'sorted ascending'
-//     }else{
-//         return 'disableSortBy
-//     }
-// }
 
 function EnhancedTableHead(props) {
   const { order, orderBy, onRequestSort } = props;
@@ -311,14 +304,7 @@ async function checkNameExist(id, name) {
   return response.status === 200;
 }
 
-// const refreshAllAlgorithms = (callback)=>{
-//     fetch('http://localhost:8080/api/algorithm/all_detail', {method: 'GET'})
-//         .then(res => res.json())
-//         .then(data => {
-//             callback(data);
-//         })
-//         .catch(err => console.error(err));
-// }
+
 
 const refreshAlgorithms = (callback) => {
   const requestOptions = {
@@ -513,33 +499,6 @@ export default function Dashboard() {
     requestSearch("");
   };
 
-  // const navigateToDownload =  (event, object_id,filename) => {
-  //     setQuery_id(object_id);
-  //     setLoading(true);
-  //     setCsvFilename(filename);
-  //     event.stopPropagation();
-  // };
-  //
-  //
-  // React.useEffect(() => {
-  //     if(loading&&query_id !==''){
-  //         fetch(APIConfig.apiUrl+'/instance/DownloadMapByID/'+query_id, {method: 'GET'})
-  //             .then(res => res.json())
-  //             .then(data => {
-  //                 setCsvData(data);
-  //                 setQuery_id('');
-  //             });
-  //     }
-  // }, [loading]);
-  //
-  //
-  // React.useEffect(() => {
-  //     if(csvData.length !== 0){
-  //         setLoading(false);
-  //         csvLinkEl.current.link.click();
-  //         setCsvData([]);
-  //     }
-  // }, [csvData]);
 
   React.useEffect(() => {
     refreshRequests((data) => {
