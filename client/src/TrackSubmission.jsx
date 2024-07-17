@@ -1,15 +1,21 @@
+import { Add } from "@mui/icons-material";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
 import FilterListOutlined from "@mui/icons-material/FilterListOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,14 +25,25 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import TextField from "@mui/material/TextField";
+import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 import { Field, Form, Formik } from "formik";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  Tooltip,
+} from "recharts";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
+import { useNavigate } from "react-router-dom";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const angle = {
   Warehouse: -40,
@@ -237,9 +254,10 @@ export default function TrackSubmission() {
   const [requestData, setRequestData] = React.useState();
   const [edit, setEdit] = React.useState(false);
 
-  const handleOpenRequestDetail = (data) => {
+  const handleOpenRequestDetail = (event, data) => {
     setOpenRequestDetail(true);
     setRequestData(data);
+    event.stopPropagation();
   };
   const handleCloseRequestDetail = () => {
     setOpenRequestDetail(false);
@@ -308,6 +326,7 @@ export default function TrackSubmission() {
     setSubmitting(false);
     await checkApiKey(values.api_key);
     resetForm({ api_key: "" });
+    // createNewApiKey()
   };
 
   const refreshRequests = async (callback) => {
@@ -359,9 +378,9 @@ export default function TrackSubmission() {
         }
       );
       const data = await response.json();
-      console.log(response);
       if (response.ok) {
         setRequestIdList((prevList) => [...prevList, data.request_id]);
+        console.log(successsssss);
       } else {
         console.error("Error finding the submission key", data);
       }
@@ -504,7 +523,9 @@ export default function TrackSubmission() {
                       <TableCell align="center">{row.algorithmName}</TableCell>
                       <TableCell align="center">
                         <IconButton
-                          onClick={() => handleOpenRequestDetail(row)}
+                          onClick={(event) =>
+                            handleOpenRequestDetail(event, row)
+                          }
                         >
                           <InfoIcon />
                         </IconButton>
