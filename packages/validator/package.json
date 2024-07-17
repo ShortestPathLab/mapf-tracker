@@ -17,5 +17,8 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.3"
   },
-  "type": "module"
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
 }

@@ -1,5 +1,5 @@
-import { CheckParameters, CheckResult } from "core/Check";
-import { serialisePoint as $ } from "core/Point";
+import { CheckParameters, CheckResult } from "../core/Check.ts";
+import { serialisePoint as $ } from "../core/Point.ts";
 import { chain as _ } from "lodash-es";
 
 export function checkImmediateCollision({

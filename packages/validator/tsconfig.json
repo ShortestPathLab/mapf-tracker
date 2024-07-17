@@ -1,3 +1,7 @@
 {
-  "compilerOptions": { "baseUrl": "src" }
+  "compilerOptions": {
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
 }

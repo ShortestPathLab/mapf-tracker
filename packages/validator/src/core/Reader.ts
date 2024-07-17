@@ -1,5 +1,5 @@
-import { Chunk } from "core/Chunk";
-import { DoneException } from "exceptions/DoneException";
+import { Chunk } from "../core/Chunk.ts";
+import { DoneException } from "../exceptions/DoneException.ts";
 
 export interface Reader {
   read(): Chunk | undefined;

@@ -1,6 +1,6 @@
-import { CheckParameters, CheckResult } from "core/Check";
-import { Domain } from "core/Domain";
-import { Point } from "core/Point";
+import { CheckParameters, CheckResult } from "../core/Check.ts";
+import { Domain } from "../core/Domain.ts";
+import { Point } from "../core/Point.ts";
 import { find } from "lodash-es";
 
 export const contains = (d: Domain, p: Point) =>

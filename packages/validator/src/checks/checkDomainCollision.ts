@@ -1,4 +1,4 @@
-import { CheckParameters, CheckResult } from "core/Check";
+import { CheckParameters, CheckResult } from "../core/Check.ts";
 import { find } from "lodash-es";
 
 export function checkDomainCollision({
