@@ -878,6 +878,7 @@ export default function SolutionPage() {
       location.state.scenTypeID;
     navigate("/visualization", {
       state: {
+        ...location.state,
         path_id: path_id,
         map_name: location.state.mapName,
         scen_string: scen_string,

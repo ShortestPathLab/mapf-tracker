@@ -18,13 +18,14 @@ import {
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
-import { clamp, min, range, trim, values } from "lodash";
+import { capitalize, clamp, min, range, trim, values } from "lodash";
 import { Graphics as PixiGraphics } from "pixi.js";
 import React, { useMemo, useReducer } from "react";
 import { useLocation } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
+import PageHeader from "./PageHeader";
 
 export const { common, ...accentColors } = colors;
 
@@ -98,9 +99,12 @@ const Visualization = () => {
   const scale = (width: number, height: number) =>
     (min([width, height])! / min([x, y])!) * scale1;
 
-  const offsetX = (width, height) => (width - scale(width, height) * x) / 2;
-  const offsetY = (width, height) => (height - scale(width, height) * y) / 2;
+  const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
+  const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
 
+  const scenarioString = capitalize(
+    `${location.state.scenType}-${location.state.scenTypeID}`
+  );
   return (
     <Box
       sx={{
@@ -113,6 +117,25 @@ const Visualization = () => {
         top: 88,
       }}
     >
+      <Stack sx={{ position: "fixed", p: 4, top: 88, left: 0 }}>
+        <PageHeader
+          current="View"
+          path={[
+            { name: "MAPF Tracker", url: "/" },
+            { name: "Benchmarks", url: "/benchmarks" },
+            {
+              name: capitalize(location.state.map_name),
+              url: "/scenarios",
+              state: location.state,
+            },
+            {
+              name: scenarioString,
+              url: "/instances",
+              state: location.state,
+            },
+          ]}
+        />
+      </Stack>
       <AutoSize>
         {(size) => (
           <Stage
