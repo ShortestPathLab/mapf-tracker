@@ -1,7 +1,7 @@
 import execSh from "exec-sh";
 import { entries, join, trim } from "lodash";
 
-const sh = execSh.default.promise;
+const sh = execSh.promise;
 
 export class ExecError extends Error {}
 

@@ -13,6 +13,7 @@ export default defineConfig({
   ],
   build: {
     outDir: "lib",
+    ssr: true,
     lib: { entry: "src/index.ts", name: "validator", fileName: "index" },
   },
 });
