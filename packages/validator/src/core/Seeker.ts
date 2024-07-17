@@ -9,7 +9,7 @@ export class Seeker {
   current: Chunk;
   /**
    * @param reader
-   * @param history How many previous chunks to store.
+   * @param history How many previous chunks to store. Set to -1 to disable.
    */
   constructor(public reader: Reader, public history = 2) {
     this.current = reader.read();
@@ -45,7 +45,7 @@ export class Seeker {
         if (this.current.next) {
           // Navigate forward in cache
           // Considering pruning cache here
-          this.prune();
+          if (this.history !== -1) this.prune();
           this.current = this.current.next as Chunk;
           return this.seek(n);
         } else {

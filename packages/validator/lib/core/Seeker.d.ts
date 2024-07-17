@@ -9,7 +9,7 @@ export declare class Seeker {
     current: Chunk;
     /**
      * @param reader
-     * @param history How many previous chunks to store.
+     * @param history How many previous chunks to store. Set to -1 to disable.
      */
     constructor(reader: Reader, history?: number);
     prune(): void;

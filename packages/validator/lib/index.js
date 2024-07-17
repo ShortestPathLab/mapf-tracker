@@ -1183,7 +1183,7 @@ class va {
 class ba {
   /**
    * @param reader
-   * @param history How many previous chunks to store.
+   * @param history How many previous chunks to store. Set to -1 to disable.
    */
   constructor(e, r = 2) {
     this.reader = e, this.history = r, this.cache = new k(), this.current = e.read(), this.cache.append(this.current);
@@ -1205,7 +1205,7 @@ class ba {
         throw new ge();
       }
       case "high":
-        return this.current.next ? (this.prune(), this.current = this.current.next, this.seek(e)) : (this.cache.append(this.reader.read()), this.seek(e));
+        return this.current.next ? (this.history !== -1 && this.prune(), this.current = this.current.next, this.seek(e)) : (this.cache.append(this.reader.read()), this.seek(e));
     }
   }
 }
