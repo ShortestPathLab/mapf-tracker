@@ -3,8 +3,6 @@ import {
   ArrowRightOutlined,
   PauseOutlined,
   PlayArrowOutlined,
-  ZoomInOutlined,
-  ZoomOutOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -17,12 +15,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
-import { capitalize, clamp, each, min, range, trim } from "lodash";
+import { capitalize, each, min, range, trim } from "lodash";
 import { Graphics as PixiGraphics } from "pixi.js";
-import React, { useMemo, useReducer } from "react";
+import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import PageHeader from "../PageHeader";
+import Viewport from "./Viewport";
 import { colors } from "./colors";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
@@ -71,12 +70,6 @@ export default function Visualiser() {
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const [zoom, setZoom] = useReducer(
-    (prev: number, next: "in" | "out") =>
-      clamp(next === "in" ? prev * 1.25 : prev / 1.25, 0.1, 1.5),
-    0.8
-  );
-
   const { map, result, getAgentPosition } = useSolution({
     solutionKey: location.state.path_id,
     agentCount: location.state.num_agents,
@@ -112,7 +105,7 @@ export default function Visualiser() {
   // ─────────────────────────────────────────────────────────────────────
 
   const scale = (width: number, height: number) =>
-    (min([width, height])! / min([x, y])!) * zoom;
+    (min([width, height])! / min([x, y])!) * 0.8;
 
   const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
   const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
@@ -161,15 +154,17 @@ export default function Visualiser() {
               antialias: true,
             }}
           >
-            <Container
-              scale={scale(size.width, size.height)}
-              x={offsetX(size.width, size.height)}
-              y={offsetY(size.width, size.height)}
-            >
-              <Graphics draw={drawAgents} />
-              <Graphics draw={drawMap} />
-              <Graphics draw={drawGrid} alpha={0.7} />
-            </Container>
+            <Viewport {...size} key={`${size.width},${size.height}`}>
+              <Container
+                scale={scale(size.width, size.height)}
+                x={offsetX(size.width, size.height)}
+                y={offsetY(size.width, size.height)}
+              >
+                <Graphics draw={drawAgents} />
+                <Graphics draw={drawMap} />
+                <Graphics draw={drawGrid} alpha={0.3} />
+              </Container>
+            </Viewport>
           </Stage>
         )}
       </AutoSize>
@@ -195,23 +190,17 @@ export default function Visualiser() {
               },
               {
                 name: paused ? "Play" : "Pause",
-                icon: paused ? <PlayArrowOutlined /> : <PauseOutlined />,
+                icon: paused ? (
+                  <PlayArrowOutlined sx={{ color: "primary.main" }} />
+                ) : (
+                  <PauseOutlined sx={{ color: "primary.main" }} />
+                ),
                 action: paused ? play : pause,
               },
               {
                 name: "Step forwards",
                 icon: <ArrowRightOutlined />,
                 action: forwards,
-              },
-              {
-                name: "Zoom in",
-                icon: <ZoomInOutlined />,
-                action: () => setZoom("in"),
-              },
-              {
-                name: "Zoom out",
-                icon: <ZoomOutOutlined />,
-                action: () => setZoom("out"),
               },
             ].map(({ name, icon, action }) => (
               <Tooltip title={name}>
