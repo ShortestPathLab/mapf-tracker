@@ -260,9 +260,10 @@ export default function TrackSubmission() {
     const [edit, setEdit] = React.useState(false);
 
 
-    const handleOpenRequestDetail = (data) => {
+    const handleOpenRequestDetail = (event, data) => {
         setOpenRequestDetail(true);
         setRequestData(data);
+        event.stopPropagation()
     };
     const handleCloseRequestDetail = () => {
         setOpenRequestDetail(false);
@@ -380,6 +381,7 @@ export default function TrackSubmission() {
       const data = await response.json();
       if (response.ok) {
         setRequestIdList((prevList) => [...prevList, data.request_id]);
+        console.log(successsssss)
       } else {
         console.error("Error finding the submission key", data);
       }
@@ -509,7 +511,7 @@ export default function TrackSubmission() {
                                             <TableCell align="center">{row.requesterEmail}</TableCell>
                                             <TableCell align="center">{row.algorithmName}</TableCell>
                                             <TableCell align="center">
-                                                <IconButton onClick={() => handleOpenRequestDetail(row)}>
+                                                <IconButton onClick={(event) => handleOpenRequestDetail(event, row)}>
                                                     <InfoIcon />
                                                 </IconButton>
                                             </TableCell>
