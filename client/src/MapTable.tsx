@@ -1,15 +1,15 @@
 import {
   CancelOutlined,
+  ChevronRightOutlined as ChevronRightIcon,
+  FileDownloadOutlined as DownloadIcon,
   ExpandMoreOutlined,
+  FilterListOutlined as FilterListIcon,
   FilterListOutlined,
   NavigateNextOutlined,
   RouteOutlined,
+  ShowChartOutlined as ShowChartIcon,
+  InfoOutlined as InfoIcon,
 } from "@mui/icons-material";
-import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
-import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
-import FilterListIcon from "@mui/icons-material/FilterListOutlined";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
-import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
 import {
   Box,
   Button,

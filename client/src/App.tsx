@@ -27,6 +27,7 @@ import SubmissionSummary from "./SubmissionSummary";
 import { SnackbarProvider } from "./Snackbar";
 import { ThemeContext } from "./ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useTitleBar } from "./useTitleBar";
 
 const queryClient = new QueryClient();
 
@@ -96,23 +97,12 @@ export default function App() {
     return next;
   }, (localStorage.getItem("theme") || "dark") as any);
   const [mode] = themeState;
+
   const t = useMemo(() => theme(mode), [mode]);
-  const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup the event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const { pathname } = useLocation();
+
+  useTitleBar(mode === "dark" ? "#15181c" : "#ffffff");
 
   return (
     <QueryClientProvider client={queryClient}>
