@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Toolbar from "@mui/material/Toolbar";
 import { Tooltip } from "@mui/material";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { useState } from "react";
 import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
 import "./BibTex.css"; // Import the CSS file for styling
@@ -121,13 +121,7 @@ export default function PaperPage() {
           </Typography>
           <div className="paper-content">
             <div className="code-viewer">
-              <SyntaxHighlighter
-                language="bibtex"
-                // style={vscDarkPlus}
-                customStyle={{ fontSize: 16, marginTop: "0", paddingTop: "0" }}
-              >
-                {bibtexEntry}
-              </SyntaxHighlighter>
+              {bibtexEntry}
               <div className="copy-button-container">
                 {copySuccess && (
                   <span className="copy-success-message">

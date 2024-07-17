@@ -6,52 +6,47 @@ import {
   RouteOutlined,
 } from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
-import CompareIcon from "@mui/icons-material/CompareOutlined";
 import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
 import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
-import MenuIcon from "@mui/icons-material/MenuOutlined";
 import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
 import {
+  Box,
+  Button,
   ButtonBase,
+  Checkbox,
+  CircularProgress,
   Collapse,
+  Dialog,
+  DialogContent,
   Divider,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  LinearProgress,
   ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   MenuList,
+  Paper,
   Popover,
+  Select,
   Stack,
-} from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import CircularProgress from "@mui/material/CircularProgress";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import LinearProgress, {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  TextField,
+  Toolbar,
+  Tooltip,
+  Typography,
   linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import Link from "@mui/material/Link";
-import ListItemText from "@mui/material/ListItemText";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import TextField from "@mui/material/TextField";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { visuallyHidden } from "@mui/utils";
 import PropTypes from "prop-types";
@@ -59,7 +54,7 @@ import randomColor from "randomcolor";
 import * as React from "react";
 import { useRef } from "react";
 import { CSVLink } from "react-csv";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Area,
   AreaChart,
@@ -75,13 +70,12 @@ import {
   Radar,
   RadarChart,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import { IconCard } from "./IconCard";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
-import { IconCard } from "./IconCard";
 
 const angle = {
   Warehouse: -40,
@@ -304,7 +298,7 @@ const headCells = [
     id: "img",
     numeric: false,
     disablePadding: false,
-    label: "Image",
+    label: "Preview",
     sortable: false,
     alignment: "center",
   },
@@ -1539,13 +1533,21 @@ export default function MapTable({ showHeader = true }) {
                           {row.map_name}
                         </TableCell>
                         <TableCell align="center">
-                          <Box
-                            component="img"
-                            sx={{ borderRadius: 1, height: 48 }}
-                            // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
-                            src={`/mapf-svg/${row.map_name}.svg`}
-                            alt="Canvas Logo"
-                          />
+                          <Tooltip
+                            title={
+                              <Box
+                                component="img"
+                                sx={{ borderRadius: 1, height: 256 }}
+                                src={`/mapf-svg/${row.map_name}.svg`}
+                              />
+                            }
+                          >
+                            <Box
+                              component="img"
+                              sx={{ borderRadius: 1, height: 48 }}
+                              src={`/mapf-svg/${row.map_name}.svg`}
+                            />
+                          </Tooltip>
                           {/*<img src={'/public/logo192.png'} alt="logo" />*/}
                         </TableCell>
                         <TableCell align="left">{row.map_size}</TableCell>
