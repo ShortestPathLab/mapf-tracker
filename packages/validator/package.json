@@ -21,6 +21,11 @@
   },
   "type": "module",
   "exports": {
-    ".": "./lib/validator.umd.cjs"
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/validator.umd.cjs",
+      "import": "./lib/validator.umd.cjs",
+      "node": "./lib/validator.umd.cjs"
+    }
   }
 }

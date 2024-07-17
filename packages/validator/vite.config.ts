@@ -8,7 +8,11 @@ export default defineConfig({
     tsconfigPaths(),
     dts({
       insertTypesEntry: true,
+      include: "src/**/*",
     }),
   ],
-  build: { outDir: "lib", lib: { entry: "src/index.ts", name: "validator" } },
+  build: {
+    outDir: "lib",
+    lib: { entry: "src/index.ts", name: "validator", fileName: "index" },
+  },
 });

@@ -1,5 +1,7 @@
 const db = require("../models/index.ts");
 const mongoose = require("mongoose");
+
+const {}: typeof import("validator") = require("validator");
 const OngoingSubmission = db.ongoing_submissions;
 const Map = db.maps;
 const Scenario = db.scenarios;
