@@ -237,22 +237,30 @@ export default function TrackSubmission() {
   const [rows, setRows] = React.useState([]);
   const [searched, setSearched] = React.useState("");
   const navigate = useNavigate();
-
-  const navigateToSubmissionSummary = (event) => {
-    const apiKey = "dnw";
-    navigate("/submissionSummary", {
-      state: {
-        apiKey,
-      },
-    });
-    event.stopPropagation();
-  };
-
   // for retriveing all the requests api insert from the user
   const [requestIdList, setRequestIdList] = React.useState([]);
   const [openRequestDetail, setOpenRequestDetail] = React.useState(false);
   const [requestData, setRequestData] = React.useState();
   const [edit, setEdit] = React.useState(false);
+  const [submissionKeys, setSubmissionKeys] = React.useState([]);
+
+  const navigateToSubmissionSummary = (event, row) => {
+    const req_id = row.id;
+    // const fetchPromises = requestIdList.map(request_id =>
+
+    submissionKeys.map((submissionKey) => {
+      if (submissionKey.request_id === req_id) {
+        // found the api key
+        const apiKey = submissionKey.api_key;
+        navigate("/submissionSummary", {
+          state: {
+            apiKey,
+          },
+        });
+        event.stopPropagation();
+      }
+    });
+  };
 
   const handleOpenRequestDetail = (event, data) => {
     setOpenRequestDetail(true);
@@ -380,7 +388,8 @@ export default function TrackSubmission() {
       const data = await response.json();
       if (response.ok) {
         setRequestIdList((prevList) => [...prevList, data.request_id]);
-        console.log(successsssss);
+        // store the api key
+        setSubmissionKeys((prevList) => [...prevList, data]);
       } else {
         console.error("Error finding the submission key", data);
       }
@@ -508,7 +517,7 @@ export default function TrackSubmission() {
                       tabIndex={-1}
                       key={row.id}
                       onClick={(event) => {
-                        navigateToSubmissionSummary(event);
+                        navigateToSubmissionSummary(event, row);
                       }}
                     >
                       <TableCell
