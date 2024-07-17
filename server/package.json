@@ -37,6 +37,7 @@
     "mongoose": "^6.4.2",
     "nodemon": "^2.0.20",
     "serve-index": "^1.9.1",
+    "validator": "file:../packages/validator",
     "vite-node": "^2.0.3",
     "yarn": "^1.22.19"
   }
