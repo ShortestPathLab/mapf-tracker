@@ -4,17 +4,15 @@
   "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
   "main": "server.js",
   "scripts": {
-    "client":  "cd ../client; npm run start",
-    "server": "NODE_ENV=development nodemon server.js",
+    "client": "cd ../client; npm run start",
+    "start": "NODE_ENV=development vite-node server.js",
+    "server": "NODE_ENV=development vite-node server.js",
     "installClient": "cd ../client; npm install",
     "installServer": "npm install",
     "install_all": "npm run installClient; npm run installServer",
-
-    "buildClient":  "cd ../client; npm run build",
-
+    "buildClient": "cd ../client; npm run build",
     "dev": "npm run install_all; concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "build": "npm run install_all; npm run buildClient",
-
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -39,6 +37,7 @@
     "mongoose": "^6.4.2",
     "nodemon": "^2.0.20",
     "serve-index": "^1.9.1",
+    "vite-node": "^2.0.3",
     "yarn": "^1.22.19"
   }
 }
