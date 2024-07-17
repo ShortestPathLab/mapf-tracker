@@ -26,7 +26,7 @@ type ValidationParameters = {
   onError?: (c: CheckResult) => boolean;
 };
 
-function processAgent(agent: string) {
+export function processAgent(agent: string) {
   const reader = new Reader(agent);
   const seeker = new Seeker(reader);
   return {

@@ -15,7 +15,7 @@ type ValidationParameters = {
      */
     onError?: (c: CheckResult) => boolean;
 };
-declare function processAgent(agent: string): {
+export declare function processAgent(agent: string): {
     seek: (n: number) => string;
     done: (n: number) => boolean;
 };

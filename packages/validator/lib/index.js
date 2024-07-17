@@ -1290,6 +1290,7 @@ export {
   xa as createActionMap,
   Oa as createOffsetMap,
   Ta as defaultOffsetMap,
+  Aa as processAgent,
   C as serialisePoint,
   $a as sumPositions,
   Ea as validate
