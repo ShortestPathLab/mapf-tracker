@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
 import CompareIcon from "@mui/icons-material/CompareOutlined";
-import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
 import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import MenuIcon from "@mui/icons-material/MenuOutlined";
@@ -81,6 +81,7 @@ import {
 } from "recharts";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
+import { IconCard } from "./IconCard";
 
 const angle = {
   Warehouse: -40,
@@ -284,10 +285,18 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
+    id: "icon",
+    numeric: false,
+    disablePadding: false,
+    label: "",
+    sortable: false,
+    alignment: "left",
+  },
+  {
     id: "map_name",
     numeric: false,
     disablePadding: false,
-    label: "Name",
+    label: "Map Name",
     sortable: true,
     alignment: "left",
   },
@@ -1452,7 +1461,7 @@ export default function MapTable({ showHeader = true }) {
               id="outlined-basic"
               onChange={(searchVal) => requestSearch(searchVal.target.value)}
               variant="filled"
-              label="Filter by algorithm name"
+              label="Filter by map name"
               value={searched}
               sx={{ width: 420 }}
               InputProps={{
@@ -1485,6 +1494,7 @@ export default function MapTable({ showHeader = true }) {
               style={{ tableLayout: "auto" }}
             >
               <colgroup>
+                <col style={{ width: "max-content" }} />
                 <col style={{ minWidth: "160px" }} width="10%" />
                 <col style={{ minWidth: "100px" }} width="10%" />
                 <col style={{ minWidth: "100px" }} width="10%" />
@@ -1509,7 +1519,7 @@ export default function MapTable({ showHeader = true }) {
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                       <TableRow
-                        sx={{ cursor: "pointer" }}
+                        sx={{ cursor: "pointer", textTransform: "capitalize" }}
                         hover
                         tabIndex={-1}
                         key={row.id}
@@ -1517,6 +1527,9 @@ export default function MapTable({ showHeader = true }) {
                           navigateToInstances(event, row.id, row.map_name)
                         }
                       >
+                        <TableCell>
+                          <IconCard />
+                        </TableCell>
                         <TableCell
                           id={labelId}
                           scope="row"
@@ -1526,11 +1539,12 @@ export default function MapTable({ showHeader = true }) {
                           {row.map_name}
                         </TableCell>
                         <TableCell align="center">
-                          <img
+                          <Box
+                            component="img"
+                            sx={{ borderRadius: 1, height: 48 }}
                             // src="https://s3.amazonaws.com/codecademy-content/courses/React/react_photo-goose.jpg"
                             src={`/mapf-svg/${row.map_name}.svg`}
                             alt="Canvas Logo"
-                            width="100%"
                           />
                           {/*<img src={'/public/logo192.png'} alt="logo" />*/}
                         </TableCell>

@@ -1,11 +1,16 @@
-import { ExpandMoreOutlined, FilterListOutlined } from "@mui/icons-material";
+import {
+  ExpandMoreOutlined,
+  FilterListOutlined,
+  FolderOutlined,
+  RouteOutlined,
+} from "@mui/icons-material";
 import CancelIcon from "@mui/icons-material/CancelOutlined";
-import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
 import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import TableViewIcon from "@mui/icons-material/TableViewOutlined";
 import VisibilityIcon from "@mui/icons-material/VisibilityOutlined";
-import { Button, MenuList, Stack, capitalize } from "@mui/material";
+import { Button, Divider, MenuList, Stack, capitalize } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -57,6 +62,7 @@ import {
 } from "recharts";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
+import { IconCard } from "./IconCard";
 
 const angle = {
   Warehouse: -40,
@@ -221,6 +227,14 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
+    id: "icon",
+    numeric: false,
+    disablePadding: false,
+    label: "",
+    sortable: false,
+    alignment: "left",
+  },
+  {
     id: "lower_date",
     numeric: false,
     disablePadding: false,
@@ -302,6 +316,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow sx={{ cursor: "pointer" }}>
+        <TableCell></TableCell>
         <TableCell
           key={"agents"}
           align={"left"}
@@ -340,18 +355,7 @@ function EnhancedTableHead(props) {
           }}
         >
           Lower Bound Record
-          <div
-            style={{
-              background: "black",
-              height: "8px",
-            }}
-          />
-          <div
-            style={{
-              background: "white",
-              height: "2px",
-            }}
-          />
+          <Divider sx={{ mt: 1 }} />
         </TableCell>
         <TableCell
           align="center"
@@ -362,18 +366,7 @@ function EnhancedTableHead(props) {
           }}
         >
           Solution Record
-          <div
-            style={{
-              background: "black",
-              height: "8px",
-            }}
-          />
-          <div
-            style={{
-              background: "white",
-              height: "2px",
-            }}
-          />
+          <Divider sx={{ mt: 1 }} />
         </TableCell>
         <TableCell
           key={"download"}
@@ -1215,6 +1208,7 @@ export default function SolutionPage() {
             style={{ tableLayout: "auto" }}
           >
             <colgroup>
+              <col style={{ width: "max-content" }} />
               <col style={{ minWidth: "100px" }} width="10%" />
               <col style={{ minWidth: "150px" }} width="15%" />
               <col style={{ minWidth: "100px" }} width="10%" />
@@ -1240,7 +1234,7 @@ export default function SolutionPage() {
 
                   return (
                     <TableRow
-                      sx={{ cursor: "pointer" }}
+                      sx={{ cursor: "pointer", textTransform: "capitalize" }}
                       hover
                       tabIndex={-1}
                       key={row.id}
@@ -1252,6 +1246,9 @@ export default function SolutionPage() {
                         )
                       }
                     >
+                      <TableCell>
+                        <IconCard icon={<RouteOutlined />} />
+                      </TableCell>
                       <TableCell
                         component="th"
                         id={labelId}

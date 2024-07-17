@@ -1,11 +1,12 @@
 import {
   ExpandMoreOutlined,
   FilterListOutlined,
+  FolderOutlined,
   NavigateNextOutlined,
 } from "@mui/icons-material";
 import CancelIcon from "@mui/icons-material/CancelOutlined";
 import ChevronRightIcon from "@mui/icons-material/ChevronRightOutlined";
-import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
 import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import ShowChartIcon from "@mui/icons-material/ShowChartOutlined";
@@ -68,6 +69,7 @@ import {
 } from "recharts";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
+import { IconCard } from "./IconCard";
 
 const infoDescriptionText = {
   scenProgress: {
@@ -258,10 +260,18 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
+    id: "icon",
+    numeric: false,
+    disablePadding: false,
+    label: "",
+    sortable: false,
+    alignment: "left",
+  },
+  {
     id: "type_id",
     numeric: true,
     disablePadding: false,
-    label: "Scenarios ID",
+    label: "Scenario ID",
     sortable: true,
     alignment: "left",
   },
@@ -269,7 +279,7 @@ const headCells = [
     id: "scen_type",
     numeric: false,
     disablePadding: false,
-    label: "Scenarios Type",
+    label: "Scenario Type",
     sortable: true,
     alignment: "left",
   },
@@ -1305,6 +1315,7 @@ export default function ScenarioTable() {
             style={{ tableLayout: "auto" }}
           >
             <colgroup>
+              <col style={{ width: "max-content" }} />
               <col style={{ minWidth: "160px" }} width="10%" />
               <col style={{ minWidth: "200px" }} width="10%" />
               <col style={{ minWidth: "100px" }} width="10%" />
@@ -1328,7 +1339,7 @@ export default function ScenarioTable() {
 
                   return (
                     <TableRow
-                      sx={{ cursor: "pointer" }}
+                      sx={{ cursor: "pointer", textTransform: "capitalize" }}
                       hover
                       tabIndex={-1}
                       key={row.id}
@@ -1342,6 +1353,9 @@ export default function ScenarioTable() {
                         )
                       }
                     >
+                      <TableCell>
+                        <IconCard />
+                      </TableCell>
                       <TableCell
                         component="th"
                         id={labelId}

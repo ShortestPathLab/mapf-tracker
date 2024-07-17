@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, CancelOutlined } from "@mui/icons-material";
 import CancelIcon from "@mui/icons-material/CancelOutlined";
 import FilterListOutlined from "@mui/icons-material/FilterListOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
@@ -44,6 +44,7 @@ import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
 import { useNavigate } from "react-router-dom";
 import DialogTitle from "@mui/material/DialogTitle";
+import { useSnackbar } from "./Snackbar";
 
 const angle = {
   Warehouse: -40,
@@ -243,6 +244,7 @@ export default function TrackSubmission() {
   const [requestData, setRequestData] = React.useState();
   const [edit, setEdit] = React.useState(false);
   const [submissionKeys, setSubmissionKeys] = React.useState([]);
+  const push = useSnackbar();
 
   const navigateToSubmissionSummary = (event, row) => {
     const req_id = row.id;
@@ -298,6 +300,7 @@ export default function TrackSubmission() {
     }
     setSubmitting(false);
     setEdit(false);
+    push("Saved successfully");
   };
 
   // for searching by name or whatever
@@ -332,8 +335,10 @@ export default function TrackSubmission() {
   };
   const handleApiFormSubmit = async (values, { setSubmitting, resetForm }) => {
     setSubmitting(false);
+    push("Checking your key");
     await checkApiKey(values.api_key);
     resetForm({ api_key: "" });
+    push("Your submission key was added");
     // createNewApiKey()
   };
 
@@ -403,12 +408,12 @@ export default function TrackSubmission() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Stack sx={{ mx: "auto", gap: 4, py: 6 }}>
-      <Stack sx={{ maxWidth: "960" }}>
-        <PageHeader
-          current="Track Submissions"
-          path={[{ name: "MAPF Tracker", url: "/" }]}
-        />
+    <Stack sx={{ maxWidth: 960, mx: "auto", gap: 4, py: 6 }}>
+      <PageHeader
+        current="Track Submissions"
+        path={[{ name: "MAPF Tracker", url: "/" }]}
+      />
+      <Stack>
         <Formik initialValues={{ api_key: "" }} onSubmit={handleApiFormSubmit}>
           {({ isSubmitting }) => (
             <Form>
@@ -423,25 +428,32 @@ export default function TrackSubmission() {
                 <Field
                   as={TextField}
                   name="api_key"
-                  label="Enter your API key"
-                  variant="standard"
+                  label="Submission (API) key"
+                  variant="filled"
                   required
-                  sx={{ width: "250px" }}
+                  sx={{ flex: 1 }}
                 />
                 <Button
                   type="submit"
                   variant="contained"
-                  color="success"
-                  sx={{ width: "100px", height: "35px" }}
                   disabled={isSubmitting}
                 >
-                  Show
+                  Add key
                 </Button>
               </Box>
             </Form>
           )}
         </Formik>
       </Stack>
+      <Typography color="text.secondary">
+        Don't have a submission (API) key?{" "}
+        <Link
+          sx={{ cursor: "pointer" }}
+          onClick={() => navigate("/contributes")}
+        >
+          Request one here.
+        </Link>
+      </Typography>
 
       <Paper>
         <Stack direction="row" sx={{ p: 2, gap: 4 }}>
@@ -514,6 +526,7 @@ export default function TrackSubmission() {
                   return (
                     <TableRow
                       hover
+                      sx={{ cursor: "pointer" }}
                       tabIndex={-1}
                       key={row.id}
                       onClick={(event) => {

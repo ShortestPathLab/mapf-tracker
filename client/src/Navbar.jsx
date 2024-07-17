@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import ArticleIcon from "@mui/icons-material/ArticleOutlined";
 import AssignmentIcon from "@mui/icons-material/AssignmentOutlined";
-import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import MenuIcon from "@mui/icons-material/MenuOutlined";
