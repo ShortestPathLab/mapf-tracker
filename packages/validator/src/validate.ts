@@ -30,7 +30,15 @@ export function processAgent(agent: string) {
   const reader = new Reader(agent);
   const seeker = new Seeker(reader);
   return {
-    seek: (n: number) => seeker.seek(n),
+    seek: (n: number) => {
+      try {
+        return seeker.seek(n);
+      } catch (e) {
+        if (e instanceof DoneException) {
+          return undefined;
+        } else throw e;
+      }
+    },
     done: (n: number) => {
       try {
         seeker.seek(n);
