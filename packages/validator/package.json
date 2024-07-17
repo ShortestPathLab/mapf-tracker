@@ -24,7 +24,7 @@
     ".": {
       "types": "./lib/index.d.ts",
       "require": "./lib/index.umd.cjs",
-      "import": "./lib/index.umd.cjs",
+      "import": "./lib/index.js",
       "node": "./lib/index.umd.cjs"
     }
   }
