@@ -32,16 +32,18 @@ import { Field, Form, Formik } from "formik";
 import PropTypes from "prop-types";
 import * as React from "react";
 import {
-  Legend,
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
-  Tooltip,
+    Legend,
+    PolarAngleAxis,
+    PolarGrid,
+    PolarRadiusAxis,
+    Radar,
+    RadarChart,
+    Tooltip,
 } from "recharts";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
+import { useNavigate } from 'react-router-dom';
+import DialogTitle from "@mui/material/DialogTitle";
 
 const angle = {
   Warehouse: -40,
@@ -53,61 +55,9 @@ const angle = {
   Room: -110,
 };
 
-const infoDescriptionText = {
-  "domainCompare-#Instances Closed": {
-    description:
-      "This plot compares the number of instances closed " +
-      "between selected algorithm and the state-of-the-art (i.e., all algorithms together) across different domains of the benchmark. " +
-      "For a particular algorithm, the instance is closed if the algorithm reports the same lower bound and solution cost. " +
-      "Algorithms that do not report lower bound data are omitted from this plot. " +
-      "The number of instances closed indicates the performance of algorithms for finding and proving optimal solution (i.e., higher the better). ",
-    c_axis:
-      "The benchmark contains many different maps, each map is associate with domain. " +
-      "The category-axis displays the names of the domains available in the benchmark.",
-    v_axis:
-      "The value-axis displays the number of instances closed for each domain. " +
-      "The percentage ratio is shown, calculated based on the total number of instances in each domain.",
-  },
-  "domainCompare-#Instances Solved": {
-    description:
-      "This plot compares the number of instances solved " +
-      "between selected algorithm and the state-of-the-art (i.e., all algorithms together) across different domains of the benchmark. " +
-      "The number of instances solved indicates the performance of algorithms while ignoring solution quality (i.e., higher the better).",
-    c_axis:
-      "The benchmark contains many different maps, each map is associate with domain. " +
-      "The category-axis displays the names of the domains available in the benchmark.",
-    v_axis:
-      "The value-axis displays the number of instances solved for each domain. " +
-      "The percentage ratio is shown, calculated based on the total number of instances in each domain.",
-  },
-  "domainCompare-#Best Lower-bounds": {
-    description:
-      "This plot compares the number of instances that have achieved the best lower bound (reported by any algorithm) " +
-      "between selected algorithm and the state-of-the-art (i.e., all algorithms together) across different domains of the benchmark. " +
-      "The number of instances that achieve the best lower bound reflects the availability of algorithms for proving optimality (i.e., higher the better). " +
-      "Algorithms that do not report lower bound data are omitted from this plot.",
-    c_axis:
-      "The benchmark contains many different maps, each map is associate with domain. " +
-      "The category-axis displays the names of the domains available in the benchmark.",
-    v_axis:
-      "The value-axis displays the number of instances that have achieved the best lower bound for each domain. " +
-      "The percentage ratio is shown, calculated based on the total number of instances in each domain. ",
-    // "For instances where no lower bound is reported, no algorithm can achieve the best lower bound in such cases."
-  },
-  "domainCompare-#Best Solutions": {
-    description:
-      "This plot compares the number of instances that have achieved the best solution (reported by any algorithm) " +
-      "between selected algorithm and the state-of-the-art (i.e., all algorithms together) across different domains of the benchmark. " +
-      "The number of instances achieving the best solution reflects the solution quality reported by different algorithms (i.e., higher the better). ",
-    c_axis:
-      "The benchmark contains many different maps, each map is associate with domain. " +
-      "The category-axis displays the names of the domains available in the benchmark.",
-    v_axis:
-      "The value-axis displays the number of instances that have achieved the best solution for each domain. " +
-      "The percentage ratio is shown, calculated based on the total number of instances in each domain. ",
-    // "For instances where no solution is reported, no algorithm can achieve the best solution in such cases."
-  },
-};
+
+
+
 
 function CustomizedLabel(props) {
   const { x, y, cx, cy, payload } = props;
@@ -153,23 +103,23 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+    return order === "desc"
+        ? (a, b) => descendingComparator(a, b, orderBy)
+        : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+        const order = comparator(a[0], b[0]);
+        if (order !== 0) {
+            return order;
+        }
+        return a[1] - b[1];
+    });
+    return stabilizedThis.map((el) => el[0]);
 }
 
 const headCells = [
@@ -209,10 +159,10 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+    const { order, orderBy, onRequestSort } = props;
+    const createSortHandler = (property) => (event) => {
+        onRequestSort(event, property);
+    };
 
   return (
     <TableHead>
@@ -253,87 +203,93 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+    orderBy: PropTypes.string.isRequired,
 };
 
 function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: "100%", mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
+    return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ width: "100%", mr: 1 }}>
+                <LinearProgress variant="determinate" {...props} />
+            </Box>
+            <Box sx={{ minWidth: 35 }}>
+                <Typography variant="body2" color="text.secondary">{`${Math.round(
+                    props.value
+                )}%`}</Typography>
+            </Box>
+        </Box>
+    );
 }
 
 LinearProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate and buffer variants.
-   * Value between 0 and 100.
-   */
-  value: PropTypes.number.isRequired,
+    /**
+     * The value of the progress indicator for the determinate and buffer variants.
+     * Value between 0 and 100.
+     */
+    value: PropTypes.number.isRequired,
 };
 
-// const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
-//     height: 10,
-//
-//     [`&.${linearProgressClasses.colorPrimary}`]: {
-//         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
-//     },
-//     [`& .${linearProgressClasses.bar}`]: {
-//
-//         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
-//     },
-// }));
-
-const createNewApiKey = () => {
-  const values = {
-    algo_id: "667d55013ecdbb93c0d02196",
-  };
-  console.log("in creating process");
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(values),
-  };
-  console.log(APIConfig.apiUrl);
-  fetch("http://localhost:50000/api/submission_key/create", requestOptions)
-    .then((response) => response.json())
-    .catch((error) => console.error("Error:", error));
-};
 
 export default function TrackSubmission() {
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("map_type");
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [data, setData] = React.useState([]);
+    const [order, setOrder] = React.useState('asc');
+    const [orderBy, setOrderBy] = React.useState('map_type');
+    const [page, setPage] = React.useState(0);
+    const [dense, setDense] = React.useState(false);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [data, setData] = React.useState([])
+    const [rows, setRows] = React.useState([]);
+    const [searched, setSearched] = React.useState("");
+    const navigate = useNavigate();
 
-  const [openAlgoDetail, setOpenAlgoDetail] = React.useState(false);
-  const [scrollAlgoDetail, setScrollAlgoDetail] = React.useState("paper");
-  const [domainQuery, setDomainQuery] = React.useState("#Instances Closed");
-  const [algodata, setAlgodata] = React.useState([]);
-  const [algoChartData, setAlgoChartData] = React.useState([]);
-  const [domainLoading, setDomainLoading] = React.useState(true);
-  const [openMonitorDetail, setOpenMonitorDetail] = React.useState(false);
-  const [infoDescription, setInfoDescription] = React.useState(0);
-  const [rows, setRows] = React.useState([]);
-  const [searched, setSearched] = React.useState("");
-  const [openApiForm, setOpenApiForm] = React.useState(false);
-  const [algoIdList, setAlgoIdList] = React.useState([]);
+    const navigateToSubmissionSummary = (event) => {
+        const apiKey = 'dnw';
+        navigate("/submissionSummary", {
+            state:{
+                apiKey
+                        }
+        });
+        event.stopPropagation();
+      };
 
-  // for retriveing all the requests api insert from the user
-  const [requestIdList, setRequestIdList] = React.useState([]);
+    // for retriveing all the requests api insert from the user
+    const [requestIdList, setRequestIdList] = React.useState([]);
+    const [openRequestDetail, setOpenRequestDetail] = React.useState(false);
+    const [requestData, setRequestData] = React.useState();
+    const [edit, setEdit] = React.useState(false);
+
+
+    const handleOpenRequestDetail = (data) => {
+        setOpenRequestDetail(true);
+        setRequestData(data);
+    };
+    const handleCloseRequestDetail = () => {
+        setOpenRequestDetail(false);
+    };
+
+    const handleRequestDetailUpdated = async (values, { setSubmitting , resetForm}) => {
+        try {
+            const response = await fetch(`${APIConfig.apiUrl}/request/update/${values.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Request updated successfully:', data);
+            } else {
+                console.error('Error updating request:', data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        setSubmitting(false);
+        setEdit(false)
+    }
 
   // for searching by name or whatever
   const requestSearch = (searchedVal) => {
@@ -346,144 +302,69 @@ export default function TrackSubmission() {
     setSearched(searchedVal);
   };
 
-  const cancelSearch = (searchedVal) => {
-    setSearched("");
-    requestSearch("");
-  };
+    const cancelSearch = (searchedVal) => {
+        setSearched("");
+        requestSearch("");
+    };
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
+    const handleRequestSort = (event, property) => {
+        const isAsc = orderBy === property && order === "asc";
+        setOrder(isAsc ? "desc" : "asc");
+        setOrderBy(property);
+    };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-  // const handleChangeDense = () => {
-  //     setDense(!dense);
-  // };
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+    const handleApiFormSubmit = async (values, { setSubmitting , resetForm}) => {
+        setSubmitting(false);
+        await checkApiKey(values.api_key)
+        resetForm({api_key:''});
+        // createNewApiKey()
+    }
 
-  React.useEffect(() => {
-    refresh_algo_details((data) => {
-      setData(data);
-      setRows(data);
+
+    const refreshRequests = async (callback) => {
+        const request_details = [];
+        const fetchPromises = requestIdList.map(request_id =>
+            fetch(`${APIConfig.apiUrl}/request/id/${request_id}`, { method: 'GET' })
+                .then(res => res.json())
+                .then(data => {
+                    request_details.push(data);
+                })
+                .catch(err => console.error(err))
+        );
+
+        // Wait for all fetch operations to complete
+        await Promise.all(fetchPromises);
+
+        // Call the callback with the collected request details
+        callback(request_details);
+    }
+
+    React.useEffect(()=>{
+    // Initial data fetch
+    refreshRequests((d) => {
+      setData(d);
+      setRows(d);
     });
 
+    // Set interval for periodic refresh
     const interval = setInterval(() => {
-      refresh_algo_details((data) => {
-        setData(data);
-        setRows(data);
+      refreshRequests((d) => {
+        setData(d);
+        setRows(d);
       });
     }, 1200000);
+
+    // Cleanup interval on component unmount
     return () => clearInterval(interval);
-  }, [algoIdList]);
-
-  const handleAlgoDetailClickOpen = (event, scrollType, algo_data) => {
-    setOpenAlgoDetail(true);
-    setScrollAlgoDetail(scrollType);
-    setAlgodata(algo_data);
-    event.stopPropagation();
-  };
-
-  const handleAlgoDetailClose = () => {
-    setOpenAlgoDetail(false);
-    setDomainQuery("#Instances Closed");
-  };
-  React.useEffect(() => {
-    if (openAlgoDetail) {
-      setDomainLoading(true);
-      fetch(
-        APIConfig.apiUrl + "/algorithm/getClosedInfoGroup/" + algodata["id"],
-        { method: "GET" }
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          data.forEach(function (element) {
-            if (element[algodata.algo_name] === undefined) {
-              element[algodata.algo_name] = 0;
-            }
-            element.name =
-              element.name.charAt(0).toUpperCase() + element.name.slice(1);
-          });
-          setAlgoChartData(data);
-          setDomainLoading(false);
-        })
-        .catch((err) => console.error(err));
-    }
-  }, [openAlgoDetail]);
-
-  const handleDomainQueryChange = (event) => {
-    setDomainQuery(event.target.value);
-    setDomainLoading(true);
-    var domain_API = "";
-    if (event.target.value === "#Instances Closed") {
-      domain_API =
-        APIConfig.apiUrl + "/algorithm/getClosedInfoGroup/" + algodata["id"];
-    } else if (event.target.value === "#Instances Solved") {
-      domain_API =
-        APIConfig.apiUrl + "/algorithm/getSolvedInfoGroup/" + algodata["id"];
-    } else if (event.target.value === "#Best Lower-bounds") {
-      domain_API =
-        APIConfig.apiUrl + "/algorithm/getLowerInfoGroup/" + algodata["id"];
-    } else {
-      domain_API =
-        APIConfig.apiUrl + "/algorithm/getSolutionInfoGroup/" + algodata["id"];
-    }
-    fetch(domain_API, { method: "GET" })
-      .then((res) => res.json())
-      .then((data) => {
-        data.forEach(function (element) {
-          if (element[algodata.algo_name] === undefined) {
-            element[algodata.algo_name] = 0;
-          }
-          element.name =
-            element.name.charAt(0).toUpperCase() + element.name.slice(1);
-        });
-        setAlgoChartData(data);
-        setDomainLoading(false);
-      })
-      .catch((err) => console.error(err));
-  };
-
-  // ----------------------------------------------------------------------------------------
-
-  const handleOpenApiForm = () => {
-    setOpenApiForm(true);
-    console.log(open);
-  };
-  const handleCloseApiForm = () => {
-    setOpenApiForm(false);
-  };
-
-  const handleApiFormSubmit = (values, { setSubmitting }) => {
-    console.log("Uploading API key:", values.api_key);
-    setSubmitting(false);
-    setOpenApiForm(false); // Close the dialog after submission
-    checkApiKey(values.api_key);
-  };
-
-  const refresh_algo_details = (callback) => {
-    const algo_details = [];
-
-    for (const algo_id of algoIdList) {
-      fetch(`${url}/algorithm/algo_detail/${algo_id}`, {
-        method: "GET",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          algo_details.push(data);
-        })
-        .catch((err) => console.error(err));
-    }
-    console.log(algo_details);
-    callback(algo_details);
-  };
+  }, [requestIdList, requestData]); 
   // ----------------------------------------------------------------------------------------
   const checkApiKey = async (api_key) => {
     try {
@@ -507,636 +388,300 @@ export default function TrackSubmission() {
     }
   };
 
-  const refreshRequests = async (callback) => {
-    const request_details = [];
-    const fetchPromises = requestIdList.map((request_id) =>
-      fetch(`${APIConfig.apiUrl}/request/id/${request_id}`, { method: "GET" })
-        .then((res) => res.json())
-        .then((data) => {
-          request_details.push(data);
-        })
-        .catch((err) => console.error(err))
-    );
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyRows =
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    // Wait for all fetch operations to complete
-    await Promise.all(fetchPromises);
-
-    // Call the callback with the collected request details
-    callback(request_details);
-  };
-
-  React.useEffect(() => {
-    refreshRequests((d) => {
-      setData(d);
-      setRows(d);
-    });
-
-    const interval = setInterval(() => {
-      refreshRequests((d) => {
-        setData(d);
-        setRows(d);
-      });
-    }, 1200000);
-    return () => clearInterval(interval);
-  }, [requestIdList]);
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  return (
-    <Stack sx={{ mx: "auto", width: 1488, gap: 4, py: 6 }}>
-      <PageHeader
-        current="Manage submissions"
-        path={[
-          { name: "MAPF Tracker", url: "/" },
-          { name: "Submit an algorithm", url: "/contributes" },
-        ]}
-      />
-      <Paper>
-        <Stack
-          direction="row"
-          sx={{
-            gap: 2,
-            p: 2,
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{ minWidth: "max-content", px: 2, py: 1 }}
-            onClick={handleOpenApiForm}
-            startIcon={<Add />}
-          >
-            Add submission (API) key
-          </Button>
-          <Dialog open={openApiForm} onClose={handleCloseApiForm}>
-            <DialogContent>
-              <Formik
-                initialValues={{ api_key: "" }}
-                onSubmit={handleApiFormSubmit}
-              >
-                {({ isSubmitting }) => (
-                  <Form>
-                    <Box
-                      sx={{
-                        marginBottom: "20px",
-                      }}
+    return (
+        <Stack sx={{ mx: "auto", gap: 4, py: 6 }}>
+            <Stack sx={{ maxWidth: '960' }}>
+                <PageHeader
+                    current="Track Submissions"
+                    path={[{ name: "MAPF Tracker", url: "/" }]}
+                />
+                <Formik
+                        initialValues={{ api_key: '' }}
+                        onSubmit={handleApiFormSubmit}
                     >
-                      <Field
-                        as={TextField}
-                        name="api_key"
-                        label="Enter your API key"
-                        variant="standard"
-                        fullWidth
-                        required
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        justifyContent: "center",
-                        alignContent: "center",
-                      }}
-                    >
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="success"
-                        sx={{ width: "50px" }}
-                        disabled={isSubmitting}
-                      >
-                        Show
-                      </Button>
-                    </Box>
-                  </Form>
-                )}
-              </Formik>
-            </DialogContent>
-          </Dialog>
+                        {({ isSubmitting }) => (
+                            <Form>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'flex-end' }}> 
+                                    <Field
+                                        as={TextField}
+                                        name="api_key"
+                                        label="Enter your API key"
+                                        variant="standard"
+                                        required
+                                        sx={{width : '250px'}}
+                                    />
+                                <Button type="submit" variant="contained" color="success" sx={{ width: '100px' , height: '35px'}} disabled={isSubmitting}>
+                                    Show
+                                </Button>
+                                </Box>
+                            </Form>
+                        )}
+                    </Formik>                
+            </Stack>
 
-          <TextField
-            id="outlined-basic"
-            onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            placeholder="Filter by name"
-            size="small"
-            value={searched}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <FilterListOutlined />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  {searched === "" ? null : (
-                    <IconButton
-                      onClick={(searchVal) =>
-                        cancelSearch(searchVal.target.value)
-                      }
+            <Paper >
+                <Stack direction="row" sx={{ p: 2, gap: 4 }}>
+                    <TextField
+                        id="outlined-basic"
+                        onChange={(searchVal) => requestSearch(searchVal.target.value)}
+                        variant="filled"
+                        label="Filter by requester name"
+                        value={searched}
+                        sx={{ width: 420 }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <FilterListOutlined />
+                                </InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    {searched === "" ? null : (
+                                        <IconButton
+                                            onClick={(searchVal) =>
+                                                cancelSearch(searchVal.target.value)
+                                            }
+                                        >
+                                            <CancelOutlined />
+                                        </IconButton>
+                                    )}
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <Box flex={1}></Box>
+                    <Button
+                        sx={{ minWidth: "max-content" }}
+                        size="medium"
+                        onClick={() => {
+                            setDense(!dense);
+                        }}
                     >
-                      <CancelIcon />
-                    </IconButton>
-                  )}
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Box flex={1}></Box>
-          <Button
-            sx={{ minWidth: "max-content" }}
-            size="medium"
-            onClick={() => {
-              setDense(!dense);
-            }}
-          >
-            {dense ? "Comfortable margins" : "Compact margins"}
-          </Button>
-        </Stack>
-        <TableContainer sx={{ width: "100%" }}>
-          <Table
-            // frozen table set max-content
-            sx={{ minWidth: 600, width: "100%" }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-            style={{ tableLayout: "auto" }}
-          >
-            <colgroup>
-              <col style={{ minWidth: "200px" }} width="20%" />
-              <col style={{ minWidth: "200px" }} width="20%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "100px" }} width="10%" />
-            </colgroup>
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
-            <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+                        {dense ? "Show sparse" : "Show dense"}
+                    </Button>
+                </Stack>
+                {/* ============================= start table================================  */}
+                <TableContainer sx={{ width: "100%" }}>
+                    <Table
+                        // frozen table set max-content
+                        sx={{ minWidth: 600, width: "100%" }}
+                        aria-labelledby="tableTitle"
+                        size={dense ? 'small' : 'medium'}
+                        style={{ tableLayout: "auto" }}
+                    >
+                        <colgroup>
+                            <col style={{ minWidth: "200px" }} width="20%" />
+                            <col style={{ minWidth: "200px" }} width="20%" />
+                            <col style={{ minWidth: "200px" }} width="15%" />
+                            <col style={{ minWidth: "100px" }} width="10%" />
+                        </colgroup>
+                        <EnhancedTableHead
+                            order={order}
+                            orderBy={orderBy}
+                            onRequestSort={handleRequestSort}
+                        />
+                        <TableBody>
+                            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow
-                      sx={{ cursor: "pointer" }}
-                      hover
-                      tabIndex={-1}
-                      key={row.id}
-                    >
-                      <TableCell
-                        id={labelId}
-                        scope="row"
-                        padding="normal"
-                        align="center"
-                      >
-                        {row.requesterName}
-                      </TableCell>
-                      <TableCell align="center">{row.requesterEmail}</TableCell>
-                      <TableCell align="center">{row.algorithmName}</TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          onClick={(event) =>
-                            handleAlgoDetailClickOpen(event, "paper", row)
-                          }
-                        >
-                          <InfoIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  sx={{ cursor: "pointer" }}
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={9} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-        <Dialog
-          open={openAlgoDetail}
-          onClose={handleAlgoDetailClose}
-          scroll={scrollAlgoDetail}
-          aria-labelledby="scroll-dialog-title"
-          aria-describedby="scroll-dialog-description"
-          fullWidth={true}
-          maxWidth={"md"}
-          disableScrollLock={true}
-          PaperProps={{
-            style: { mb: 2, borderRadius: 10 },
-          }}
-          // PaperProps={{ sx: { width: "100%"}}}
-        >
-          <DialogContent
-            dividers={scrollAlgoDetail === "paper"}
-            sx={{ width: 850, display: "flex" }}
-          >
-            <Table sx={{ width: 500 }}>
-              <colgroup>
-                {/*<col width="120" />*/}
-                {/*<col width="150" />*/}
-                {/*<col width="65" />*/}
-                {/*<col width="200" />*/}
-                <col width="120" />
-                <col width="150" />
-                <col width="50" />
-                <col width="150" />
-              </colgroup>
-              <TableBody>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    Algorithm Name:
-                  </TableCell>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    {algodata.algo_name}
-                  </TableCell>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    Authors:{" "}
-                  </TableCell>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    {algodata.authors}
-                  </TableCell>
-                </TableRow>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    Github Link:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{ paddingRight: 0, paddingLeft: 0 }}
-                    colSpan={3}
-                  >
-                    <Link href={algodata.github} underline="hover">
-                      {algodata.github}
-                    </Link>
-                  </TableCell>
-                </TableRow>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                  >
-                    {" "}
-                    Paper Reference:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                    colSpan={3}
-                  >
-                    {" "}
-                    {algodata.papers}{" "}
-                  </TableCell>
-                </TableRow>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                  >
-                    {" "}
-                    Comments:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                    colSpan={3}
-                  >
-                    {" "}
-                    {algodata.comments}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            {/*<ResponsiveContainer width={500} height={380}>*/}
-            <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
-            <Box sx={{ width: 350, height: 464 }}>
-              <Toolbar
-                sx={{
-                  pl: { sm: 2 },
-                  pr: { xs: 1, sm: 1 },
-                }}
-              >
-                <Typography
-                  sx={{ flex: "1 1 100%" }}
-                  variant="h8"
-                  id="tableTitle"
-                  component="div"
-                >
-                  Summary
-                  <IconButton
-                    onClick={() => {
-                      handleOpenInfo("domainCompare-" + domainQuery);
-                    }}
-                  >
-                    <InfoIcon />
-                  </IconButton>
-                </Typography>
-                <FormControl
-                  sx={{ m: 1, minWidth: 120, width: 300 }}
-                  size="small"
-                >
-                  <Select
-                    displayEmpty={true}
-                    value={domainQuery}
-                    onChange={handleDomainQueryChange}
-                    inputProps={{ "aria-label": "Without label" }}
-                  >
-                    <MenuItem value={"#Instances Closed"}>
-                      Instances Closed
-                    </MenuItem>
-                    <MenuItem value={"#Instances Solved"}>
-                      Instances Solved
-                    </MenuItem>
-                    <MenuItem value={"#Best Lower-bounds"}>
-                      Best Lower Bound
-                    </MenuItem>
-                    <MenuItem value={"#Best Solutions"}>Best Solution</MenuItem>
-                  </Select>
-                </FormControl>
-              </Toolbar>
-              {domainLoading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  width={350}
-                  height={400}
-                >
-                  <CircularProgress size={80} />
-                </Box>
-              ) : (
-                <RadarChart
-                  width={350}
-                  height={400}
-                  cx="50%"
-                  cy="60%"
-                  outerRadius="80%"
-                  data={algoChartData}
-                >
-                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
-                  <Legend
-                    verticalAlign="top"
-                    align="center"
-                    wrapperStyle={{
-                      fontFamily: "Roboto Slab",
-                    }}
-                  />
-                  <PolarGrid />
-                  <PolarAngleAxis
-                    dataKey="name"
-                    tick={<CustomizedLabel />}
-                    style={{
-                      fontFamily: "Roboto Slab",
-                    }}
-                  />
-                  <Tooltip
-                    wrapperStyle={{ fontFamily: "Roboto Slab" }}
-                    formatter={(tick) => {
-                      var value = tick * 100;
-                      return `${value.toFixed(2)}%`;
-                    }}
-                  />
-                  <PolarRadiusAxis
-                    angle={38.5}
-                    domain={[0, algoChartData.length > 0 ? "dataMax" : 1]}
-                    tickFormatter={(tick) => {
-                      var value = tick * 100;
-                      return `${value.toFixed(0)}%`;
-                    }}
-                  />
-                  <Radar
-                    key={"State of The Art"}
-                    dataKey={"State of The Art"}
-                    fillOpacity={0.6}
-                    stroke={`#87ceeb`}
-                    fill={`#87ceeb`}
-                  />
-                  <Radar
-                    key={algodata.algo_name}
-                    dataKey={algodata.algo_name}
-                    fillOpacity={0.6}
-                    stroke={`#ff4500`}
-                    fill={`#ff4500`}
-                  />
-                </RadarChart>
-              )}
-            </Box>
-            {/*</Paper>*/}
-            {/*</ResponsiveContainer>*/}
-          </DialogContent>
-          {/*<DialogActions>*/}
-          {/*    <Button onClick={handleAlgoDetailClose}>Cancel</Button>*/}
-          {/*</DialogActions>*/}
-        </Dialog>
-        <Dialog
-          open={openMonitorDetail}
-          onClose={() => setOpenMonitorDetail(false)}
-          fullWidth={true}
-          aria-labelledby="scroll-dialog-title"
-          aria-describedby="scroll-dialog-description"
-          maxWidth={"sm"}
-          disableScrollLock={true}
-          PaperProps={{
-            style: { mb: 2, borderRadius: 10 },
-          }}
-          // PaperProps={{ sx: { width: "100%"}}}
-        >
-          <DialogContent sx={{ width: 550, display: "flex" }}>
-            <Table sx={{ width: 550 }}>
-              <colgroup>
-                {/*<col width="120" />*/}
-                {/*<col width="150" />*/}
-                {/*<col width="65" />*/}
-                {/*<col width="200" />*/}
-                <col width="150" />
-                <col width="150" />
-                <col width="150" />
-                <col width="50" />
-              </colgroup>
-              <TableBody>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                  >
-                    {" "}
-                    Description:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                    colSpan={3}
-                  >
-                    {infoDescription.description}
-                  </TableCell>
-                </TableRow>
-                {infoDescription.c_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      Category-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.c_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {infoDescription.v_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      Value-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.v_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
+                            {stableSort(rows, getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    const labelId = `enhanced-table-checkbox-${index}`;
+                                    return (
+                                        <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            key={row.id}
+                                            onClick={(event)=> {navigateToSubmissionSummary(event)}}
+                                        >
+                                            <TableCell
+                                                id={labelId}
+                                                scope="row"
+                                                padding="normal"
+                                                align="center"
+                                            >
+                                                {row.requesterName}
+                                            </TableCell>
+                                            <TableCell align="center">{row.requesterEmail}</TableCell>
+                                            <TableCell align="center">{row.algorithmName}</TableCell>
+                                            <TableCell align="center">
+                                                <IconButton onClick={() => handleOpenRequestDetail(row)}>
+                                                    <InfoIcon />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow
+                                    style={{
+                                        height: (dense ? 33 : 53) * emptyRows,
+                                    }}
+                                >
+                                    <TableCell colSpan={9} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[10, 25, 50]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
 
-                {infoDescription.x_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      X-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.x_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {infoDescription.y_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      Y-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.y_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {infoDescription.comment != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      Comments:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.comment}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </DialogContent>
-        </Dialog>
-      </Paper>
-      {/*<FormControlLabel*/}
-      {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
-      {/*    label="Dense padding"*/}
-      {/*/>*/}
-    </Stack>
-  );
+                <Dialog
+                    open={openRequestDetail}
+                    onClose={handleCloseRequestDetail}
+                    scroll='paper'
+                    aria-labelledby="form-dialog-title"
+                    fullWidth={true}
+                    maxWidth={'md'}
+                >
+                    <DialogTitle id="form-dialog-title">Request Details</DialogTitle>
+                    <DialogContent sx={{ width: 850, display: 'flex' }}>
+                        <Formik
+                            initialValues={requestData}
+                            onSubmit={handleRequestDetailUpdated}
+                        >
+                            {({ isSubmitting }) => (
+                                <Form style={{ width: '100%', marginTop: 10 }}>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                                        <Field
+                                            as={TextField}
+                                            name="requesterName"
+                                            label="Requester Name"
+                                            variant="standard"
+                                            fullWidth
+                                            disabled={!edit}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            name="requesterEmail"
+                                            label="Requester Email"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                                        <Field
+                                            as={TextField}
+                                            name="requesterAffilation"
+                                            label="Affilation"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            name="authorName"
+                                            label="Author's Name"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                                        <Field
+                                            as={TextField}
+                                            name="justification"
+                                            label="Justification"
+                                            variant="outlined" fullWidth
+                                            multiline
+                                            disabled={!edit}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                                        <Field
+                                            as={TextField}
+                                            name="algorithmName"
+                                            label="Algorithm Name"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            name="paperReference"
+                                            label="Paper References"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                                        <Field
+                                            as={TextField}
+                                            name="comments"
+                                            label="Comments"
+                                            variant="outlined" fullWidth
+                                            multiline
+                                            disabled={!edit}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                                        <Field
+                                            as={TextField}
+                                            name="googleScholar"
+                                            type="url"
+                                            label="Google Scholar"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            name="dblp"
+                                            label="DBLP"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            name="githubLink"
+                                            type="url"
+                                            label="Github Link"
+                                            fullWidth
+                                            variant="standard"
+                                            disabled={!edit}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 5, marginBottom: 5, justifyContent: 'center' }}>
+
+                                        {edit && (
+                                            <Button type="submit" color="primary" disabled={isSubmitting}>
+                                                Save
+                                            </Button>)
+                                        }
+                                        {!edit && (
+                                            <Button type="button" color="primary" onClick={() => {
+                                                setEdit(true)
+                                            }}>
+                                                Edit
+                                            </Button>
+                                        )}
+                                    </Box>
+
+                                </Form>
+                            )}
+                        </Formik>
+                    </DialogContent>
+                </Dialog>
+
+
+
+            </Paper>
+
+        </Stack>
+    );
 }
