@@ -1,6 +1,6 @@
 import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
+  ChevronLeftOutlined,
+  ChevronRightOutlined,
   PauseOutlined,
   PlayArrowOutlined,
 } from "@mui/icons-material";
@@ -185,7 +185,7 @@ export default function Visualiser() {
             {[
               {
                 name: "Step back",
-                icon: <ArrowLeftOutlined />,
+                icon: <ChevronLeftOutlined />,
                 action: backwards,
               },
               {
@@ -199,7 +199,7 @@ export default function Visualiser() {
               },
               {
                 name: "Step forwards",
-                icon: <ArrowRightOutlined />,
+                icon: <ChevronRightOutlined />,
                 action: forwards,
               },
             ].map(({ name, icon, action }) => (
