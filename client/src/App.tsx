@@ -32,7 +32,7 @@ const theme = (t: "light" | "dark") =>
       mode: t,
       background:
         t === "light"
-          ? { default: "#eaeaea", paper: "#fff" }
+          ? { default: "#eaeaea", paper: "#ffffff" }
           : { default: "#111317", paper: "#17191d" },
     },
     shape: { borderRadius: 8 },
@@ -123,7 +123,7 @@ export default function App() {
           >
             <Navbar />
             <Box
-              sx={{ px: 4, pb: 32 }}
+              sx={{ px: 4, pb: 32, position: "relative" }}
               key={pathname === "/" ? "/benchmarks" : pathname}
             >
               <Fade in={true}>
