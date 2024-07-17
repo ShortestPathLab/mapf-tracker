@@ -1,14 +1,16 @@
-import express = require("express");
-import cors = require("cors");
-import path = require("path");
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
 const app = express();
-import serveIndex = require("serve-index");
-import fs = require("fs");
-import mime = require("mime-types");
+const serveIndex = require("serve-index");
+const fs = require("fs");
+const mime = require("mime-types");
 var bodyParser = require("body-parser");
 var https = require("https");
 var http = require("http");
-import db from "./app/models/index.ts";
+const db = require("./app/models/index.ts");
+
+const validator: typeof import("validator") = require("validator");
 
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(

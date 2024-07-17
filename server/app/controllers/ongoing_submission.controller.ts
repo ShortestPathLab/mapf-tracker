@@ -5,6 +5,7 @@ const Map = db.maps;
 const Scenario = db.scenarios;
 const Instance = db.instances;
 const SubmissionKey = db.submission_keys;
+
 // find all submissions
 exports.findAll = (req, res) => {
   OngoingSubmission.find({})
