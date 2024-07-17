@@ -1,1 +1,1 @@
-export declare function mail(from: string, to: string, title: string, body: string): void;
+export declare function mail(from: string, to: string, subject: string, body: string): void;
