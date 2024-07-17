@@ -23,7 +23,7 @@ import React, { useMemo, useReducer } from "react";
 import { useLocation } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import PageHeader from "../PageHeader";
-import { colors } from "./accentColorsList";
+import { colors } from "./colors";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
 
