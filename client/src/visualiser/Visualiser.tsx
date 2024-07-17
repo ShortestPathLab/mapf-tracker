@@ -78,10 +78,10 @@ export default function Visualiser() {
   );
 
   const { map, result, getAgentPosition } = useSolution({
-    path: location.state.path_id,
+    solutionKey: location.state.path_id,
     agentCount: location.state.num_agents,
-    map: location.state.map_name,
-    scenario: location.state.scen_string,
+    mapKey: location.state.map_name,
+    scenarioKey: location.state.scen_string,
   });
 
   const { timespan = 0, x = 0, y = 0 } = result ?? {};

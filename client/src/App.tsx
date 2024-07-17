@@ -26,6 +26,9 @@ import SubmissionSummary from "./SubmissionSummary";
 
 import { SnackbarProvider } from "./Snackbar";
 import { ThemeContext } from "./ThemeProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const theme = (t: "light" | "dark") =>
   createTheme({
@@ -112,76 +115,78 @@ export default function App() {
   const { pathname } = useLocation();
 
   return (
-    <ThemeContext.Provider value={themeState}>
-      <ThemeProvider theme={t}>
-        <ConfirmProvider>
-          <SnackbarProvider>
-            <Stack
-              sx={{
-                bgcolor: "background.default",
-                minHeight: "100svh",
-                color: "text.primary",
-              }}
-            >
-              <Navbar />
-              <Box
-                sx={{ px: 4, pb: 32, position: "relative" }}
-                key={pathname === "/" ? "/benchmarks" : pathname}
+    <QueryClientProvider client={queryClient}>
+      <ThemeContext.Provider value={themeState}>
+        <ThemeProvider theme={t}>
+          <ConfirmProvider>
+            <SnackbarProvider>
+              <Stack
+                sx={{
+                  bgcolor: "background.default",
+                  minHeight: "100svh",
+                  color: "text.primary",
+                }}
               >
-                <Fade in={true}>
-                  <Stack>
-                    <Routes>
-                      <Route path="/" element={<MapTable />} />
-                      <Route
-                        path="/benchmarks"
-                        element={<MapTable showHeader={false} />}
-                      />
-                      <Route path="/scenarios" element={<ScenarioTable />} />
-                      <Route path="/instances" element={<SolutionPage />} />
-                      <Route path="/visualization" element={<Visualiser />} />
-                      <Route path="/summary" element={<Summary />} />
-                      <Route path="/aboutUs" element={<AboutUs />} />
-                      <Route path="/systemDemo" element={<SystemDemo />} />
-                      <Route path="/submissions" element={<Submissions />} />
-                      <Route
-                        path="/submissionSummary"
-                        element={<SubmissionSummary />}
-                      />
-                      <Route path="/contributes" element={<Contribute />} />
-                      <Route path="/download" element={<Download />} />
-                      <Route path="/papers" element={<Paper />} />
-                      <Route
-                        path="/trackSubmission"
-                        element={<TrackSubmission />}
-                      />
-                      <Route
-                        path="/dashboard"
-                        element={
-                          localStorage.getItem("user") !== null ? (
-                            <Dashboard />
-                          ) : (
-                            <Navigate to="/" />
-                          )
-                        }
-                      />
-                      <Route
-                        path="/user/maps"
-                        element={
-                          localStorage.getItem("user") !== null ? (
-                            <UserMapPage />
-                          ) : (
-                            <Navigate to="/" />
-                          )
-                        }
-                      />
-                    </Routes>
-                  </Stack>
-                </Fade>
-              </Box>
-            </Stack>
-          </SnackbarProvider>
-        </ConfirmProvider>
-      </ThemeProvider>
-    </ThemeContext.Provider>
+                <Navbar />
+                <Box
+                  sx={{ px: 4, pb: 32, position: "relative" }}
+                  key={pathname === "/" ? "/benchmarks" : pathname}
+                >
+                  <Fade in={true}>
+                    <Stack>
+                      <Routes>
+                        <Route path="/" element={<MapTable />} />
+                        <Route
+                          path="/benchmarks"
+                          element={<MapTable showHeader={false} />}
+                        />
+                        <Route path="/scenarios" element={<ScenarioTable />} />
+                        <Route path="/instances" element={<SolutionPage />} />
+                        <Route path="/visualization" element={<Visualiser />} />
+                        <Route path="/summary" element={<Summary />} />
+                        <Route path="/aboutUs" element={<AboutUs />} />
+                        <Route path="/systemDemo" element={<SystemDemo />} />
+                        <Route path="/submissions" element={<Submissions />} />
+                        <Route
+                          path="/submissionSummary"
+                          element={<SubmissionSummary />}
+                        />
+                        <Route path="/contributes" element={<Contribute />} />
+                        <Route path="/download" element={<Download />} />
+                        <Route path="/papers" element={<Paper />} />
+                        <Route
+                          path="/trackSubmission"
+                          element={<TrackSubmission />}
+                        />
+                        <Route
+                          path="/dashboard"
+                          element={
+                            localStorage.getItem("user") !== null ? (
+                              <Dashboard />
+                            ) : (
+                              <Navigate to="/" />
+                            )
+                          }
+                        />
+                        <Route
+                          path="/user/maps"
+                          element={
+                            localStorage.getItem("user") !== null ? (
+                              <UserMapPage />
+                            ) : (
+                              <Navigate to="/" />
+                            )
+                          }
+                        />
+                      </Routes>
+                    </Stack>
+                  </Fade>
+                </Box>
+              </Stack>
+            </SnackbarProvider>
+          </ConfirmProvider>
+        </ThemeProvider>
+      </ThemeContext.Provider>
+    </QueryClientProvider>
   );
 }

@@ -10,7 +10,7 @@ export function usePlayback(span: number) {
         setStep((p) => min([p + 1, span])!);
         setPaused(step === span);
       };
-      const cancel = setInterval(f, 300);
+      const cancel = setInterval(f, 1000 / 30);
       return () => clearInterval(cancel);
     }
   }, [step, setStep, paused]);
