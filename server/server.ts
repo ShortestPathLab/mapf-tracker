@@ -10,8 +10,6 @@ var https = require("https");
 var http = require("http");
 const db = require("./app/models/index.ts");
 
-const validator: typeof import("validator") = require("validator");
-
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(
   bodyParser.urlencoded({

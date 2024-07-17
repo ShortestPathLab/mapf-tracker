@@ -1,0 +1,1 @@
+(function(e,t){typeof exports=="object"&&typeof module<"u"?t(exports):typeof define=="function"&&define.amd?define(["exports"],t):(e=typeof globalThis<"u"?globalThis:e||self,t(e.validator={}))})(this,function(e){"use strict";function t(i,o,n,f){}e.mail=t,Object.defineProperty(e,Symbol.toStringTag,{value:"Module"})});
