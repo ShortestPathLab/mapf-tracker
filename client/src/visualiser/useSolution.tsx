@@ -50,7 +50,7 @@ function createAgentPositionGetter(
     if (n === 0) {
       return sources;
     } else {
-      const offsets = createOffsetMap(createActionMap(n, as), {
+      const offsets = createOffsetMap(createActionMap(n - 1, as), {
         u: { x: 0, y: 1 },
         d: { x: 0, y: -1 },
         l: { x: -1, y: 0 },
