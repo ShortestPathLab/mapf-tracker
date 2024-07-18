@@ -160,6 +160,7 @@ function ResponsiveAppBar() {
           setOpen(false);
           setLogin(true);
           push("Logged in.");
+          navigate("/dashboard");
         } else {
           alert("Please enter the correct username and password");
         }
