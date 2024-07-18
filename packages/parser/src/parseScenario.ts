@@ -1,5 +1,5 @@
 import { Reader } from "validator";
-import { chain } from "lodash";
+import { chain } from "lodash-es";
 
 export function parseScenario(
   scenarioData: string,

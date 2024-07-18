@@ -1,0 +1,31 @@
+{
+  "name": "parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "vitest",
+    "build": "vite build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "lodash-es": "^4.17.21",
+    "validator": "file:../validator",
+    "vite-node": "^2.0.3",
+    "vite-plugin-dts": "^3.9.1",
+    "vite-test": "^0.4.0",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^2.0.3"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.umd.cjs",
+      "import": "./lib/index.js",
+      "node": "./lib/index.umd.cjs"
+    }
+  }
+}
