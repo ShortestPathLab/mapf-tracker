@@ -32,6 +32,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
+import { useSnackbar } from "./Snackbar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
@@ -136,6 +137,8 @@ function ResponsiveAppBar() {
     setOpen(false);
   };
 
+  const push = useSnackbar();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -156,6 +159,7 @@ function ResponsiveAppBar() {
           localStorage.setItem("user", JSON.stringify(data));
           setOpen(false);
           setLogin(true);
+          push("Logged in.");
         } else {
           alert("Please enter the correct username and password");
         }
