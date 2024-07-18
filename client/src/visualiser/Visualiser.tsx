@@ -1,6 +1,7 @@
 import {
   ChevronLeftOutlined,
   ChevronRightOutlined,
+  FirstPageOutlined,
   PauseOutlined,
   PlayArrowOutlined,
 } from "@mui/icons-material";
@@ -79,7 +80,7 @@ export default function Visualiser() {
 
   const { timespan = 0, x = 0, y = 0 } = result ?? {};
 
-  const { step, backwards, forwards, play, pause, paused } =
+  const { step, backwards, forwards, play, pause, paused, restart } =
     usePlayback(timespan);
 
   // ─────────────────────────────────────────────────────────────────────
@@ -181,6 +182,11 @@ export default function Visualiser() {
             </Typography>
             <Divider orientation="vertical" flexItem />
             {[
+              {
+                name: "Restart",
+                icon: <FirstPageOutlined />,
+                action: restart,
+              },
               {
                 name: "Step back",
                 icon: <ChevronLeftOutlined />,
