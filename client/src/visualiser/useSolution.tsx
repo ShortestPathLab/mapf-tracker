@@ -1,7 +1,5 @@
-import randomColor from "randomcolor";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { APIConfig } from "../config";
-import memoizee from "memoizee";
 import {
   DoneException,
   Reader,
