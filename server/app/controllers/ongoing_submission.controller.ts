@@ -177,16 +177,21 @@ exports.create = async (req, res) => {
       console.log(err);
     });
 };
-// const validateData =(data, map_name)=>{
-//       const mapData = getMapInfo(map_name)
-//       const height = parseInt(mapData.match(/height\s+(\d+)/)![1], 10);
-//       const width = parseInt(mapData.match(/width\s+(\d+)/)![1], 10);
-//       const map = mapData.split("map\n")[1];
-//       const rows = map.trim().split('\n');
-//       const mapArray = rows.map(row => row.split(''));
+const validateData =(data, map_name)=>{
+  const solution_path = data.solution_path;
+  
+      getMapInfo(map_name)
+      .then(mapData =>{
+          const height = parseInt(mapData.match(/height\s+(\d+)/)![1], 10);
+          const width = parseInt(mapData.match(/width\s+(\d+)/)![1], 10);
+          const map = mapData.split("map\n")[1];
+          const rows = map.trim().split('\n');
+          const mapArray = rows.map(row => row.split(''));
+      })
+      
 
 
-// }
+}
 
 
 
