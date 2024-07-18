@@ -7,6 +7,10 @@ const Map = db.maps;
 const Scenario = db.scenarios;
 const Instance = db.instances;
 const SubmissionKey = db.submission_keys;
+const fs = require("fs");
+const path = require("path");
+
+
 
 // find all submissions
 exports.findAll = (req, res) => {
@@ -173,3 +177,55 @@ exports.create = async (req, res) => {
       console.log(err);
     });
 };
+// const validateData =(data, map_name)=>{
+//       const mapData = getMapInfo(map_name)
+//       const height = parseInt(mapData.match(/height\s+(\d+)/)![1], 10);
+//       const width = parseInt(mapData.match(/width\s+(\d+)/)![1], 10);
+//       const map = mapData.split("map\n")[1];
+//       const rows = map.trim().split('\n');
+//       const mapArray = rows.map(row => row.split(''));
+
+
+// }
+
+
+
+// Function to get map information
+const getMapInfo = (mapName: string): Promise<string> => {
+  const filePath = path.join(__dirname, 'resources', 'maps', `${mapName}.map`);
+
+  return new Promise((resolve, reject) => {
+      // Check if the file exists
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+          if (err) {
+              return reject(new Error(`Map file ${mapName}.map not found`));
+          }
+
+          // Read the map file
+          fs.readFile(filePath, 'utf8', (err, data) => {
+              if (err) {
+                  return reject(err);
+              }
+              resolve(data); // Return the map data
+          });
+      });
+  });
+};
+
+// Example usage
+// const mapName = 'empty-8-8';
+// getMapInfo(mapName)
+//   .then(mapData => {
+//       console.log(`Map data forrrrrrrrrrrrrrrrrrrrrrrrrr ${mapName}:`);
+//       console.log(mapData);
+//       const height = parseInt(mapData.match(/height\s+(\d+)/)![1], 10);
+//       const width = parseInt(mapData.match(/width\s+(\d+)/)![1], 10);
+//       const map = mapData.split("map\n")[1];
+//       const rows = map.trim().split('\n');
+//       const mapArray = rows.map(row => row.split(''));
+
+//   })
+//   .catch(err => {
+//       console.error('Error:', err.message);
+//   });
+
