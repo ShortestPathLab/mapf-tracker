@@ -15,7 +15,6 @@ import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
-import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
@@ -193,30 +192,20 @@ const headCells = [
     sortable: false,
     alignment: "center",
   },
-
-  {
-    id: "algo_name",
-    numeric: false,
-    disablePadding: false,
-    label: "Algorithm Name",
-    sortable: false,
-    alignment: "center",
-  },
-
-  {
-    id: "isApproved",
-    numeric: false,
-    disablePadding: false,
-    label: "Status",
-    sortable: true,
-    alignment: "center",
-  },
   {
     id: "requestDetails",
     numeric: false,
     disablePadding: false,
     label: "Details",
     sortable: false,
+    alignment: "center",
+  },
+  {
+    id: "isApproved",
+    numeric: false,
+    disablePadding: false,
+    label: "Status",
+    sortable: true,
     alignment: "center",
   },
   {
@@ -338,40 +327,6 @@ const refreshRequests = (callback) => {
     .catch((err) => console.error(err));
 };
 
-function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: "100%", mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value
-        )}%`}</Typography>
-      </Box>
-    </Box>
-  );
-}
-
-LinearProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate and buffer variants.
-   * Value between 0 and 100.
-   */
-  value: PropTypes.number.isRequired,
-};
-//
-// const BorderLinearProgress = styled(LinearProgressWithLabel)(({ theme }) => ({
-//     height: 10,
-//
-//     [`&.${linearProgressClasses.colorPrimary}`]: {
-//         backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
-//     },
-//     [`& .${linearProgressClasses.bar}`]: {
-//
-//         backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
-//     },
-// }));
 
 export default function Dashboard() {
   const [order, setOrder] = React.useState("asc");
@@ -436,6 +391,13 @@ export default function Dashboard() {
     setSubmitting(false);
     handleCloseRequestDetail();
   };
+
+
+  const handleStatusUpdated = (requestData, status)=>{
+    
+
+  }
+
   // for open send results -------------=================================
   const [submissionKey, setSubmissionKey] = React.useState();
   const [openSendResults, setOpenSendResults] = React.useState(false);
@@ -652,19 +614,46 @@ export default function Dashboard() {
     // state={instance_id : id}, replace: false});
   };
 
-  const handleAlgoDetailClickOpen = (event, scrollType, algo_data) => {
-    setOpenAlgoDetail(true);
-    setScrollAlgoDetail(scrollType);
-    setAlgodata(algo_data);
-    event.stopPropagation();
-  };
+  const handleSendButtonOnClick = async ()=>{
+    // create the data first 
+    const values = {
+      requesterName: requestData.requesterName, 
+      requesterEmail: requestData.requesterEmail, 
+      status : requestData.reviewStatus.status,
+      comments : requestData.reviewStatus.comments,
+      api_key : requestData.reviewStatus.status === "Approved" ? submissionKey.api_key : undefined
+    }
+    console.log(values)
 
-  const handleAlgoModifyClickOpen = (event, scrollType, algo_data) => {
-    setOpenAlgoModify(true);
-    setScrollAlgoDetail(scrollType);
-    setAlgodata(algo_data);
-    event.stopPropagation();
-  };
+    // send email to the user
+    try {
+      const response = await fetch(
+        `${APIConfig.apiUrl}/user/sendMail`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": JSON.parse(localStorage.getItem("user"))
+            .accessToken,
+          },
+          body: JSON.stringify(values),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Email was sent : ", data);
+        alert('Email was sent !')
+      } else {
+        console.error("Error sending email: ", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    
+  }
+
   const handleAlgoModifyClose = () => {
     setOpenAlgoModify(false);
   };
@@ -817,7 +806,6 @@ export default function Dashboard() {
             <colgroup>
               <col style={{ minWidth: "200px" }} width="15%" />
               <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
               <col style={{ minWidth: "100px" }} width="15%" />
               <col style={{ minWidth: "100px" }} width="15%" />
               <col style={{ minWidth: "100px" }} width="15%" />
@@ -853,29 +841,6 @@ export default function Dashboard() {
                         {row.requesterName}
                       </TableCell>
                       <TableCell align="center">{row.requesterEmail}</TableCell>
-                      <TableCell align="center">{row.algorithmName}</TableCell>
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: "inline-block",
-                            padding: "4px 8px",
-                            borderRadius: "4px",
-                            color: "white",
-                            backgroundColor:
-                              row.reviewStatus.status === "Approved"
-                                ? "green"
-                                : row.reviewStatus.status === "Rejected"
-                                ? "red"
-                                : "grey",
-                          }}
-                        >
-                          {row.reviewStatus.status === "Approved"
-                            ? "Approved"
-                            : row.reviewStatus.status === "Rejected"
-                            ? "Rejected"
-                            : "Not Reviewed"}
-                        </Box>
-                      </TableCell>
                       <TableCell align="center">
                         <IconButton
                           onClick={(event) =>
@@ -884,6 +849,36 @@ export default function Dashboard() {
                         >
                           <InfoIcon />
                         </IconButton>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box
+                          sx={{
+                            display: "inline-block",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                      <Select
+                        name="reviewStatus.status"
+                        labelId="status-label"
+                        value={row.reviewStatus.status}
+                        sx={{
+                          color: "white",
+                            backgroundColor:
+                              row.reviewStatus.status === "Approved"
+                                ? "green"
+                                : row.reviewStatus.status === "Rejected"
+                                ? "red"
+                                : "grey",
+                          
+                        }}
+                        onChange={handleStatusUpdated(row)}
+                      >
+                        <MenuItem value="Not Reviewed">Not Reviewed</MenuItem>
+                        <MenuItem value="Approved">Approved</MenuItem>
+                        <MenuItem value="Rejected">Rejected</MenuItem>
+                        </Select>
+                        </Box>
                       </TableCell>
                       <TableCell align="center">
                         <IconButton
@@ -1197,6 +1192,7 @@ export default function Dashboard() {
                     variant="contained"
                     style={{ width: "200px" }}
                     endIcon={<SendIcon />}
+                    onClick={handleSendButtonOnClick}
                   >
                     Send
                   </Button>
