@@ -19,7 +19,10 @@ export function usePlayback(span: number) {
     backwards: () => setStep((p) => max([p - 1, 0])!),
     play: () => setPaused(false),
     pause: () => setPaused(true),
-    restart: () => setStep((p) => 0),
+    restart: () => { 
+      setPaused(true); 
+      setStep((p) => 0); 
+    },
     step,
     paused,
   };
