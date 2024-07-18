@@ -9,8 +9,33 @@ const Submission = db.submissions;
 const Request = db.requests;
 const { authJwt } = require("../middlewares/index.ts");
 const { ObjectID: ObjectId } = require("mongodb");
+const { mail }: typeof import("mail") = require("mail");
+
 // database changed. we had to insert agents and scen_id in submission
 // database changed. we need to insert path to solution_path, but keep solution_path_id in instance.
+
+exports.sendMail = (req, res) =>{
+  console.log("in sendding maillllllllllll")
+  const request_email = req.body.requesterEmail ;
+  const request_name = req.body.requesterName ;
+  const status = req.body.status ;
+  const comments =  req.body.comments;
+  let subjectText = `Dear ${request_name},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
+
+  if (status === "Approved"){
+    // retrived the api key 
+    const apiKey = req.body.api_key
+    subjectText += `\n\nYour API key is: ${apiKey}`;
+  }
+  else {
+    subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
+  }
+
+  // Send email using the mail function
+  mail("noreply@pathfinding.ai", request_email, "Submission Request Status", subjectText)
+}
+
+
 
 exports.findSubmittedAlgoByID = (req, res) => {
   const id = req.params.id;

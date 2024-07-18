@@ -10,6 +10,13 @@ module.exports = function (app) {
     next();
   });
 
+  app.put(
+    "/api/user/sendMail",
+    [authJwt.verifyToken],
+    controller.sendMail
+  );
+
+
   app.get(
     "/api/userAlgo/:id",
     [authJwt.verifyToken],
