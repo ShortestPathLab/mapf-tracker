@@ -19,7 +19,7 @@ app.use(
   bodyParser.urlencoded({
     limit: "500mb",
     extended: true,
-    parameterLimit: 500000,
+    parameterLimit: 500_000,
   })
 );
 
@@ -52,10 +52,12 @@ db.mongoose
 // });
 
 app.use((request, response, next) => {
-  if (process.env.NODE_ENV != "development" && !request.secure) {
-    if (!request.url.includes(".well-known"))
-      return response.redirect(`https://${request.headers.host}${request.url}`);
-  }
+  if (
+    process.env.NODE_ENV != "development" &&
+    !request.secure &&
+    !request.url.includes(".well-known")
+  )
+    return response.redirect(`https://${request.headers.host}${request.url}`);
 
   next();
 });
@@ -81,7 +83,7 @@ function formatFileSize(bytes: any) {
     bytes /= 1024;
     i++;
   }
-  return bytes.toFixed(2) + " " + units[i];
+  return `${bytes.toFixed(2)} ${units[i]}`;
 }
 
 function makeEntry(info: any, callback: any) {
