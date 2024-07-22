@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
+  },
+  "exclude": ["node_modules"]
+}
