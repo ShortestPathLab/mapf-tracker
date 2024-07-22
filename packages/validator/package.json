@@ -13,6 +13,7 @@
     "@types/lodash-es": "^4.17.12",
     "linked-list": "^3.1.0",
     "lodash-es": "^4.17.21",
+    "typescript": "^5.4.2",
     "vite-node": "^2.0.3",
     "vite-plugin-dts": "^3.9.1",
     "vite-test": "^0.4.0",
@@ -23,9 +24,8 @@
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
-      "require": "./lib/index.umd.cjs",
       "import": "./lib/index.js",
-      "node": "./lib/index.umd.cjs"
+      "require": "./lib/index.umd.cjs"
     }
   }
 }

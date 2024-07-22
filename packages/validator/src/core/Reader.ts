@@ -1,12 +1,12 @@
-import { Chunk } from "../core/Chunk.ts";
-import { DoneException } from "../exceptions/DoneException.ts";
+import { Chunk } from "../core/Chunk";
+import { DoneException } from "../exceptions/DoneException";
 
 export interface Reader {
   read(): Chunk | undefined;
 }
 
 export class Reader {
-  chunks: IterableIterator<RegExpExecArray>;
+  chunks: Iterator<RegExpExecArray, [string, string, string]>;
   offset = 0;
   constructor(agent: string) {
     this.chunks = agent.matchAll(/(\d*)([a-z])/g);
@@ -14,7 +14,7 @@ export class Reader {
   read() {
     const { value, done } = this.chunks.next();
     if (!done) {
-      const [_, count, symbol] = value;
+      const [, count, symbol] = value;
       const o = count ? +count : 1;
       const out = new Chunk(o, symbol, this.offset);
       this.offset += o;

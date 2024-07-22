@@ -2,16 +2,16 @@ import {
   CheckParameters,
   CheckResult,
   FinalCheckParameters,
-} from "./core/Check.ts";
-import { checkImmediateCollision } from "./checks/checkImmediateCollision.ts";
-import { Domain } from "./core/Domain.ts";
-import { Point } from "./core/Point.ts";
-import { Reader } from "./core/Reader.ts";
-import { Seeker } from "./core/Seeker.ts";
-import { DoneException } from "./exceptions/DoneException.ts";
+} from "./core/Check";
+import { checkImmediateCollision } from "./checks/checkImmediateCollision";
+import { Domain } from "./core/Domain";
+import { Point } from "./core/Point";
+import { Reader } from "./core/Reader";
+import { Seeker } from "./core/Seeker";
+import { DoneException } from "./exceptions/DoneException";
 import type { Dictionary } from "lodash";
 import { some, zip } from "lodash-es";
-import { checkEdgeCollision } from "./checks/checkEdgeCollision.ts";
+import { checkEdgeCollision } from "./checks/checkEdgeCollision";
 
 type ValidationParameters = {
   paths: string[];

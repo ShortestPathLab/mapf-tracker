@@ -1,5 +1,5 @@
-import { CheckResult, FinalCheckParameters } from "../core/Check.ts";
-import { serialisePoint as $ } from "../core/Point.ts";
+import { CheckResult, FinalCheckParameters } from "../core/Check";
+import { serialisePoint as $ } from "../core/Point";
 import { find, zip } from "lodash-es";
 
 export function checkGoalReached({

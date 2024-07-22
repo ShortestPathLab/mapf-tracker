@@ -1,8 +1,8 @@
 import { List } from "linked-list";
 import { times } from "lodash-es";
-import { LowerOutOfRangeException } from "../exceptions/LowerOutOfRangeException.ts";
-import { Chunk } from "./Chunk.ts";
-import { Reader } from "./Reader.ts";
+import { LowerOutOfRangeException } from "../exceptions/LowerOutOfRangeException";
+import { Chunk } from "./Chunk";
+import { Reader } from "./Reader";
 
 export class Seeker {
   cache = new List<Chunk>();

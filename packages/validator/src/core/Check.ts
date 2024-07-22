@@ -1,5 +1,5 @@
-import { Domain } from "../core/Domain.ts";
-import { Point } from "../core/Point.ts";
+import { Domain } from "../core/Domain";
+import { Point } from "../core/Point";
 
 export type CheckResult = {
   errors?: string[];

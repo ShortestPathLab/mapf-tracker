@@ -1,2 +1,2 @@
-export * from "./parseMap.ts";
-export * from "./parseScenario.ts";
+export * from "./parseMap";
+export * from "./parseScenario";

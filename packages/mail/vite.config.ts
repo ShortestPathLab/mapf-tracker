@@ -9,11 +9,12 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       include: "src/**/*",
+      rollupTypes: true,
     }),
   ],
   build: {
     outDir: "lib",
     ssr: true,
-    lib: { entry: "src/index.ts", name: "validator", fileName: "index" },
+    lib: { entry: "src/index.ts", name: "mail", fileName: "index" },
   },
 });

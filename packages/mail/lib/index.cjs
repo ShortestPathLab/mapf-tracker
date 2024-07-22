@@ -1,5 +1,5 @@
 (function(global, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("exec-sh"), require("lodash")) : typeof define === "function" && define.amd ? define(["exports", "exec-sh", "lodash"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.validator = {}, global.execSh, global.lodash));
+  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("exec-sh"), require("lodash")) : typeof define === "function" && define.amd ? define(["exports", "exec-sh", "lodash"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.mail = {}, global.execSh, global.lodash));
 })(this, function(exports2, execSh, lodash) {
   "use strict";
   const sh = execSh.promise;
