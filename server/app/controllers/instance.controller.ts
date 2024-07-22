@@ -1,4 +1,5 @@
 import db from "../models/index";
+import { RequestHandler } from "express";
 const Instance = db.instances;
 
 // const ObjectId = db.ObjectId;
@@ -7,7 +8,7 @@ import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
 // Retrieve all Tutorials from the database.
-export const findAll = (req, res) => {
+export const findAll: RequestHandler = (req, res) => {
   Instance.find({})
     .then((data) => {
       res.send(data);
@@ -21,7 +22,7 @@ export const findAll = (req, res) => {
 };
 
 //
-// exports.findNonEmptyByScenId = (req, res) => {
+// exports.findNonEmptyByScenId: RequestHandler = (req, res) => {
 //     const id = req.params.id;
 //     console.log(id);
 //     Instance.find({scen_id : id, empty: false}, {"scen_id": 1,"agents": 1, "lower_cost": 1, "lower_algo_name": 1,"lower_algo_id": 1,"lower_date": 1,
@@ -38,7 +39,7 @@ export const findAll = (req, res) => {
 //         });
 // };
 
-export const findNonEmptyByScenId = (req, res) => {
+export const findNonEmptyByScenId: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
   // const id = req.params.id;
   // Instance.find({scen_id : id, empty: false}, {"agents": 1, "lower_cost": 1, "lower_algos": 1,"lower_date": 1,
@@ -77,7 +78,7 @@ export const findNonEmptyByScenId = (req, res) => {
     });
 };
 
-export const findAlgosRecord = (req, res) => {
+export const findAlgosRecord: RequestHandler = (req, res) => {
   const id = req.params.id;
   Instance.find(
     { _id: id, empty: false },
@@ -119,7 +120,7 @@ function rankingSorter(firstKey, secondKey, thirdKey) {
   };
 }
 
-export const downloadMapByID = (req, res) => {
+export const downloadMapByID: RequestHandler = (req, res) => {
   const id = req.params.id;
   Instance.find(
     { map_id: id, empty: false },
@@ -159,7 +160,7 @@ export const downloadMapByID = (req, res) => {
     });
 };
 
-export const test = (req, res) => {
+export const test: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
@@ -238,7 +239,7 @@ export const test = (req, res) => {
     });
 };
 
-export const downloadNonEmptyByScenId = (req, res) => {
+export const downloadNonEmptyByScenId: RequestHandler = (req, res) => {
   const id = req.params.id;
   Instance.find(
     { scen_id: id, empty: false },
@@ -263,7 +264,7 @@ export const downloadNonEmptyByScenId = (req, res) => {
     });
 };
 
-export const findPathById = (req, res) => {
+export const findPathById: RequestHandler = (req, res) => {
   const id = req.params.id;
   Instance.find({ _id: id, empty: false }, { solution_path: 1 })
     .then((data) => {
@@ -277,7 +278,7 @@ export const findPathById = (req, res) => {
     });
 };
 
-export const downloadRowById = (req, res) => {
+export const downloadRowById: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
@@ -324,7 +325,7 @@ export const downloadRowById = (req, res) => {
     });
 };
 
-export const get_map_level_summary = (req, res) => {
+export const get_map_level_summary: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
   // Instance.aggregate(
   //     [
@@ -485,7 +486,7 @@ export const get_map_level_summary = (req, res) => {
   //         });
   //     });
 };
-// exports.get_map_level_summary = (req, res) => {
+// exports.get_map_level_summary: RequestHandler = (req, res) => {
 //     const id = mongoose.Types.ObjectId(req.params.id);
 //     Instance.aggregate(
 //         [

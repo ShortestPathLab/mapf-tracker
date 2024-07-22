@@ -1,8 +1,9 @@
 import db from "../models/index";
+import { RequestHandler } from "express";
 const Solution_submission = db.submissions;
 import { ObjectID as ObjectId } from "mongodb";
 
-export const findLeadingSolutionByInstance_id = (req, res) => {
+export const findLeadingSolutionByInstance_id: RequestHandler = (req, res) => {
   const id = req.params.id;
 
   Solution_submission.find({ instance_id: new ObjectId(id), isleading: true })
@@ -20,7 +21,10 @@ export const findLeadingSolutionByInstance_id = (req, res) => {
     });
 };
 
-export const findLeadingSolutionByInstance_idAndAgents = (req, res) => {
+export const findLeadingSolutionByInstance_idAndAgents: RequestHandler = (
+  req,
+  res
+) => {
   const id = req.params.id;
   const num = req.params.agents;
 
@@ -42,7 +46,7 @@ export const findLeadingSolutionByInstance_idAndAgents = (req, res) => {
     });
 };
 
-// exports.findLeadingSolutionByPaths = (req, res) => {
+// exports.findLeadingSolutionByPaths: RequestHandler = (req, res) => {
 //     const id = req.params.id;
 //     const num = req.params.agents;
 //
@@ -60,7 +64,7 @@ export const findLeadingSolutionByInstance_idAndAgents = (req, res) => {
 // };
 
 // // Find a single Tutorial with an id
-// exports.findByInstance_id = (req, res) => {
+// exports.findByInstance_id: RequestHandler = (req, res) => {
 //     const id = req.params.id;
 //
 //     Submission.find({instance_id : id})

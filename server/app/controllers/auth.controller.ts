@@ -1,11 +1,12 @@
 import config from "../config/auth.config";
 import db from "../models/index";
+import { RequestHandler } from "express";
 const User = db.users;
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 //may need to implement refresh token https://github.com/bezkoder/node-js-jwt-auth-mongodb
-export const signin = (req, res) => {
+export const signin: RequestHandler = (req, res) => {
   User.findOne({
     username: req.body.username,
   }).exec((err, user) => {

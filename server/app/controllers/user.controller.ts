@@ -1,6 +1,7 @@
 import { mail } from "mail";
 import mongoose from "mongoose";
 import db from "../models/index";
+import { RequestHandler } from "express";
 import date from "date-and-time";
 
 const Algorithm = db.algorithms;
@@ -14,7 +15,7 @@ const Request = db.requests;
 // database changed. we had to insert agents and scen_id in submission
 // database changed. we need to insert path to solution_path, but keep solution_path_id in instance.
 
-export const sendMail = (req, res) => {
+export const sendMail: RequestHandler = (req, res) => {
   console.log("in sendding maillllllllllll");
   const request_email = req.body.requesterEmail;
   const request_name = req.body.requesterName;
@@ -39,7 +40,7 @@ export const sendMail = (req, res) => {
   );
 };
 
-export const findSubmittedAlgoByID = (req, res) => {
+export const findSubmittedAlgoByID: RequestHandler = (req, res) => {
   const id = req.params.id;
   Algorithm.find({ user_id: id }, {})
     .then((data) => {
@@ -53,7 +54,7 @@ export const findSubmittedAlgoByID = (req, res) => {
     });
 };
 
-export const updateAlgoByID = (req, res) => {
+export const updateAlgoByID: RequestHandler = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
       message: "Data to update can not be empty!",
@@ -76,7 +77,7 @@ export const updateAlgoByID = (req, res) => {
     });
 };
 
-export const checkAlgoExist = (req, res) => {
+export const checkAlgoExist: RequestHandler = (req, res) => {
   console.log("here");
   console.log(req.params.id);
   if (!req.body) {
@@ -127,7 +128,7 @@ export const checkAlgoExist = (req, res) => {
   }
 };
 
-export const createAlgo = (req, res) => {
+export const createAlgo: RequestHandler = (req, res) => {
   // Validate request
   if (!req.body.algo_name) {
     res.status(400).send({ message: "Content can not be empty!" });
@@ -161,7 +162,7 @@ export const createAlgo = (req, res) => {
     });
 };
 
-export const getMapSubmittedInfo = (req, res) => {
+export const getMapSubmittedInfo: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
   const query1 = Map.find({}).catch((err) => {
     res.status(500).send({

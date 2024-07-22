@@ -1,5 +1,7 @@
-export default (mongoose) => {
-  const schema = mongoose.Schema({
+import { Mongoose } from "mongoose";
+
+export default (mongoose: Mongoose) => {
+  const schema = new mongoose.Schema({
     map_id: { type: mongoose.Schema.Types.ObjectId, ref: "map" },
     scen_id: { type: mongoose.Schema.Types.ObjectId, ref: "scenario" },
     agents: Number,

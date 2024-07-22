@@ -1,9 +1,10 @@
 import db from "../models/index";
+import { RequestHandler } from "express";
 import mongoose from "mongoose";
 const Submission_key = db.submission_keys;
 import crypto from "crypto";
 
-export const findAll = (req, res) => {
+export const findAll: RequestHandler = (req, res) => {
   Submission_key.find({})
     .then((data) => {
       res.send(data);
@@ -16,7 +17,7 @@ export const findAll = (req, res) => {
     });
 };
 
-export const findByRequestId = (req, res) => {
+export const findByRequestId: RequestHandler = (req, res) => {
   const requestId = req.params.request_id; // or req.query.request_id if it's a query parameter
   console.log(requestId);
   Submission_key.find({ request_id: requestId })
@@ -39,7 +40,7 @@ export const findByRequestId = (req, res) => {
 };
 
 // Find a single Submission_key by apiKey
-export const findByApiKey = (req, res) => {
+export const findByApiKey: RequestHandler = (req, res) => {
   const apiKey = req.params.apiKey; // Assuming apiKey is passed in req.params
   console.log("request api key : ", apiKey);
   Submission_key.findOne({ api_key: apiKey })

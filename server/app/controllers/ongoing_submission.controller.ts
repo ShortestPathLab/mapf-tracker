@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import db from "../models/index";
+import { RequestHandler } from "express";
 
 const OngoingSubmission = db.ongoing_submissions;
 const Map = db.maps;
@@ -8,7 +9,7 @@ const Scenario = db.scenarios;
 const SubmissionKey = db.submission_keys;
 
 // find all submissions
-export const findAll = (req, res) => {
+export const findAll: RequestHandler = (req, res) => {
   OngoingSubmission.find({})
     .then((data) => {
       res.send(data);
@@ -23,7 +24,7 @@ export const findAll = (req, res) => {
 };
 
 // find a submission using id
-export const findByInstance_id = (req, res) => {
+export const findByInstance_id: RequestHandler = (req, res) => {
   const id = req.params.id;
 
   OngoingSubmission.find({ instance_id: id })
@@ -42,7 +43,7 @@ export const findByInstance_id = (req, res) => {
 };
 
 // Find all OngoingSubmission entries with a given api_key
-export const findByApiKey = (req, res) => {
+export const findByApiKey: RequestHandler = (req, res) => {
   const apiKey = req.params.apiKey;
 
   OngoingSubmission.find({ api_key: apiKey })

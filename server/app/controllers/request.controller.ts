@@ -1,10 +1,11 @@
 import db from "../models/index";
+import { RequestHandler } from "express";
 import mongoose from "mongoose";
 const Request = db.requests;
 const Submission_key = db.submission_keys;
 import crypto from "crypto";
 
-export const findAll = (req, res) => {
+export const findAll: RequestHandler = (req, res) => {
   Request.find({})
     .then((data) => {
       res.send(data);
@@ -17,7 +18,7 @@ export const findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-export const findByInstance_id = (req, res) => {
+export const findByInstance_id: RequestHandler = (req, res) => {
   const id = req.params.id;
 
   Request.findById(id)

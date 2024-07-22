@@ -1,8 +1,9 @@
 import db from "../models/index";
+import { RequestHandler } from "express";
 const Submission = db.submissions;
 import { ObjectID as ObjectId } from "mongodb";
 
-export const findLeadingSolutionInstance_id = (req, res) => {
+export const findLeadingSolutionInstance_id: RequestHandler = (req, res) => {
   const id = req.params.id;
 
   Submission.find({ instance_id: id, isleading: true, type: "solution" })
@@ -20,7 +21,7 @@ export const findLeadingSolutionInstance_id = (req, res) => {
     });
 };
 
-export const findLeadingLowerboundInstance_id = (req, res) => {
+export const findLeadingLowerboundInstance_id: RequestHandler = (req, res) => {
   const id = req.params.id;
 
   Submission.aggregate([
@@ -71,7 +72,7 @@ export const findLeadingLowerboundInstance_id = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-export const findByInstance_id = (req, res) => {
+export const findByInstance_id: RequestHandler = (req, res) => {
   const id = req.params.id;
 
   Submission.find({ instance_id: id })

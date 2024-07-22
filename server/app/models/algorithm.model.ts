@@ -1,5 +1,7 @@
-export default (mongoose) => {
-  const schema = mongoose.Schema(
+import { Mongoose } from "mongoose";
+
+export default (mongoose: Mongoose) => {
+  const schema = new mongoose.Schema(
     {
       algo_name: String,
       authors: String,
