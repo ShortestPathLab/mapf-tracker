@@ -1104,18 +1104,20 @@ export const findBestLowerGroup: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach((element) => {
-        const entry = {};
-        entry["name"] = element.map_type;
-        entry["State of The Art"] = element.count / element.instances;
-        entry[result[2][0].algo_name] = 0;
-        result[1].forEach((algo) => {
-          if (algo.map_type === element.map_type) {
-            entry[algo.algo_name] = algo.count / algo.instances;
-          }
+      result[0] &&
+        result[0].forEach((element) => {
+          const entry = {};
+          entry["name"] = element.map_type;
+          entry["State of The Art"] = element.count / element.instances;
+          entry[result[2][0].algo_name] = 0;
+          result[1] &&
+            result[1].forEach((algo) => {
+              if (algo.map_type === element.map_type) {
+                entry[algo.algo_name] = algo.count / algo.instances;
+              }
+            });
+          final_results.push(entry);
         });
-        final_results.push(entry);
-      });
       res.send(final_results);
     })
     .catch((err) => {
@@ -1237,18 +1239,20 @@ export const findBestSolutionGroup = async (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach((element) => {
-        const entry = {};
-        entry["name"] = element.map_type;
-        entry["State of The Art"] = element.count / element.instances;
-        entry[result[2][0].algo_name] = 0;
-        result[1].forEach((algo) => {
-          if (algo.map_type === element.map_type) {
-            entry[algo.algo_name] = algo.count / algo.instances;
-          }
+      result[0] &&
+        result[0].forEach((element) => {
+          const entry = {};
+          entry["name"] = element.map_type;
+          entry["State of The Art"] = element.count / element.instances;
+          entry[result[2][0].algo_name] = 0;
+          result[1] &&
+            result[1].forEach((algo) => {
+              if (algo.map_type === element.map_type) {
+                entry[algo.algo_name] = algo.count / algo.instances;
+              }
+            });
+          final_results.push(entry);
         });
-        final_results.push(entry);
-      });
       res.send(final_results);
     })
     .catch((err) => {
@@ -1375,18 +1379,20 @@ export const findBestClosedGroup: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach((element) => {
-        const entry = {};
-        entry["name"] = element.map_type;
-        entry["State of The Art"] = element.count / element.instances;
-        entry[result[2][0].algo_name] = 0;
-        result[1].forEach((algo) => {
-          if (algo.map_type === element.map_type) {
-            entry[algo.algo_name] = algo.count / algo.instances;
-          }
+      if (result[0])
+        result[0].forEach((element) => {
+          const entry = {};
+          entry["name"] = element.map_type;
+          entry["State of The Art"] = element.count / element.instances;
+          entry[result[2][0].algo_name] = 0;
+          if (result[1])
+            result[1].forEach((algo) => {
+              if (algo.map_type === element.map_type) {
+                entry[algo.algo_name] = algo.count / algo.instances;
+              }
+            });
+          final_results.push(entry);
         });
-        final_results.push(entry);
-      });
       res.send(final_results);
     })
     .catch((err) => {
@@ -1508,18 +1514,20 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach((element) => {
-        const entry = {};
-        entry["name"] = element.map_type;
-        entry["State of The Art"] = element.count / element.instances;
-        entry[result[2][0].algo_name] = 0;
-        result[1].forEach((algo) => {
-          if (algo.map_type === element.map_type) {
-            entry[algo.algo_name] = algo.count / algo.instances;
-          }
+      result[0] &&
+        result[0].forEach((element) => {
+          const entry = {};
+          entry["name"] = element.map_type;
+          entry["State of The Art"] = element.count / element.instances;
+          entry[result[2][0].algo_name] = 0;
+          result[1] &&
+            result[1].forEach((algo) => {
+              if (algo.map_type === element.map_type) {
+                entry[algo.algo_name] = algo.count / algo.instances;
+              }
+            });
+          final_results.push(entry);
         });
-        final_results.push(entry);
-      });
       res.send(final_results);
     })
     .catch((err) => {
