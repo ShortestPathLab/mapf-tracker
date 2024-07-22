@@ -5,7 +5,7 @@ const Instance = db.instances;
 // const ObjectId = db.ObjectId;
 import mongoose from "mongoose";
 
-const ObjectId = mongoose.Types.ObjectId;
+const { ObjectId } = mongoose.Types;
 
 // Retrieve all Tutorials from the database.
 export const findAll: RequestHandler = (req, res) => {
@@ -79,7 +79,7 @@ export const findNonEmptyByScenId: RequestHandler = (req, res) => {
 };
 
 export const findAlgosRecord: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Instance.find(
     { _id: id, empty: false },
     { lower_algos: 1, solution_algos: 1 }
@@ -97,7 +97,7 @@ export const findAlgosRecord: RequestHandler = (req, res) => {
 };
 
 function rankingSorter(firstKey, secondKey, thirdKey) {
-  return function (a, b) {
+  return (a, b) => {
     if (a[firstKey] > b[firstKey]) {
       return 1;
     } else if (a[firstKey] < b[firstKey]) {
@@ -121,7 +121,7 @@ function rankingSorter(firstKey, secondKey, thirdKey) {
 }
 
 export const downloadMapByID: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Instance.find(
     { map_id: id, empty: false },
     {
@@ -240,7 +240,7 @@ export const test: RequestHandler = (req, res) => {
 };
 
 export const downloadNonEmptyByScenId: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Instance.find(
     { scen_id: id, empty: false },
     {
@@ -265,7 +265,7 @@ export const downloadNonEmptyByScenId: RequestHandler = (req, res) => {
 };
 
 export const findPathById: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Instance.find({ _id: id, empty: false }, { solution_path: 1 })
     .then((data) => {
       res.send(data);
@@ -394,7 +394,7 @@ export const get_map_level_summary: RequestHandler = (req, res) => {
       // for(const i = 0 ; i < result[0].length )
       // console.log(result[0])
       // console.log("finished")
-      result[0].forEach(function (element) {
+      result[0].forEach((element) => {
         const entry = {};
         entry["name"] = element._id.agents;
         entry["total"] = element.count;
@@ -403,12 +403,12 @@ export const get_map_level_summary: RequestHandler = (req, res) => {
         entry["Solved"] = 0;
         final_results.push(entry);
       });
-      result[1].forEach(function (element) {
+      result[1].forEach((element) => {
         final_results[parseInt(element._id.agents) - 1]["Closed"] =
           element.count;
         // console.log(final_results[parseInt(element.agents)-1])
       });
-      result[2].forEach(function (element) {
+      result[2].forEach((element) => {
         final_results[parseInt(element._id.agents) - 1]["Solved"] =
           element.count -
           final_results[parseInt(element._id.agents) - 1]["Closed"];

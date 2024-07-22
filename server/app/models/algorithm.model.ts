@@ -19,7 +19,7 @@ export default (mongoose: Mongoose) => {
     }
   );
 
-  schema.method("toJSON", function () {
+  schema.method("toJSON", () => {
     const { __v, _id, ...object } = this.toObject();
     object.id = _id;
     return object;

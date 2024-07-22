@@ -41,14 +41,14 @@ export const findByRequestId: RequestHandler = (req, res) => {
 
 // Find a single Submission_key by apiKey
 export const findByApiKey: RequestHandler = (req, res) => {
-  const apiKey = req.params.apiKey; // Assuming apiKey is passed in req.params
+  const { apiKey } = req.params; // Assuming apiKey is passed in req.params
   console.log("request api key : ", apiKey);
   Submission_key.findOne({ api_key: apiKey })
     .then((data) => {
       if (!data)
         res
           .status(404)
-          .send({ message: "Not found Submission_key with apiKey " + apiKey });
+          .send({ message: `Not found Submission_key with apiKey ${apiKey}` });
       else {
         res.send(data);
         console.log("data for aubmission key is : ", data);
@@ -56,7 +56,7 @@ export const findByApiKey: RequestHandler = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving Submission_key with apiKey=" + apiKey,
+        message: `Error retrieving Submission_key with apiKey=${apiKey}`,
       });
     });
 };
@@ -76,8 +76,8 @@ export const create = async (req, res) => {
   const submission_key = new Submission_key({
     request_id: req.body.request_id,
     api_key: apiKey,
-    creationDate: creationDate,
-    expirationDate: expirationDate,
+    creationDate,
+    expirationDate,
   });
 
   submission_key

@@ -19,8 +19,8 @@ export const sendMail: RequestHandler = (req, res) => {
   console.log("in sendding maillllllllllll");
   const request_email = req.body.requesterEmail;
   const request_name = req.body.requesterName;
-  const status = req.body.status;
-  const comments = req.body.comments;
+  const { status } = req.body;
+  const { comments } = req.body;
   let subjectText = `Dear ${request_name},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
 
   if (status === "Approved") {
@@ -41,7 +41,7 @@ export const sendMail: RequestHandler = (req, res) => {
 };
 
 export const findSubmittedAlgoByID: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Algorithm.find({ user_id: id }, {})
     .then((data) => {
       res.send(data);
@@ -61,7 +61,7 @@ export const updateAlgoByID: RequestHandler = (req, res) => {
     });
   }
 
-  const id = req.params.id;
+  const { id } = req.params;
   Algorithm.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then((data) => {
       if (!data) {
@@ -72,7 +72,7 @@ export const updateAlgoByID: RequestHandler = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error updating  Algorithm with id=" + id,
+        message: `Error updating  Algorithm with id=${id}`,
       });
     });
 };
@@ -86,7 +86,7 @@ export const checkAlgoExist: RequestHandler = (req, res) => {
     });
   }
   console.log("here");
-  const id = req.params.id;
+  const { id } = req.params;
   if (id === "-1") {
     Algorithm.findOne({ algo_name: req.body.algo_name })
       .then((data) => {
@@ -249,7 +249,7 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3, query4, query5])
     .then((result) => {
       const map_info = {};
-      result[0].forEach(function (element) {
+      result[0].forEach((element) => {
         map_info[element.id] = {};
         map_info[element.id].map_name = element.map_name;
         map_info[element.id].map_size = element.map_size;
@@ -261,16 +261,16 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
         map_info[element.id].closed = 0;
         map_info[element.id].solved = 0;
       });
-      result[1].forEach(function (element) {
+      result[1].forEach((element) => {
         map_info[element._id.map_id].best_lower = element.count;
       });
-      result[2].forEach(function (element) {
+      result[2].forEach((element) => {
         map_info[element._id.map_id].best_solution = element.count;
       });
-      result[3].forEach(function (element) {
+      result[3].forEach((element) => {
         map_info[element._id.map_id].solved = element.count;
       });
-      result[4].forEach(function (element) {
+      result[4].forEach((element) => {
         map_info[element._id.map_id].closed = element.count;
       });
       const final_results = [];
@@ -393,7 +393,7 @@ export const submitData = async (req, res) => {
     res.status(400).send({ message: "Error: algorithm not found" });
     return;
   }
-  const algo_name = algo.algo_name;
+  const { algo_name } = algo;
   const map = await Map.findOne({ map_name: req.body[0].map_name }).catch(
     (err) => {
       res.status(400).send({
@@ -408,7 +408,7 @@ export const submitData = async (req, res) => {
   const map_id = map._id;
   for (const index in req.body) {
     const scen = await Scenario.findOne({
-      map_id: map_id,
+      map_id,
       scen_type: req.body[index].scen_type,
       type_id: parseInt(req.body[index].type_id),
     }).catch((err) => {
@@ -422,8 +422,8 @@ export const submitData = async (req, res) => {
     }
     const scen_id = scen._id;
     const curr_instance = await Instance.findOne({
-      map_id: map_id,
-      scen_id: scen_id,
+      map_id,
+      scen_id,
       agents: parseInt(req.body[index].agents),
     }).catch((err) => {
       res.status(400).send({
@@ -437,9 +437,9 @@ export const submitData = async (req, res) => {
     //
     const instance_id = curr_instance._id;
     const curr_submission = {
-      map_id: map_id,
-      instance_id: instance_id,
-      algo_id: algo_id,
+      map_id,
+      instance_id,
+      algo_id,
       lower_cost:
         req.body[index].lower_cost === ""
           ? null
@@ -452,7 +452,7 @@ export const submitData = async (req, res) => {
       best_solution: false,
       date: date.format(new Date(), "YYYY-MM-DD"),
       agents: parseInt(req.body[index].agents),
-      scen_id: scen_id,
+      scen_id,
     };
     const path = req.body[index].solution_plan;
     if (curr_submission.lower_cost !== null) {
@@ -467,14 +467,14 @@ export const submitData = async (req, res) => {
         curr_instance.lower_date = curr_submission.date;
         curr_instance.empty = false;
         curr_instance.lower_algos.push({
-          algo_name: algo_name,
+          algo_name,
           algo_id: curr_submission.algo_id,
           date: curr_submission.date,
         });
       } else {
         if (curr_instance.lower_cost < curr_submission.lower_cost) {
           await Submission.updateMany(
-            { instance_id: instance_id },
+            { instance_id },
             {
               $set: {
                 best_lower: false,
@@ -494,7 +494,7 @@ export const submitData = async (req, res) => {
           curr_instance.empty = false;
           curr_instance.lower_algos = [
             {
-              algo_name: algo_name,
+              algo_name,
               algo_id: curr_submission.algo_id,
               date: curr_submission.date,
             },
@@ -522,7 +522,7 @@ export const submitData = async (req, res) => {
             curr_instance.empty = false;
           } else {
             curr_instance.lower_algos.push({
-              algo_name: algo_name,
+              algo_name,
               algo_id: curr_submission.algo_id,
               date: curr_submission.date,
             });
@@ -535,7 +535,7 @@ export const submitData = async (req, res) => {
       if (curr_instance.solution_cost === null) {
         let path_id = null;
         await Solution_path.collection
-          .insertOne({ instance_id: instance_id, solution_path: path })
+          .insertOne({ instance_id, solution_path: path })
           .then((result) => {
             path_id = result.insertedId;
           })
@@ -551,14 +551,14 @@ export const submitData = async (req, res) => {
         curr_instance.solution_path_id = path_id;
         curr_instance.empty = false;
         curr_instance.solution_algos.push({
-          algo_name: algo_name,
+          algo_name,
           algo_id: curr_submission.algo_id,
           date: curr_submission.date,
         });
       } else {
         if (curr_instance.solution_cost > curr_submission.solution_cost) {
           await Submission.updateMany(
-            { instance_id: instance_id },
+            { instance_id },
             {
               $set: {
                 best_solution: false,
@@ -572,7 +572,7 @@ export const submitData = async (req, res) => {
           });
           let path_id = null;
           await Solution_path.collection
-            .insertOne({ instance_id: instance_id, solution_path: path })
+            .insertOne({ instance_id, solution_path: path })
             .then((result) => {
               path_id = result.insertedId;
             })
@@ -588,7 +588,7 @@ export const submitData = async (req, res) => {
           curr_instance.solution_path_id = path_id;
           curr_instance.solution_algos = [
             {
-              algo_name: algo_name,
+              algo_name,
               algo_id: curr_submission.algo_id,
               date: curr_submission.date,
             },
@@ -619,7 +619,7 @@ export const submitData = async (req, res) => {
             curr_instance.empty = false;
           } else {
             curr_instance.solution_algos.push({
-              algo_name: algo_name,
+              algo_name,
               algo_id: curr_submission.algo_id,
               date: curr_submission.date,
             });
@@ -698,7 +698,7 @@ export const updateProgress = async (req, res) => {
   for (let i = 1; i < 26; i++) {
     for (const scen_t of scen_type) {
       const scen = await Scenario.findOne({
-        map_id: map_id,
+        map_id,
         type_id: i,
         scen_type: scen_t,
       }).catch((err) => {
@@ -713,7 +713,7 @@ export const updateProgress = async (req, res) => {
       const scen_id = scen._id;
 
       const num_s = await Instance.countDocuments({
-        scen_id: scen_id,
+        scen_id,
         closed: true,
       }).catch((err) => {
         res.status(400).send({
@@ -722,7 +722,7 @@ export const updateProgress = async (req, res) => {
         });
       });
       const num_l = await Instance.countDocuments({
-        scen_id: scen_id,
+        scen_id,
         solution_cost: { $ne: null },
       }).catch((err) => {
         res.status(400).send({
@@ -762,7 +762,7 @@ export const updateProgress = async (req, res) => {
     });
   });
   const lower = await Submission.countDocuments({
-    algo_id: algo_id,
+    algo_id,
     best_lower: true,
   }).catch((err) => {
     res.status(400).send({
@@ -770,7 +770,7 @@ export const updateProgress = async (req, res) => {
     });
   });
   const solution = await Submission.countDocuments({
-    algo_id: algo_id,
+    algo_id,
     best_solution: true,
   }).catch((err) => {
     res.status(400).send({
@@ -778,7 +778,7 @@ export const updateProgress = async (req, res) => {
     });
   });
   const closed = await Submission.countDocuments({
-    algo_id: algo_id,
+    algo_id,
     $expr: { $eq: ["$lower_cost", "$solution_cost"] },
   }).catch((err) => {
     res.status(400).send({
@@ -786,7 +786,7 @@ export const updateProgress = async (req, res) => {
     });
   });
   const solved = await Submission.countDocuments({
-    algo_id: algo_id,
+    algo_id,
     $expr: { $ne: ["$solution_cost", null] },
   }).catch((err) => {
     res.status(400).send({

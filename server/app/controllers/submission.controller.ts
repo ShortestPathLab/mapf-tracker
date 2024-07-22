@@ -4,25 +4,25 @@ const Submission = db.submissions;
 import { ObjectID as ObjectId } from "mongodb";
 
 export const findLeadingSolutionInstance_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Submission.find({ instance_id: id, isleading: true, type: "solution" })
     .then((data) => {
       if (!data)
         res
           .status(404)
-          .send({ message: "Not leading solution with instance id =" + id });
+          .send({ message: `Not leading solution with instance id =${id}` });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error leading solution with instance id =" + id });
+        .send({ message: `Error leading solution with instance id =${id}` });
     });
 };
 
 export const findLeadingLowerboundInstance_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Submission.aggregate([
     {
@@ -50,13 +50,13 @@ export const findLeadingLowerboundInstance_id: RequestHandler = (req, res) => {
       if (!data)
         res
           .status(404)
-          .send({ message: "Not leading solution with instance id =" + id });
+          .send({ message: `Not leading solution with instance id =${id}` });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error leading solution with instance id =" + id });
+        .send({ message: `Error leading solution with instance id =${id}` });
     });
   // Submission.find({instance_id : ObjectId(id) , isleading :  true })
   //     .then(data => {
@@ -73,15 +73,15 @@ export const findLeadingLowerboundInstance_id: RequestHandler = (req, res) => {
 
 // Find a single Tutorial with an id
 export const findByInstance_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Submission.find({ instance_id: id })
     .then((data) => {
       if (!data)
-        res.status(404).send({ message: "Not found Map with id " + id });
+        res.status(404).send({ message: `Not found Map with id ${id}` });
       else res.send(data);
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error retrieving Map with id=" + id });
+      res.status(500).send({ message: `Error retrieving Map with id=${id}` });
     });
 };

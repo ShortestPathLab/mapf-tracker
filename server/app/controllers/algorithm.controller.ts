@@ -379,14 +379,14 @@ export const findSolvedDomainQuery: RequestHandler = (req, res) => {
   ])
     .sort({ map_type: 1 })
     .then((data) => {
-      data.forEach(function (element) {
+      data.forEach((element) => {
         let total = 0;
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           if (algo["algo_name"] === "CBSH2-RTC") {
             total = algo["total_ins"];
           }
         });
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
@@ -469,14 +469,14 @@ export const findClosedDomainQuery: RequestHandler = (req, res) => {
   ])
     .sort({ map_type: 1 })
     .then((data) => {
-      data.forEach(function (element) {
+      data.forEach((element) => {
         let total = 0;
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           if (algo["algo_name"] === "CBSH2-RTC") {
             total = algo["total_ins"];
           }
         });
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
@@ -559,14 +559,14 @@ export const findBestLowerDomainQuery: RequestHandler = (req, res) => {
   ])
     .sort({ map_type: 1 })
     .then((data) => {
-      data.forEach(function (element) {
+      data.forEach((element) => {
         let total = 0;
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           if (algo["algo_name"] === "CBSH2-RTC") {
             total = algo["total_ins"];
           }
         });
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
@@ -650,14 +650,14 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
   ])
     .sort({ map_type: 1 })
     .then((data) => {
-      data.forEach(function (element) {
+      data.forEach((element) => {
         let total = 0;
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           if (algo["algo_name"] === "CBSH2-RTC") {
             total = algo["total_ins"];
           }
         });
-        element["results"].forEach(function (algo) {
+        element["results"].forEach((algo) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
@@ -861,7 +861,7 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
 //     //     ]
 //     // )
 //         .then(data => {
-//             data.forEach(function (element) {
+//             data.forEach((element) => {
 //                 const total = 0
 //                 element['record'].forEach(function (record){
 //                         if(record['group_label'] === 'State of The Art'){
@@ -966,7 +966,7 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
 //     ).sort({"_id.map_type":1})
 //         .then(data => {
 //             console.log("query finished")
-//             data.forEach(function (element) {
+//             data.forEach((element) => {
 //                 const total = 0
 //                 element['record'].forEach(function (record){
 //                         if(record['group_label'] === 'State of The Art'){
@@ -1104,12 +1104,12 @@ export const findBestLowerGroup: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach(function (element) {
+      result[0].forEach((element) => {
         const entry = {};
         entry["name"] = element.map_type;
         entry["State of The Art"] = element.count / element.instances;
         entry[result[2][0].algo_name] = 0;
-        result[1].forEach(function (algo) {
+        result[1].forEach((algo) => {
           if (algo.map_type === element.map_type) {
             entry[algo.algo_name] = algo.count / algo.instances;
           }
@@ -1237,12 +1237,12 @@ export const findBestSolutionGroup = async (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach(function (element) {
+      result[0].forEach((element) => {
         const entry = {};
         entry["name"] = element.map_type;
         entry["State of The Art"] = element.count / element.instances;
         entry[result[2][0].algo_name] = 0;
-        result[1].forEach(function (algo) {
+        result[1].forEach((algo) => {
           if (algo.map_type === element.map_type) {
             entry[algo.algo_name] = algo.count / algo.instances;
           }
@@ -1375,12 +1375,12 @@ export const findBestClosedGroup: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach(function (element) {
+      result[0].forEach((element) => {
         const entry = {};
         entry["name"] = element.map_type;
         entry["State of The Art"] = element.count / element.instances;
         entry[result[2][0].algo_name] = 0;
-        result[1].forEach(function (algo) {
+        result[1].forEach((algo) => {
           if (algo.map_type === element.map_type) {
             entry[algo.algo_name] = algo.count / algo.instances;
           }
@@ -1508,12 +1508,12 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      result[0].forEach(function (element) {
+      result[0].forEach((element) => {
         const entry = {};
         entry["name"] = element.map_type;
         entry["State of The Art"] = element.count / element.instances;
         entry[result[2][0].algo_name] = 0;
-        result[1].forEach(function (algo) {
+        result[1].forEach((algo) => {
           if (algo.map_type === element.map_type) {
             entry[algo.algo_name] = algo.count / algo.instances;
           }
@@ -1603,7 +1603,7 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
 //         ]
 //     ).sort({"_id.map_type":1})
 //         .then(data => {
-//             data.forEach(function (element) {
+//             data.forEach((element) => {
 //                 const total = 0
 //                 element['record'].forEach(function (record){
 //                         if(record['group_label'] === 'State of The Art'){
@@ -1715,16 +1715,16 @@ export const LeadingLowerInfo: RequestHandler = (req, res) => {
 
 // Find a single Tutorial with an id
 export const findOne: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Algorithm.findById(id)
     .then((data) => {
       if (!data)
-        res.status(404).send({ message: "Not found Map with id " + id });
+        res.status(404).send({ message: `Not found Map with id ${id}` });
       else res.send(data);
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error retrieving Map with id=" + id });
+      res.status(500).send({ message: `Error retrieving Map with id=${id}` });
     });
 };
 

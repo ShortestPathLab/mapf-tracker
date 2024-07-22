@@ -14,7 +14,7 @@ import userModel from "./user.model";
 mongoose.Promise = global.Promise;
 
 export default {
-  mongoose: mongoose,
+  mongoose,
   url: dbConfig.url,
   maps: mapModel(mongoose),
   scenarios: scenarioModel(mongoose),

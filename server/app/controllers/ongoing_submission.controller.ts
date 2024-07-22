@@ -25,32 +25,32 @@ export const findAll: RequestHandler = (req, res) => {
 
 // find a submission using id
 export const findByInstance_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   OngoingSubmission.find({ instance_id: id })
     .then((data) => {
       if (!data)
         res
           .status(404)
-          .send({ message: "Not found OngoingSubmission with id " + id });
+          .send({ message: `Not found OngoingSubmission with id ${id}` });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error retrieving OngoingSubmission with id=" + id });
+        .send({ message: `Error retrieving OngoingSubmission with id=${id}` });
     });
 };
 
 // Find all OngoingSubmission entries with a given api_key
 export const findByApiKey: RequestHandler = (req, res) => {
-  const apiKey = req.params.apiKey;
+  const { apiKey } = req.params;
 
   OngoingSubmission.find({ api_key: apiKey })
     .then((data) => {
       if (!data || data.length === 0) {
         res.status(404).send({
-          message: "Not found OngoingSubmission with apiKey " + apiKey,
+          message: `Not found OngoingSubmission with apiKey ${apiKey}`,
         });
       } else {
         res.send(data);
@@ -58,7 +58,7 @@ export const findByApiKey: RequestHandler = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving OngoingSubmission with apiKey=" + apiKey,
+        message: `Error retrieving OngoingSubmission with apiKey=${apiKey}`,
       });
     });
 };
@@ -123,7 +123,7 @@ export const create = async (req, res) => {
 
   // check if the scenario exist
   const scen = await Scenario.findOne({
-    map_id: map_id,
+    map_id,
     scen_type: req.body.scen_type,
     type_id: parseInt(req.body.type_id),
   }).catch((err) => {
@@ -138,7 +138,7 @@ export const create = async (req, res) => {
   const scen_id = scen._id;
 
   // chck if the solution_path consist invalid letters
-  const solution_path = req.body.solution_path;
+  const { solution_path } = req.body;
   // Regular expression to check if solution_path contains only 'l', 'r', 'u', 'd'
   const validPattern = /^[lrud]*$/;
 
@@ -151,12 +151,12 @@ export const create = async (req, res) => {
   // create new ongoing submission data
   const new_ongoing_submission = new OngoingSubmission({
     api_key: req.body.api_key,
-    map_id: map_id,
-    scen_id: scen_id,
+    map_id,
+    scen_id,
     agents: parseInt(req.body.agents),
     lower_cost: req.body.lower_cost,
     solution_cost: req.body.solution_cost,
-    solution_path: solution_path,
+    solution_path,
     error: { isError: false, errorMessage: "" },
   });
 

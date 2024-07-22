@@ -19,18 +19,18 @@ export const findAll: RequestHandler = (req, res) => {
 
 // Find a single Tutorial with an id
 export const findByInstance_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Request.findById(id)
     .then((data) => {
       if (!data)
-        res.status(404).send({ message: "Not found request with id " + id });
+        res.status(404).send({ message: `Not found request with id ${id}` });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error retrieving request with id=" + id });
+        .send({ message: `Error retrieving request with id=${id}` });
     });
 };
 
@@ -101,8 +101,8 @@ export const updateRequest = async (req, res) => {
       const submission_key = new Submission_key({
         request_id: id,
         api_key: apiKey,
-        creationDate: creationDate,
-        expirationDate: expirationDate,
+        creationDate,
+        expirationDate,
       });
       console.log(submission_key);
 

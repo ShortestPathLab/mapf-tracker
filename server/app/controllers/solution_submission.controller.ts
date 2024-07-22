@@ -4,20 +4,20 @@ const Solution_submission = db.submissions;
 import { ObjectID as ObjectId } from "mongodb";
 
 export const findLeadingSolutionByInstance_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Solution_submission.find({ instance_id: new ObjectId(id), isleading: true })
     .then((data) => {
       if (!data)
         res
           .status(404)
-          .send({ message: "Not leading solution with instance id =" + id });
+          .send({ message: `Not leading solution with instance id =${id}` });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error leading solution with instance id =" + id });
+        .send({ message: `Error leading solution with instance id =${id}` });
     });
 };
 
@@ -25,7 +25,7 @@ export const findLeadingSolutionByInstance_idAndAgents: RequestHandler = (
   req,
   res
 ) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const num = req.params.agents;
 
   Solution_submission.find({
@@ -36,13 +36,13 @@ export const findLeadingSolutionByInstance_idAndAgents: RequestHandler = (
       if (!data)
         res
           .status(404)
-          .send({ message: "Not leading solution with instance id =" + id });
+          .send({ message: `Not leading solution with instance id =${id}` });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error leading solution with instance id =" + id });
+        .send({ message: `Error leading solution with instance id =${id}` });
     });
 };
 

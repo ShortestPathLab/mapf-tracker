@@ -3,7 +3,7 @@ import { RequestHandler } from "express";
 const Solution_path = db.solution_paths;
 
 export const find_path: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Solution_path.findById(id)
     .then((data) => {
       res.send(data);

@@ -51,10 +51,10 @@ db.mongoose
 //     res.json({ message: "Welcome to bezkoder application." });
 // });
 
-app.use(function (request, response, next) {
+app.use((request, response, next) => {
   if (process.env.NODE_ENV != "development" && !request.secure) {
     if (!request.url.includes(".well-known"))
-      return response.redirect("https://" + request.headers.host + request.url);
+      return response.redirect(`https://${request.headers.host}${request.url}`);
   }
 
   next();
@@ -74,7 +74,7 @@ app.use(
   })
 );
 
-function formatFileSize(bytes) {
+function formatFileSize(bytes: any) {
   const units = ["B", "KB", "MB", "GB", "TB"];
   let i = 0;
   while (bytes >= 1024 && i < units.length - 1) {
@@ -84,16 +84,14 @@ function formatFileSize(bytes) {
   return bytes.toFixed(2) + " " + units[i];
 }
 
-function makeEntry(info, callback) {
+function makeEntry(info: any, callback: any) {
   const files = info.fileList.map((file) => {
     const st = file.stat;
     const typeClass = st.isDirectory() ? "dir" : "file";
     const parts = info.directory
       .split("/")
       .concat(file.name)
-      .map(function (c) {
-        return encodeURIComponent(c);
-      });
+      .map((c) => encodeURIComponent(c));
     const url = path.normalize(parts.join("/")).split(path.sep).join("/");
     const size = formatFileSize(st.size);
     const date = st.mtime.toLocaleDateString();
@@ -129,7 +127,7 @@ function makeEntry(info, callback) {
   );
 }
 
-app.get("*", function (req, res) {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 // set port, listen for requests

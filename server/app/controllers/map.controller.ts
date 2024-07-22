@@ -19,15 +19,15 @@ export const findAll: RequestHandler = (req, res) => {
 
 // Find a single Tutorial with an id
 export const findOne: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   Map.findById(id)
     .then((data) => {
       if (!data)
-        res.status(404).send({ message: "Not found Map with id " + id });
+        res.status(404).send({ message: `Not found Map with id ${id}` });
       else res.send(data);
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error retrieving Map with id=" + id });
+      res.status(500).send({ message: `Error retrieving Map with id=${id}` });
     });
 };

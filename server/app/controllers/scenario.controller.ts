@@ -17,7 +17,7 @@ export const findAll: RequestHandler = (req, res) => {
 };
 
 export const findByMap_id: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Scenario.find({ map_id: id })
     .sort({ scen_type: 1 })
     .then((data) => {
@@ -32,7 +32,7 @@ export const findByMap_id: RequestHandler = (req, res) => {
 };
 
 export const findByMap_id_Map_type: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const type = req.params.scen_type;
   Scenario.find({ map_id: id, scen_type: type })
     .then((data) => {
@@ -47,7 +47,7 @@ export const findByMap_id_Map_type: RequestHandler = (req, res) => {
 };
 
 export const findById: RequestHandler = (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Scenario.find({ _id: id })
     .then((data) => {
       res.send(data);
