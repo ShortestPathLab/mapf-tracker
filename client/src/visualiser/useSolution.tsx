@@ -48,6 +48,7 @@ function createAgentPositionGetter(
     if (n === 0) {
       return sources;
     } else {
+      // TODO: still using math origin! data in solution_paths has not been swapped over yet.
       const offsets = createOffsetMap(createActionMap(n - 1, as), {
         u: { x: 0, y: 1 },
         d: { x: 0, y: -1 },

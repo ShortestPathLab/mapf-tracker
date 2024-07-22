@@ -63,8 +63,32 @@ export function SubmissionFileFormat() {
             and right respectively, and 'w' represents waiting at its current
             location (eg., a path [(0,0) -&gt; (0,1) -&gt; (1,1) -&gt; (2,1)
             -&gt; (2,0) -&gt; (2,0) -&gt; (1,0)] is converted to a motion string
-            "urrdwl"). We use "\n" to separate the paths between different
+            "drruwl"). We use "\n" to separate the paths between different
             agents.
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: 16,
+              paddingLeft: "15px",
+              paddingBottom: "15px",
+              flex: "1 1 100%",
+            }}
+          >
+            Note that coordinates should be using pixel origin, i.e. (0, 0) 
+            is in the top left corner of the map. This means that an agent with
+            an increasing y-coordinate is going down.
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: 16,
+              paddingLeft: "15px",
+              paddingBottom: "15px",
+              flex: "1 1 100%",
+            }}
+          >
+            Solution plans should be run-length encoded before submission to
+            keep file size low. Please encode single actions as "a" rather
+            than as "1a"
           </Typography>
           <Typography
             sx={{ fontSize: 16, flex: "1 1 100%" }}
@@ -104,7 +128,7 @@ export function SubmissionFileFormat() {
                   <TableCell>1</TableCell>
                   <TableCell>14</TableCell>
                   <TableCell>14</TableCell>
-                  <TableCell>urrurrruuurrrr</TableCell>
+                  <TableCell>u2ru3r3u4r</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>empty-32-32</TableCell>
@@ -114,9 +138,9 @@ export function SubmissionFileFormat() {
                   <TableCell>38</TableCell>
                   <TableCell>38</TableCell>
                   <TableCell>
-                    urrurrruuurrrr
+                    u2ru3r3u4r
                     <br />
-                    ddrddrrrddrddrdrrdrddddd
+                    2dr2d3r2dr2drd2rdr5d
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -127,10 +151,10 @@ export function SubmissionFileFormat() {
                   <TableCell>50</TableCell>
                   <TableCell>50</TableCell>
                   <TableCell>
-                    urrurrruuurrrr <br />
-                    ddrddrrrddrddrdrrdrddddd
+                    u2ru3r3u4r <br />
+                    2dr2d3r2dr2drd2rdr5d
                     <br />
-                    dddddddddddd
+                    12d
                   </TableCell>
                 </TableRow>
               </TableBody>
