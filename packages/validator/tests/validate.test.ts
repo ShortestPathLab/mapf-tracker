@@ -1,8 +1,11 @@
-import { checkDomainCollision } from "checks/checkDomainCollision";
-import { checkDomainOutOfBounds } from "checks/checkDomainOutOfBounds";
-import { checkEdgeCollision } from "checks/checkEdgeCollision";
-import { checkGoalReached } from "checks/checkGoalReached";
-import { checkImmediateCollision, validate } from "index";
+import {
+  checkImmediateCollision,
+  validate,
+  checkDomainCollision,
+  checkDomainOutOfBounds,
+  checkEdgeCollision,
+  checkGoalReached,
+} from "index";
 import { expect, it, suite, vitest } from "vitest";
 
 const T = true;

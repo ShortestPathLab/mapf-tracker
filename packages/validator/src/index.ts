@@ -1,6 +1,7 @@
 export * from "./exceptions/DoneException.ts";
 export * from "./exceptions/LowerOutOfRangeException.ts";
 export * from "./checks/checkImmediateCollision.ts";
+export * from "./checks/checkDomainOutOfBounds.ts";
 export * from "./checks/checkDomainCollision.ts";
 export * from "./checks/checkEdgeCollision.ts";
 export * from "./checks/checkGoalReached.ts";
