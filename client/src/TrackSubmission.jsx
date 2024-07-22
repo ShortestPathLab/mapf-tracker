@@ -77,10 +77,10 @@ function CustomizedLabel(props) {
 
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {
-    var string_a = a[orderBy].split("x");
-    var string_b = b[orderBy].split("x");
-    var value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
-    var value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
+    const string_a = a[orderBy].split("x");
+    const string_b = b[orderBy].split("x");
+    const value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
+    const value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
     if (value_b < value_a) {
       return -1;
     }

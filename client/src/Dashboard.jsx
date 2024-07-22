@@ -133,10 +133,10 @@ function CustomizedLabel(props) {
 }
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {
-    var string_a = a[orderBy].split("x");
-    var string_b = b[orderBy].split("x");
-    var value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
-    var value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
+    const string_a = a[orderBy].split("x");
+    const string_b = b[orderBy].split("x");
+    const value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
+    const value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
     if (value_b < value_a) {
       return -1;
     }
@@ -520,7 +520,7 @@ export default function Dashboard() {
       } else {
         confirm({
           title: "",
-          description: "Invalid algorithm name: " + data.get("algoName"),
+          description: `Invalid algorithm name: ${data.get("algoName")}`,
           cancellationButtonProps: { sx: { display: "none" } },
           dialogProps: { fullWidth: true, maxWidth: "xs" },
         });
@@ -572,7 +572,7 @@ export default function Dashboard() {
       } else {
         confirm({
           title: "",
-          description: "Invalid algorithm name: " + data.get("algoName"),
+          description: `Invalid algorithm name: ${data.get("algoName")}`,
           cancellationButtonProps: { sx: { display: "none" } },
           dialogProps: { fullWidth: true, maxWidth: "xs" },
         });
@@ -607,7 +607,7 @@ export default function Dashboard() {
     // console.log(event.target);
     // console.log(event.target.getAttribute('type'));
     navigate("/user/maps", {
-      state: { algo_id: algo_id, algo_name: algo_name },
+      state: { algo_id, algo_name },
       replace: false,
     });
     event.stopPropagation();
@@ -688,7 +688,7 @@ export default function Dashboard() {
   const handleDomainQueryChange = (event) => {
     setDomainQuery(event.target.value);
     setDomainLoading(true);
-    var domain_API = "";
+    let domain_API = "";
     if (event.target.value === "#Instances Closed") {
       domain_API =
         APIConfig.apiUrl + "/algorithm/getClosedInfoGroup/" + algodata["id"];
@@ -1333,7 +1333,7 @@ export default function Dashboard() {
                   Summary
                   <IconButton
                     onClick={() => {
-                      handleOpenInfo("domainCompare-" + domainQuery);
+                      handleOpenInfo(`domainCompare-${domainQuery}`);
                     }}
                   >
                     <InfoIcon />
@@ -1400,7 +1400,7 @@ export default function Dashboard() {
                   <Tooltip
                     wrapperStyle={{ fontFamily: "Roboto Slab" }}
                     formatter={(tick) => {
-                      var value = tick * 100;
+                      const value = tick * 100;
                       return `${value.toFixed(2)}%`;
                     }}
                   />
@@ -1408,7 +1408,7 @@ export default function Dashboard() {
                     angle={38.5}
                     domain={[0, algoChartData.length > 0 ? "dataMax" : 1]}
                     tickFormatter={(tick) => {
-                      var value = tick * 100;
+                      const value = tick * 100;
                       return `${value.toFixed(0)}%`;
                     }}
                   />

@@ -148,7 +148,7 @@ export default function Summary() {
   const handleDomainQueryChange = (event) => {
     setDomainQuery(event.target.value);
 
-    var domain_API = "";
+    let domain_API = "";
     if (event.target.value === "#Instances Closed") {
       domain_API = APIConfig.apiUrl + "/algorithm/getDomainClosedInfo";
     } else if (event.target.value === "#Best Lower-bounds") {
@@ -166,11 +166,11 @@ export default function Summary() {
   };
 
   React.useEffect(() => {
-    var algorithm_API = APIConfig.apiUrl + "/algorithm/";
+    const algorithm_API = APIConfig.apiUrl + "/algorithm/";
     fetch(algorithm_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        var key = [];
+        const key = [];
         data.forEach((a) => key.push(a.algo_name));
         key.sort();
         setAlgorithm_name(key);
@@ -180,9 +180,9 @@ export default function Summary() {
 
   React.useEffect(() => {
     if (algorithm_name.length > 0) {
-      var map_API = APIConfig.apiUrl + "/map";
-      var closed_API = APIConfig.apiUrl + "/algorithm/getClosedInfo";
-      var domain_chart_API =
+      const map_API = APIConfig.apiUrl + "/map";
+      const closed_API = APIConfig.apiUrl + "/algorithm/getClosedInfo";
+      const domain_chart_API =
         APIConfig.apiUrl + "/algorithm/getDomainClosedInfo";
 
       Promise.all([
@@ -204,7 +204,7 @@ export default function Summary() {
 
   React.useEffect(() => {
     if (mapData.length > 0) {
-      var progressChartData = [];
+      const progressChartData = [];
       mapData.forEach((element) =>
         progressChartData.push({
           name: element.map_name,
@@ -220,7 +220,7 @@ export default function Summary() {
 
   React.useEffect(() => {
     if (mapQueryResult.length > 0) {
-      var mapChartData = [];
+      const mapChartData = [];
       [...new Set(mapData.map((item) => item.map_name))].forEach((element) =>
         mapChartData.push({ name: element })
       );
@@ -236,8 +236,8 @@ export default function Summary() {
           mapChartData[mapIndex][algo.algo_name] = algo.count;
         }
       }
-      var unique_key = [];
-      var check_box_state = {};
+      const unique_key = [];
+      const check_box_state = {};
       algorithm.forEach(function (algo) {
         unique_key.push(algo);
         check_box_state[algo] = true;
@@ -253,7 +253,7 @@ export default function Summary() {
 
   React.useEffect(() => {
     if (domainQueryResult.length > 0) {
-      var domainChartData = [];
+      const domainChartData = [];
       [...new Set(mapData.map((item) => item.map_type))].forEach((element) =>
         domainChartData.push({ name: element })
       );
@@ -271,8 +271,8 @@ export default function Summary() {
           domainChartData[domainIndex][algo.algo_name] = algo.count;
         }
       }
-      var unique_key = [];
-      var check_box_state = {};
+      const unique_key = [];
+      const check_box_state = {};
       algorithm.forEach(function (algo) {
         unique_key.push(algo);
         check_box_state[algo] = true;
@@ -350,10 +350,10 @@ export default function Summary() {
   };
 
   React.useEffect(() => {
-    var displayData = [];
+    const displayData = [];
     // console.log(solvedChartOriData);
     mapBarChartOriData.forEach(function (element) {
-      var mapData = {};
+      const mapData = {};
       mapData["name"] = element["name"];
       mapBarChartAlgorithms.forEach(function (algo) {
         if (mapFilterState[algo]) {
@@ -363,7 +363,7 @@ export default function Summary() {
       displayData.push(mapData);
     });
     // console.log(displayData);
-    var displayKey = [];
+    const displayKey = [];
     mapBarChartAlgorithms.forEach(function (algo) {
       if (mapFilterState[algo]) {
         displayKey.push(algo);
@@ -374,10 +374,10 @@ export default function Summary() {
   }, [mapFilterState]);
 
   React.useEffect(() => {
-    var displayData = [];
+    const displayData = [];
     // console.log(solvedChartOriData);
     domainBarChartOriData.forEach(function (element) {
-      var domainData = {};
+      const domainData = {};
       domainData["name"] = element["name"];
       domainBarChartAlgorithms.forEach(function (algo) {
         if (domainFilterState[algo]) {
@@ -388,7 +388,7 @@ export default function Summary() {
     });
 
     // console.log(displayData);
-    var displayKey = [];
+    const displayKey = [];
     domainBarChartAlgorithms.forEach(function (algo) {
       if (domainFilterState[algo]) {
         displayKey.push(algo);
@@ -607,7 +607,7 @@ export default function Summary() {
               <Tooltip
                 wrapperStyle={{ fontFamily: "Roboto Slab" }}
                 formatter={(tick) => {
-                  var value = tick * 100;
+                  const value = tick * 100;
                   return `${value.toFixed(2)}%`;
                 }}
               />
@@ -618,7 +618,7 @@ export default function Summary() {
                   domainBarChartDisplayAlgorithms.length > 0 ? "dataMax" : 1,
                 ]}
                 tickFormatter={(tick) => {
-                  var value = tick * 100;
+                  const value = tick * 100;
                   return `${value.toFixed(0)}%`;
                 }}
               />
@@ -734,7 +734,7 @@ export default function Summary() {
               <Tooltip
                 wrapperStyle={{ fontFamily: "Roboto Slab" }}
                 formatter={(tick) => {
-                  var value = tick * 100;
+                  const value = tick * 100;
                   return `${value.toFixed(2)}%`;
                 }}
               />

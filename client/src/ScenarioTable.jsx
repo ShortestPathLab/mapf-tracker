@@ -216,10 +216,10 @@ const infoDescriptionText = {
 
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {
-    var string_a = a[orderBy].split("x");
-    var string_b = b[orderBy].split("x");
-    var value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
-    var value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
+    const string_a = a[orderBy].split("x");
+    const string_b = b[orderBy].split("x");
+    const value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
+    const value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
     if (value_b < value_a) {
       return -1;
     }
@@ -591,7 +591,7 @@ export default function ScenarioTable() {
   };
 
   const handleDownload = async (fileName) => {
-    var filePath = "./assets/scens/" + fileName;
+    const filePath = `./assets/scens/${fileName}`;
     await fetch(filePath)
       .then((response) => response.blob())
       .then(async (blob) => {
@@ -685,7 +685,7 @@ export default function ScenarioTable() {
     const { active, payload, label } = o;
     if (active && payload && payload.length) {
       // console.log(payload);
-      const total = payload[0].payload.total;
+      const { total } = payload[0].payload;
       payload.sort((a, b) => (a.name > b.name ? 1 : -1));
       return (
         <div
@@ -711,7 +711,7 @@ export default function ScenarioTable() {
     const { active, payload, label } = o;
     if (active && payload && payload.length) {
       // console.log(payload);
-      const total = payload[0].payload.total;
+      const { total } = payload[0].payload;
       return (
         <div
           className="customized-tooltip-content"
@@ -735,7 +735,7 @@ export default function ScenarioTable() {
   const handleMapChange = (event) => {
     setMapQuery(event.target.value);
     setMapLoading(true);
-    var map_API = "";
+    let map_API = "";
     if (event.target.value === "#Instances Closed") {
       setScenCompareYLabel("Instances Closed");
       map_API =
@@ -773,7 +773,7 @@ export default function ScenarioTable() {
   const handleAgentChange = (event) => {
     setAgentQuery(event.target.value);
     setAgentLoading(true);
-    var agent_API = "";
+    let agent_API = "";
     if (event.target.value === "#Instances Closed") {
       setAgentCompareYLabel("Instances Closed");
       agent_API =
@@ -809,7 +809,7 @@ export default function ScenarioTable() {
 
   React.useEffect(() => {
     if (mapQueryResult.length > 0) {
-      var mapChartData = [];
+      const mapChartData = [];
       [
         ...new Set(
           data.map(
@@ -839,8 +839,8 @@ export default function ScenarioTable() {
           mapChartData[mapIndex]["total"] = algo.total;
         }
       }
-      var unique_key = [];
-      var check_box_state = {};
+      const unique_key = [];
+      const check_box_state = {};
       algorithm.forEach(function (algo) {
         unique_key.push(algo);
         check_box_state[algo] = true;
@@ -856,10 +856,10 @@ export default function ScenarioTable() {
   }, [mapQueryResult]);
 
   React.useEffect(() => {
-    var displayData = [];
+    const displayData = [];
     // console.log(solvedChartOriData);
     mapBarChartOriData.forEach(function (element) {
-      var mapData = {};
+      const mapData = {};
       mapData["name"] = element["name"];
       mapData["total"] = element["total"];
       mapBarChartAlgorithms.forEach(function (algo) {
@@ -870,7 +870,7 @@ export default function ScenarioTable() {
       displayData.push(mapData);
     });
     // console.log(displayData);
-    var displayKey = [];
+    const displayKey = [];
     mapBarChartAlgorithms.forEach(function (algo) {
       if (mapFilterState[algo]) {
         displayKey.push(algo);
@@ -882,10 +882,10 @@ export default function ScenarioTable() {
 
   React.useEffect(() => {
     if (agentQueryResult.length > 0) {
-      var agent_data = [];
+      const agent_data = [];
       data.forEach(function (element) {
-        var num_of_agents = element.instances;
-        for (var i = 1; i <= num_of_agents; i++) {
+        const num_of_agents = element.instances;
+        for (let i = 1; i <= num_of_agents; i++) {
           if (agent_data.length < i) {
             agent_data.push({ name: i, total: 1 });
           } else {
@@ -894,7 +894,7 @@ export default function ScenarioTable() {
         }
       });
       const algorithm = new Set();
-      for (var i = 0; i < agentQueryResult.length; i++) {
+      for (let i = 0; i < agentQueryResult.length; i++) {
         // iterate map
         var agentIndex = agentQueryResult[i].agents - 1;
 
@@ -905,8 +905,8 @@ export default function ScenarioTable() {
             algo.count / agent_data[agentIndex].total;
         }
       }
-      var unique_key = [];
-      var check_box_state = {};
+      const unique_key = [];
+      const check_box_state = {};
       algorithm.forEach(function (algo) {
         unique_key.push(algo);
         check_box_state[algo] = true;
@@ -919,8 +919,8 @@ export default function ScenarioTable() {
       unique_key.sort();
       setAgentFilterState(check_box_state);
       unique_key.sort((a, b) => {
-        var value_a = 0;
-        var value_b = 0;
+        let value_a = 0;
+        let value_b = 0;
         agent_data.forEach(function (element) {
           value_a += element[a];
           value_b += element[b];
@@ -944,10 +944,10 @@ export default function ScenarioTable() {
   }, [agentQueryResult]);
 
   React.useEffect(() => {
-    var displayData = [];
+    const displayData = [];
     // console.log(solvedChartOriData);
     agentChartOriData.forEach(function (element) {
-      var mapData = {};
+      const mapData = {};
       mapData["name"] = element["name"];
       mapData["total"] = element["total"];
       agentChartAlgorithms.forEach(function (algo) {
@@ -958,7 +958,7 @@ export default function ScenarioTable() {
       displayData.push(mapData);
     });
     // console.log(displayData);
-    var displayKey = [];
+    const displayKey = [];
     agentChartAlgorithms.forEach(function (algo) {
       if (agentFilterState[algo]) {
         displayKey.push(algo);
@@ -990,7 +990,7 @@ export default function ScenarioTable() {
   const handleClickOpenScenProgress = (event, scrollType) => {
     setScenProgressOpen(true);
     setScroll(scrollType);
-    var progressChartData = [];
+    const progressChartData = [];
     data.forEach((element) =>
       progressChartData.push({
         name:
@@ -1028,11 +1028,11 @@ export default function ScenarioTable() {
     setMapLoading(true);
     setScenCompareOpen(true);
     setScroll(scrollType);
-    var algorithm_API = APIConfig.apiUrl + "/algorithm/";
+    const algorithm_API = APIConfig.apiUrl + "/algorithm/";
     await fetch(algorithm_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        var key = [];
+        const key = [];
         data.forEach((a) => key.push(a.algo_name));
         key.sort();
         setAlgorithm_name(key);
@@ -1040,7 +1040,7 @@ export default function ScenarioTable() {
       .catch((err) => console.error(err));
     setMapQuery("#Instances Closed");
     setScenCompareYLabel("Instances Closed");
-    var closed_API =
+    const closed_API =
       APIConfig.apiUrl + "/algorithm/getScenClosedInfo/" + location.state.mapId;
     fetch(closed_API, { method: "GET" })
       .then((res) => res.json())
@@ -1056,11 +1056,11 @@ export default function ScenarioTable() {
     setAgentCompareOpen(true);
     setAgentLoading(true);
     setScroll(scrollType);
-    var algorithm_API = APIConfig.apiUrl + "/algorithm/";
+    const algorithm_API = APIConfig.apiUrl + "/algorithm/";
     await fetch(algorithm_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        var key = [];
+        const key = [];
         data.forEach((a) => key.push(a.algo_name));
         key.sort();
         setAlgorithm_name(key);
@@ -1068,7 +1068,7 @@ export default function ScenarioTable() {
       .catch((err) => console.error(err));
     setAgentQuery("#Instances Closed");
     setAgentCompareYLabel("Instances Closed");
-    var agent_chart_API =
+    const agent_chart_API =
       APIConfig.apiUrl +
       "/algorithm/getAgentClosedInfo/" +
       location.state.mapId;
@@ -1807,7 +1807,7 @@ export default function ScenarioTable() {
                 {capitalizeFirstLetter(location.state.mapName)})
                 <IconButton
                   onClick={() => {
-                    handleOpenInfo("scenCompare-" + mapQuery);
+                    handleOpenInfo(`scenCompare-${mapQuery}`);
                   }}
                 >
                   <InfoIcon />
@@ -1968,7 +1968,7 @@ export default function ScenarioTable() {
                       fontFamily: "Roboto Slab",
                     }}
                     formatter={(tick) => {
-                      var value = tick * 100;
+                      const value = tick * 100;
                       return `${value.toFixed(2)}%`;
                     }}
                   />
@@ -2021,7 +2021,7 @@ export default function ScenarioTable() {
                 <br />({capitalizeFirstLetter(location.state.mapName)})
                 <IconButton
                   onClick={() => {
-                    handleOpenInfo("agentCompare-" + agentQuery);
+                    handleOpenInfo(`agentCompare-${agentQuery}`);
                   }}
                 >
                   <InfoIcon />

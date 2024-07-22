@@ -183,10 +183,10 @@ function descendingComparator(a, b, orderBy) {
     return 0;
   }
   if (orderBy === "map_size") {
-    var string_a = a[orderBy].split("x");
-    var string_b = b[orderBy].split("x");
-    var value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
-    var value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
+    const string_a = a[orderBy].split("x");
+    const string_b = b[orderBy].split("x");
+    const value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
+    const value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
     if (value_b < value_a) {
       return -1;
     }
@@ -646,7 +646,7 @@ export default function SolutionPage() {
   const handleClickOpen = (event, scrollType, instance_id, algo_type) => {
     // setalgoID(algo_id);
     // console.log(instance_id)
-    var algo_API = APIConfig.apiUrl + "/instance/getAlgo/" + instance_id;
+    const algo_API = APIConfig.apiUrl + "/instance/getAlgo/" + instance_id;
     fetch(algo_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
@@ -676,8 +676,8 @@ export default function SolutionPage() {
 
   React.useEffect(() => {
     if (progressLoading === true) {
-      var progressChartData_copy = [];
-      for (var i = 1; i < location.state.numAgents + 1; i++) {
+      const progressChartData_copy = [];
+      for (let i = 1; i < location.state.numAgents + 1; i++) {
         progressChartData_copy.push({
           name: i.toString(),
           "Lower Bound Cost": 0,
@@ -695,7 +695,7 @@ export default function SolutionPage() {
             element.solution_cost;
         }
       });
-      var max_ratio = 0;
+      let max_ratio = 0;
       progressChartData_copy.forEach(function (element) {
         if (
           element["Lower Bound Cost"] !== 0 &&
@@ -826,7 +826,7 @@ export default function SolutionPage() {
     setDomainLoading(true);
     setDomainQuery(event.target.value);
 
-    var domain_API = "";
+    let domain_API = "";
     if (event.target.value === "#Instances Closed") {
       domain_API = APIConfig.apiUrl + "/algorithm/getClosedInfoGroup/" + algoID;
     } else if (event.target.value === "#Instances Solved") {
@@ -863,7 +863,7 @@ export default function SolutionPage() {
     //
     // console.log(planning_results);
     // console.log(path_id);
-    var scen_string =
+    const scen_string =
       location.state.mapName +
       "-" +
       location.state.scenType +
@@ -872,10 +872,10 @@ export default function SolutionPage() {
     navigate("/visualization", {
       state: {
         ...location.state,
-        path_id: path_id,
+        path_id,
         map_name: location.state.mapName,
-        scen_string: scen_string,
-        num_agents: num_agents,
+        scen_string,
+        num_agents,
       },
       replace: false,
     });
@@ -887,11 +887,11 @@ export default function SolutionPage() {
     setOpenComparator(true);
     setScroll(scrollType);
     setAgentLoading(true);
-    var algorithm_API = APIConfig.apiUrl + "/algorithm/";
+    const algorithm_API = APIConfig.apiUrl + "/algorithm/";
     fetch(algorithm_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        var key = [];
+        const key = [];
         data.forEach((a) => key.push(a.algo_name));
         key.sort();
         setAlgorithm_name(key);
@@ -905,7 +905,7 @@ export default function SolutionPage() {
     if (algorithm_name.length > 0) {
       setAgentLoading(true);
       setAgentQuery("Solution Cost");
-      var agent_cost_API =
+      const agent_cost_API =
         APIConfig.apiUrl +
         "/algorithm/getAgentSolutionCost/" +
         location.state.mapId +
@@ -923,7 +923,7 @@ export default function SolutionPage() {
 
   React.useEffect(() => {
     if (agentQueryResult.length > 0) {
-      var agentChartData = [];
+      const agentChartData = [];
       for (var i = 1; i < location.state.numAgents + 1; i++) {
         agentChartData.push({
           name: i.toString(),
@@ -940,8 +940,8 @@ export default function SolutionPage() {
           agentChartData[agentIndex][algo.algo_name] = parseInt(algo.cost);
         }
       }
-      var unique_key = [];
-      var check_box_state = {};
+      const unique_key = [];
+      const check_box_state = {};
       algorithm.forEach(function (algo) {
         unique_key.push(algo);
         check_box_state[algo] = true;
@@ -953,7 +953,7 @@ export default function SolutionPage() {
       });
       unique_key.sort();
       setAgentFilterState(check_box_state);
-      var max_value = 0;
+      let max_value = 0;
 
       for (var i = 0; i < data.length; i++) {
         if (agentQuery === "Solution Cost") {
@@ -1005,8 +1005,8 @@ export default function SolutionPage() {
         });
       }
       unique_key.sort((a, b) => {
-        var value_a = 0;
-        var value_b = 0;
+        let value_a = 0;
+        let value_b = 0;
         agentChartData.forEach(function (element) {
           value_a += element[a];
           value_b += element[b];
@@ -1029,10 +1029,10 @@ export default function SolutionPage() {
   }, [agentQueryResult]);
 
   React.useEffect(() => {
-    var displayData = [];
+    const displayData = [];
     // console.log(solvedChartOriData);
     agentChartOriData.forEach(function (element) {
-      var mapData = {};
+      const mapData = {};
       mapData["name"] = element["name"];
       agentChartAlgorithms.forEach(function (algo) {
         if (agentFilterState[algo]) {
@@ -1042,7 +1042,7 @@ export default function SolutionPage() {
       displayData.push(mapData);
     });
     // console.log(displayData);
-    var displayKey = [];
+    const displayKey = [];
     agentChartAlgorithms.forEach(function (algo) {
       if (agentFilterState[algo]) {
         displayKey.push(algo);
@@ -1056,7 +1056,7 @@ export default function SolutionPage() {
     setAgentLoading(true);
     setAgentQuery(event.target.value);
 
-    var agent_API = "";
+    let agent_API = "";
     if (event.target.value === "Solution Cost") {
       agent_API =
         APIConfig.apiUrl +
@@ -1543,7 +1543,7 @@ export default function SolutionPage() {
                 Summary
                 <IconButton
                   onClick={() => {
-                    handleOpenInfo("domainCompare-" + domainQuery);
+                    handleOpenInfo(`domainCompare-${domainQuery}`);
                   }}
                 >
                   <InfoIcon />
@@ -1610,7 +1610,7 @@ export default function SolutionPage() {
                 <Tooltip
                   wrapperStyle={{ fontFamily: "Roboto Slab" }}
                   formatter={(tick) => {
-                    var value = tick * 100;
+                    const value = tick * 100;
                     return `${value.toFixed(2)}%`;
                   }}
                 />
@@ -1618,7 +1618,7 @@ export default function SolutionPage() {
                   angle={38.5}
                   domain={[0, algoChartData.length > 0 ? "dataMax" : 1]}
                   tickFormatter={(tick) => {
-                    var value = tick * 100;
+                    const value = tick * 100;
                     return `${value.toFixed(0)}%`;
                   }}
                 />
@@ -1803,7 +1803,7 @@ export default function SolutionPage() {
                     if (tick === maxRatio + maxRatio * 0.5) {
                       return "Inf";
                     }
-                    var value = tick * 100;
+                    const value = tick * 100;
                     return `${value.toFixed(2)}%`;
                     // return `${tick* 100}%`;
                   }}
@@ -1866,7 +1866,7 @@ export default function SolutionPage() {
                 {location.state.scenType}-{location.state.scenTypeID} scenario)
                 <IconButton
                   onClick={() => {
-                    handleOpenInfo("Compare-" + agentQuery);
+                    handleOpenInfo(`Compare-${agentQuery}`);
                   }}
                 >
                   <InfoIcon />
@@ -2030,7 +2030,7 @@ export default function SolutionPage() {
                       if (tick === maxAgentResults + maxAgentResults * 0.5) {
                         return "Inf";
                       }
-                      var value = tick * 100;
+                      const value = tick * 100;
                       return `${value.toFixed(2)}%`;
                       // return `${tick* 100}%`;
                     }}
