@@ -23,17 +23,9 @@ app.use(
   })
 );
 
-// const corsOptions = {
-//   origin:
-//   ["http://localhost:8080","http://localhost:3000"]
-// };
-//
-// app.use(cors(corsOptions));
 app.use(cors());
-// parse requests of content-type - application/json
 app.use(express.json());
 
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
 db.mongoose
@@ -45,11 +37,6 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
-
-// simple route
-// app.get("/", (req, res) => {
-//     res.json({ message: "Welcome to bezkoder application." });
-// });
 
 app.use((request, response, next) => {
   if (
@@ -132,9 +119,6 @@ function makeEntry(info: any, callback: any) {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
-// set port, listen for requests
-// const PORT = "" || 80;
-// const PORT = process.env.PORT || 80;
 if (process.env.NODE_ENV === "development") {
   const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => {

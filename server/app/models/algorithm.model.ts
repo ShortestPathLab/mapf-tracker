@@ -15,8 +15,7 @@ export default (mongoose: Mongoose) => {
       instances_solved: Number,
     },
     {
-      versionKey: false, // You should be aware of the outcome after set to false
-    }
+      versionKey: false,     }
   );
 
   schema.method("toJSON", function () {

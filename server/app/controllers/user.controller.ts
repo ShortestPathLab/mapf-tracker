@@ -12,9 +12,6 @@ const Scenario = db.scenarios;
 const Submission = db.submissions;
 const Request = db.requests;
 
-// database changed. we had to insert agents and scen_id in submission
-// database changed. we need to insert path to solution_path, but keep solution_path_id in instance.
-
 export const sendMail: RequestHandler = (req, res) => {
   console.log("in sendding maillllllllllll");
   const request_email = req.body.requesterEmail;
@@ -24,14 +21,11 @@ export const sendMail: RequestHandler = (req, res) => {
   let subjectText = `Dear ${request_name},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
 
   if (status === "Approved") {
-    // retrived the api key
     const apiKey = req.body.api_key;
     subjectText += `\n\nYour API key is: ${apiKey}`;
   } else {
     subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
   }
-
-  // Send email using the mail function
   mail(
     "noreply@pathfinding.ai",
     request_email,
@@ -129,13 +123,10 @@ export const checkAlgoExist: RequestHandler = (req, res) => {
 };
 
 export const createAlgo: RequestHandler = (req, res) => {
-  // Validate request
   if (!req.body.algo_name) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
   }
-
-  // Create a Tutorial
   const algo = new Algorithm({
     algo_name: req.body.algo_name,
     authors: req.body.authors,
@@ -147,7 +138,6 @@ export const createAlgo: RequestHandler = (req, res) => {
     best_solution: 0,
     instances_closed: 0,
   });
-  // Save Tutorial in the database
   console.log(algo);
   algo
     .save(algo)
@@ -235,17 +225,6 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
         err.message || "Some error occurred while creating the Algorithm.",
     });
   });
-  //
-  // map_name: '$_id.map_name',
-  //     map_size: '$_id.map_size',
-  //     map_type: '$_id.map_type',
-  //     scens: '$_id.scens',
-  //     instances: '$_id.instances',
-  //     best_lower: "$best_lower",
-  //     best_solution: "$best_solution",
-  //     closed: "$closed",
-  //     solved: "$solved",
-  //     counter: "$counter"
   Promise.all([query1, query2, query3, query4, query5])
     .then((result) => {
       const map_info = {};
@@ -284,102 +263,10 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
         message: err.message || "Some error occurred.",
       });
     });
-
-  // Map.aggregate(
-  //     [
-  //         {
-  //             $lookup: {
-  //                 from: "submissions",
-  //                 let: {map_id: "$_id"},
-  //                 pipeline: [
-  //                     {
-  //                         $match: {
-  //                             $expr:
-  //                                 { $and:
-  //                                         [
-  //                                             { $eq: ["$$map_id","$map_id"]},
-  //                                             { $eq: ["$algo_id",id]}
-  //                                         ]
-  //                                 }
-  //                         }
-  //                     }
-  //                 ],
-  //                 as: "submissions"
-  //             }
-  //         },
-  //         {$unwind: {"path":"$submissions","preserveNullAndEmptyArrays": true}},
-  //         {
-  //             $project: {
-  //                 map_name: '$map_name',
-  //                 map_size: '$map_size',
-  //                 map_type: '$map_type',
-  //                 scens: '$scens',
-  //                 instances: '$instances',
-  //                 best_lower: {  // Set to 1 if value < 10
-  //                     $cond: [ { $eq: ["$submissions.best_lower", true ] }, 1, 0]
-  //                 },
-  //                 best_solution: {  // Set to 1 if value > 10
-  //                     $cond: [ { $eq: [ "$submissions.best_solution", true ] }, 1, 0]
-  //                 },
-  //                 closed: {  // Set to 1 if value > 10
-  //                     $cond: [
-  //                         {$and: [
-  //                                 {$gt: ["$submissions.lower_cost", null]},
-  //                                 { $eq: [ "$submissions.lower_cost", "$submissions.solution_cost" ]}
-  //                             ]}, 1, 0]
-  //                 },
-  //                 solved: {  // Set to 1 if value > 10
-  //                     $cond: [ { $gt: [ "$submissions.solution_cost", null ] }, 1, 0]
-  //                 }
-  //             }
-  //         },
-  //         {
-  //             $group: {
-  //                 _id: {"map_name": "$map_name",
-  //                     "map_size":"$map_size",
-  //                     "map_type":"$map_type",
-  //                     "scens":"$scens",
-  //                     "instances":"$instances"
-  //                 },
-  //                 "best_lower": {$sum: "$best_lower" },
-  //                 "best_solution": {$sum: "$best_solution" },
-  //                 "closed": {$sum: "$closed" },
-  //                 "solved": {$sum: "$solved" },
-  //                 "counter": { $count: { } }
-  //             }
-  //         },
-  //         {
-  //             $project: {
-  //                 map_name: '$_id.map_name',
-  //                 map_size: '$_id.map_size',
-  //                 map_type: '$_id.map_type',
-  //                 scens: '$_id.scens',
-  //                 instances: '$_id.instances',
-  //                 best_lower: "$best_lower",
-  //                 best_solution: "$best_solution",
-  //                 closed: "$closed",
-  //                 solved: "$solved",
-  //                 counter: "$counter"
-  //             }
-  //         },
-  //     ]
-  //
-  //
-  // ).sort({map_type :1, map_name:1})
-  //     .then(data => {
-  //         res.send(data);
-  //     })
-  //     .catch(err => {
-  //         res.status(500).send({
-  //             message:
-  //                 err.message || "Some error occurred while creating the Algorithm."
-  //         });
-  //     });
 };
 
 export const submitData = async (req, res) => {
   const algo_id = new mongoose.Types.ObjectId(req.params.id);
-  // Validate request
   if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
@@ -434,7 +321,6 @@ export const submitData = async (req, res) => {
       res.status(400).send({ message: "Error: instance not found" });
       return;
     }
-    //
     const instance_id = curr_instance._id;
     const curr_submission = {
       map_id,
@@ -666,7 +552,6 @@ export const submitData = async (req, res) => {
 
 export const updateProgress = async (req, res) => {
   const algo_id = new mongoose.Types.ObjectId(req.params.id);
-  // Validate request
   if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;

@@ -30,7 +30,7 @@ export default (mongoose: Mongoose) => {
         status: "Not Reviewed",
         comments: "",
       },
-      _id: false, // Disable _id for this subdocument
+      _id: false,
     },
   });
 

@@ -39,7 +39,6 @@ export const findByRequestId: RequestHandler = (req, res) => {
     });
 };
 
-// Find a single Submission_key by apiKey
 export const findByApiKey: RequestHandler = (req, res) => {
   const { apiKey } = req.params; // Assuming apiKey is passed in req.params
   console.log("request api key : ", apiKey);
@@ -61,9 +60,6 @@ export const findByApiKey: RequestHandler = (req, res) => {
     });
 };
 
-// find by api key and retrive the
-
-// return requester information (using the requestID )
 export const create = async (req, res) => {
   if (!req.body.request_id) {
     return res.status(400).send({ message: "Request id cannot be empty!" });

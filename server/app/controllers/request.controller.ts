@@ -17,7 +17,6 @@ export const findAll: RequestHandler = (req, res) => {
     });
 };
 
-// Find a single Tutorial with an id
 export const findByInstance_id: RequestHandler = (req, res) => {
   const { id } = req.params;
 

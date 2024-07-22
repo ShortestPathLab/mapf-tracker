@@ -2,7 +2,6 @@ import db from "../models/index";
 import { RequestHandler } from "express";
 const Scenario = db.scenarios;
 
-// Retrieve all Tutorials from the database.
 export const findAll: RequestHandler = (req, res) => {
   Scenario.find({})
     .then((data) => {

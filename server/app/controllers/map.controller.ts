@@ -2,7 +2,6 @@ import db from "../models/index";
 import { RequestHandler } from "express";
 const Map = db.maps;
 
-// Retrieve all Tutorials from the database.
 export const findAll: RequestHandler = (req, res) => {
   Map.find({})
     .sort({ map_type: 1 })
@@ -17,7 +16,6 @@ export const findAll: RequestHandler = (req, res) => {
     });
 };
 
-// Find a single Tutorial with an id
 export const findOne: RequestHandler = (req, res) => {
   const { id } = req.params;
 

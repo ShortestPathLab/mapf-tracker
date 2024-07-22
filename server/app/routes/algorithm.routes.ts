@@ -3,8 +3,6 @@ import * as algorithm from "../controllers/algorithm.controller";
 
 export default (app) => {
   const router = Router();
-
-  // Retrieve all Instances
   router.get("/", algorithm.findAll);
   router.get("/all_detail", algorithm.findAllDetails);
   router.get("/algo_detail/:id", algorithm.findOne);
@@ -44,7 +42,5 @@ export default (app) => {
     algorithm.findAgentSolutionCost
   );
   router.get("/getAgentLower/:mapId&:scenId", algorithm.findAgentLower);
-
-  // Retrieve a single Map with id
   app.use("/api/algorithm", router);
 };

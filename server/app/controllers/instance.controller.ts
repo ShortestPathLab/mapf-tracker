@@ -2,12 +2,10 @@ import db from "../models/index";
 import { RequestHandler } from "express";
 const Instance = db.instances;
 
-// const ObjectId = db.ObjectId;
 import mongoose from "mongoose";
 
 const { ObjectId } = mongoose.Types;
 
-// Retrieve all Tutorials from the database.
 export const findAll: RequestHandler = (req, res) => {
   Instance.find({})
     .then((data) => {
@@ -21,30 +19,8 @@ export const findAll: RequestHandler = (req, res) => {
     });
 };
 
-//
-// exports.findNonEmptyByScenId: RequestHandler = (req, res) => {
-//     const id = req.params.id;
-//     console.log(id);
-//     Instance.find({scen_id : id, empty: false}, {"scen_id": 1,"agents": 1, "lower_cost": 1, "lower_algo_name": 1,"lower_algo_id": 1,"lower_date": 1,
-//         "solution_cost": 1, "solution_algo_name": 1, "solution_algo_id": 1, "solution_date": 1
-//     })
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message:
-//                     err.message || "Some error occurred while retrieving instances."
-//             });
-//         });
-// };
-
 export const findNonEmptyByScenId: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
-  // const id = req.params.id;
-  // Instance.find({scen_id : id, empty: false}, {"agents": 1, "lower_cost": 1, "lower_algos": 1,"lower_date": 1,
-  //     "solution_cost": 1, "solution_algos": 1, "solution_date": 1
-  // })
   Instance.aggregate([
     {
       $match: {
@@ -67,7 +43,6 @@ export const findNonEmptyByScenId: RequestHandler = (req, res) => {
     },
   ])
     .then((data) => {
-      // console.log(data);
       res.send(data);
     })
     .catch((err) => {
@@ -85,7 +60,6 @@ export const findAlgosRecord: RequestHandler = (req, res) => {
     { lower_algos: 1, solution_algos: 1 }
   )
     .then((data) => {
-      // console.log(data)
       res.send(data);
     })
     .catch((err) => {
@@ -136,8 +110,6 @@ export const downloadMapByID: RequestHandler = (req, res) => {
   )
     .populate("scen_id", { scen_type: 1, type_id: 1, _id: 0 })
     .then((data) => {
-      // console.log(data)
-      // console.log("sorting data ")
       const transformedDataArray = data.map((row) => ({
         scen_type: row.scen_id.scen_type,
         type_id: row.scen_id.type_id,
@@ -195,38 +167,8 @@ export const test: RequestHandler = (req, res) => {
         scen_id: "$scen_id",
         agents: "$agents",
         Submission_records: "$Submission_records",
-        // {
-        // $filter: {
-        //     input: '$Submission_records',
-        //     cond: { $ne: [ "$$submission.algo_id",mongoose.Types.ObjectId("636cf9b1a1b36ac2118eb15f")] },
-        //     as: 'submission',
-        // }
-        // }
       },
     },
-    // {
-    //     $unwind: '$Submission_records'
-    // },
-
-    // {$group: {_id: '$_id',
-    //         agents: { $addToSet:{num: "$agents"}},
-    //         maxLower: { $max: "$Submission_records.lower_cost" },
-    //         minSolution: { $min: "$Submission_records.solution_cost" }
-    //     }},
-    // {
-    //     $group:
-    //         {_id:null,
-    //             maxLower:{$max:"$maxLower"},
-    //             minSolution:{$min:"$minSolution"}
-    //         }
-    // }
-    // {
-    //     $project:{
-    //         _id : "$_id",
-    //         agents: "$agents",
-    //         submissions:"$Submission_records"
-    //     }
-    // }
   ])
     .then((data) => {
       res.send(data);
@@ -311,9 +253,6 @@ export const downloadRowById: RequestHandler = (req, res) => {
       },
     },
   ])
-    // Instance.find({_id : id, empty: false}, {"agents": 1, "lower_cost": 1,"lower_date": 1,
-    //     "solution_cost": 1, "solution_date": 1, "_id":0
-    // })
     .then((data) => {
       res.send(data);
     })
@@ -327,24 +266,6 @@ export const downloadRowById: RequestHandler = (req, res) => {
 
 export const get_map_level_summary: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
-  // Instance.aggregate(
-  //     [
-  //         {$match:{map_id: id, $expr: { $ne: [ "$solution_cost", null] } }},
-  //         {
-  //             $group: {
-  //                 _id: {"agents": "$agents"},
-  //                 count: { $count: { } }
-  //             }
-  //         }
-  //     ]
-  // ).sort({ "_id.agents": 1}).then(result=>(console.log(result)))
-  //     .catch(err => {
-  //         res.status(500).send({
-  //             message:
-  //                 err.message || "Some error occurred."
-  //         });
-  //     });
-
   const query1 = Instance.aggregate([
     { $match: { map_id: id } },
     {
@@ -391,9 +312,6 @@ export const get_map_level_summary: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
-      // for(const i = 0 ; i < result[0].length )
-      // console.log(result[0])
-      // console.log("finished")
       result[0].forEach((element) => {
         const entry = {};
         entry["name"] = element._id.agents;
@@ -406,7 +324,6 @@ export const get_map_level_summary: RequestHandler = (req, res) => {
       result[1].forEach((element) => {
         final_results[parseInt(element._id.agents) - 1]["Closed"] =
           element.count;
-        // console.log(final_results[parseInt(element.agents)-1])
       });
       result[2].forEach((element) => {
         final_results[parseInt(element._id.agents) - 1]["Solved"] =
@@ -423,127 +340,4 @@ export const get_map_level_summary: RequestHandler = (req, res) => {
         message: err.message || "Some error occurred.",
       });
     });
-
-  //
-  //
-  // Instance.aggregate(
-  //     [
-  //         {$match:{map_id: id}},
-  //
-  //         {
-  //             $group: {
-  //                 _id: {"agents":"$agents"},
-  //
-  //                 closed: { $sum:
-  //                         {
-  //                             $cond:{
-  //                                 "if":{
-  //                                     $eq:[
-  //                                         "$closed",
-  //                                         true
-  //                                     ]
-  //                                 },
-  //                                 "then":1,
-  //                                 "else":0
-  //                             }
-  //                         }
-  //                 },
-  //                 solved: { $sum:
-  //                         {
-  //                             $cond:{
-  //                                 "if":{
-  //                                     $ne:[
-  //                                         "$solution_cost",
-  //                                         null
-  //                                     ]
-  //                                 },
-  //                                 "then":1,
-  //                                 "else":0
-  //                             }
-  //                         }
-  //                 },
-  //                 count: { $count: { } }
-  //             }
-  //         },
-  //         {
-  //             $project : {
-  //                 name : "$_id.agents",
-  //                 total: "$count",
-  //                 Closed : "$closed" ,
-  //                 Solved : { $subtract: [ "$solved",  "$closed"] },
-  //                 Unknown :{ $subtract: [ "$count",  "$solved"] },
-  //             }
-  //         }
-  //     ]
-  // ).sort({ "_id.agents": 1})
-  //     .then(data => {
-  //         res.send(data);
-  //     })
-  //     .catch(err => {
-  //         res.status(500).send({
-  //             message:
-  //                 err.message || "Some error occurred while retrieving instances."
-  //         });
-  //     });
 };
-// exports.get_map_level_summary: RequestHandler = (req, res) => {
-//     const id = mongoose.Types.ObjectId(req.params.id);
-//     Instance.aggregate(
-//         [
-//             {$match:{map_id: id}},
-//             {
-//                 $group: {
-//                     _id: {"agents":"$agents"},
-//
-//                     closed: { $sum:
-//                             {
-//                                 $cond:{
-//                                     "if":{
-//                                         $eq:[
-//                                             "$closed",
-//                                             true
-//                                         ]
-//                                     },
-//                                     "then":1,
-//                                     "else":0
-//                                 }
-//                             }
-//                     },
-//                     solved: { $sum:
-//                             {
-//                                 $cond:{
-//                                     "if":{
-//                                         $ne:[
-//                                             "$solution_cost",
-//                                             null
-//                                         ]
-//                                     },
-//                                     "then":1,
-//                                     "else":0
-//                                 }
-//                             }
-//                     },
-//                     count: { $count: { } }
-//                 }
-//             },
-//             {
-//                 $project : {
-//                     name : "$_id.agents",
-//                     total: "$count",
-//                     Closed : "$closed" ,
-//                     Solved : { $subtract: [ "$solved",  "$closed"] },
-//                     Unknown :{ $subtract: [ "$count",  "$solved"] },
-//                 }
-//             }
-//         ]
-//     ).sort({ "_id.agents": 1})
-//         .then(data => {
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message:
-//                     err.message || "Some error occurred while retrieving instances."
-//             });
-//         });
-// };

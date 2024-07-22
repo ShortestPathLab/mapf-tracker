@@ -1,7 +1,9 @@
 import db from "../models/index";
 import { RequestHandler } from "express";
 const Submission = db.submissions;
-import { ObjectID as ObjectId } from "mongodb";
+import { Types } from "mongoose";
+
+const { ObjectId } = Types;
 
 export const findLeadingSolutionInstance_id: RequestHandler = (req, res) => {
   const { id } = req.params;
@@ -58,20 +60,8 @@ export const findLeadingLowerboundInstance_id: RequestHandler = (req, res) => {
         .status(500)
         .send({ message: `Error leading solution with instance id =${id}` });
     });
-  // Submission.find({instance_id : ObjectId(id) , isleading :  true })
-  //     .then(data => {
-  //         if (!data)
-  //             res.status(404).send({ message: "Not leading solution with instance id =" + id });
-  //         else res.send(data);
-  //     })
-  //     .catch(err => {
-  //         res
-  //             .status(500)
-  //             .send({ message: "Error leading solution with instance id =" + id });
-  //     });
 };
 
-// Find a single Tutorial with an id
 export const findByInstance_id: RequestHandler = (req, res) => {
   const { id } = req.params;
 

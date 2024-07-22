@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 const Algorithm = db.algorithms;
 const Submission = db.submissions;
 
-// Retrieve all Tutorials from the database.
 export const findAll: RequestHandler = (req, res) => {
   Algorithm.find({}, { _id: 0, algo_name: 1 })
     .then((data) => {
@@ -353,7 +352,6 @@ export const findSolvedDomainQuery: RequestHandler = (req, res) => {
         _id: { map_type: "$map_type", algo_name: "$algo_name" },
         sum_value: { $sum: "$count" },
         total_instances: { $sum: "$instances" },
-        // record: { $addToSet:{algo_name: "$algo_name",count:"$count" }}
       },
     },
     {
@@ -443,7 +441,6 @@ export const findClosedDomainQuery: RequestHandler = (req, res) => {
         _id: { map_type: "$map_type", algo_name: "$algo_name" },
         sum_value: { $sum: "$count" },
         total_instances: { $sum: "$instances" },
-        // record: { $addToSet:{algo_name: "$algo_name",count:"$count" }}
       },
     },
     {
@@ -533,7 +530,6 @@ export const findBestLowerDomainQuery: RequestHandler = (req, res) => {
         _id: { map_type: "$map_type", algo_name: "$algo_name" },
         sum_value: { $sum: "$count" },
         total_instances: { $sum: "$instances" },
-        // record: { $addToSet:{algo_name: "$algo_name",count:"$count" }}
       },
     },
     {
@@ -570,7 +566,6 @@ export const findBestLowerDomainQuery: RequestHandler = (req, res) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
-      // console.log(data)
       res.send(data);
     })
     .catch((err) => {
@@ -624,7 +619,6 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
         _id: { map_type: "$map_type", algo_name: "$algo_name" },
         sum_value: { $sum: "$count" },
         total_instances: { $sum: "$instances" },
-        // record: { $addToSet:{algo_name: "$algo_name",count:"$count" }}
       },
     },
     {
@@ -639,7 +633,6 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
         },
       },
     },
-    //
     {
       $project: {
         _id: 0,
@@ -670,328 +663,6 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
     });
 };
 
-// exports.findBestLowerGroup: RequestHandler = (req, res) => {
-//     const id = mongoose.Types.ObjectId(req.params.id);
-//     Submission.aggregate(
-//         [
-//             { $match : { best_lower: true } },
-//             {
-//                 $group: {
-//                     _id: {"map_id":"$map_id","algo_id" : "$algo_id"},
-//                     "uniqueInstance": { $addToSet: "$instance_id" }
-//                 }
-//             },
-//
-//             {
-//                 $lookup : {
-//                     from : 'algorithms',
-//                     localField  : '_id.algo_id',
-//                     foreignField : '_id',
-//                     as : "algo_info"
-//                 }
-//             },
-//             {
-//                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$algo_info", 0 ] }, "$$ROOT" ] } }
-//             },
-//             {
-//                 $lookup : {
-//                     from : 'maps',
-//                     localField  : '_id.map_id',
-//                     foreignField : '_id',
-//                     as : "map_info"
-//                 }
-//             },
-//             {
-//                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$map_info", 0 ] }, "$$ROOT" ] } }
-//             },
-//
-//
-//             { $project: {
-//                     '_id' : "$_id",
-//                     'map_type': "$map_type",
-//                     'instances': "$instances",
-//                     "group_label":{$cond: [{$eq: ['$_id.algo_id', id]}, "$algo_name", "State of The Art" ]},
-//                     "uniqueInstance":"$uniqueInstance"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: {"map_type":"$map_type","group_label" : "$group_label"},
-//                     "instances": {$sum: "$instances" },
-//                     "uniqueInstance": { $addToSet: "$uniqueInstance" }
-//                 }
-//             },
-//             { $addFields: {
-//                     "uniqueInstance": {
-//                         "$reduce": {
-//                             "input": "$uniqueInstance",
-//                             "initialValue": [],
-//                             "in": { $setUnion: [ "$$value", "$$this" ] }
-//                         }
-//                     }
-//                 }},
-//             {$project:{"map_type":"$_id.map_type","instances": "$instances", "group_label": "$_id.group_label", "count":{$size:"$uniqueInstance"}}},
-//             {
-//                 $group: {
-//                     _id: {"map_type": "$map_type"},
-//                     record: {
-//                         $addToSet: {
-//                             group_label: "$_id.group_label",
-//                             count : "$count",
-//                             instance:  "$instances",
-//                             total_amount: { $divide: [ "$count", "$instances" ]}
-//                         }
-//                     }
-//                 }
-//             },
-//             // {
-//             //     $lookup : {
-//             //         from : 'maps',
-//             //         localField  : '_id.map_id',
-//             //         foreignField : '_id',
-//             //         as : "map_info"
-//             //     }
-//             // },
-//             // {
-//             //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$map_info", 0 ] }, "$$ROOT" ] } }
-//             // },
-//
-//             // {
-//             //     $group: {
-//             //         _id: {"map_id":"$map_id","group_label" : "$group_label"},
-//             //         "uniqueInstance": { $addToSet: "$instance_id" }
-//             //     }
-//             // },
-//             // {$project:{"map_id":"$_id.map_id","group_label": "$_id.group_label", "count":{$size:"$uniqueInstance"}}},
-//
-//             // {
-//             //     $lookup : {
-//             //         from : 'maps',
-//             //         localField  : '_id.map_id',
-//             //         foreignField : '_id',
-//             //         as : "map_info"
-//             //     }
-//             // },
-//             // {
-//             //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$map_info", 0 ] }, "$$ROOT" ] } }
-//             // },
-//             // {
-//             //     $group: {
-//             //         _id: {"map_type": "$map_type"},
-//             //         record: {
-//             //             $addToSet: {group_label: "$_id.group_label",
-//             //                 total_amount: {"$sum": {"$size": "$uniqueInstance"
-//             //                 }}}
-//             //         }
-//             //     }
-//             // },
-//
-//         ]
-//     ).sort({"_id.map_type":1})
-//     //
-//     //
-//     //
-//     //
-//     //
-//     // Algorithm.aggregate(
-//     //     [
-//     //         { $project: {
-//     //                 '_id' : "$_id",
-//     //                 "algo_name": "$algo_name",
-//     //                 "group_label":{$cond: [{$eq: ['$_id', id]}, "$algo_name", "State of The Art" ]}
-//     //             }
-//     //         },
-//     //         {
-//     //             $lookup : {
-//     //                 from : 'submissions',
-//     //                 localField  : '_id',
-//     //                 foreignField : 'algo_id',
-//     //                 as : "Submission_records"
-//     //             }
-//     //         },
-//     //         {
-//     //             $project: {
-//     //                 algo_name: '$algo_name',
-//     //                 group_label: '$group_label',
-//     //                 Submission_records: {
-//     //                     $filter: {
-//     //                         input: '$Submission_records',
-//     //                         cond: { $eq: [ "$$submission.best_lower", true] },
-//     //                         as: 'submission',
-//     //                     }
-//     //                 }
-//     //             }
-//     //         },
-//     //         {
-//     //             "$unwind": "$Submission_records"
-//     //         },
-//     //         {
-//     //             $group: {
-//     //                 _id: {"map_id":"$Submission_records.map_id","group_label" : "$group_label"},
-//     //                 "uniqueInstance": { $addToSet: "$Submission_records.instance_id" }
-//     //             }
-//     //         },
-//     //         // {
-//     //         //     $lookup : {
-//     //         //         from : 'maps',
-//     //         //         localField  : '_id.map_id',
-//     //         //         foreignField : '_id',
-//     //         //         as : "map_info"
-//     //         //     }
-//     //         // },
-//     //         // {
-//     //         //     $group: {
-//     //         //         _id: {"map_type":"$map_info.map_type","group_label" : "$_id.group_label"},
-//     //         //         totalAmount: { $sum: { $size: "$uniqueInstance"} }
-//     //         //     }
-//     //         // },
-//     //         // {
-//     //         //     $group: {
-//     //         //         _id: {"map_type": "$_id.map_type"},
-//     //         //         record: {$addToSet: {group_label: "$_id.group_label",total_amount: "$totalAmount" } }
-//     //         //     }
-//     //         // },
-//     //         // {
-//     //         //     $project: {
-//     //         //         _id : 0,
-//     //         //         name : {$first: "$_id.map_type"},
-//     //         //         record: "$record"
-//     //         //     }
-//     //         // }
-//     //     ]
-//     // )
-//         .then(data => {
-//             data.forEach((element) => {
-//                 const total = 0
-//                 element['record'].forEach(function (record){
-//                         if(record['group_label'] === 'State of The Art'){
-//                             total = record['instance'];
-//                         }
-//                     }
-//                 )
-//                 element['record'].forEach(function (record){
-//                         element[record['group_label']] = record['count'] / total;
-//                     }
-//                 )
-//                 element['name'] = element['_id']['map_type']
-//                 delete element.record;
-//                 delete element._id;
-//             })
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message:
-//                     err.message || "Some error occurred."
-//             });
-//         });
-// };
-
-// exports.findBestSolutionGroup: RequestHandler = (req, res) => {
-//     const id = mongoose.Types.ObjectId(req.params.id);
-//     console.log(id)
-//     Submission.aggregate(
-//         [
-//             { $match : { best_solution: true } },
-//             {
-//                 $group: {
-//                     _id: {"map_id":"$map_id","algo_id" : "$algo_id"},
-//                     "uniqueInstance": { $addToSet: "$instance_id" }
-//                 }
-//             },
-//
-//             {
-//                 $lookup : {
-//                     from : 'algorithms',
-//                     localField  : '_id.algo_id',
-//                     foreignField : '_id',
-//                     as : "algo_info"
-//                 }
-//             },
-//             {
-//                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$algo_info", 0 ] }, "$$ROOT" ] } }
-//             },
-//             {
-//                 $lookup : {
-//                     from : 'maps',
-//                     localField  : '_id.map_id',
-//                     foreignField : '_id',
-//                     as : "map_info"
-//                 }
-//             },
-//             {
-//                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$map_info", 0 ] }, "$$ROOT" ] } }
-//             },
-//
-//
-//             { $project: {
-//                     '_id' : "$_id",
-//                     'map_type': "$map_type",
-//                     'instances': "$instances",
-//                     "group_label":{$cond: [{$eq: ['$_id.algo_id', id]}, "$algo_name", "State of The Art" ]},
-//                     "uniqueInstance":"$uniqueInstance"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: {"map_type":"$map_type","group_label" : "$group_label"},
-//                     "instances": {$sum: "$instances" },
-//                     "uniqueInstance": { $addToSet: "$uniqueInstance" }
-//                 }
-//             },
-//             { $addFields: {
-//                     "uniqueInstance": {
-//                         "$reduce": {
-//                             "input": "$uniqueInstance",
-//                             "initialValue": [],
-//                             "in": { $setUnion: [ "$$value", "$$this" ] }
-//                         }
-//                     }
-//                 }},
-//             {$project:{"map_type":"$_id.map_type","instances": "$instances", "group_label": "$_id.group_label", "count":{$size:"$uniqueInstance"}}},
-//             {
-//                 $group: {
-//                     _id: {"map_type": "$map_type"},
-//                     record: {
-//                         $addToSet: {
-//                             group_label: "$_id.group_label",
-//                             count : "$count",
-//                             instance:  "$instances",
-//                             total_amount: { $divide: [ "$count", "$instances" ]}
-//                         }
-//                     }
-//                 }
-//             },
-//         ]
-//     ).sort({"_id.map_type":1})
-//         .then(data => {
-//             console.log("query finished")
-//             data.forEach((element) => {
-//                 const total = 0
-//                 element['record'].forEach(function (record){
-//                         if(record['group_label'] === 'State of The Art'){
-//                             total = record['instance'];
-//                         }
-//                     }
-//                 )
-//                 element['record'].forEach(function (record){
-//                         element[record['group_label']] = record['count'] / total;
-//                     }
-//                 )
-//                 element['name'] = element['_id']['map_type']
-//                 delete element.record;
-//                 delete element._id;
-//             })
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message:
-//                     err.message || "Some error occurred."
-//             });
-//         });
-// };
-//
 export const findBestLowerGroup: RequestHandler = (req, res) => {
   const id = new mongoose.Types.ObjectId(req.params.id);
   const query3 = Algorithm.find({ _id: id });
@@ -1537,106 +1208,6 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
     });
 };
 
-// exports.findBestSolvedGroup: RequestHandler = (req, res) => {
-//     const id = mongoose.Types.ObjectId(req.params.id);
-//     Submission.aggregate(
-//         [
-//             { $match : { $expr: { $eq: [ "$lower_cost", "$solution_cost"] }}  },
-//             {
-//                 $group: {
-//                     _id: {"map_id":"$map_id","algo_id" : "$algo_id"},
-//                     "uniqueInstance": { $addToSet: "$instance_id" }
-//                 }
-//             },
-//             {
-//                 $lookup : {
-//                     from : 'algorithms',
-//                     localField  : '_id.algo_id',
-//                     foreignField : '_id',
-//                     as : "algo_info"
-//                 }
-//             },
-//             {
-//                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$algo_info", 0 ] }, "$$ROOT" ] } }
-//             },
-//             {
-//                 $lookup : {
-//                     from : 'maps',
-//                     localField  : '_id.map_id',
-//                     foreignField : '_id',
-//                     as : "map_info"
-//                 }
-//             },
-//             {
-//                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$map_info", 0 ] }, "$$ROOT" ] } }
-//             },
-//             { $project: {
-//                     '_id' : "$_id",
-//                     'map_type': "$map_type",
-//                     'instances': "$instances",
-//                     "group_label":{$cond: [{$eq: ['$_id.algo_id', id]}, "$algo_name", "State of The Art" ]},
-//                     "uniqueInstance":"$uniqueInstance"
-//                 }
-//             },
-//             {
-//                 $group: {
-//                     _id: {"map_type":"$map_type","group_label" : "$group_label"},
-//                     "instances": {$sum: "$instances" },
-//                     "uniqueInstance": { $addToSet: "$uniqueInstance" }
-//                 }
-//             },
-//             { $addFields: {
-//                     "uniqueInstance": {
-//                         "$reduce": {
-//                             "input": "$uniqueInstance",
-//                             "initialValue": [],
-//                             "in": { $setUnion: [ "$$value", "$$this" ] }
-//                         }
-//                     }
-//                 }},
-//             {$project:{"map_type":"$_id.map_type","instances": "$instances", "group_label": "$_id.group_label", "count":{$size:"$uniqueInstance"}}},
-//             {
-//                 $group: {
-//                     _id: {"map_type": "$map_type"},
-//                     record: {
-//                         $addToSet: {
-//                             group_label: "$_id.group_label",
-//                             count : "$count",
-//                             instance:  "$instances",
-//                             total_amount: { $divide: [ "$count", "$instances" ]}
-//                         }
-//                     }
-//                 }
-//             },
-//         ]
-//     ).sort({"_id.map_type":1})
-//         .then(data => {
-//             data.forEach((element) => {
-//                 const total = 0
-//                 element['record'].forEach(function (record){
-//                         if(record['group_label'] === 'State of The Art'){
-//                             total = record['instance'];
-//                         }
-//                     }
-//                 )
-//                 element['record'].forEach(function (record){
-//                         element[record['group_label']] = record['count'] / total;
-//                     }
-//                 )
-//                 element['name'] = element['_id']['map_type']
-//                 delete element.record;
-//                 delete element._id;
-//             })
-//             res.send(data);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 message:
-//                     err.message || "Some error occurred."
-//             });
-//         });
-// };
-
 export const LeadingSolvedInfo: RequestHandler = (req, res) => {
   Algorithm.aggregate([
     {
@@ -1721,7 +1292,6 @@ export const LeadingLowerInfo: RequestHandler = (req, res) => {
     });
 };
 
-// Find a single Tutorial with an id
 export const findOne: RequestHandler = (req, res) => {
   const { id } = req.params;
 
@@ -1747,23 +1317,6 @@ export const findScenBestClosed: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         scen_id : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", scen_id: "$scen_id" },
@@ -1823,7 +1376,6 @@ export const findScenBestClosed: RequestHandler = (req, res) => {
   ])
     .sort({ scen_type: 1, type_id: 1 })
     .then((data) => {
-      // console.log(data)
       res.send(data);
     })
     .catch((err) => {
@@ -1845,23 +1397,6 @@ export const findScenBestSolved: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         scen_id : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", scen_id: "$scen_id" },
@@ -1942,23 +1477,6 @@ export const findScenBestLower: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         scen_id : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", scen_id: "$scen_id" },
@@ -2039,23 +1557,6 @@ export const findScenBestSolution: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         scen_id : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", scen_id: "$scen_id" },
@@ -2136,23 +1637,6 @@ export const findAgentBestClosed: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         agents : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", agents: "$agents" },
@@ -2211,23 +1695,6 @@ export const findAgentBestSolved: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         agents : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", agents: "$agents" },
@@ -2286,23 +1753,6 @@ export const findAgentBestLower: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         agents : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", agents: "$agents" },
@@ -2361,23 +1811,6 @@ export const findAgentBestSolution: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         agents : 1,
-    //     }
-    // },
     {
       $group: {
         _id: { algo_id: "$algo_id", agents: "$agents" },
@@ -2438,30 +1871,6 @@ export const findAgentSolutionCost: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         scen_id : 1,
-    //         agents:1,
-    //         solution_cost:1,
-    //     }
-    // },
-    // {
-    //     $match : {
-    //         $expr: { $eq: [  "$scen_id", scen_id ] }
-    //     }
-    // },
     {
       $lookup: {
         from: "algorithms",
@@ -2519,30 +1928,6 @@ export const findAgentLower: RequestHandler = (req, res) => {
         ],
       },
     },
-    // {
-    //     $lookup : {
-    //         from : 'instances',
-    //         localField  : 'instance_id',
-    //         foreignField : '_id',
-    //         as : "instance_info"
-    //     }
-    // },
-    // {
-    //     $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$instance_info", 0 ] }, "$$ROOT" ] } }
-    // },
-    // {
-    //     $project:{
-    //         algo_id :  1,
-    //         scen_id : 1,
-    //         agents:1,
-    //         lower_cost:1,
-    //     }
-    // },
-    // {
-    //     $match : {
-    //         $expr: { $eq: [  "$scen_id", scen_id ] }
-    //     }
-    // },
     {
       $lookup: {
         from: "algorithms",

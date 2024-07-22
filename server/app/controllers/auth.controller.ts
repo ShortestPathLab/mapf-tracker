@@ -5,7 +5,6 @@ const User = db.users;
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-//may need to implement refresh token https://github.com/bezkoder/node-js-jwt-auth-mongodb
 export const signin: RequestHandler = (req, res) => {
   User.findOne({
     username: req.body.username,
@@ -20,11 +19,6 @@ export const signin: RequestHandler = (req, res) => {
     }
 
     const passwordIsValid = req.body.password === user.password;
-    //     bcrypt.compareSync(
-    //     req.body.password,
-    //     user.password
-    // );
-
     if (!passwordIsValid) {
       return res.status(401).send({
         accessToken: null,
@@ -33,7 +27,7 @@ export const signin: RequestHandler = (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, config.secret, {
-      expiresIn: 86400, // 24 hours
+      expiresIn: 86400,
     });
     res.status(200).send({
       id: user._id,
