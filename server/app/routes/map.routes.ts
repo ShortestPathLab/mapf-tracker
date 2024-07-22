@@ -1,8 +1,7 @@
-module.exports = (app) => {
-  const map = require("../controllers/map.controller.ts");
-
-  var router = require("express").Router();
-
+import { Router } from "express";
+import * as map from "../controllers/map.controller";
+const router = Router();
+export default (app) => {
   // Retrieve all Maps
   router.get("/", map.findAll);
 

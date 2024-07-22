@@ -1,8 +1,8 @@
-const db = require("../models/index.ts");
+import db from "../models/index";
 const Map = db.maps;
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   Map.find({})
     .sort({ map_type: 1 })
     .then((data) => {
@@ -17,7 +17,7 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findOne = (req, res) => {
+export const findOne = (req, res) => {
   const id = req.params.id;
 
   Map.findById(id)

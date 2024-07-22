@@ -1,19 +1,14 @@
-const db = require("../models/index.ts");
-const mongoose = require("mongoose");
+import fs from "fs";
+import path from "path";
+import db from "../models/index";
 
-// const {}: typeof import("validator") = require("validator");
 const OngoingSubmission = db.ongoing_submissions;
 const Map = db.maps;
 const Scenario = db.scenarios;
-const Instance = db.instances;
 const SubmissionKey = db.submission_keys;
-const fs = require("fs");
-const path = require("path");
-
-
 
 // find all submissions
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   OngoingSubmission.find({})
     .then((data) => {
       res.send(data);
@@ -28,7 +23,7 @@ exports.findAll = (req, res) => {
 };
 
 // find a submission using id
-exports.findByInstance_id = (req, res) => {
+export const findByInstance_id = (req, res) => {
   const id = req.params.id;
 
   OngoingSubmission.find({ instance_id: id })
@@ -47,7 +42,7 @@ exports.findByInstance_id = (req, res) => {
 };
 
 // Find all OngoingSubmission entries with a given api_key
-exports.findByApiKey = (req, res) => {
+export const findByApiKey = (req, res) => {
   const apiKey = req.params.apiKey;
 
   OngoingSubmission.find({ api_key: apiKey })
@@ -68,7 +63,7 @@ exports.findByApiKey = (req, res) => {
 };
 
 // create a new ongoing submission
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   // Define validation rules
   const validations = [
     { field: "api_key", message: "API key cannot be empty!" },
@@ -91,7 +86,7 @@ exports.create = async (req, res) => {
     }
   }
   // check api key
-  var api = await SubmissionKey.findOne({ api_key: req.body.api_key }).catch(
+  const api = await SubmissionKey.findOne({ api_key: req.body.api_key }).catch(
     (err) => {
       res.status(400).send({
         message: err.message || "Some error occurred while finding api key.",
@@ -112,19 +107,21 @@ exports.create = async (req, res) => {
   }
 
   // check if the map exist and retrieve map id
-  var map = await Map.findOne({ map_name: req.body.map_name }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while finding map.",
-    });
-  });
+  const map = await Map.findOne({ map_name: req.body.map_name }).catch(
+    (err) => {
+      res.status(400).send({
+        message: err.message || "Some error occurred while finding map.",
+      });
+    }
+  );
   if (!map) {
     res.status(400).send({ message: "Error: map not found" });
     return;
   }
-  var map_id = map._id;
+  const map_id = map._id;
 
   // check if the scenario exist
-  var scen = await Scenario.findOne({
+  const scen = await Scenario.findOne({
     map_id: map_id,
     scen_type: req.body.scen_type,
     type_id: parseInt(req.body.type_id),
@@ -137,10 +134,10 @@ exports.create = async (req, res) => {
     res.status(400).send({ message: "Error: scenario not found" });
     return;
   }
-  var scen_id = scen._id;
+  const scen_id = scen._id;
 
   // chck if the solution_path consist invalid letters
-  var solution_path = req.body.solution_path;
+  const solution_path = req.body.solution_path;
   // Regular expression to check if solution_path contains only 'l', 'r', 'u', 'd'
   const validPattern = /^[lrud]*$/;
 
@@ -177,60 +174,25 @@ exports.create = async (req, res) => {
       console.log(err);
     });
 };
-const validateData =(data, map_name)=>{
-  const solution_path = data.solution_path;
-  
-      getMapInfo(map_name)
-      .then(mapData =>{
-          const height = parseInt(mapData.match(/height\s+(\d+)/)![1], 10);
-          const width = parseInt(mapData.match(/width\s+(\d+)/)![1], 10);
-          const map = mapData.split("map\n")[1];
-          const rows = map.trim().split('\n');
-          const mapArray = rows.map(row => row.split(''));
-      })
-      
-
-
-}
-
-
 
 // Function to get map information
 const getMapInfo = (mapName: string): Promise<string> => {
-  const filePath = path.join(__dirname, 'resources', 'maps', `${mapName}.map`);
+  const filePath = path.join(__dirname, "resources", "maps", `${mapName}.map`);
 
   return new Promise((resolve, reject) => {
-      // Check if the file exists
-      fs.access(filePath, fs.constants.F_OK, (err) => {
-          if (err) {
-              return reject(new Error(`Map file ${mapName}.map not found`));
-          }
+    // Check if the file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        return reject(new Error(`Map file ${mapName}.map not found`));
+      }
 
-          // Read the map file
-          fs.readFile(filePath, 'utf8', (err, data) => {
-              if (err) {
-                  return reject(err);
-              }
-              resolve(data); // Return the map data
-          });
+      // Read the map file
+      fs.readFile(filePath, "utf8", (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(data); // Return the map data
       });
+    });
   });
 };
-
-// Example usage
-// const mapName = 'empty-8-8';
-// getMapInfo(mapName)
-//   .then(mapData => {
-//       console.log(`Map data forrrrrrrrrrrrrrrrrrrrrrrrrr ${mapName}:`);
-//       console.log(mapData);
-//       const height = parseInt(mapData.match(/height\s+(\d+)/)![1], 10);
-//       const width = parseInt(mapData.match(/width\s+(\d+)/)![1], 10);
-//       const map = mapData.split("map\n")[1];
-//       const rows = map.trim().split('\n');
-//       const mapArray = rows.map(row => row.split(''));
-
-//   })
-//   .catch(err => {
-//       console.error('Error:', err.message);
-//   });
-

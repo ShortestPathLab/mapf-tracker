@@ -1,5 +1,1 @@
-const authJwt = require("./authJwt.ts");
-
-module.exports = {
-  authJwt,
-};
+export { default as authJwt } from "./authJwt";

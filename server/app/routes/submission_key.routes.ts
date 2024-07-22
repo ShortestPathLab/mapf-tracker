@@ -1,7 +1,8 @@
-module.exports = (app) => {
-  const submission_key = require("../controllers/submission_key.controller.ts");
+import { Router } from "express";
+import * as submission_key from "../controllers/submission_key.controller";
 
-  var router = require("express").Router();
+export default (app) => {
+  const router = Router();
 
   // Retrieve all submission_keys
   router.get("/", submission_key.findAll);

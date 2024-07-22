@@ -1,7 +1,8 @@
-module.exports = (app) => {
-  const solution_path = require("../controllers/solution_path.controller.ts");
+import { Router } from "express";
+import * as solution_path from "../controllers/solution_path.controller";
 
-  var router = require("express").Router();
+export default (app) => {
+  const router = Router();
   // Retrieve a single Map with id
   router.get("/:id", solution_path.find_path);
   app.use("/api/solution_path", router);

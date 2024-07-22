@@ -1,7 +1,8 @@
-module.exports = (app) => {
-  const scen = require("../controllers/scenario.controller.ts");
+import { Router } from "express";
+import * as scen from "../controllers/scenario.controller";
 
-  var router = require("express").Router();
+export default (app) => {
+  const router = Router();
 
   // Retrieve all Instances
   router.get("/", scen.findAll);

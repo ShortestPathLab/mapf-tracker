@@ -1,7 +1,8 @@
-const db = require("../models/index.ts");
+import db from "../models/index";
 const Submission = db.submissions;
-const ObjectId = require("mongodb").ObjectID;
-exports.findLeadingSolutionInstance_id = (req, res) => {
+import { ObjectID as ObjectId } from "mongodb";
+
+export const findLeadingSolutionInstance_id = (req, res) => {
   const id = req.params.id;
 
   Submission.find({ instance_id: id, isleading: true, type: "solution" })
@@ -19,13 +20,13 @@ exports.findLeadingSolutionInstance_id = (req, res) => {
     });
 };
 
-exports.findLeadingLowerboundInstance_id = (req, res) => {
+export const findLeadingLowerboundInstance_id = (req, res) => {
   const id = req.params.id;
 
   Submission.aggregate([
     {
       $match: {
-        instance_id: ObjectId(id),
+        instance_id: new ObjectId(id),
         isleading: true,
         $or: [{ type: "solution", optimal: true }, { type: "lower_bound" }],
       },
@@ -70,7 +71,7 @@ exports.findLeadingLowerboundInstance_id = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findByInstance_id = (req, res) => {
+export const findByInstance_id = (req, res) => {
   const id = req.params.id;
 
   Submission.find({ instance_id: id })

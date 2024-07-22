@@ -1,8 +1,8 @@
-const instance = require("../controllers/instance.controller.ts");
-module.exports = (app) => {
-  const instance = require("../controllers/instance.controller.ts");
+import { Router } from "express";
+import * as instance from "../controllers/instance.controller";
 
-  var router = require("express").Router();
+export default (app) => {
+  const router = Router();
 
   // Retrieve all Instances
   router.get("/", instance.findAll);

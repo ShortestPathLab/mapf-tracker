@@ -1,9 +1,9 @@
-const db = require("../models/index.ts");
-const mongoose = require("mongoose");
+import db from "../models/index";
+import mongoose from "mongoose";
 const Submission_key = db.submission_keys;
-const crypto = require("crypto");
+import crypto from "crypto";
 
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   Submission_key.find({})
     .then((data) => {
       res.send(data);
@@ -16,7 +16,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-exports.findByRequestId = (req, res) => {
+export const findByRequestId = (req, res) => {
   const requestId = req.params.request_id; // or req.query.request_id if it's a query parameter
   console.log(requestId);
   Submission_key.find({ request_id: requestId })
@@ -39,7 +39,7 @@ exports.findByRequestId = (req, res) => {
 };
 
 // Find a single Submission_key by apiKey
-exports.findByApiKey = (req, res) => {
+export const findByApiKey = (req, res) => {
   const apiKey = req.params.apiKey; // Assuming apiKey is passed in req.params
   console.log("request api key : ", apiKey);
   Submission_key.findOne({ api_key: apiKey })
@@ -54,18 +54,16 @@ exports.findByApiKey = (req, res) => {
       }
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({
-          message: "Error retrieving Submission_key with apiKey=" + apiKey,
-        });
+      res.status(500).send({
+        message: "Error retrieving Submission_key with apiKey=" + apiKey,
+      });
     });
 };
 
 // find by api key and retrive the
 
 // return requester information (using the requestID )
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   if (!req.body.request_id) {
     return res.status(400).send({ message: "Request id cannot be empty!" });
   }

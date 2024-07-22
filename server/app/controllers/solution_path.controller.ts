@@ -1,7 +1,7 @@
-const db = require("../models/index.ts");
+import db from "../models/index";
 const Solution_path = db.solution_paths;
 
-exports.find_path = (req, res) => {
+export const find_path = (req, res) => {
   const id = req.params.id;
   Solution_path.findById(id)
     .then((data) => {

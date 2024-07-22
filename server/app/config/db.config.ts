@@ -1,5 +1,7 @@
-require('dotenv').config();
+import { config } from "dotenv";
 
-module.exports = {
+config();
+
+export default {
   url: process.env.MONGO_DB_URI,
 };

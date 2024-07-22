@@ -1,6 +1,8 @@
-module.exports = (app) => {
-  const ongoing_submission = require("../controllers/ongoing_submission.controller.ts");
-  var router = require("express").Router();
+import { Router } from "express";
+import * as ongoing_submission from "../controllers/ongoing_submission.controller";
+
+export default (app) => {
+  const router = Router();
   // Retrieve all ongoing_submission
   router.get("/", ongoing_submission.findAll);
   // Retrieve a ongoing_submission with id

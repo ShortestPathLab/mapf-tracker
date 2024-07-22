@@ -1,5 +1,8 @@
-const db = require("../models/index.ts");
-const mongoose = require("mongoose");
+import { mail } from "mail";
+import mongoose from "mongoose";
+import db from "../models/index";
+import date from "date-and-time";
+
 const Algorithm = db.algorithms;
 const Instance = db.instances;
 const Solution_path = db.solution_paths;
@@ -7,37 +10,36 @@ const Map = db.maps;
 const Scenario = db.scenarios;
 const Submission = db.submissions;
 const Request = db.requests;
-const { authJwt } = require("../middlewares/index.ts");
-const { ObjectID: ObjectId } = require("mongodb");
-const { mail }: typeof import("mail") = require("mail");
 
 // database changed. we had to insert agents and scen_id in submission
 // database changed. we need to insert path to solution_path, but keep solution_path_id in instance.
 
-exports.sendMail = (req, res) =>{
-  console.log("in sendding maillllllllllll")
-  const request_email = req.body.requesterEmail ;
-  const request_name = req.body.requesterName ;
-  const status = req.body.status ;
-  const comments =  req.body.comments;
+export const sendMail = (req, res) => {
+  console.log("in sendding maillllllllllll");
+  const request_email = req.body.requesterEmail;
+  const request_name = req.body.requesterName;
+  const status = req.body.status;
+  const comments = req.body.comments;
   let subjectText = `Dear ${request_name},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
 
-  if (status === "Approved"){
-    // retrived the api key 
-    const apiKey = req.body.api_key
+  if (status === "Approved") {
+    // retrived the api key
+    const apiKey = req.body.api_key;
     subjectText += `\n\nYour API key is: ${apiKey}`;
-  }
-  else {
+  } else {
     subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
   }
 
   // Send email using the mail function
-  mail("noreply@pathfinding.ai", request_email, "Submission Request Status", subjectText)
-}
+  mail(
+    "noreply@pathfinding.ai",
+    request_email,
+    "Submission Request Status",
+    subjectText
+  );
+};
 
-
-
-exports.findSubmittedAlgoByID = (req, res) => {
+export const findSubmittedAlgoByID = (req, res) => {
   const id = req.params.id;
   Algorithm.find({ user_id: id }, {})
     .then((data) => {
@@ -51,7 +53,7 @@ exports.findSubmittedAlgoByID = (req, res) => {
     });
 };
 
-exports.updateAlgoByID = (req, res) => {
+export const updateAlgoByID = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
       message: "Data to update can not be empty!",
@@ -74,7 +76,7 @@ exports.updateAlgoByID = (req, res) => {
     });
 };
 
-exports.checkAlgoExist = (req, res) => {
+export const checkAlgoExist = (req, res) => {
   console.log("here");
   console.log(req.params.id);
   if (!req.body) {
@@ -125,58 +127,7 @@ exports.checkAlgoExist = (req, res) => {
   }
 };
 
-exports.checkAlgoExist = (req, res) => {
-  console.log("here");
-  console.log(req.params.id);
-  if (!req.body) {
-    return res.status(400).send({
-      message: "Data to update can not be empty!",
-    });
-  }
-  console.log("here");
-  const id = req.params.id;
-  if (id === "-1") {
-    Algorithm.findOne({ algo_name: req.body.algo_name })
-      .then((data) => {
-        if (data === null) {
-          res.status(200).send({
-            message: "valid name",
-          });
-        } else {
-          res.status(404).send({
-            message: `Cannot update Algorithm with id=${id}. Maybe  Algorithm was not found!`,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({
-          message: err,
-        });
-      });
-  } else {
-    Algorithm.findOne({ _id: { $ne: id }, algo_name: req.body.algo_name })
-      .then((data) => {
-        if (data === null) {
-          res.status(200).send({
-            message: "valid name",
-          });
-        } else {
-          res.status(404).send({
-            message: `Cannot update Algorithm with id=${id}. Maybe  Algorithm was not found!`,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({
-          message: err,
-        });
-      });
-  }
-};
-
-exports.createAlgo = (req, res) => {
+export const createAlgo = (req, res) => {
   // Validate request
   if (!req.body.algo_name) {
     res.status(400).send({ message: "Content can not be empty!" });
@@ -210,16 +161,16 @@ exports.createAlgo = (req, res) => {
     });
 };
 
-exports.getMapSubmittedInfo = (req, res) => {
-  const id = mongoose.Types.ObjectId(req.params.id);
-  var query1 = Map.find({}).catch((err) => {
+export const getMapSubmittedInfo = (req, res) => {
+  const id = new mongoose.Types.ObjectId(req.params.id);
+  const query1 = Map.find({}).catch((err) => {
     res.status(500).send({
       message:
         err.message || "Some error occurred while creating the Algorithm.",
     });
   });
 
-  var query2 = Submission.aggregate([
+  const query2 = Submission.aggregate([
     { $match: { algo_id: id, best_lower: true } },
     {
       $group: {
@@ -234,7 +185,7 @@ exports.getMapSubmittedInfo = (req, res) => {
     });
   });
 
-  var query3 = Submission.aggregate([
+  const query3 = Submission.aggregate([
     { $match: { algo_id: id, best_solution: true } },
     {
       $group: {
@@ -249,7 +200,7 @@ exports.getMapSubmittedInfo = (req, res) => {
     });
   });
 
-  var query4 = Submission.aggregate([
+  const query4 = Submission.aggregate([
     { $match: { algo_id: id, $expr: { $ne: ["$solution_cost", null] } } },
     {
       $group: {
@@ -264,7 +215,7 @@ exports.getMapSubmittedInfo = (req, res) => {
     });
   });
 
-  var query5 = Submission.aggregate([
+  const query5 = Submission.aggregate([
     {
       $match: {
         algo_id: id,
@@ -296,7 +247,7 @@ exports.getMapSubmittedInfo = (req, res) => {
   //     counter: "$counter"
   Promise.all([query1, query2, query3, query4, query5])
     .then((result) => {
-      var map_info = {};
+      const map_info = {};
       result[0].forEach(function (element) {
         map_info[element.id] = {};
         map_info[element.id].map_name = element.map_name;
@@ -321,7 +272,7 @@ exports.getMapSubmittedInfo = (req, res) => {
       result[4].forEach(function (element) {
         map_info[element._id.map_id].closed = element.count;
       });
-      var final_results = [];
+      const final_results = [];
       for (const key in map_info) {
         final_results.push(map_info[key]);
       }
@@ -425,14 +376,14 @@ exports.getMapSubmittedInfo = (req, res) => {
   //     });
 };
 
-exports.submitData = async (req, res) => {
-  const algo_id = mongoose.Types.ObjectId(req.params.id);
+export const submitData = async (req, res) => {
+  const algo_id = new mongoose.Types.ObjectId(req.params.id);
   // Validate request
   if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
   }
-  var algo = await Algorithm.findOne({ _id: algo_id }).catch((err) => {
+  const algo = await Algorithm.findOne({ _id: algo_id }).catch((err) => {
     res.status(400).send({
       message: err.message || "Some error occurred while finding algorithm.",
     });
@@ -441,8 +392,8 @@ exports.submitData = async (req, res) => {
     res.status(400).send({ message: "Error: algorithm not found" });
     return;
   }
-  var algo_name = algo.algo_name;
-  var map = await Map.findOne({ map_name: req.body[0].map_name }).catch(
+  const algo_name = algo.algo_name;
+  const map = await Map.findOne({ map_name: req.body[0].map_name }).catch(
     (err) => {
       res.status(400).send({
         message: err.message || "Some error occurred while finding map.",
@@ -453,9 +404,9 @@ exports.submitData = async (req, res) => {
     res.status(400).send({ message: "Error: map not found" });
     return;
   }
-  var map_id = map._id;
+  const map_id = map._id;
   for (const index in req.body) {
-    var scen = await Scenario.findOne({
+    const scen = await Scenario.findOne({
       map_id: map_id,
       scen_type: req.body[index].scen_type,
       type_id: parseInt(req.body[index].type_id),
@@ -468,8 +419,8 @@ exports.submitData = async (req, res) => {
       res.status(400).send({ message: "Error: scenario not found" });
       return;
     }
-    var scen_id = scen._id;
-    var curr_instance = await Instance.findOne({
+    const scen_id = scen._id;
+    const curr_instance = await Instance.findOne({
       map_id: map_id,
       scen_id: scen_id,
       agents: parseInt(req.body[index].agents),
@@ -483,9 +434,8 @@ exports.submitData = async (req, res) => {
       return;
     }
     //
-    var instance_id = curr_instance._id;
-    const date = require("date-and-time");
-    var curr_submission = {
+    const instance_id = curr_instance._id;
+    const curr_submission = {
       map_id: map_id,
       instance_id: instance_id,
       algo_id: algo_id,
@@ -503,7 +453,7 @@ exports.submitData = async (req, res) => {
       agents: parseInt(req.body[index].agents),
       scen_id: scen_id,
     };
-    var path = req.body[index].solution_plan;
+    const path = req.body[index].solution_plan;
     if (curr_submission.lower_cost !== null) {
       if (curr_instance.lower_cost !== null) {
         if (curr_instance.lower_cost > curr_submission.lower_cost) {
@@ -550,9 +500,9 @@ exports.submitData = async (req, res) => {
           ];
         } else if (curr_instance.lower_cost === curr_submission.lower_cost) {
           curr_submission.best_lower = true;
-          var record_exist = false;
-          var earliest_date = "2222-10-10";
-          for (var i = 0; i < curr_instance.lower_algos.length; i++) {
+          let record_exist = false;
+          let earliest_date = "2222-10-10";
+          for (let i = 0; i < curr_instance.lower_algos.length; i++) {
             if (
               curr_instance.lower_algos[i].algo_id.equals(
                 curr_submission.algo_id
@@ -582,7 +532,7 @@ exports.submitData = async (req, res) => {
 
     if (curr_submission.solution_cost !== null) {
       if (curr_instance.solution_cost === null) {
-        var path_id = null;
+        let path_id = null;
         await Solution_path.collection
           .insertOne({ instance_id: instance_id, solution_path: path })
           .then((result) => {
@@ -619,7 +569,7 @@ exports.submitData = async (req, res) => {
                 err.message || "Some error occurred while updating solution.",
             });
           });
-          var path_id = null;
+          let path_id = null;
           await Solution_path.collection
             .insertOne({ instance_id: instance_id, solution_path: path })
             .then((result) => {
@@ -647,9 +597,9 @@ exports.submitData = async (req, res) => {
           curr_instance.solution_cost === curr_submission.solution_cost
         ) {
           curr_submission.best_solution = true;
-          var record_exist = false;
-          var earliest_date = "2222-10-10";
-          for (var i = 0; i < curr_instance.solution_algos.length; i++) {
+          let record_exist = false;
+          let earliest_date = "2222-10-10";
+          for (let i = 0; i < curr_instance.solution_algos.length; i++) {
             if (
               curr_instance.solution_algos[i].algo_id.equals(
                 curr_submission.algo_id
@@ -686,7 +636,7 @@ exports.submitData = async (req, res) => {
       }
     }
 
-    var mongo_update = await Instance.updateOne(
+    let mongo_update = await Instance.updateOne(
       { _id: instance_id },
       curr_instance
     ).catch((err) => {
@@ -713,14 +663,14 @@ exports.submitData = async (req, res) => {
   return res.status(200).send({ message: "Update successful" });
 };
 
-exports.updateProgress = async (req, res) => {
-  const algo_id = mongoose.Types.ObjectId(req.params.id);
+export const updateProgress = async (req, res) => {
+  const algo_id = new mongoose.Types.ObjectId(req.params.id);
   // Validate request
   if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
   }
-  var algo = await Algorithm.findOne({ _id: algo_id }).catch((err) => {
+  const algo = await Algorithm.findOne({ _id: algo_id }).catch((err) => {
     res.status(400).send({
       message: err.message || "Some error occurred while finding algorithm.",
     });
@@ -729,22 +679,24 @@ exports.updateProgress = async (req, res) => {
     res.status(400).send({ message: "Error: algorithm not found" });
     return;
   }
-  var map = await Map.findOne({ map_name: req.body.map_name }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while finding map.",
-    });
-  });
+  const map = await Map.findOne({ map_name: req.body.map_name }).catch(
+    (err) => {
+      res.status(400).send({
+        message: err.message || "Some error occurred while finding map.",
+      });
+    }
+  );
   if (!map) {
     res.status(400).send({ message: "Error: map not found" });
     return;
   }
-  var map_id = map._id;
-  var scen_type = ["even", "random"];
-  var total_s = 0;
-  var total_l = 0;
-  for (var i = 1; i < 26; i++) {
+  const map_id = map._id;
+  const scen_type = ["even", "random"];
+  let total_s = 0;
+  let total_l = 0;
+  for (let i = 1; i < 26; i++) {
     for (const scen_t of scen_type) {
-      var scen = await Scenario.findOne({
+      const scen = await Scenario.findOne({
         map_id: map_id,
         type_id: i,
         scen_type: scen_t,
@@ -757,9 +709,9 @@ exports.updateProgress = async (req, res) => {
         res.status(400).send({ message: "Error: scenario not found" });
         return;
       }
-      var scen_id = scen._id;
+      const scen_id = scen._id;
 
-      var num_s = await Instance.countDocuments({
+      const num_s = await Instance.countDocuments({
         scen_id: scen_id,
         closed: true,
       }).catch((err) => {
@@ -768,7 +720,7 @@ exports.updateProgress = async (req, res) => {
             err.message || "Some error occurred while counting document.",
         });
       });
-      var num_l = await Instance.countDocuments({
+      const num_l = await Instance.countDocuments({
         scen_id: scen_id,
         solution_cost: { $ne: null },
       }).catch((err) => {
@@ -808,7 +760,7 @@ exports.updateProgress = async (req, res) => {
       message: err.message || "Some error occurred while updating map.",
     });
   });
-  var lower = await Submission.countDocuments({
+  const lower = await Submission.countDocuments({
     algo_id: algo_id,
     best_lower: true,
   }).catch((err) => {
@@ -816,7 +768,7 @@ exports.updateProgress = async (req, res) => {
       message: err.message || "Some error occurred while counting document.",
     });
   });
-  var solution = await Submission.countDocuments({
+  const solution = await Submission.countDocuments({
     algo_id: algo_id,
     best_solution: true,
   }).catch((err) => {
@@ -824,7 +776,7 @@ exports.updateProgress = async (req, res) => {
       message: err.message || "Some error occurred while counting document.",
     });
   });
-  var closed = await Submission.countDocuments({
+  const closed = await Submission.countDocuments({
     algo_id: algo_id,
     $expr: { $eq: ["$lower_cost", "$solution_cost"] },
   }).catch((err) => {
@@ -832,7 +784,7 @@ exports.updateProgress = async (req, res) => {
       message: err.message || "Some error occurred while counting document.",
     });
   });
-  var solved = await Submission.countDocuments({
+  const solved = await Submission.countDocuments({
     algo_id: algo_id,
     $expr: { $ne: ["$solution_cost", null] },
   }).catch((err) => {

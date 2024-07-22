@@ -1,8 +1,8 @@
-const solution_submission = require("../controllers/solution_submission.controller.ts");
-module.exports = (app) => {
-  const solution_submission = require("../controllers/solution_submission.controller.ts");
+import { Router } from "express";
+import * as solution_submission from "../controllers/solution_submission.controller";
 
-  var router = require("express").Router();
+export default (app) => {
+  const router = Router();
   router.get(
     "/leadingSolution/:id",
     solution_submission.findLeadingSolutionByInstance_id

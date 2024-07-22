@@ -1,5 +1,5 @@
-module.exports = (mongoose) => {
-  var schema = mongoose.Schema({
+export default (mongoose) => {
+  const schema = mongoose.Schema({
     api_key: { type: String, required: true, ref: "submission_key" },
     map_id: {
       type: mongoose.Schema.Types.ObjectId,

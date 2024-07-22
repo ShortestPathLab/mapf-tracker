@@ -1,7 +1,7 @@
-const { authJwt } = require("../middlewares/index.ts");
-const controller = require("../controllers/user.controller.ts");
+import { authJwt } from "../middlewares";
+import * as controller from "../controllers/user.controller";
 
-module.exports = function (app) {
+export default function (app) {
   app.use(function (req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
@@ -10,12 +10,7 @@ module.exports = function (app) {
     next();
   });
 
-  app.put(
-    "/api/user/sendMail",
-    [authJwt.verifyToken],
-    controller.sendMail
-  );
-
+  app.put("/api/user/sendMail", [authJwt.verifyToken], controller.sendMail);
 
   app.get(
     "/api/userAlgo/:id",
@@ -48,4 +43,4 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.updateProgress
   );
-};
+}

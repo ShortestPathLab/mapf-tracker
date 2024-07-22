@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "module": "node16",
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "esModuleInterop": true
   },
   "exclude": ["node_modules"]
 }

@@ -1,10 +1,10 @@
-const db = require("../models/index.ts");
-const mongoose = require("mongoose");
+import db from "../models/index";
+import mongoose from "mongoose";
 const Request = db.requests;
 const Submission_key = db.submission_keys;
-const crypto = require("crypto");
+import crypto from "crypto";
 
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   Request.find({})
     .then((data) => {
       res.send(data);
@@ -17,7 +17,7 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findByInstance_id = (req, res) => {
+export const findByInstance_id = (req, res) => {
   const id = req.params.id;
 
   Request.findById(id)
@@ -33,7 +33,7 @@ exports.findByInstance_id = (req, res) => {
     });
 };
 
-exports.create = async (req, res) => {
+export const create = async (req, res) => {
   if (!req.body.requesterName) {
     return res
       .status(400)
@@ -66,7 +66,7 @@ exports.create = async (req, res) => {
     });
 };
 
-exports.updateRequest = async (req, res) => {
+export const updateRequest = async (req, res) => {
   const { id } = req.params;
   const { reviewStatus, ...otherFields } = req.body;
   try {
@@ -115,11 +115,8 @@ exports.updateRequest = async (req, res) => {
     }
     res.send({ message: "Request updated successfully", updatedRequest });
   } catch (err) {
-    res
-      .status(500)
-      .send({
-        message:
-          err.message || "Some error occurred while updating the request.",
-      });
+    res.status(500).send({
+      message: err.message || "Some error occurred while updating the request.",
+    });
   }
 };

@@ -1,22 +1,29 @@
-///@ts-nocheck
+import mongoose from "mongoose";
+import dbConfig from "../config/db.config";
+import algorithmModel from "./algorithm.model";
+import instanceModel from "./instance.model";
+import mapModel from "./map.model";
+import ongoingSubmissionModel from "./ongoing_submission.model";
+import requestModel from "./request.model";
+import scenarioModel from "./scenario.model";
+import solutionPathModel from "./solution_path.model";
+import submissionModel from "./submission.model";
+import submissionKeyModel from "./submission_key.model";
+import userModel from "./user.model";
 
-const dbConfig = require("../config/db.config.ts");
-
-const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
-let db = {};
-db.mongoose = mongoose;
-db.url = dbConfig.url;
-db.maps = require("./map.model.ts")(mongoose);
-db.scenarios = require("./scenario.model.ts")(mongoose);
-db.instances = require("./instance.model.ts")(mongoose);
-db.submissions = require("./submission.model.ts")(mongoose);
-db.algorithms = require("./algorithm.model.ts")(mongoose);
-db.users = require("./user.model.ts")(mongoose);
-db.solution_paths = require("./solution_path.model.ts")(mongoose);
-db.requests = require("./request.model.ts")(mongoose);
-db.submission_keys = require("./submission_key.model.ts")(mongoose);
-db.ongoing_submissions = require("./ongoing_submission.model.ts")(mongoose);
-
-module.exports = db;
+export default {
+  mongoose: mongoose,
+  url: dbConfig.url,
+  maps: mapModel(mongoose),
+  scenarios: scenarioModel(mongoose),
+  instances: instanceModel(mongoose),
+  submissions: submissionModel(mongoose),
+  algorithms: algorithmModel(mongoose),
+  users: userModel(mongoose),
+  solution_paths: solutionPathModel(mongoose),
+  requests: requestModel(mongoose),
+  submission_keys: submissionKeyModel(mongoose),
+  ongoing_submissions: ongoingSubmissionModel(mongoose),
+};

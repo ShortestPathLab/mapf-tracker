@@ -1,14 +1,18 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const app = express();
-const serveIndex = require("serve-index");
-const fs = require("fs");
-const mime = require("mime-types");
-var bodyParser = require("body-parser");
-var https = require("https");
-var http = require("http");
-const db = require("./app/models/index.ts");
+import bodyParser from "body-parser";
+import cors from "cors";
+import express from "express";
+import fs from "fs";
+import http from "http";
+import https from "https";
+import mime from "mime-types";
+import path from "path";
+import serveIndex from "serve-index";
+import db from "./app/models";
+import { createRouters } from "./createRouters";
+
+export const app = express();
+
+createRouters(app);
 
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(
@@ -19,7 +23,7 @@ app.use(
   })
 );
 
-// var corsOptions = {
+// const corsOptions = {
 //   origin:
 //   ["http://localhost:8080","http://localhost:3000"]
 // };
@@ -33,10 +37,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 db.mongoose
-  .connect(db.url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(db.url, {})
   .then(() => {
     console.log("Connected to the database!");
   })
@@ -59,20 +60,6 @@ app.use(function (request, response, next) {
   next();
 });
 
-require("./app/routes/turorial.routes.ts")(app);
-require("./app/routes/map.routes.ts")(app);
-require("./app/routes/instance.routes.ts")(app);
-require("./app/routes/submission.routes.ts")(app);
-require("./app/routes/solution_submission.routes.ts")(app);
-require("./app/routes/scenario.routes.ts")(app);
-require("./app/routes/algorithm.routes.ts")(app);
-require("./app/routes/auth.routes.ts")(app);
-require("./app/routes/user.routes.ts")(app);
-require("./app/routes/solution_path.routes.ts")(app);
-require("./app/routes/request.routes.ts")(app);
-require("./app/routes/submission_key.routes.ts")(app);
-require("./app/routes/ongoing_submission.routes.ts")(app);
-
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.use(
@@ -82,7 +69,6 @@ app.use(
 app.use(
   "/quickDownload",
   serveIndex(path.join(__dirname, "../client/public/download"), {
-    icon: true,
     stylesheet: path.join(__dirname, "listing.css"),
     template: makeEntry,
   })
@@ -147,7 +133,7 @@ app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 // set port, listen for requests
-// var PORT = "" || 80;
+// const PORT = "" || 80;
 // const PORT = process.env.PORT || 80;
 if (process.env.NODE_ENV === "development") {
   const PORT = process.env.PORT || 3001;
@@ -155,18 +141,18 @@ if (process.env.NODE_ENV === "development") {
     console.log(`Server is running on port ${PORT}.`);
   });
 } else {
-  var privateKey = fs.readFileSync("./credential/privkey.pem", "utf8");
-  var certificate = fs.readFileSync("./credential/fullchain.pem", "utf8");
-  var credentials = { key: privateKey, cert: certificate };
-  var httpsServer = https.createServer(credentials, app);
+  const privateKey = fs.readFileSync("./credential/privkey.pem", "utf8");
+  const certificate = fs.readFileSync("./credential/fullchain.pem", "utf8");
+  const credentials = { key: privateKey, cert: certificate };
+  const httpsServer = https.createServer(credentials, app);
 
-  var https_port = 5443;
-  var http_port = 5000;
+  const https_port = 5443;
+  const http_port = 5000;
   httpsServer.listen(https_port, () =>
     console.log(`Listening on port ${https_port} for https`)
   );
 
-  var httpServer = http.createServer(app);
+  const httpServer = http.createServer(app);
 
   httpServer.listen(http_port, () =>
     console.log(`Listening on port ${http_port} for http`)

@@ -1,11 +1,13 @@
-const db = require("../models/index.ts");
+import db from "../models/index";
 const Instance = db.instances;
+
 // const ObjectId = db.ObjectId;
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
 const ObjectId = mongoose.Types.ObjectId;
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   Instance.find({})
     .then((data) => {
       res.send(data);
@@ -36,8 +38,8 @@ exports.findAll = (req, res) => {
 //         });
 // };
 
-exports.findNonEmptyByScenId = (req, res) => {
-  const id = mongoose.Types.ObjectId(req.params.id);
+export const findNonEmptyByScenId = (req, res) => {
+  const id = new mongoose.Types.ObjectId(req.params.id);
   // const id = req.params.id;
   // Instance.find({scen_id : id, empty: false}, {"agents": 1, "lower_cost": 1, "lower_algos": 1,"lower_date": 1,
   //     "solution_cost": 1, "solution_algos": 1, "solution_date": 1
@@ -75,7 +77,7 @@ exports.findNonEmptyByScenId = (req, res) => {
     });
 };
 
-exports.findAlgosRecord = (req, res) => {
+export const findAlgosRecord = (req, res) => {
   const id = req.params.id;
   Instance.find(
     { _id: id, empty: false },
@@ -92,6 +94,7 @@ exports.findAlgosRecord = (req, res) => {
       });
     });
 };
+
 function rankingSorter(firstKey, secondKey, thirdKey) {
   return function (a, b) {
     if (a[firstKey] > b[firstKey]) {
@@ -115,7 +118,8 @@ function rankingSorter(firstKey, secondKey, thirdKey) {
     }
   };
 }
-exports.downloadMapByID = (req, res) => {
+
+export const downloadMapByID = (req, res) => {
   const id = req.params.id;
   Instance.find(
     { map_id: id, empty: false },
@@ -155,20 +159,22 @@ exports.downloadMapByID = (req, res) => {
     });
 };
 
-exports.test = (req, res) => {
-  const id = mongoose.Types.ObjectId(req.params.id);
+export const test = (req, res) => {
+  const id = new mongoose.Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
       $match: {
         map_id: id,
         $or: [
           {
-            solution_algo_id: mongoose.Types.ObjectId(
+            solution_algo_id: new mongoose.Types.ObjectId(
               "636cf9b1a1b36ac2118eb15f"
             ),
           },
           {
-            lower_algo_id: mongoose.Types.ObjectId("636cf9b1a1b36ac2118eb15f"),
+            lower_algo_id: new mongoose.Types.ObjectId(
+              "636cf9b1a1b36ac2118eb15f"
+            ),
           },
         ],
       },
@@ -232,7 +238,7 @@ exports.test = (req, res) => {
     });
 };
 
-exports.downloadNonEmptyByScenId = (req, res) => {
+export const downloadNonEmptyByScenId = (req, res) => {
   const id = req.params.id;
   Instance.find(
     { scen_id: id, empty: false },
@@ -257,7 +263,7 @@ exports.downloadNonEmptyByScenId = (req, res) => {
     });
 };
 
-exports.findPathById = (req, res) => {
+export const findPathById = (req, res) => {
   const id = req.params.id;
   Instance.find({ _id: id, empty: false }, { solution_path: 1 })
     .then((data) => {
@@ -271,8 +277,8 @@ exports.findPathById = (req, res) => {
     });
 };
 
-exports.downloadRowById = (req, res) => {
-  const id = mongoose.Types.ObjectId(req.params.id);
+export const downloadRowById = (req, res) => {
+  const id = new mongoose.Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
       $match: { _id: id },
@@ -318,8 +324,8 @@ exports.downloadRowById = (req, res) => {
     });
 };
 
-exports.get_map_level_summary = (req, res) => {
-  const id = mongoose.Types.ObjectId(req.params.id);
+export const get_map_level_summary = (req, res) => {
+  const id = new mongoose.Types.ObjectId(req.params.id);
   // Instance.aggregate(
   //     [
   //         {$match:{map_id: id, $expr: { $ne: [ "$solution_cost", null] } }},
@@ -338,7 +344,7 @@ exports.get_map_level_summary = (req, res) => {
   //         });
   //     });
 
-  var query1 = Instance.aggregate([
+  const query1 = Instance.aggregate([
     { $match: { map_id: id } },
     {
       $group: {
@@ -354,7 +360,7 @@ exports.get_map_level_summary = (req, res) => {
       });
     });
 
-  var query2 = Instance.aggregate([
+  const query2 = Instance.aggregate([
     { $match: { map_id: id, closed: true } },
     {
       $group: {
@@ -367,7 +373,7 @@ exports.get_map_level_summary = (req, res) => {
       message: err.message || "Some error occurred.",
     });
   });
-  var query3 = Instance.aggregate([
+  const query3 = Instance.aggregate([
     { $match: { map_id: id, $expr: { $ne: ["$solution_cost", null] } } },
     {
       $group: {
@@ -383,12 +389,12 @@ exports.get_map_level_summary = (req, res) => {
 
   Promise.all([query1, query2, query3])
     .then((result) => {
-      var final_results = [];
-      // for(var i = 0 ; i < result[0].length )
+      const final_results = [];
+      // for(const i = 0 ; i < result[0].length )
       // console.log(result[0])
       // console.log("finished")
       result[0].forEach(function (element) {
-        var entry = {};
+        const entry = {};
         entry["name"] = element._id.agents;
         entry["total"] = element.count;
         entry["Unknown"] = element.count;

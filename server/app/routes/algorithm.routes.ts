@@ -1,9 +1,8 @@
-const algorithm = require("../controllers/algorithm.controller.ts");
+import { Router } from "express";
+import * as algorithm from "../controllers/algorithm.controller";
 
-module.exports = (app) => {
-  const algorithm = require("../controllers/algorithm.controller.ts");
-
-  var router = require("express").Router();
+export default (app) => {
+  const router = Router();
 
   // Retrieve all Instances
   router.get("/", algorithm.findAll);

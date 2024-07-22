@@ -1,9 +1,8 @@
-const db = require("../models/index.ts");
+import db from "../models/index";
 const Scenario = db.scenarios;
-const ObjectId = db.ObjectId;
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
+export const findAll = (req, res) => {
   Scenario.find({})
     .then((data) => {
       res.send(data);
@@ -16,7 +15,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-exports.findByMap_id = (req, res) => {
+export const findByMap_id = (req, res) => {
   const id = req.params.id;
   Scenario.find({ map_id: id })
     .sort({ scen_type: 1 })
@@ -31,7 +30,7 @@ exports.findByMap_id = (req, res) => {
     });
 };
 
-exports.findByMap_id_Map_type = (req, res) => {
+export const findByMap_id_Map_type = (req, res) => {
   const id = req.params.id;
   const type = req.params.scen_type;
   Scenario.find({ map_id: id, scen_type: type })
@@ -46,7 +45,7 @@ exports.findByMap_id_Map_type = (req, res) => {
     });
 };
 
-exports.findById = (req, res) => {
+export const findById = (req, res) => {
   const id = req.params.id;
   Scenario.find({ _id: id })
     .then((data) => {

@@ -1,5 +1,5 @@
-module.exports = (mongoose) => {
-  var schema = mongoose.Schema({
+export default (mongoose) => {
+  const schema = mongoose.Schema({
     username: String,
     password: String,
   });

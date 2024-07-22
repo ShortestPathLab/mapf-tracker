@@ -1,6 +1,8 @@
-module.exports = (app) => {
-  const request = require("../controllers/request.controller.ts");
-  var router = require("express").Router();
+import { Router } from "express";
+import * as request from "../controllers/request.controller";
+
+export default (app) => {
+  const router = Router();
   // Retrieve all requester
   router.get("/", request.findAll);
   // Retrieve a single requester with id

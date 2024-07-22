@@ -1,10 +1,11 @@
-const db = require("../models/index.ts");
-const Solution_submission = db.solution_submissions;
-const ObjectId = require("mongodb").ObjectID;
-exports.findLeadingSolutionByInstance_id = (req, res) => {
+import db from "../models/index";
+const Solution_submission = db.submissions;
+import { ObjectID as ObjectId } from "mongodb";
+
+export const findLeadingSolutionByInstance_id = (req, res) => {
   const id = req.params.id;
 
-  Solution_submission.find({ instance_id: ObjectId(id), isleading: true })
+  Solution_submission.find({ instance_id: new ObjectId(id), isleading: true })
     .then((data) => {
       if (!data)
         res
@@ -19,11 +20,14 @@ exports.findLeadingSolutionByInstance_id = (req, res) => {
     });
 };
 
-exports.findLeadingSolutionByInstance_idAndAgents = (req, res) => {
+export const findLeadingSolutionByInstance_idAndAgents = (req, res) => {
   const id = req.params.id;
   const num = req.params.agents;
 
-  Solution_submission.find({ instance_id: ObjectId(id), agents: Number(num) })
+  Solution_submission.find({
+    instance_id: new ObjectId(id),
+    agents: Number(num),
+  })
     .then((data) => {
       if (!data)
         res
