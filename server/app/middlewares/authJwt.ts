@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import config from "../config/auth.config";
+import { RequestHandler } from "express";
 
-const verifyToken = (req, res, next) => {
+const verifyToken: RequestHandler = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
