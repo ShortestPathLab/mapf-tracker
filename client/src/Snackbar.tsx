@@ -41,6 +41,19 @@ export function useSnackbar() {
   return useContext(SnackbarContext);
 }
 
+export function useSnackbarAction<T extends []>() {
+  const push = useSnackbar();
+  return (
+      f: (...args: T) => Promise<any>,
+      { start = "Preparing...", end = "Done" }: { start?: string; end?: string }
+    ) =>
+    async (...params: T) => {
+      if (start) push(start);
+      await f(...params);
+      if (end) push(end);
+    };
+}
+
 export function SnackbarProvider({ children }: { children?: ReactNode }) {
   const [snackPack, setSnackPack] = useState<readonly SnackbarMessage[]>([]);
   const [open, setOpen] = useState(false);

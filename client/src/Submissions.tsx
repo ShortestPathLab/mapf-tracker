@@ -119,7 +119,7 @@ function CustomizedLabel(props) {
       <text
         x={2}
         y={0}
-        fontFamily="Roboto Slab"
+        fontFamily="Inter Tight"
         textAnchor={"middle"}
         transform={`rotate(${
           angle[payload.value] === undefined ? 0 : angle[payload.value]
@@ -787,12 +787,12 @@ export default function Submissions() {
                   outerRadius="80%"
                   data={algoChartData}
                 >
-                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
                   <Legend
                     verticalAlign="top"
                     align="center"
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   />
                   <PolarGrid />
@@ -800,11 +800,11 @@ export default function Submissions() {
                     dataKey="name"
                     tick={<CustomizedLabel />}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   />
                   <Tooltip
-                    wrapperStyle={{ fontFamily: "Roboto Slab" }}
+                    wrapperStyle={{ fontFamily: "Inter Tight" }}
                     formatter={(tick) => {
                       const value = tick * 100;
                       return `${value.toFixed(2)}%`;

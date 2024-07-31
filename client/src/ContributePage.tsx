@@ -16,7 +16,7 @@ import { SubmissionFileFormat } from "./SubmissionFileFormat";
 import { APIConfig } from "./config";
 import Faq from "./Faq";
 import PageHeader from "./PageHeader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "useNavigation";
 
 export default function Contribute() {
   const validationSchema = Yup.object({

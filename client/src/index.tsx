@@ -3,17 +3,15 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
-
-import "overlayscrollbars/overlayscrollbars.css";
-import { OverlayScrollbars } from "overlayscrollbars";
+import { Scroll } from "components/dialog/Scrollbars";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 
 root.render(
   <BrowserRouter>
-    <App />
+    <Scroll y style={{ height: "100vh" }}>
+      <App />
+    </Scroll>
   </BrowserRouter>
 );
-
-OverlayScrollbars(document.body, {});

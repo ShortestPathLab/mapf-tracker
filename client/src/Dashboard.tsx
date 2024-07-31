@@ -18,7 +18,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Link from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -35,7 +35,7 @@ import { Field, Form, Formik } from "formik";
 import { useConfirm } from "material-ui-confirm";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "useNavigation";
 import {
   Legend,
   PolarAngleAxis,
@@ -120,7 +120,7 @@ function CustomizedLabel(props) {
       <text
         x={2}
         y={0}
-        fontFamily="Roboto Slab"
+        fontFamily="Inter Tight"
         textAnchor={"middle"}
         transform={`rotate(${
           angle[payload.value] === undefined ? 0 : angle[payload.value]
@@ -327,7 +327,6 @@ const refreshRequests = (callback) => {
     .catch((err) => console.error(err));
 };
 
-
 export default function Dashboard() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("map_type");
@@ -392,11 +391,7 @@ export default function Dashboard() {
     handleCloseRequestDetail();
   };
 
-
-  const handleStatusUpdated = (requestData, status)=>{
-    
-
-  }
+  const handleStatusUpdated = (row: any, key: SelectChangeEvent<any>) => {};
 
   // for open send results -------------=================================
   const [submissionKey, setSubmissionKey] = React.useState();
@@ -614,45 +609,43 @@ export default function Dashboard() {
     // state={instance_id : id}, replace: false});
   };
 
-  const handleSendButtonOnClick = async ()=>{
-    // create the data first 
+  const handleSendButtonOnClick = async () => {
+    // create the data first
     const values = {
-      requesterName: requestData.requesterName, 
-      requesterEmail: requestData.requesterEmail, 
-      status : requestData.reviewStatus.status,
-      comments : requestData.reviewStatus.comments,
-      api_key : requestData.reviewStatus.status === "Approved" ? submissionKey.api_key : undefined
-    }
-    console.log(values)
+      requesterName: requestData.requesterName,
+      requesterEmail: requestData.requesterEmail,
+      status: requestData.reviewStatus.status,
+      comments: requestData.reviewStatus.comments,
+      api_key:
+        requestData.reviewStatus.status === "Approved"
+          ? submissionKey.api_key
+          : undefined,
+    };
+    console.log(values);
 
     // send email to the user
     try {
-      const response = await fetch(
-        `${APIConfig.apiUrl}/user/sendMail`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": JSON.parse(localStorage.getItem("user"))
+      const response = await fetch(`${APIConfig.apiUrl}/user/sendMail`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": JSON.parse(localStorage.getItem("user"))
             .accessToken,
-          },
-          body: JSON.stringify(values),
-        }
-      );
+        },
+        body: JSON.stringify(values),
+      });
 
       const data = await response.json();
       if (response.ok) {
         console.log("Email was sent : ", data);
-        alert('Email was sent !')
+        alert("Email was sent !");
       } else {
         console.error("Error sending email: ", data);
       }
     } catch (error) {
       console.error("Error:", error);
     }
-
-    
-  }
+  };
 
   const handleAlgoModifyClose = () => {
     setOpenAlgoModify(false);
@@ -858,26 +851,27 @@ export default function Dashboard() {
                             borderRadius: "4px",
                           }}
                         >
-                      <Select
-                        name="reviewStatus.status"
-                        labelId="status-label"
-                        value={row.reviewStatus.status}
-                        sx={{
-                          color: "white",
-                            backgroundColor:
-                              row.reviewStatus.status === "Approved"
-                                ? "green"
-                                : row.reviewStatus.status === "Rejected"
-                                ? "red"
-                                : "grey",
-                          
-                        }}
-                        onChange={handleStatusUpdated(row)}
-                      >
-                        <MenuItem value="Not Reviewed">Not Reviewed</MenuItem>
-                        <MenuItem value="Approved">Approved</MenuItem>
-                        <MenuItem value="Rejected">Rejected</MenuItem>
-                        </Select>
+                          <Select
+                            name="reviewStatus.status"
+                            labelId="status-label"
+                            value={row.reviewStatus.status}
+                            sx={{
+                              color: "white",
+                              backgroundColor:
+                                row.reviewStatus.status === "Approved"
+                                  ? "green"
+                                  : row.reviewStatus.status === "Rejected"
+                                  ? "red"
+                                  : "grey",
+                            }}
+                            onChange={(key) => handleStatusUpdated(row, key)}
+                          >
+                            <MenuItem value="Not Reviewed">
+                              Not Reviewed
+                            </MenuItem>
+                            <MenuItem value="Approved">Approved</MenuItem>
+                            <MenuItem value="Rejected">Rejected</MenuItem>
+                          </Select>
                         </Box>
                       </TableCell>
                       <TableCell align="center">
@@ -1381,12 +1375,12 @@ export default function Dashboard() {
                   outerRadius="80%"
                   data={algoChartData}
                 >
-                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
                   <Legend
                     verticalAlign="top"
                     align="center"
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   />
                   <PolarGrid />
@@ -1394,11 +1388,11 @@ export default function Dashboard() {
                     dataKey="name"
                     tick={<CustomizedLabel />}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   />
                   <Tooltip
-                    wrapperStyle={{ fontFamily: "Roboto Slab" }}
+                    wrapperStyle={{ fontFamily: "Inter Tight" }}
                     formatter={(tick) => {
                       const value = tick * 100;
                       return `${value.toFixed(2)}%`;

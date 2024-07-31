@@ -12,6 +12,5 @@ export default (mongoose: Mongoose) => {
     return object;
   });
 
-  const User = mongoose.model("User", schema);
-  return User;
+  return mongoose.model("User", schema);
 };

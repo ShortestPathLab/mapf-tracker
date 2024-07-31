@@ -43,7 +43,7 @@ import randomColor from "randomcolor";
 import * as React from "react";
 import { useRef } from "react";
 import { CSVLink } from "react-csv";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocationState as useLocation, useNavigate } from "useNavigation";
 import {
   Area,
   AreaChart,
@@ -238,7 +238,7 @@ const headCells = [
     id: "lower_date",
     numeric: false,
     disablePadding: false,
-    label: "Claim Date",
+    label: "Claim date",
     sortable: true,
     alignment: "left",
     rowspan: 1,
@@ -265,7 +265,7 @@ const headCells = [
     id: "solution_date",
     numeric: true,
     disablePadding: false,
-    label: "Claim Date",
+    label: "Claim date",
     sortable: true,
     alignment: "left",
     rowspan: 1,
@@ -288,15 +288,6 @@ const headCells = [
     alignment: "left",
     rowspan: 1,
   },
-  // {
-  //     id: 'solution_path',
-  //     numeric: false,
-  //     disablePadding: false,
-  //     label: 'View/Download',
-  //     sortable: false,
-  //     alignment: 'center',
-  //     rowspan: 1
-  // },
 ];
 
 // function checkSortable(head, order ){
@@ -504,7 +495,7 @@ function CustomizedLabel(props) {
       <text
         x={2}
         y={0}
-        fontFamily="Roboto Slab"
+        fontFamily="Inter Tight"
         textAnchor={"middle"}
         transform={`rotate(${
           angle[payload.value] === undefined ? 0 : angle[payload.value]
@@ -790,7 +781,8 @@ export default function SolutionPage() {
   //         setAlgoChartData(data);
   //     }
   // }, [algoChartData]);
-  const location = useLocation();
+  const state = useLocation();
+  const location = { state };
 
   React.useEffect(() => {
     refreshLeader((data) => {
@@ -1591,12 +1583,12 @@ export default function SolutionPage() {
                 outerRadius="80%"
                 data={algoChartData}
               >
-                {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+                {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
                 <Legend
                   verticalAlign="top"
                   align="center"
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                 />
                 <PolarGrid />
@@ -1604,11 +1596,11 @@ export default function SolutionPage() {
                   dataKey="name"
                   tick={<CustomizedLabel />}
                   style={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                 />
                 <Tooltip
-                  wrapperStyle={{ fontFamily: "Roboto Slab" }}
+                  wrapperStyle={{ fontFamily: "Inter Tight" }}
                   formatter={(tick) => {
                     const value = tick * 100;
                     return `${value.toFixed(2)}%`;
@@ -1727,7 +1719,7 @@ export default function SolutionPage() {
                   height={30}
                   align="center"
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                 />
                 <CartesianGrid strokeDasharray="3 3" />
@@ -1736,7 +1728,7 @@ export default function SolutionPage() {
                   // label={{ value: "Number of Agents",
                   //     position: "insideBottom",
                   //     dy: 20,
-                  //     style:{fontFamily: "Roboto Slab" }
+                  //     style:{fontFamily: "Inter Tight" }
                   //  }}
                   angle={-60}
                   height={70}
@@ -1746,7 +1738,7 @@ export default function SolutionPage() {
                   // domain={[0,"dataMax"]}
                   interval="preserveStartEnd"
                   style={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                 >
                   <Label
@@ -1754,7 +1746,7 @@ export default function SolutionPage() {
                     position="insideBottom"
                     offset={-20}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                     fill="#626262"
                     fontSize={18}
@@ -1792,7 +1784,7 @@ export default function SolutionPage() {
                     value="Gap to Best LB"
                     angle={-90}
                     position="insideLeft"
-                    style={{ textAnchor: "middle", fontFamily: "Roboto Slab" }}
+                    style={{ textAnchor: "middle", fontFamily: "Inter Tight" }}
                     fill="#626262"
                     offset={0}
                     fontSize={18}
@@ -1811,7 +1803,7 @@ export default function SolutionPage() {
                     return `#Agents: ${tick}`;
                   }}
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                     backgroundColor: "white",
                     borderStyle: "ridge",
                   }}
@@ -1955,7 +1947,7 @@ export default function SolutionPage() {
                     verticalAlign="top"
                     align="center"
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                     payload={[...agentChartDisplayAlgorithms]
                       .sort()
@@ -1977,7 +1969,7 @@ export default function SolutionPage() {
                     dy={30}
                     dx={-5}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   >
                     <Label
@@ -1985,7 +1977,7 @@ export default function SolutionPage() {
                       position="insideBottom"
                       offset={-20}
                       style={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                       fill="#626262"
                       fontSize={18}
@@ -2012,7 +2004,7 @@ export default function SolutionPage() {
                       position="insideLeft"
                       style={{
                         textAnchor: "middle",
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                       fill="#626262"
                       offset={0}
@@ -2038,7 +2030,7 @@ export default function SolutionPage() {
                       return `#Agents: ${tick}`;
                     }}
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                       backgroundColor: "white",
                       borderStyle: "ridge",
                     }}

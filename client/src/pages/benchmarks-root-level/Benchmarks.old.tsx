@@ -14,6 +14,7 @@ import {
   Box,
   Button,
   ButtonBase,
+  Card,
   Checkbox,
   CircularProgress,
   Collapse,
@@ -53,7 +54,7 @@ import randomColor from "randomcolor";
 import * as React from "react";
 import { useRef } from "react";
 import { CSVLink } from "react-csv";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Area,
   AreaChart,
@@ -72,9 +73,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { IconCard } from "./IconCard";
-import PageHeader from "./PageHeader";
-import { APIConfig } from "./config";
+import { useNavigate } from "useNavigation";
+import { APIConfig } from "../../config";
+import { IconCard } from "../../IconCard";
+import Layout from "../../layout/Layout";
+import PageHeader from "../../PageHeader";
 
 const angle = {
   Warehouse: -40,
@@ -317,22 +320,6 @@ const headCells = [
     sortable: true,
     alignment: "left",
   },
-  // {
-  //     id: 'scens',
-  //     numeric: true,
-  //     disablePadding: false,
-  //     label: '#Scenarios',
-  //     sortable: true,
-  //     alignment: 'left'
-  // },
-  // {
-  //     id: 'instances',
-  //     numeric: true,
-  //     disablePadding: false,
-  //     label: '#Instances',
-  //     sortable: true,
-  //     alignment: 'left'
-  // },
   {
     id: "solved_percentage",
     numeric: true,
@@ -975,7 +962,6 @@ export default function MapTable({ showHeader = true }) {
           (element.name =
             element.name.charAt(0).toUpperCase() + element.name.slice(1))
       );
-      // console.log(domainChartData);
       setDomainFilterState(check_box_state);
 
       unique_key.sort((a, b) => {
@@ -1060,7 +1046,7 @@ export default function MapTable({ showHeader = true }) {
         <text
           x={2}
           y={0}
-          fontFamily="Roboto Slab"
+          fontFamily="Inter Tight"
           textAnchor={"middle"}
           transform={`rotate(${
             angle[payload.value] === undefined ? 0 : angle[payload.value]
@@ -1204,6 +1190,11 @@ export default function MapTable({ showHeader = true }) {
 
   return (
     <>
+      <Layout title="Benchmarks" path={[{ name: "MAPF Tracker", url: "/" }]}>
+        <Card>
+          <Table />
+        </Card>
+      </Layout>
       <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
         <Collapse in={showHeader} sx={{ mb: -4 }}>
           <Stack
@@ -1760,12 +1751,12 @@ export default function MapTable({ showHeader = true }) {
                     outerRadius="80%"
                     data={domainBarChartDisplayData}
                   >
-                    {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+                    {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
                     <Legend
                       verticalAlign="top"
                       align="center"
                       wrapperStyle={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                       payload={[...domainBarChartDisplayAlgorithms]
                         .sort()
@@ -1780,7 +1771,7 @@ export default function MapTable({ showHeader = true }) {
                       content={renderDomainTooltipContent}
                       itemSorter={(item) => item.name}
                       wrapperStyle={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                         backgroundColor: "white",
                         borderStyle: "ridge",
                       }}
@@ -1813,14 +1804,14 @@ export default function MapTable({ showHeader = true }) {
                         return `${value.toFixed(0)}%`;
                       }}
                       style={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                         opacity: "0.3",
                       }}
                     />
                     <PolarGrid
                       stroke={"black"}
                       style={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                         opacity: "0.3",
                       }}
                     />
@@ -1829,7 +1820,7 @@ export default function MapTable({ showHeader = true }) {
                       tick={<CustomizedLabel />}
                       // stroke={'black'}
                       style={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                     />
                   </RadarChart>
@@ -1965,7 +1956,7 @@ export default function MapTable({ showHeader = true }) {
                       verticalAlign="top"
                       align="center"
                       wrapperStyle={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                     />
                     <Brush
@@ -1986,7 +1977,7 @@ export default function MapTable({ showHeader = true }) {
                       }
                       dy={30}
                       style={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                     >
                       <Label
@@ -1994,7 +1985,7 @@ export default function MapTable({ showHeader = true }) {
                         position="insideBottom"
                         offset={-20}
                         style={{
-                          fontFamily: "Roboto Slab",
+                          fontFamily: "Inter Tight",
                         }}
                         fill="#626262"
                         fontSize={18}
@@ -2011,7 +2002,7 @@ export default function MapTable({ showHeader = true }) {
                         position="insideLeft"
                         style={{
                           textAnchor: "middle",
-                          fontFamily: "Roboto Slab",
+                          fontFamily: "Inter Tight",
                         }}
                         fill="#626262"
                         offset={0}
@@ -2021,7 +2012,7 @@ export default function MapTable({ showHeader = true }) {
                     <Tooltip
                       content={renderMapTooltipContent}
                       wrapperStyle={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                         backgroundColor: "white",
                         borderStyle: "ridge",
                       }}
@@ -2092,12 +2083,12 @@ export default function MapTable({ showHeader = true }) {
                   outerRadius="80%"
                   data={domainProgressChartData}
                 >
-                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
                   <Legend
                     verticalAlign="top"
                     align="center"
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                     payload={["Solved", "Closed", "Unknown"]
                       .sort()
@@ -2112,7 +2103,7 @@ export default function MapTable({ showHeader = true }) {
                     content={renderDomainProgressTooltipContent}
                     itemSorter={(item) => item.name}
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                       backgroundColor: "white",
                       borderStyle: "ridge",
                     }}
@@ -2151,7 +2142,7 @@ export default function MapTable({ showHeader = true }) {
                     }}
                     stroke={"black"}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                       opacity: "0.3",
                     }}
                   />
@@ -2159,13 +2150,13 @@ export default function MapTable({ showHeader = true }) {
                     dataKey="name"
                     tick={<CustomizedLabel />}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   />
                   <PolarGrid
                     stroke={"black"}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                       opacity: "0.3",
                     }}
                   />
@@ -2228,7 +2219,7 @@ export default function MapTable({ showHeader = true }) {
                   align="center"
                   height={30}
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                   payload={["Solved", "Closed", "Unknown"]
                     .sort()
@@ -2253,7 +2244,7 @@ export default function MapTable({ showHeader = true }) {
                   dy={30}
                   dx={-5}
                   style={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                 >
                   <Label
@@ -2261,7 +2252,7 @@ export default function MapTable({ showHeader = true }) {
                     position="insideBottom"
                     offset={-20}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                     fill="#626262"
                     fontSize={18}
@@ -2277,7 +2268,7 @@ export default function MapTable({ showHeader = true }) {
                     value="Success Rate"
                     angle={-90}
                     position="insideLeft"
-                    style={{ textAnchor: "middle", fontFamily: "Roboto Slab" }}
+                    style={{ textAnchor: "middle", fontFamily: "Inter Tight" }}
                     fill="#626262"
                     offset={0}
                     fontSize={18}
@@ -2292,7 +2283,7 @@ export default function MapTable({ showHeader = true }) {
                 <Tooltip
                   content={renderTooltipContent}
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                     backgroundColor: "white",
                     borderStyle: "ridge",
                     paddingLeft: "10px",

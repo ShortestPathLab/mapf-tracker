@@ -1,14 +1,16 @@
-import { Stack, Typography, Breadcrumbs, Link } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Breadcrumbs, Link, Stack, Typography } from "@mui/material";
+import { useNavigate } from "useNavigation";
 
-export default function PageHeader({
-  path = [],
-  current,
-}: {
-  path?: { name: string; url: string; state?: any }[];
+export type PageHeaderProps = {
+  path?: {
+    name: string;
+    url: string;
+    state?: any;
+  }[];
   current?: string;
-}) {
+};
+
+export default function PageHeader({ path = [], current }: PageHeaderProps) {
   const navigate = useNavigate();
   return (
     <Stack sx={{ gap: 2, mb: 2 }}>
@@ -19,7 +21,7 @@ export default function PageHeader({
             sx={{ cursor: "pointer" }}
             underline="hover"
             color="inherit"
-            onClick={() => navigate(url, { state })}
+            onClick={() => navigate(url, state)}
           >
             {name}
           </Link>

@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import React, { ReactNode } from "react";
 import PageHeader from "./PageHeader";
-import { useLocation } from "react-router-dom";
+import { useLocationState as useLocation } from "useNavigation";
 
 export type Props = {
   extras?: ReactNode;

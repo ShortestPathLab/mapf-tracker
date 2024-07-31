@@ -19,13 +19,17 @@ import { Container, Graphics, Stage } from "@pixi/react";
 import { capitalize, each, min, range, trim } from "lodash";
 import { Graphics as PixiGraphics } from "pixi.js";
 import React, { useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import {
+  useLocationState as useLocation,
+  useLocationState,
+} from "useNavigation";
 import AutoSize from "react-virtualized-auto-sizer";
-import PageHeader from "../PageHeader";
+import PageHeader from "PageHeader";
 import Viewport from "./Viewport";
-import { colors } from "./colors";
+import { colors } from "colors";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
+import { VisualiserLocationState } from "./VisualiserLocationState";
 
 const LINE_WIDTH = 0.05;
 const WHITE = "#ffffff";
@@ -65,17 +69,17 @@ const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
 };
 
 export default function Visualiser() {
-  const location = useLocation();
+  const state = useLocationState<VisualiserLocationState>();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
 
   // ─────────────────────────────────────────────────────────────────────
 
   const { map, result, getAgentPosition } = useSolution({
-    solutionKey: location.state.path_id,
-    agentCount: location.state.num_agents,
-    mapKey: location.state.map_name,
-    scenarioKey: location.state.scen_string,
+    solutionKey: state.path_id,
+    agentCount: state.num_agents,
+    mapKey: state.map_name,
+    scenarioKey: state.scen_string,
   });
 
   const { timespan = 0, x = 0, y = 0 } = result ?? {};
@@ -111,9 +115,7 @@ export default function Visualiser() {
   const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
   const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
 
-  const scenarioString = capitalize(
-    `${location.state.scenType}-${location.state.scenTypeID}`
-  );
+  const scenarioString = capitalize(`${state.scenType}-${state.scenTypeID}`);
   return (
     <Box
       sx={{
@@ -131,14 +133,14 @@ export default function Visualiser() {
             { name: "MAPF Tracker", url: "/" },
             { name: "Benchmarks", url: "/benchmarks" },
             {
-              name: capitalize(location.state.map_name),
+              name: capitalize(state.map_name),
               url: "/scenarios",
-              state: location.state,
+              state,
             },
             {
               name: scenarioString,
               url: "/instances",
-              state: location.state,
+              state,
             },
           ]}
         />

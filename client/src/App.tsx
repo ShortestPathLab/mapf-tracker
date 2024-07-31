@@ -1,94 +1,35 @@
-import React, { useMemo, useReducer } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
-import "./App.css";
-import MapTable from "./MapTable";
-import Navbar from "./Navbar";
-
+import { Box, Fade, Stack } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConfirmProvider } from "material-ui-confirm";
+import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
+import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
+import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
+import { useMemo, useReducer } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import AboutUs from "./AboutUsPage";
+import "./App.css";
 import Contribute from "./ContributePage";
 import Dashboard from "./Dashboard";
 import Download from "./DownloadPage";
+import Navbar from "./Navbar";
+import MapTable from "./pages/benchmarks-root-level/Benchmarks.old";
+import { Visualiser } from "./pages/visualiser";
 import Paper from "./PaperPage";
 import ScenarioTable from "./ScenarioTable";
+import { SnackbarProvider } from "./Snackbar";
 import SolutionPage from "./SolutionPage";
 import Submissions from "./Submissions";
+import SubmissionSummary from "./SubmissionSummary";
 import Summary from "./Summary";
 import SystemDemo from "./SystemDemo";
+import { theme } from "./theme";
+import { ThemeContext } from "./ThemeProvider";
 import TrackSubmission from "./TrackSubmission";
 import UserMapPage from "./UserMapPage";
-import { Visualiser } from "./visualiser";
-
-import { Box, Fade, Stack, alpha } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { ConfirmProvider } from "material-ui-confirm";
-import { Navigate } from "react-router-dom";
-import SubmissionSummary from "./SubmissionSummary";
-
-import { SnackbarProvider } from "./Snackbar";
-import { ThemeContext } from "./ThemeProvider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTitleBar } from "./useTitleBar";
 
 const queryClient = new QueryClient();
-
-const theme = (t: "light" | "dark") =>
-  createTheme({
-    palette: {
-      mode: t,
-      background:
-        t === "light"
-          ? { default: "#eaeaea", paper: "#ffffff" }
-          : { default: "#111317", paper: "#17191d" },
-    },
-    shape: { borderRadius: 8 },
-    shadows: [
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      `0px 0px 0px 1px ${alpha("#111317", 0.1)}`,
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-      "none",
-    ],
-    typography: {
-      allVariants: {
-        fontFamily:
-          '"Inter Tight", "Inter", "Roboto Slab", "Helvetica", "Arial", sans-serif',
-        letterSpacing: "0px",
-        fontWeight: 450,
-      },
-      h1: { fontWeight: 550, fontSize: 42 },
-      h2: { fontWeight: 550, fontSize: 36 },
-      h3: { fontWeight: 550, fontSize: 24 },
-      h4: { fontWeight: 550, fontSize: 24 },
-      h5: { fontWeight: 550, fontSize: 20 },
-      h6: { fontWeight: 550, fontSize: 18 },
-      button: { textTransform: "none", fontWeight: 550 },
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: { contained: { padding: "16px 32px" } },
-      },
-    },
-  });
 
 export default function App() {
   const themeState = useReducer((prev) => {
@@ -125,13 +66,34 @@ export default function App() {
                   <Fade in={true}>
                     <Stack>
                       <Routes>
-                        <Route path="/" element={<MapTable />} />
                         <Route
-                          path="/benchmarks"
+                          path="/benchmarks-old"
                           element={<MapTable showHeader={false} />}
                         />
-                        <Route path="/scenarios" element={<ScenarioTable />} />
-                        <Route path="/instances" element={<SolutionPage />} />
+                        <Route
+                          path="/"
+                          element={<BenchmarksRootLevelPage showHeader />}
+                        />
+                        <Route
+                          path="/benchmarks"
+                          element={<BenchmarksRootLevelPage />}
+                        />
+                        <Route
+                          path="/scenarios-old"
+                          element={<ScenarioTable />}
+                        />
+                        <Route
+                          path="/scenarios"
+                          element={<BenchmarksMapLevelPage />}
+                        />
+                        <Route
+                          path="/instances-old"
+                          element={<SolutionPage />}
+                        />
+                        <Route
+                          path="/instances"
+                          element={<BenchmarksScenarioLevelPage />}
+                        />
                         <Route path="/visualization" element={<Visualiser />} />
                         <Route path="/summary" element={<Summary />} />
                         <Route path="/aboutUs" element={<AboutUs />} />

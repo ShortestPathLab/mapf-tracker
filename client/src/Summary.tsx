@@ -304,7 +304,7 @@ export default function Summary() {
         <text
           x={2}
           y={0}
-          fontFamily="Roboto Slab"
+          fontFamily="Inter Tight"
           textAnchor={"middle"}
           transform={`rotate(${
             angle[payload.value] === undefined ? 0 : angle[payload.value]
@@ -453,7 +453,7 @@ export default function Summary() {
                 verticalAlign="top"
                 align="center"
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               />
               <CartesianGrid strokeDasharray="3 3" />
@@ -469,7 +469,7 @@ export default function Summary() {
                 dy={30}
                 dx={-5}
                 style={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               />
               {/*<YAxis tickFormatter={toPercent} />*/}
@@ -487,7 +487,7 @@ export default function Summary() {
               <Tooltip
                 content={renderTooltipContent}
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                   background: "white",
                 }}
               />
@@ -588,12 +588,12 @@ export default function Summary() {
               outerRadius="80%"
               data={domainBarChartDisplayData}
             >
-              {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Roboto Slab" }}>Solution</text>*!/*/}
+              {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
               <Legend
                 verticalAlign="top"
                 align="center"
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               />
               <PolarGrid />
@@ -601,11 +601,11 @@ export default function Summary() {
                 dataKey="name"
                 tick={<CustomizedLabel />}
                 style={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               />
               <Tooltip
-                wrapperStyle={{ fontFamily: "Roboto Slab" }}
+                wrapperStyle={{ fontFamily: "Inter Tight" }}
                 formatter={(tick) => {
                   const value = tick * 100;
                   return `${value.toFixed(2)}%`;
@@ -702,7 +702,7 @@ export default function Summary() {
                 verticalAlign="top"
                 align="center"
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               />
               <Brush
@@ -723,7 +723,7 @@ export default function Summary() {
                 }
                 dy={30}
                 style={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               />
               <YAxis
@@ -732,7 +732,7 @@ export default function Summary() {
                 }}
               />
               <Tooltip
-                wrapperStyle={{ fontFamily: "Roboto Slab" }}
+                wrapperStyle={{ fontFamily: "Inter Tight" }}
                 formatter={(tick) => {
                   const value = tick * 100;
                   return `${value.toFixed(2)}%`;

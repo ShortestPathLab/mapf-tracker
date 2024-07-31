@@ -42,7 +42,7 @@ import {
 } from "recharts";
 import PageHeader from "./PageHeader";
 import { APIConfig } from "./config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "useNavigation";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useSnackbar } from "./Snackbar";
 
@@ -63,7 +63,7 @@ function CustomizedLabel(props) {
       <text
         x={2}
         y={0}
-        fontFamily="Roboto Slab"
+        fontFamily="Inter Tight"
         textAnchor={"middle"}
         transform={`rotate(${
           angle[payload.value] === undefined ? 0 : angle[payload.value]

@@ -52,7 +52,7 @@ import randomColor from "randomcolor";
 import * as React from "react";
 import { useRef } from "react";
 import { CSVLink } from "react-csv";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocationState as useLocation, useNavigate } from "useNavigation";
 import {
   Area,
   AreaChart,
@@ -445,7 +445,8 @@ export default function ScenarioTable() {
   const [data, setData] = React.useState([]);
   const [csvData, setCsvData] = React.useState([]);
   const csvLinkEl = useRef();
-  const location = useLocation();
+  const state = useLocation();
+  const location = { state };
   const [csvFilename, setCsvFilename] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [loadingBenchmark, setLoadingBenchmark] = React.useState(false);
@@ -1092,7 +1093,7 @@ export default function ScenarioTable() {
             { name: "Benchmarks", url: "/benchmarks" },
           ]}
         />
-        <Box flex={1}></Box>
+        <Box flex={1} />
         <Box
           component="img"
           sx={{ height: 83, borderRadius: 1 }}
@@ -1501,14 +1502,14 @@ export default function ScenarioTable() {
               margin={{ top: 5, right: 5, bottom: 5, left: 10 }}
             >
               {/*<Legend verticalAlign="top"  align="center" wrapperStyle={{*/}
-              {/*    fontFamily: "Roboto Slab"*/}
+              {/*    fontFamily: "Inter Tight"*/}
               {/*}}/>*/}
               <Legend
                 verticalAlign="top"
                 align="center"
                 height={30}
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
                 payload={["Solved", "Closed", "Unknown"].sort().map((name) => ({
                   value: name,
@@ -1527,7 +1528,7 @@ export default function ScenarioTable() {
                 dy={30}
                 dx={-5}
                 style={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               >
                 <Label
@@ -1535,7 +1536,7 @@ export default function ScenarioTable() {
                   position="insideBottom"
                   offset={-15}
                   style={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                   fill="#626262"
                   fontSize={18}
@@ -1551,7 +1552,7 @@ export default function ScenarioTable() {
                   value="Success Rate"
                   angle={-90}
                   position="insideLeft"
-                  style={{ textAnchor: "middle", fontFamily: "Roboto Slab" }}
+                  style={{ textAnchor: "middle", fontFamily: "Inter Tight" }}
                   fill="#626262"
                   offset={0}
                   fontSize={18}
@@ -1566,7 +1567,7 @@ export default function ScenarioTable() {
               <Tooltip
                 content={renderTooltipContent}
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                   backgroundColor: "white",
                   borderStyle: "ridge",
                   paddingLeft: "10px",
@@ -1671,14 +1672,14 @@ export default function ScenarioTable() {
               margin={{ top: 5, right: 5, bottom: 5, left: 10 }}
             >
               {/*<Legend verticalAlign="top" align="center" wrapperStyle={{*/}
-              {/*    fontFamily: "Roboto Slab"*/}
+              {/*    fontFamily: "Inter Tight"*/}
               {/*}}/>*/}
               <Legend
                 verticalAlign="top"
                 align="center"
                 height={30}
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
                 payload={["Solved", "Closed", "Unknown"].sort().map((name) => ({
                   value: name,
@@ -1697,7 +1698,7 @@ export default function ScenarioTable() {
                 dy={30}
                 dx={-5}
                 style={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                 }}
               >
                 <Label
@@ -1705,7 +1706,7 @@ export default function ScenarioTable() {
                   position="insideBottom"
                   offset={-20}
                   style={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                   fill="#626262"
                   fontSize={18}
@@ -1721,7 +1722,7 @@ export default function ScenarioTable() {
                   value="Success Rate"
                   angle={-90}
                   position="insideLeft"
-                  style={{ textAnchor: "middle", fontFamily: "Roboto Slab" }}
+                  style={{ textAnchor: "middle", fontFamily: "Inter Tight" }}
                   fill="#626262"
                   offset={0}
                   fontSize={18}
@@ -1736,7 +1737,7 @@ export default function ScenarioTable() {
               <Tooltip
                 content={renderTooltipContent}
                 wrapperStyle={{
-                  fontFamily: "Roboto Slab",
+                  fontFamily: "Inter Tight",
                   backgroundColor: "white",
                   borderStyle: "ridge",
                   paddingLeft: "10px",
@@ -1900,7 +1901,7 @@ export default function ScenarioTable() {
                     verticalAlign="top"
                     align="center"
                     wrapperStyle={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   />
                   <Brush
@@ -1914,7 +1915,7 @@ export default function ScenarioTable() {
                   {/*       tickFormatter={(tick) => tick === 0 ? "" : tick.substring(0, 5) + "..."}*/}
                   {/*       dy = {30}*/}
                   {/*       style={{*/}
-                  {/*           fontFamily: "Roboto Slab"*/}
+                  {/*           fontFamily: "Inter Tight"*/}
                   {/*       }}*/}
                   {/*/>*/}
                   <XAxis
@@ -1926,7 +1927,7 @@ export default function ScenarioTable() {
                     dy={30}
                     dx={-5}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                   >
                     <Label
@@ -1934,7 +1935,7 @@ export default function ScenarioTable() {
                       position="insideBottom"
                       offset={-15}
                       style={{
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                       fill="#626262"
                       fontSize={18}
@@ -1951,7 +1952,7 @@ export default function ScenarioTable() {
                       position="insideLeft"
                       style={{
                         textAnchor: "middle",
-                        fontFamily: "Roboto Slab",
+                        fontFamily: "Inter Tight",
                       }}
                       fill="#626262"
                       offset={0}
@@ -1965,7 +1966,7 @@ export default function ScenarioTable() {
                       borderStyle: "ridge",
                       paddingLeft: "10px",
                       paddingRight: "10px",
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                     formatter={(tick) => {
                       const value = tick * 100;
@@ -2116,7 +2117,7 @@ export default function ScenarioTable() {
                   verticalAlign="top"
                   align="center"
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                   payload={[...agentChartDisplayAlgorithms]
                     .sort()
@@ -2137,7 +2138,7 @@ export default function ScenarioTable() {
                   dy={30}
                   dx={-5}
                   style={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                   }}
                 >
                   <Label
@@ -2145,7 +2146,7 @@ export default function ScenarioTable() {
                     position="insideBottom"
                     offset={-20}
                     style={{
-                      fontFamily: "Roboto Slab",
+                      fontFamily: "Inter Tight",
                     }}
                     fill="#626262"
                     fontSize={18}
@@ -2161,7 +2162,7 @@ export default function ScenarioTable() {
                     value={agentCompareYLabel}
                     angle={-90}
                     position="insideLeft"
-                    style={{ textAnchor: "middle", fontFamily: "Roboto Slab" }}
+                    style={{ textAnchor: "middle", fontFamily: "Inter Tight" }}
                     fill="#626262"
                     offset={0}
                     fontSize={18}
@@ -2176,7 +2177,7 @@ export default function ScenarioTable() {
                 <Tooltip
                   content={renderAgentTooltipContent}
                   wrapperStyle={{
-                    fontFamily: "Roboto Slab",
+                    fontFamily: "Inter Tight",
                     backgroundColor: "white",
                     borderStyle: "ridge",
                     paddingLeft: "10px",

@@ -1,9 +1,9 @@
+import { RequestHandler } from "express";
+import jwt from "jsonwebtoken";
 import config from "../config/auth.config";
 import db from "../models/index";
-import { RequestHandler } from "express";
+
 const User = db.users;
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
 export const signin: RequestHandler = (req, res) => {
   User.findOne({

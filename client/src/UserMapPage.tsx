@@ -34,7 +34,7 @@ import { DropzoneDialog } from "mui-file-dropzone";
 import Papa from "papaparse";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocationState as useLocation } from "useNavigation";
 import { APIConfig } from "./config";
 import { Stack } from "@mui/material";
 import PageHeader from "./PageHeader";

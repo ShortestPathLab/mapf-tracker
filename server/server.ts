@@ -12,8 +12,6 @@ import { createRouters } from "./createRouters";
 
 export const app = express();
 
-createRouters(app);
-
 app.use(bodyParser.json({ limit: "500mb" }));
 app.use(
   bodyParser.urlencoded({
@@ -22,7 +20,6 @@ app.use(
     parameterLimit: 500_000,
   })
 );
-
 app.use(cors());
 app.use(express.json());
 
@@ -48,6 +45,8 @@ app.use((request, response, next) => {
 
   next();
 });
+
+createRouters(app);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
