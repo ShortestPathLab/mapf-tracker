@@ -37,8 +37,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import PageHeader from "./PageHeader";
-import { APIConfig } from "./config";
+import PageHeader from "../layout/PageHeader";
+import { APIConfig } from "../core/config";
 import {
   CancelOutlined,
   FilterListOutlined,

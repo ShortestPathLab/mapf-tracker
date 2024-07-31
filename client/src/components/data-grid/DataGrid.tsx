@@ -41,7 +41,6 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
 } & { columns: GridColDef<T>[] }) {
   const sm = useSm();
   const center = useCss({ display: "flex", alignItems: "center" });
-  // const dataGrid
   const [input, setInput] = useState("");
 
   return (

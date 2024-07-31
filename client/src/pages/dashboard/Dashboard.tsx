@@ -35,7 +35,7 @@ import { Field, Form, Formik } from "formik";
 import { useConfirm } from "material-ui-confirm";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { useNavigate } from "useNavigation";
+import { useNavigate } from "hooks/useNavigation";
 import {
   Legend,
   PolarAngleAxis,
@@ -45,8 +45,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import { APIConfig } from "./config";
-import PageHeader from "./PageHeader";
+import { APIConfig } from "core/config";
+import PageHeader from "layout/PageHeader";
 
 const infoDescriptionText = {
   "domainCompare-#Instances Closed": {

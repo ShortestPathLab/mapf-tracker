@@ -1,4 +1,4 @@
-import { toneBy } from "colors";
+import { toneBy } from "utils/colors";
 import { map, filter } from "lodash";
 import { BarChart, Legend, Tooltip, YAxis, XAxis, Bar } from "recharts";
 import { AxisDomain } from "recharts/types/util/types";

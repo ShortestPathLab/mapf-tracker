@@ -2,7 +2,7 @@ import { Card } from "@mui/material";
 import Layout, { DataInspectorLayout } from "layout/Layout";
 import { makePreviewImagePageRenderFunction } from "layout/render";
 import { capitalize } from "lodash";
-import { useLocationState } from "useNavigation";
+import { useLocationState } from "hooks/useNavigation";
 import Table from "./Table";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import { Analysis } from "components/analysis/Analysis";

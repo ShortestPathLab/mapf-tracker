@@ -40,11 +40,11 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import PageHeader from "./PageHeader";
-import { APIConfig } from "./config";
-import { useNavigate } from "useNavigation";
+import PageHeader from "layout/PageHeader";
+import { APIConfig } from "core/config";
+import { useNavigate } from "hooks/useNavigation";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useSnackbar } from "./Snackbar";
+import { useSnackbar } from "components/Snackbar";
 
 const angle = {
   Warehouse: -40,

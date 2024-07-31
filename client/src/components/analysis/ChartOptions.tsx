@@ -2,7 +2,7 @@ import { Box, Chip, MenuItem, Stack, TextField } from "@mui/material";
 import { map } from "lodash";
 import { setFromEvent } from "utils/set";
 import { Slice, useAlgorithmSelector } from "./useAlgorithmSelector";
-import { BaseMetric, metrics as defaultMetrics } from "metrics";
+import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
 
 export default function ChartOptions({
   slices,

@@ -1,7 +1,7 @@
-import { APIConfig } from "config";
+import { APIConfig } from "core/config";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
-import { Benchmark } from "types";
+import { Benchmark } from "core/types";
 
 export async function downloadBenchmarks(item?: Benchmark) {
   if (item)

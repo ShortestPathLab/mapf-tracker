@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { accentColors, tone } from "colors";
+import { accentColors, tone } from "utils/colors";
 import { capitalize, chain, head, map } from "lodash";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import {
@@ -11,12 +11,12 @@ import {
   Radar,
   RadarChart,
 } from "recharts";
-import { Chart } from "../../../components/analysis/Chart";
-import { formatPercentage } from "../../../utils/format";
+import { Chart } from "components/analysis/Chart";
+import { formatPercentage } from "utils/format";
 import {
   aggregateInstances,
   getInstanceAggregateProportions,
-} from "../../../components/analysis/reducers";
+} from "components/analysis/reducers";
 
 export function MapProportionChart() {
   const { palette } = useTheme();

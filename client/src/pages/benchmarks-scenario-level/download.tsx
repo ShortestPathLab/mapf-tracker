@@ -1,8 +1,8 @@
-import { APIConfig } from "config";
+import { APIConfig } from "core/config";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
 import { json, text } from "queries/query";
-import { Benchmark, Scenario, ScenarioCollection } from "types";
+import { Benchmark, Scenario, ScenarioCollection } from "core/types";
 
 export const downloadRow = async (item?: Scenario) => {
   if (item)

@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "config";
+import { APIConfig } from "core/config";
 import { capitalize, upperFirst } from "lodash";
-import { AlgorithmCollection, AlgorithmCollectionCount } from "types";
-import { Metric, ScenarioMetric } from "metrics";
+import { AlgorithmCollection, AlgorithmCollectionCount } from "core/types";
+import { Metric, ScenarioMetric } from "core/metrics";
 import { json } from "./query";
 
 export const useScenarioData = (query: Metric, id: string) =>

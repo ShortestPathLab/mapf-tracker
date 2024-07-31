@@ -32,7 +32,7 @@ import FilterListIcon from "@mui/icons-material/FilterListOutlined";
 import Menu from "@mui/material/Menu";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
-import { APIConfig } from "./config";
+import { APIConfig } from "../../core/config";
 
 const angle = {
   Warehouse: -40,

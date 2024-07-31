@@ -2,9 +2,7 @@ import { Card, Stack } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
-import "./BibTex.css"; // Import the CSS file for styling
-import PageHeader from "./PageHeader";
+import PageHeader from "layout/PageHeader";
 
 export default function AboutUs() {
   const item_width = 200;

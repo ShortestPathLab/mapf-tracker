@@ -1,12 +1,12 @@
 import { useTheme } from "@mui/material";
 import { capitalize, chain, head } from "lodash";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
-import { Chart } from "../../../components/analysis/Chart";
+import { Chart } from "components/analysis/Chart";
 import {
   aggregateInstances,
   getInstanceAggregateProportions,
-} from "../../../components/analysis/reducers";
-import { successRateBarChartRenderer } from "../../../components/analysis/successRateBarChartRenderer";
+} from "components/analysis/reducers";
+import { successRateBarChartRenderer } from "components/analysis/successRateBarChartRenderer";
 
 export function MapProportionByDomainChart() {
   const { palette } = useTheme();

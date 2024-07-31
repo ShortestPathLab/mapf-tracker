@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { accentColors, tone } from "colors";
+import { accentColors, tone } from "utils/colors";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
 import { formatPercentage } from "utils/format";
@@ -10,7 +10,7 @@ import {
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
 import { capitalize, chain, keyBy, map, slice } from "lodash";
-import { scenarioMetrics } from "metrics";
+import { scenarioMetrics } from "core/metrics";
 import { useScenarioCollectionData } from "queries/useBenchmarksQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
 import { Bar, BarChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";

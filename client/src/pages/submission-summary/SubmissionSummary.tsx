@@ -15,8 +15,8 @@ import {
   Typography,
 } from "@mui/material";
 import React, { ReactNode } from "react";
-import PageHeader from "./PageHeader";
-import { useLocationState as useLocation } from "useNavigation";
+import PageHeader from "layout/PageHeader";
+import { useLocationState as useLocation } from "hooks/useNavigation";
 
 export type Props = {
   extras?: ReactNode;

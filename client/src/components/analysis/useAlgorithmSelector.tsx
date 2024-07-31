@@ -1,5 +1,5 @@
 import { find, head } from "lodash";
-import { BaseMetric, Metric, metrics } from "metrics";
+import { BaseMetric, Metric, metrics } from "core/metrics";
 import { useState } from "react";
 import { useList } from "react-use";
 

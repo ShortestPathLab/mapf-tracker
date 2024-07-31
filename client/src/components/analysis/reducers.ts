@@ -1,5 +1,5 @@
 import { mapValues, round, sumBy } from "lodash";
-import { CollectionWithInstances } from "types";
+import { CollectionWithInstances } from "core/types";
 
 export const aggregateInstances = <T extends CollectionWithInstances>(
   c: T[]

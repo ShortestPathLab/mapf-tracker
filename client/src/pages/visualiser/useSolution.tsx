@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { APIConfig } from "config";
+import { APIConfig } from "core/config";
 import {
   DoneException,
   Reader,

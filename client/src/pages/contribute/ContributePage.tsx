@@ -1,22 +1,18 @@
 import { CheckOutlined } from "@mui/icons-material";
-import { Breadcrumbs, Card, Link, Stack } from "@mui/material";
+import { Card, Link, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
 import FormHelperText from "@mui/material/FormHelperText";
-import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as React from "react";
+import { useNavigate } from "hooks/useNavigation";
 import * as Yup from "yup";
+import { APIConfig } from "core/config";
+import PageHeader from "layout/PageHeader";
 import { CallForSubmission } from "./CallForSubmission";
-import { SubmissionFileFormat } from "./SubmissionFileFormat";
-import { APIConfig } from "./config";
 import Faq from "./Faq";
-import PageHeader from "./PageHeader";
-import { useNavigate } from "useNavigation";
+import { SubmissionFileFormat } from "./SubmissionFileFormat";
 
 export default function Contribute() {
   const validationSchema = Yup.object({

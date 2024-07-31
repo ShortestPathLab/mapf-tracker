@@ -1,9 +1,8 @@
-import React from "react";
-import { BrowserRouter } from "react-router-dom";
+import { Scroll } from "components/dialog/Scrollbars";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import { Scroll } from "components/dialog/Scrollbars";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);

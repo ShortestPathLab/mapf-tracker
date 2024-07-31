@@ -12,12 +12,11 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
+import { Dialog, Title } from "components/dialog";
 import { find, head, map } from "lodash";
-import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
+import PopupState, { bindMenu } from "material-ui-popup-state";
 import { ReactNode, SyntheticEvent, useState } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { Dialog, Title } from "../dialog";
-import { PopupState as PopupStateParams } from "material-ui-popup-state/hooks";
 
 type Variant = {
   name: string;

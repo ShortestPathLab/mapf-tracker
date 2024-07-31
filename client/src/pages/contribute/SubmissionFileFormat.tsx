@@ -8,7 +8,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 
 export function SubmissionFileFormat() {
   return (
@@ -74,9 +73,9 @@ export function SubmissionFileFormat() {
               flex: "1 1 100%",
             }}
           >
-            Note that coordinates should be using pixel origin, i.e. (0, 0) 
-            is in the top left corner of the map. This means that an agent with
-            an increasing y-coordinate is going down.
+            Note that coordinates should be using pixel origin, i.e. (0, 0) is
+            in the top left corner of the map. This means that an agent with an
+            increasing y-coordinate is going down.
           </Typography>
           <Typography
             sx={{
@@ -87,8 +86,8 @@ export function SubmissionFileFormat() {
             }}
           >
             Solution plans should be run-length encoded before submission to
-            keep file size low. Please encode single actions as "a" rather
-            than as "1a"
+            keep file size low. Please encode single actions as "a" rather than
+            as "1a"
           </Typography>
           <Typography
             sx={{ fontSize: 16, flex: "1 1 100%" }}

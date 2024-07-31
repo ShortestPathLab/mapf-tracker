@@ -10,7 +10,7 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import Divider from "@mui/material/Divider";
 import TableContainer from "@mui/material/TableContainer";
-import PageHeader from "./PageHeader";
+import PageHeader from "layout/PageHeader";
 import { Link, Stack } from "@mui/material";
 
 export default function Download() {

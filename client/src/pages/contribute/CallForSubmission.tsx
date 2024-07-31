@@ -1,9 +1,7 @@
 import { ExpandMoreOutlined } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 
 export function CallForSubmission() {
   return (

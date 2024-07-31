@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { toneBy } from "colors";
+import { toneBy } from "utils/colors";
 import { capitalize, chain, filter, identity, keyBy, map } from "lodash";
 import { useMapTypeData } from "queries/useAlgorithmQuery";
 import {

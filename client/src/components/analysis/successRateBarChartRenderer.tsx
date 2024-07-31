@@ -1,4 +1,4 @@
-import { accentColors, tone } from "colors";
+import { accentColors, tone } from "utils/colors";
 import { map } from "lodash";
 import { BarChart, Legend, XAxis, Tooltip, Bar } from "recharts";
 import { formatPercentage } from "utils/format";

@@ -1,5 +1,5 @@
 import { Breadcrumbs, Link, Stack, Typography } from "@mui/material";
-import { useNavigate } from "useNavigation";
+import { useNavigate } from "hooks/useNavigation";
 
 export type PageHeaderProps = {
   path?: {

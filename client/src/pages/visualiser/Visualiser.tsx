@@ -22,11 +22,11 @@ import React, { useMemo } from "react";
 import {
   useLocationState as useLocation,
   useLocationState,
-} from "useNavigation";
+} from "hooks/useNavigation";
 import AutoSize from "react-virtualized-auto-sizer";
-import PageHeader from "PageHeader";
+import PageHeader from "layout/PageHeader";
 import Viewport from "./Viewport";
-import { colors } from "colors";
+import { colors } from "utils/colors";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
 import { VisualiserLocationState } from "./VisualiserLocationState";

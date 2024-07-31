@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "config";
+import { APIConfig } from "core/config";
 import { json } from "./query";
 import { capitalize } from "lodash";
 import {
   AlgorithmCollection,
   AlgorithmCollectionCount,
   AlgorithmCollectionAggregate,
-} from "types";
-import { Metric } from "metrics";
+} from "core/types";
+import { Metric } from "core/metrics";
 
 export const useAlgorithmsData = () => {
   return useQuery({

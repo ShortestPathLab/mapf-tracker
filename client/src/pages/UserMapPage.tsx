@@ -34,10 +34,10 @@ import { DropzoneDialog } from "mui-file-dropzone";
 import Papa from "papaparse";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { useLocationState as useLocation } from "useNavigation";
-import { APIConfig } from "./config";
+import { useLocationState as useLocation } from "hooks/useNavigation";
+import { APIConfig } from "core/config";
 import { Stack } from "@mui/material";
-import PageHeader from "./PageHeader";
+import PageHeader from "layout/PageHeader";
 
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {

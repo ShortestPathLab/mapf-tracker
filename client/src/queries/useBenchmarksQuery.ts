@@ -5,8 +5,8 @@ import {
   CollectionWithInstances,
   Scenario,
   ScenarioCollection,
-} from "types";
-import { APIConfig } from "../config";
+} from "core/types";
+import { APIConfig } from "core/config";
 import { json } from "./query";
 
 const incorporateProportions = <T extends CollectionWithInstances>(

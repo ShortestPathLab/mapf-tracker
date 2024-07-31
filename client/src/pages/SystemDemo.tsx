@@ -1,12 +1,10 @@
+import { Card, Link, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
-import { Card, Link, Stack } from "@mui/material";
-import "./BibTex.css"; // Import the CSS file for styling
-import PageHeader from "./PageHeader";
+import PageHeader from "layout/PageHeader";
 
 const bibtexEntry = `@misc{MAPF_Tracker,
   doi       = {10.48550/arXiv.2305.08446},

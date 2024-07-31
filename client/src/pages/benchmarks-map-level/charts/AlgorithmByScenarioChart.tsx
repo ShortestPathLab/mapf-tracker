@@ -1,14 +1,14 @@
 import { useTheme } from "@mui/material";
 import { capitalize, chain, keyBy } from "lodash";
 import { useScenarioData } from "queries/useScenarioQuery";
-import { Chart } from "../../../components/analysis/Chart";
-import ChartOptions from "../../../components/analysis/ChartOptions";
-import { sliceBarChartRenderer } from "../../../components/analysis/sliceBarChartRenderer";
+import { Chart } from "components/analysis/Chart";
+import ChartOptions from "components/analysis/ChartOptions";
+import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
 import {
   Slice,
   useAlgorithmSelector,
-} from "../../../components/analysis/useAlgorithmSelector";
-import { getAlgorithms } from "../../../components/analysis/getAlgorithms";
+} from "components/analysis/useAlgorithmSelector";
+import { getAlgorithms } from "components/analysis/getAlgorithms";
 
 export const slices = [
   {

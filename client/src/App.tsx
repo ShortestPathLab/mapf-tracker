@@ -5,29 +5,26 @@ import { ConfirmProvider } from "material-ui-confirm";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
+import SystemDemo from "pages/SystemDemo";
 import { useMemo, useReducer } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import AboutUs from "./AboutUsPage";
 import "./App.css";
-import Contribute from "./ContributePage";
-import Dashboard from "./Dashboard";
-import Download from "./DownloadPage";
-import Navbar from "./Navbar";
-import MapTable from "./pages/benchmarks-root-level/Benchmarks.old";
+import Dashboard from "./pages/dashboard/Dashboard";
+import AboutUs from "./pages/AboutUsPage";
+import Contribute from "./pages/contribute/ContributePage";
+import Download from "./pages/DownloadPage";
+import Paper from "./pages/PaperPage";
+import SubmissionSummary from "./pages/submission-summary/SubmissionSummary";
+import TrackSubmission from "./pages/submissions/TrackSubmission";
+import UserMapPage from "./pages/UserMapPage";
 import { Visualiser } from "./pages/visualiser";
-import Paper from "./PaperPage";
-import ScenarioTable from "./ScenarioTable";
-import { SnackbarProvider } from "./Snackbar";
-import SolutionPage from "./SolutionPage";
-import Submissions from "./Submissions";
-import SubmissionSummary from "./SubmissionSummary";
-import Summary from "./Summary";
-import SystemDemo from "./SystemDemo";
+import { SnackbarProvider } from "./components/Snackbar";
+import Submissions from "./pages/AlgorithmsPage";
+import Summary from "./pages/dashboard/DashboardPage";
 import { theme } from "./theme";
-import { ThemeContext } from "./ThemeProvider";
-import TrackSubmission from "./TrackSubmission";
-import UserMapPage from "./UserMapPage";
-import { useTitleBar } from "./useTitleBar";
+import { ThemeContext } from "./utils/ThemeProvider";
+import { useTitleBar } from "./hooks/useTitleBar";
+import Navbar from "components/Navbar";
 
 const queryClient = new QueryClient();
 
@@ -67,10 +64,6 @@ export default function App() {
                     <Stack>
                       <Routes>
                         <Route
-                          path="/benchmarks-old"
-                          element={<MapTable showHeader={false} />}
-                        />
-                        <Route
                           path="/"
                           element={<BenchmarksRootLevelPage showHeader />}
                         />
@@ -79,16 +72,8 @@ export default function App() {
                           element={<BenchmarksRootLevelPage />}
                         />
                         <Route
-                          path="/scenarios-old"
-                          element={<ScenarioTable />}
-                        />
-                        <Route
                           path="/scenarios"
                           element={<BenchmarksMapLevelPage />}
-                        />
-                        <Route
-                          path="/instances-old"
-                          element={<SolutionPage />}
                         />
                         <Route
                           path="/instances"

@@ -8,7 +8,6 @@ import { Link, Tooltip } from "@mui/material";
 // import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { useState } from "react";
 import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
-import "./BibTex.css"; // Import the CSS file for styling
 import ClipboardJS from "clipboard";
 import Divider from "@mui/material/Divider";
 

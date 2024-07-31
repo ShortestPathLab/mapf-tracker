@@ -3,7 +3,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Stack, Tab } from "@mui/material";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
-import PageHeader, { PageHeaderProps } from "../PageHeader";
+import PageHeader, { PageHeaderProps } from "./PageHeader";
 import { useSm } from "components/dialog/useSmallDisplay";
 
 export default function Layout({
