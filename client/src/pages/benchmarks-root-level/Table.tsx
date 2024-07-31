@@ -19,6 +19,7 @@ import BenchmarkDetails from "./BenchmarkDetails";
 import { downloadBenchmarks, downloadBenchmarksResultsCSV } from "./download";
 import { analysisTemplate } from "pages/benchmarks-map-level/analysisTemplate";
 import { AnalysisButton } from "components/analysis/Analysis";
+import { downloadMap } from "pages/benchmarks-map-level/download";
 
 export default function Table() {
   const { data, isLoading } = useBenchmarksData();
@@ -129,6 +130,11 @@ export default function Table() {
           name: "Download all scenarios (ZIP)",
           icon: <FileDownloadOutlined />,
           action: notify(downloadBenchmarks, { end: "File downloaded" }),
+        },
+        {
+          name: "Download map",
+          action: (r) =>
+            notify(downloadMap(r.map_name), { end: "Map downloaded" })(),
         },
         {
           name: "Download results (CSV)",
