@@ -5,7 +5,7 @@ export const makePreviewImagePageRenderFunction =
   ({ header, children }) =>
     (
       <>
-        <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+        <Stack direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>
           {header}
           <Box component="img" sx={{ height: 83, borderRadius: 1 }} src={url} />
         </Stack>

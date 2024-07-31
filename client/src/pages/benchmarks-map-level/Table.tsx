@@ -1,22 +1,10 @@
-import {
-  InfoOutlined,
-  Title,
-  FileDownloadOutlined,
-  ShowChartOutlined,
-} from "@mui/icons-material";
-import { Box } from "@mui/material";
+import { FileDownloadOutlined, ShowChartOutlined } from "@mui/icons-material";
 import { AnalysisButton } from "components/analysis/Analysis";
 import { cellRendererBar, makeDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { IconCard } from "IconCard";
 import { capitalize } from "lodash";
-import { bindTrigger } from "material-ui-popup-state";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
-import BenchmarkDetails from "pages/benchmarks-root-level/BenchmarkDetails";
-import {
-  downloadBenchmarks,
-  downloadBenchmarksResultsCSV,
-} from "pages/benchmarks-root-level/download";
 import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { useScenarioCollectionsData } from "queries/useBenchmarksQuery";
@@ -53,6 +41,7 @@ export default function Table() {
       headerAlign: "left",
       width: 150,
       valueFormatter: capitalize,
+      fold: true,
     },
     {
       field: "instances",
@@ -61,6 +50,7 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
+      fold: true,
       width: 150,
     },
     {

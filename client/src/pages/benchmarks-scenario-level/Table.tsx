@@ -1,27 +1,24 @@
 import {
+  BlurOnOutlined,
   FileDownloadOutlined,
   InfoOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
+import { Box } from "@mui/material";
 import { makeDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
+import { Dialog, Title } from "components/dialog";
 import { IconCard } from "IconCard";
-import {
-  downloadBenchmarks,
-  downloadBenchmarksResultsCSV,
-} from "pages/benchmarks-root-level/download";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
 import { useScenarioCollectionData } from "queries/useBenchmarksQuery";
+import { cloneElement } from "react";
 import { useSnackbarAction } from "Snackbar";
 import { Scenario } from "types";
 import { useLocationState, useNavigate } from "useNavigation";
-import { downloadRow } from "./download";
-import { Dialog, Title } from "components/dialog";
-import { cloneElement } from "react";
-import Details from "./Details";
-import { Box } from "@mui/material";
 import { formatDate } from "utils/format";
+import Details from "./Details";
+import { downloadRow } from "./download";
 
 export default function Table() {
   const state = useLocationState<ScenarioLevelLocationState>();
@@ -29,6 +26,15 @@ export default function Table() {
   const { data, isLoading } = useScenarioCollectionData(scenId);
   const navigate = useNavigate();
   const notify = useSnackbarAction();
+
+  const openVisualisation = (row: Scenario) =>
+    navigate<VisualiserLocationState>("/visualization", {
+      ...state,
+      path_id: row.solution_path_id,
+      map_name: mapName,
+      scen_string: `${mapName}-${scenType}-${scenTypeID}`,
+      num_agents: row.agents,
+    });
 
   const columns: GridColDef<Scenario>[] = [
     {
@@ -51,6 +57,7 @@ export default function Table() {
       align: "left",
       headerAlign: "left",
       width: 150,
+      fold: true,
     },
     {
       field: "lower_cost",
@@ -59,6 +66,7 @@ export default function Table() {
       align: "left",
       headerAlign: "left",
       width: 150,
+      fold: true,
     },
     {
       field: "lower_algos",
@@ -67,6 +75,7 @@ export default function Table() {
       align: "left",
       headerAlign: "left",
       width: 150,
+      fold: true,
     },
     {
       field: "solution_date",
@@ -77,6 +86,7 @@ export default function Table() {
       align: "left",
       headerAlign: "left",
       width: 150,
+      fold: true,
     },
     {
       field: "solution_cost",
@@ -85,6 +95,7 @@ export default function Table() {
       align: "left",
       headerAlign: "left",
       width: 150,
+      fold: true,
     },
     {
       field: "solution_algos",
@@ -94,9 +105,15 @@ export default function Table() {
       align: "left",
       headerAlign: "left",
       width: 150,
+      fold: true,
     },
     makeDataGridActions({
       items: [
+        {
+          name: "Open visualisation",
+          icon: <BlurOnOutlined />,
+          action: openVisualisation,
+        },
         {
           name: "Details",
           icon: <InfoOutlined />,
@@ -148,13 +165,7 @@ export default function Table() {
       columns={columns}
       rows={data}
       onRowClick={({ row }) => {
-        navigate<VisualiserLocationState>("/visualization", {
-          ...state,
-          path_id: row.solution_path_id,
-          map_name: mapName,
-          scen_string: `${mapName}-${scenType}-${scenTypeID}`,
-          num_agents: row.agents,
-        });
+        openVisualisation(row);
       }}
     />
   );

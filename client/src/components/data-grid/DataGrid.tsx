@@ -57,7 +57,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
           label="Search items"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          sx={{ width: 420 }}
+          sx={{ width: "100%" }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -66,7 +66,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
             ),
           }}
         />
-        <Stack>{extras}</Stack>
+        {extras && <Stack>{extras}</Stack>}
       </Stack>
       {isLoading ? (
         <CircularProgress sx={{ mx: "auto", mt: 2, mb: 4 }} />
