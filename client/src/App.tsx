@@ -25,6 +25,7 @@ import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
 import { useTitleBar } from "./hooks/useTitleBar";
 import Navbar from "components/Navbar";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -120,6 +121,7 @@ export default function App() {
                   </Fade>
                 </Box>
               </Stack>
+              <ReactQueryDevtools />
             </SnackbarProvider>
           </ConfirmProvider>
         </ThemeProvider>

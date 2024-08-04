@@ -1,8 +1,10 @@
 import { Router } from "express";
 import * as algorithm from "../controllers/algorithm.controller";
+import { middleware as cache } from "apicache";
 
 export default (app) => {
   const router = Router();
+  router.use(cache("1 day"));
   router.get("/", algorithm.findAll);
   router.get("/all_detail", algorithm.findAllDetails);
   router.get("/algo_detail/:id", algorithm.findOne);

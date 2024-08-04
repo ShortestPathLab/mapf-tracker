@@ -1,8 +1,10 @@
 import { Router } from "express";
 import * as instance from "../controllers/instance.controller";
+import { middleware as cache } from "apicache";
 
 export default (app) => {
   const router = Router();
+  router.use(cache("1 day"));
   router.get("/", instance.findAll);
   router.get("/:id", instance.findNonEmptyByScenId);
   router.get("/getAlgo/:id", instance.findAlgosRecord);

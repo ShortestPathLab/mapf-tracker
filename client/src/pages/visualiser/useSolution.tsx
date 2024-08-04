@@ -75,7 +75,7 @@ export function useSolution({
   agentCount = 0,
 }: SolutionParameters) {
   const { data: solutionData } = useQuery({
-    queryKey: [solutionKey],
+    queryKey: ["solution", solutionKey],
     queryFn: async () =>
       (
         await (
@@ -87,7 +87,7 @@ export function useSolution({
   });
 
   const { data: generalData } = useQuery({
-    queryKey: [solutionData, mapKey, scenarioKey],
+    queryKey: ["solutionContextData", solutionData, mapKey, scenarioKey],
     queryFn: async () => {
       if (solutionData?.length) {
         const [mapData, scenarioData] = await Promise.all([

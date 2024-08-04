@@ -16,20 +16,21 @@ import {
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
-import { capitalize, each, min, range, trim } from "lodash";
-import { Graphics as PixiGraphics } from "pixi.js";
-import React, { useMemo } from "react";
-import {
-  useLocationState as useLocation,
-  useLocationState,
-} from "hooks/useNavigation";
-import AutoSize from "react-virtualized-auto-sizer";
+import { useLocationState } from "hooks/useNavigation";
 import PageHeader from "layout/PageHeader";
-import Viewport from "./Viewport";
+import { capitalize, each, min, range, trim } from "lodash";
+import memoizee from "memoizee";
+import { Viewport as PixiViewport } from "pixi-viewport";
+import { Graphics as PixiGraphics } from "pixi.js";
+import { useEffect, useMemo, useRef, useState } from "react";
+import AutoSize from "react-virtualized-auto-sizer";
 import { colors } from "utils/colors";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
+import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
+
+const SCALE_SHOW_GRID_THRESHOLD = 30;
 
 const LINE_WIDTH = 0.05;
 const WHITE = "#ffffff";
@@ -68,6 +69,12 @@ const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
   });
 };
 
+const $bg = memoizee(
+  (color, width, height): ((graphics: PixiGraphics) => void) =>
+    (g) =>
+      g.beginFill(hexToInt(color)).drawRect(0, 0, width, height).endFill()
+);
+
 export default function Visualiser() {
   const state = useLocationState<VisualiserLocationState>();
   const theme = useTheme();
@@ -91,7 +98,7 @@ export default function Visualiser() {
 
   const drawGrid = useMemo(
     () => $grid({ x, y }, dark ? WHITE : BLACK),
-    [x, y, theme.palette.mode]
+    [x, y, dark]
   );
 
   const drawMap = useMemo(() => $map(map, dark ? WHITE : BLACK), [map, dark]);
@@ -116,6 +123,26 @@ export default function Visualiser() {
   const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
 
   const scenarioString = capitalize(`${state.scenType}-${state.scenTypeID}`);
+
+  // ──────────────────────────────────────────────────────────────────────
+
+  const viewport = useRef<PixiViewport | null>(null);
+  const [showGrid, setShowGrid] = useState(false);
+
+  useEffect(() => {
+    if (!viewport.current || !x) return;
+    const f = () => {
+      setShowGrid(
+        scale(viewport.current.screenWidth, viewport.current.screenHeight) *
+          viewport.current.scale.x >
+          SCALE_SHOW_GRID_THRESHOLD
+      );
+    };
+    viewport.current.on("moved", f);
+    f();
+    return () => void viewport.current.off("moved", f);
+  }, [viewport.current, x, setShowGrid]);
+
   return (
     <Box
       sx={{
@@ -148,14 +175,25 @@ export default function Visualiser() {
       <AutoSize>
         {(size) => (
           <Stage
-            key={theme.palette.mode}
             {...size}
+            renderOnComponentChange
             options={{
-              backgroundColor: hexToInt(theme.palette.background.default),
               antialias: true,
+              powerPreference: "high-performance",
             }}
           >
-            <Viewport {...size} key={`${size.width},${size.height}`}>
+            <Graphics
+              draw={$bg(
+                theme.palette.background.default,
+                size.width,
+                size.height
+              )}
+            />
+            <Viewport
+              {...size}
+              key={`${size.width},${size.height}`}
+              ref={viewport}
+            >
               <Container
                 scale={scale(size.width, size.height)}
                 x={offsetX(size.width, size.height)}
@@ -163,7 +201,7 @@ export default function Visualiser() {
               >
                 <Graphics draw={drawAgents} />
                 <Graphics draw={drawMap} />
-                <Graphics draw={drawGrid} alpha={0.3} />
+                {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
               </Container>
             </Viewport>
           </Stage>

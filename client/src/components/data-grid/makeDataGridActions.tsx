@@ -44,7 +44,14 @@ export function makeDataGridActions<T>({
         onClick={(e) => e.stopPropagation()}
       >
         {map(items, ({ name, action, icon, render = (_, c) => c }) => (
-          <Box>
+          <Box
+            sx={{
+              "@media (pointer: fine)": {
+                opacity: 0,
+                "&:is(.MuiDataGrid-row:hover *)": { opacity: 1 },
+              },
+            }}
+          >
             {render(
               row,
               <IconButton onClick={() => action?.(row)}>

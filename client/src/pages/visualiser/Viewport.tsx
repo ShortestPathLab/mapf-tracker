@@ -1,7 +1,7 @@
-import React from "react";
-import * as PIXI from "pixi.js";
 import { PixiComponent, useApp } from "@pixi/react";
 import { Viewport as PixiViewport } from "pixi-viewport";
+import * as PIXI from "pixi.js";
+import React, { ForwardedRef, forwardRef } from "react";
 
 export interface ViewportProps {
   width: number;
@@ -29,9 +29,11 @@ const PixiComponentViewport = PixiComponent("Viewport", {
   },
 });
 
-const Viewport = (props: ViewportProps) => {
-  const app = useApp();
-  return <PixiComponentViewport app={app} {...props} />;
-};
+const Viewport = forwardRef(
+  (props: ViewportProps, ref: ForwardedRef<PixiViewport>) => {
+    const app = useApp();
+    return <PixiComponentViewport ref={ref} app={app} {...props} />;
+  }
+);
 
 export default Viewport;
