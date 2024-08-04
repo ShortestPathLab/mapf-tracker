@@ -8,6 +8,7 @@ import {
 import {
   Box,
   Card,
+  CircularProgress,
   Divider,
   IconButton,
   Stack,
@@ -82,7 +83,7 @@ export default function Visualiser() {
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const { map, result, getAgentPosition } = useSolution({
+  const { map, result, getAgentPosition, isLoading } = useSolution({
     solutionKey: state.path_id,
     agentCount: state.num_agents,
     mapKey: state.map_name,
@@ -109,7 +110,7 @@ export default function Visualiser() {
       positions.map(({ x, y }, i) => ({
         x,
         y,
-        color: colors[i % colors.length][dark ? "300" : "A100"],
+        color: colors[i % colors.length][dark ? "300" : "A400"],
       }))
     );
   }, [getAgentPosition, step, dark]);
@@ -172,41 +173,51 @@ export default function Visualiser() {
           ]}
         />
       </Stack>
+      (
       <AutoSize>
-        {(size) => (
-          <Stage
-            {...size}
-            renderOnComponentChange
-            options={{
-              antialias: true,
-              powerPreference: "high-performance",
-            }}
-          >
-            <Graphics
-              draw={$bg(
-                theme.palette.background.default,
-                size.width,
-                size.height
-              )}
-            />
-            <Viewport
-              {...size}
-              key={`${size.width},${size.height}`}
-              ref={viewport}
+        {(size) =>
+          isLoading ? (
+            <Stack
+              sx={{ ...size, alignItems: "center", justifyContent: "center" }}
             >
-              <Container
-                scale={scale(size.width, size.height)}
-                x={offsetX(size.width, size.height)}
-                y={offsetY(size.width, size.height)}
+              <CircularProgress />
+            </Stack>
+          ) : (
+            <Stage
+              {...size}
+              renderOnComponentChange
+              options={{
+                antialias: true,
+                powerPreference: "high-performance",
+              }}
+            >
+              <Graphics
+                draw={$bg(
+                  theme.palette.background.default,
+                  size.width,
+                  size.height
+                )}
+              />
+              <Viewport
+                {...size}
+                key={`${size.width},${size.height}`}
+                ref={viewport}
               >
-                <Graphics draw={drawAgents} />
-                <Graphics draw={drawMap} />
-                {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
-              </Container>
-            </Viewport>
-          </Stage>
-        )}
+                <Container
+                  scale={scale(size.width, size.height)}
+                  x={offsetX(size.width, size.height)}
+                  y={offsetY(size.width, size.height)}
+                >
+                  <Graphics draw={drawAgents} />
+                  <Graphics draw={drawMap} />
+                  {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
+                </Container>
+              </Viewport>
+            </Stage>
+          )
+        }
       </AutoSize>
+      )
       <Stack
         sx={{
           position: "fixed",

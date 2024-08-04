@@ -74,7 +74,7 @@ export function useSolution({
   scenarioKey,
   agentCount = 0,
 }: SolutionParameters) {
-  const { data: solutionData } = useQuery({
+  const { data: solutionData, isLoading: isSolutionDataLoading } = useQuery({
     queryKey: ["solution", solutionKey],
     queryFn: async () =>
       (
@@ -86,7 +86,7 @@ export function useSolution({
       ).solution_path as string,
   });
 
-  const { data: generalData } = useQuery({
+  const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
     queryKey: ["solutionContextData", solutionData, mapKey, scenarioKey],
     queryFn: async () => {
       if (solutionData?.length) {
@@ -111,6 +111,7 @@ export function useSolution({
   );
 
   return {
+    isLoading: isSolutionDataLoading || isGeneralDataLoading,
     map: map ?? [],
     result,
     getAgentPosition,
