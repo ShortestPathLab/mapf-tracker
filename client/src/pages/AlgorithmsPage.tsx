@@ -1,7 +1,7 @@
 import CancelIcon from "@mui/icons-material/CancelOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import SearchIcon from "@mui/icons-material/SearchOutlined";
-import { Button, Stack } from "@mui/material";
+import { Button, Card, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
@@ -487,7 +487,7 @@ export default function Submissions() {
         />
       </Stack>
 
-      <Paper>
+      <Card>
         <Stack direction="row" sx={{ p: 2, gap: 4 }}>
           <TextField
             id="outlined-basic"
@@ -722,7 +722,7 @@ export default function Submissions() {
             </Table>
             {/*<ResponsiveContainer width={500} height={380}>*/}
             <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
+            {/*<Card   sx={{  width : 350, height: 464, mb: 2, }}>*/}
             <Box sx={{ width: 350, height: 464 }}>
               <Toolbar
                 sx={{
@@ -835,7 +835,7 @@ export default function Submissions() {
                 </RadarChart>
               )}
             </Box>
-            {/*</Paper>*/}
+            {/*</Card>*/}
             {/*</ResponsiveContainer>*/}
           </DialogContent>
           {/*<DialogActions>*/}
@@ -1015,7 +1015,7 @@ export default function Submissions() {
             </Table>
           </DialogContent>
         </Dialog>
-      </Paper>
+      </Card>
       {/*<FormControlLabel*/}
       {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
       {/*    label="Dense padding"*/}

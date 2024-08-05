@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 export function IconCard({ icon = <FolderOutlined /> }: { icon?: ReactNode }) {
   return (
     <Card
+      elevation={0}
       sx={{
         lineHeight: 0,
         border: (t) => `1px solid ${t.palette.divider}`,

@@ -892,7 +892,7 @@ export default function UserMapPage() {
           { name: "Dashboard", url: "/dashboard" },
         ]}
       />
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Card sx={{ width: "100%", mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -1041,7 +1041,7 @@ export default function UserMapPage() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Paper>
+      </Card>
       <Dialog
         open={openExplanation}
         onClose={() => {

@@ -431,7 +431,7 @@ export default function Summary() {
   return (
     <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
       <Box sx={{ width: "100%", display: "flex" }}>
-        <Paper sx={{ width: "68%", mb: 2 }}>
+        <Card sx={{ width: "68%", mb: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -514,10 +514,10 @@ export default function Summary() {
               />
             </AreaChart>
           </ResponsiveContainer>
-        </Paper>
+        </Card>
         <div style={{ width: "2%" }} />
 
-        <Paper sx={{ width: "38%", mb: 2 }}>
+        <Card sx={{ width: "38%", mb: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -633,10 +633,10 @@ export default function Summary() {
               ))}
             </RadarChart>
           </ResponsiveContainer>
-        </Paper>
+        </Card>
       </Box>
       <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2 }}>
+        <Card sx={{ width: "100%", mb: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -748,7 +748,7 @@ export default function Summary() {
               ))}
             </BarChart>
           </ResponsiveContainer>
-        </Paper>
+        </Card>
       </Box>
     </Box>
   );

@@ -721,7 +721,7 @@ export default function Dashboard() {
         current="Dashboard"
         path={[{ name: "MAPF Tracker", url: "/" }]}
       />
-      <Paper>
+      <Card>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -1310,7 +1310,7 @@ export default function Dashboard() {
             </Table>
             {/*<ResponsiveContainer width={500} height={380}>*/}
             <div style={{ width: 30 }} />
-            {/*<Paper   sx={{  width : 350, height: 464, mb: 2, }}>*/}
+            {/*<Card   sx={{  width : 350, height: 464, mb: 2, }}>*/}
             <Box sx={{ width: 350, height: 464 }}>
               <Toolbar
                 sx={{
@@ -1423,7 +1423,7 @@ export default function Dashboard() {
                 </RadarChart>
               )}
             </Box>
-            {/*</Paper>*/}
+            {/*</Card>*/}
             {/*</ResponsiveContainer>*/}
           </DialogContent>
           {/*<DialogActions>*/}
@@ -1966,7 +1966,7 @@ export default function Dashboard() {
             </Table>
           </DialogContent>
         </Dialog>
-      </Paper>
+      </Card>
     </Stack>
   );
 }

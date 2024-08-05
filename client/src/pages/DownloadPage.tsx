@@ -11,7 +11,7 @@ import TableBody from "@mui/material/TableBody";
 import Divider from "@mui/material/Divider";
 import TableContainer from "@mui/material/TableContainer";
 import PageHeader from "layout/PageHeader";
-import { Link, Stack } from "@mui/material";
+import { Card, Link, Stack } from "@mui/material";
 
 export default function Download() {
   return (
@@ -20,7 +20,7 @@ export default function Download() {
         current="Get the dataset"
         path={[{ name: "MAPF Tracker", url: "/" }]}
       />
-      <Paper>
+      <Card>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -83,8 +83,8 @@ export default function Download() {
             </Typography>
           </ul>
         </Box>
-      </Paper>
-      <Paper>
+      </Card>
+      <Card>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -215,9 +215,9 @@ export default function Download() {
             </Table>
           </TableContainer>
         </Box>
-      </Paper>
+      </Card>
 
-      {/*<Paper  sx={{ width: '100%', mb: 2,}}>*/}
+      {/*<Card  sx={{ width: '100%', mb: 2,}}>*/}
       {/*    <Toolbar*/}
       {/*        sx={{*/}
       {/*            pl: { sm: 2 },*/}
@@ -244,11 +244,11 @@ export default function Download() {
       {/*            To report an issue or bug, please submit it as an issue on our <Link href="https://github.com/bshen95/MAPF-benchmark-web">Github</Link>.*/}
       {/*        </Typography>*/}
       {/*    </Box>*/}
-      {/*</Paper>*/}
+      {/*</Card>*/}
 
       {/*<textarea ref={textareaRef} className="hidden-textarea" readOnly value={bibtexEntry} />*/}
 
-      {/*</Paper>*/}
+      {/*</Card>*/}
     </Stack>
   );
 }

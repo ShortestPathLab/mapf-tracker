@@ -1,31 +1,31 @@
 import { Box, Fade, Stack } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Navbar from "components/Navbar";
 import { ConfirmProvider } from "material-ui-confirm";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
-import SystemDemo from "pages/SystemDemo";
+import SystemDemo from "pages/demo";
 import { useMemo, useReducer } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
+import { SnackbarProvider } from "./components/Snackbar";
+import { useTitleBar } from "./hooks/useTitleBar";
+import AboutPage from "./pages/about";
+import Submissions from "./pages/AlgorithmsPage";
+import ContributePage from "./pages/contribute";
 import Dashboard from "./pages/dashboard/Dashboard";
-import AboutUs from "./pages/AboutUsPage";
-import Contribute from "./pages/contribute/ContributePage";
+import Summary from "./pages/dashboard/DashboardPage";
 import Download from "./pages/DownloadPage";
 import Paper from "./pages/PaperPage";
 import SubmissionSummary from "./pages/submission-summary/SubmissionSummary";
 import TrackSubmission from "./pages/submissions/TrackSubmission";
 import UserMapPage from "./pages/UserMapPage";
 import { Visualiser } from "./pages/visualiser";
-import { SnackbarProvider } from "./components/Snackbar";
-import Submissions from "./pages/AlgorithmsPage";
-import Summary from "./pages/dashboard/DashboardPage";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
-import { useTitleBar } from "./hooks/useTitleBar";
-import Navbar from "components/Navbar";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -82,14 +82,17 @@ export default function App() {
                         />
                         <Route path="/visualization" element={<Visualiser />} />
                         <Route path="/summary" element={<Summary />} />
-                        <Route path="/aboutUs" element={<AboutUs />} />
+                        <Route path="/aboutUs" element={<AboutPage />} />
                         <Route path="/systemDemo" element={<SystemDemo />} />
                         <Route path="/submissions" element={<Submissions />} />
                         <Route
                           path="/submissionSummary"
                           element={<SubmissionSummary />}
                         />
-                        <Route path="/contributes" element={<Contribute />} />
+                        <Route
+                          path="/contributes"
+                          element={<ContributePage />}
+                        />
                         <Route path="/download" element={<Download />} />
                         <Route path="/papers" element={<Paper />} />
                         <Route

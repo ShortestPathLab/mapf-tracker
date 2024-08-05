@@ -16,6 +16,7 @@ import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map, snakeCase } from "lodash";
 import { ReactNode, useState } from "react";
 import { useCss } from "react-use";
+import { paper } from "theme";
 
 function includeItemByFuzzyJSONString<T>(item: T, input: string): boolean {
   return snakeCase(JSON.stringify(item))
@@ -71,14 +72,6 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
         <CircularProgress sx={{ mx: "auto", mt: 2, mb: 4 }} />
       ) : (
         <MuiDataGrid<T>
-          slotProps={{
-            filterPanel: { sx: { background: "red" } },
-            columnMenu: {
-              style: {
-                background: "red",
-              },
-            },
-          }}
           rowSelection={false}
           sx={{
             "--DataGrid-containerBackground": "transparent",

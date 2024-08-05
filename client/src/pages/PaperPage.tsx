@@ -43,7 +43,7 @@ export default function PaperPage() {
 
   return (
     <Box sx={{ mx: "auto", maxWidth: 960 }}>
-      <Paper sx={{ width: "100%", mt: 2, mb: 2 }}>
+      <Card sx={{ width: "100%", mt: 2, mb: 2 }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -109,7 +109,7 @@ export default function PaperPage() {
             </div>
           </div>
         </Box>
-      </Paper>
+      </Card>
     </Box>
   );
 }
