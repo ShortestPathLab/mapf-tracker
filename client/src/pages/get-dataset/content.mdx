@@ -1,0 +1,20 @@
+### Download Instructions
+
+This page contains download links to all best-known results, and all corresponding benchmark problem instances, currently submitted to the MAPF Tracker. Results and benchmarks are offered as separate downloads, grouped by map, and in zip format.
+
+- To download results, please visit [here](http://tracker.pathfinding.ai/quickDownload/results/).
+- To download benchmarks, please visit [here](http://tracker.pathfinding.ai/quickDownload/benchmarks/).
+
+---
+
+### Results File Format (CSV)
+
+Each results archive (zip file) contains a single file, with comma separated values, which describes best known results for a single grid map. The first line of the file is a header, which gives column names. Each subsequent line gives the corresponding values for a single problem instance. Where a best-known solution is available, we also give the corresponding plan. Further details about the solution plan format are available [here](http://tracker.pathfinding.ai/contributes).
+
+##### Example File
+
+| map_name    | scen_type | type_id | agents | lower_cost | solution_cost | solution_plan                                                  |
+| ----------- | --------- | ------- | ------ | ---------- | ------------- | -------------------------------------------------------------- |
+| empty-32-32 | even      | 1       | 1      | 14         | 14            | urrurrruuurrrr                                                 |
+| empty-32-32 | even      | 1       | 2      | 38         | 38            | urrurrruuurrrr<br />ddrddrrrddrddrdrrdrddddd                   |
+| empty-32-32 | even      | 1       | 3      | 50         | 50            | urrurrruuurrrr<br />ddrddrrrddrddrdrrdrddddd<br />dddddddddddd |

@@ -24,6 +24,8 @@ export function ScrollPanel({
     }
   }, [target, onScroll]);
 
+  console.log(target);
+
   return (
     <div
       {...props}
@@ -35,6 +37,7 @@ export function ScrollPanel({
       }}
       ref={(e) => {
         setTarget(e);
+        console.log("hi", e);
         onTarget?.(e);
       }}
     >

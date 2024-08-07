@@ -1,43 +1,33 @@
 {
-  "name": "node-express-mongodb",
+  "name": "@shortestpathlab/mapf-tracker-server",
   "version": "1.0.0",
-  "description": "Node.js Restful CRUD API with Node.js, Express and MongoDB",
-  "main": "server.js",
+  "main": "server.ts",
   "scripts": {
-    "client": "cd ../client; npm run start",
-    "start": "NODE_ENV=development vite-node server.ts",
-    "server": "NODE_ENV=development vite-node server.ts",
-    "installClient": "cd ../client; npm install",
-    "installServer": "npm install",
+    "dev": "NODE_ENV=development bun --watch src/server.ts | pino-pretty",
+    "installClient": "cd ../client; npm i",
+    "installServer": "npm i",
     "install_all": "npm run installClient; npm run installServer",
-    "buildClient": "cd ../client; npm run build",
-    "dev": "npm run install_all; concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "build": "npm run install_all; npm run buildClient",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "nodejs",
-    "express",
-    "rest",
-    "api",
-    "mongodb"
-  ],
-  "author": "bezkoder",
   "license": "ISC",
   "devDependencies": {
+    "@types/apicache": "^1.6.6",
+    "@types/bun": "^1.1.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/lodash": "^4.17.7",
     "@types/mime-types": "^2.1.4",
     "@types/serve-index": "^1.9.4",
     "concurrently": "^7.6.0"
   },
   "dependencies": {
-    "@types/apicache": "^1.6.6",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/lodash": "^4.17.7",
     "apicache": "^1.6.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "bullmq": "^5.12.1",
+    "bun": "^1.1.21",
     "cors": "^2.8.5",
     "date-and-time": "^2.4.1",
     "dotenv": "^16.4.5",
@@ -47,12 +37,14 @@
     "mail": "file:../packages/mail",
     "mime-types": "^2.1.35",
     "mongoose": "^6.4.2",
+    "pino": "^9.3.2",
+    "pino-http": "^10.2.0",
+    "pino-pretty": "^11.2.2",
+    "redis-memory-server": "^0.11.0",
     "serve-index": "^1.9.1",
-    "typescript": "^5.5.3",
+    "typescript": "^5.4.5",
     "validator": "file:../packages/validator",
-    "vite": "^5.3.4",
-    "vite-node": "^2.0.4",
-    "vite-tsconfig-paths": "^4.3.2"
+    "zod": "^3.23.8"
   },
   "type": "module"
 }

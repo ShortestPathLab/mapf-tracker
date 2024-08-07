@@ -12,6 +12,14 @@ export function checkDomainOutOfBounds({
   domain,
   timestep,
 }: CheckParameters): CheckResult {
-  const collision = find(next, (p) => !contains(domain, p));
-  return collision ? { errors: ["agent out of bounds"] } : {};
+  const point = find(next, (p) => !contains(domain, p));
+  return point
+    ? {
+        errors: [
+          `agent out of bounds, at timestep ${timestep}, position ${JSON.stringify(
+            point
+          )}`,
+        ],
+      }
+    : {};
 }

@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "test": "vitest",
-    "build": "vite build"
+    "build": "vite build",
+    "postinstall": "npm run build"
   },
   "author": "",
   "license": "ISC",

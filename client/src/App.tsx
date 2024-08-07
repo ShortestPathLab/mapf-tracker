@@ -18,10 +18,9 @@ import Submissions from "./pages/AlgorithmsPage";
 import ContributePage from "./pages/contribute";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Summary from "./pages/dashboard/DashboardPage";
-import Download from "./pages/DownloadPage";
-import Paper from "./pages/PaperPage";
+import DownloadPage from "./pages/get-dataset";
 import SubmissionSummary from "./pages/submission-summary/SubmissionSummary";
-import TrackSubmission from "./pages/submissions/TrackSubmission";
+import TrackSubmission from "./pages/submissions";
 import UserMapPage from "./pages/UserMapPage";
 import { Visualiser } from "./pages/visualiser";
 import { theme } from "./theme";
@@ -54,6 +53,7 @@ export default function App() {
                   bgcolor: "background.default",
                   minHeight: "100svh",
                   color: "text.primary",
+                  transition: (t) => t.transitions.create("background-color"),
                 }}
               >
                 <Navbar />
@@ -93,8 +93,7 @@ export default function App() {
                           path="/contributes"
                           element={<ContributePage />}
                         />
-                        <Route path="/download" element={<Download />} />
-                        <Route path="/papers" element={<Paper />} />
+                        <Route path="/download" element={<DownloadPage />} />
                         <Route
                           path="/trackSubmission"
                           element={<TrackSubmission />}

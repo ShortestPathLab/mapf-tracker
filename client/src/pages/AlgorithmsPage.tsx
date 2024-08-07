@@ -1,6 +1,5 @@
-import CancelIcon from "@mui/icons-material/CancelOutlined";
+import { CancelOutlined, FilterListOutlined } from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
-import SearchIcon from "@mui/icons-material/SearchOutlined";
 import { Button, Card, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -12,7 +11,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
-import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -37,14 +35,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import PageHeader from "../layout/PageHeader";
 import { APIConfig } from "../core/config";
-import {
-  CancelOutlined,
-  FilterListOutlined,
-  FilterOutlined,
-  SearchOutlined,
-} from "@mui/icons-material";
+import PageHeader from "../layout/PageHeader";
 
 const angle = {
   Warehouse: -40,

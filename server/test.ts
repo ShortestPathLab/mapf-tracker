@@ -1,4 +1,4 @@
-import models from "./app/models/";
+import models from "./src/models";
 
 const cursor = models.solution_paths.collection.find();
 

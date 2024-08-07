@@ -1,12 +1,12 @@
 import { ArrowBack } from "@mui/icons-material";
 import {
+  alpha,
   AppBar,
   Box,
   BoxProps,
   Dialog,
   Fade,
   IconButton,
-  ModalProps,
   Popover,
   PopoverProps,
   Toolbar,
@@ -17,21 +17,20 @@ import { ResizeSensor } from "css-element-queries";
 import PopupState, { bindPopover } from "material-ui-popup-state";
 import { useScrollState } from "./useScrollState";
 import { useSm } from "./useSmallDisplay";
-import { usePanel } from "./ScrollPanel";
 
 import { merge } from "lodash";
 import { PopupState as State } from "material-ui-popup-state/hooks";
 import {
-  cloneElement,
   ComponentProps,
   CSSProperties,
-  ReactElement,
   ReactNode,
   SyntheticEvent,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
 } from "react";
-import { useAcrylic, usePaper } from "theme";
+import { paper, useAcrylic, usePaper } from "theme";
 import { Scroll } from "./Scrollbars";
 import Swipe from "./Swipe";
 
@@ -73,28 +72,17 @@ export function ModalAppBar({
   simple,
   position = "sticky",
 }: ModalAppBarProps) {
-  const panel = usePanel();
+  const ref = useRef<HTMLDivElement | null>(null);
   const theme = useTheme();
   const [, , isAbsoluteTop, , setTarget] = useScrollState();
   useEffect(() => {
-    setTarget(panel);
-  }, [panel, setTarget]);
-
-  const styles = isAbsoluteTop
-    ? {
-        background: theme.palette.background.paper,
-        ...(!simple && {
-          boxShadow: theme.shadows[0],
-        }),
-        ...style,
-      }
-    : {
-        background: theme.palette.background.paper,
-        ...(!simple && {
-          boxShadow: theme.shadows[4],
-        }),
-        ...elevatedStyle,
-      };
+    if (ref.current) {
+      const panel = ref.current.closest(
+        ".scrollbars div[data-overlayscrollbars-contents]"
+      );
+      if (panel && panel instanceof HTMLDivElement) setTarget(panel);
+    }
+  }, [ref.current]);
 
   function renderTitle(label: ReactNode) {
     return typeof label === "string" ? (
@@ -106,15 +94,28 @@ export function ModalAppBar({
 
   return (
     <AppBar
+      ref={ref}
       elevation={0}
       position={position}
       style={{
         color: theme.palette.text.primary,
-        transition: theme.transitions.create(transitionProperties),
-        ...styles,
+        background: "transparent",
       }}
     >
-      <Toolbar>
+      <Toolbar
+        sx={
+          isAbsoluteTop
+            ? {}
+            : {
+                ...paper(),
+                background: alpha(theme.palette.background.paper, 0.8),
+                border: "none",
+                borderRadius: 0,
+                boxShadow: "none",
+                borderBottom: (t) => `1px solid ${t.palette.divider}`,
+              }
+        }
+      >
         <IconButton
           style={{
             marginRight: theme.spacing(1),
@@ -179,7 +180,7 @@ export default function Modal({
   ...props
 }: Props & ComponentProps<typeof Dialog>) {
   const [content, setContent] = useState<ReactNode | undefined>(undefined);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (children) setContent(children);
   }, [children]);
   const theme = useTheme();
@@ -193,7 +194,7 @@ export default function Modal({
 
   const mt = 95 - 5 * depth;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!(target && contentRef && !sm && !height)) {
       return;
     }
@@ -270,7 +271,10 @@ export default function Modal({
       >
         <div
           ref={(e) => setContentRef(e)}
-          style={{ width: "100%", height: sm ? "100%" : undefined }}
+          style={{
+            width: "100%",
+            height: sm ? "100%" : undefined,
+          }}
         >
           {content}
         </div>
@@ -281,12 +285,16 @@ export default function Modal({
 }
 
 export function ManagedModal({
+  padded,
+  title,
   appBar: ModalAppBarProps,
   trigger = () => <></>,
   children,
   popover,
   slotProps,
 }: {
+  padded?: boolean;
+  title?: string;
   options?: ComponentProps<typeof Modal>;
   trigger?: (
     onClick: (e: SyntheticEvent<any, Event>) => void,
@@ -347,8 +355,13 @@ export function ManagedModal({
               </Popover>
             ) : (
               <Modal open={isOpen} onClose={close} {...slotProps?.modal}>
-                <ModalAppBar onClose={close} {...ModalAppBarProps} />
-                {chi2}
+                <ModalAppBar
+                  onClose={close}
+                  {...(title
+                    ? { children: <AppBarTitle>{title}</AppBarTitle> }
+                    : ModalAppBarProps)}
+                />
+                {padded ? <Box sx={{ p: sm ? 2 : 3 }}>{chi2}</Box> : chi2}
               </Modal>
             )}
           </>

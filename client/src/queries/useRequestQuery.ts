@@ -1,28 +1,29 @@
-import { APIConfig } from "core/config";
-import { json } from "./query";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import * as Yup from "yup";
+import { APIConfig } from "core/config";
 import { map } from "lodash";
-export type Request = Yup.InferType<typeof requestSchema>;
+import { InferType, object, string } from "yup";
+import { json } from "./query";
 
-export const requestSchema = Yup.object({
-  requesterName: Yup.string().required("Requester name is required."),
-  requesterEmail: Yup.string()
+export type Request = InferType<typeof requestSchema>;
+
+export const requestSchema = object({
+  requesterName: string().required("Requester name is required."),
+  requesterEmail: string()
     .email("Please enter a valid email address.")
     .required("Contact email is required."),
-  requesterAffilation: Yup.string().required("Affiliation is required."),
-  googleScholar: Yup.string()
+  requesterAffilation: string().required("Affiliation is required."),
+  googleScholar: string()
     .url("Please enter a valid URL.")
     .required("Google Scholar profile URL is required."),
-  dblp: Yup.string().required("DBLP profile URL is required."),
-  justification: Yup.string().required("Justification is required."),
-  algorithmName: Yup.string().required("Algorithm name is required."),
-  authorName: Yup.string().required("Author name is required."),
-  paperReference: Yup.string().required("Paper reference is required."),
-  githubLink: Yup.string()
+  dblp: string().required("DBLP profile URL is required."),
+  justification: string().required("Justification is required."),
+  algorithmName: string().required("Algorithm name is required."),
+  authorName: string().required("Author name is required."),
+  paperReference: string().required("Paper reference is required."),
+  githubLink: string()
     .url("Please enter a valid URL.")
     .required("GitHub link is required."),
-  comments: Yup.string(),
+  comments: string(),
 });
 
 const requestQuery = (id: string) => ({

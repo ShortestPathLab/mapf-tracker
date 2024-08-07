@@ -82,7 +82,7 @@ export const Scroll = forwardRef(
           height: "100%",
           ...rest.style,
         }}
-        className={`${cls} ${rest.className}`}
+        className={`${cls} scrollbars ${rest.className}`}
         events={{ initialized: handleRef }}
       >
         {children}

@@ -25,5 +25,15 @@ export default {
   solution_paths: solutionPathModel(mongoose),
   requests: requestModel(mongoose),
   submission_keys: submissionKeyModel(mongoose),
-  ongoing_submissions: ongoingSubmissionModel(mongoose),
 };
+
+export const OngoingSubmission = ongoingSubmissionModel(mongoose);
+export const Map = mapModel(mongoose);
+export const Scenario = scenarioModel(mongoose);
+export const Instance = instanceModel(mongoose);
+export const Submission = submissionModel(mongoose);
+export const Algorithms = algorithmModel(mongoose);
+export const User = userModel(mongoose);
+export const SolutionPath = solutionPathModel(mongoose);
+export const Request = requestModel(mongoose);
+export const SubmissionKey = submissionKeyModel(mongoose);

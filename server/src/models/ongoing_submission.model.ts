@@ -2,21 +2,25 @@ import { Mongoose } from "mongoose";
 
 export default (mongoose: Mongoose) => {
   const schema = new mongoose.Schema({
-    api_key: { type: String, required: true, ref: "submission_key" },
-    map_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "map",
+    apiKey: {
+      type: String,
       required: true,
     },
-    scen_id: {
+    mapId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "scenario",
+      ref: "maps",
       required: true,
     },
-    agents: Number,
-    lower_cost: Number,
-    solution_cost: Number,
-    solution_path: String,
+    scenarioId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "scenarios",
+      required: true,
+    },
+    index: Number,
+    lowerCost: Number,
+    solutionCost: Number,
+    solutionPath: String,
+    validated: Boolean,
     error: { isError: Boolean, errorMessage: String },
   });
 
@@ -26,6 +30,5 @@ export default (mongoose: Mongoose) => {
     return object;
   });
 
-  const OngoingSubmission = mongoose.model("onging_submission", schema);
-  return OngoingSubmission;
+  return mongoose.model("ongoing_submission", schema);
 };

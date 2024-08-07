@@ -5,19 +5,17 @@ import {
   EmailOutlined,
 } from "@mui/icons-material";
 import { Card, Stack } from "@mui/material";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useMutation } from "@tanstack/react-query";
 import { DataGrid, makeDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog, Title } from "components/dialog";
-import { Field } from "components/Field";
+import { Dialog } from "components/dialog";
 import { IconCard } from "components/IconCard";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
-import { Form, Formik } from "formik";
+import { AddKeyForm } from "forms/AddKeyForm";
 import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
@@ -25,8 +23,8 @@ import { zipWith } from "lodash";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
 import { cloneElement } from "react";
-import { useList } from "react-use";
-import * as Yup from "yup";
+import { useLocalStorageList } from "../../hooks/useLocalStorageList";
+import { SubmissionLocationState } from "./SubmissionLocationState";
 
 export default function TrackSubmission() {
   const navigate = useNavigate();
@@ -37,7 +35,8 @@ export default function TrackSubmission() {
     mutationKey: ["checkKey"],
   });
 
-  const [keys, { push, filter }] = useList<string>();
+  const [keys, { push, filter }] =
+    useLocalStorageList<string>("submission-keys");
 
   const results = useRequestsData(keys);
 
@@ -47,25 +46,6 @@ export default function TrackSubmission() {
   }));
 
   const notify = useSnackbar();
-
-  const navigateToSubmissionSummary = (event, row) => {
-    const req_id = row.id;
-    // const fetchPromises = requestIdList.map(request_id =>
-
-    [].map((submissionKey) => {
-      if (submissionKey.request_id !== req_id) {
-        return;
-      }
-      // found the api key
-      const apiKey = submissionKey.key;
-      navigate("/submissionSummary", {
-        state: {
-          apiKey,
-        },
-      });
-      event.stopPropagation();
-    });
-  };
 
   const handleRequestDetailUpdated = async (
     values,
@@ -111,7 +91,7 @@ export default function TrackSubmission() {
     notify("Your submission key was invalid");
   };
 
-  // ----------------------------------------------------------------------------------------
+  // ─────────────────────────────────────────────────────────────────────
 
   const columns: GridColDef<Request & { id: string }>[] = [
     {
@@ -135,29 +115,28 @@ export default function TrackSubmission() {
           name: "Edit request details",
           render: (row, trigger) => (
             <Dialog
-              appBar={{ children: <Title>Edit request details</Title> }}
+              slotProps={{ modal: { width: 640 } }}
+              padded
+              title="Edit request details"
               trigger={(onClick) => cloneElement(trigger, { onClick })}
             >
-              <Stack sx={{ p: 2 }}>
-                <SubmissionKeyRequestForm
-                  initialValues={row}
-                  onSubmit={handleRequestDetailUpdated}
-                  submit={({ isSubmitting }) => (
-                    <Button
-                      fullWidth
-                      sx={{ mt: 4 }}
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      disableElevation
-                      disabled={isSubmitting}
-                      startIcon={<CheckOutlined />}
-                    >
-                      {isSubmitting ? "Saving changes..." : "Save changes"}
-                    </Button>
-                  )}
-                />
-              </Stack>
+              <SubmissionKeyRequestForm
+                initialValues={row}
+                onSubmit={handleRequestDetailUpdated}
+                submit={({ isSubmitting }) => (
+                  <Button
+                    fullWidth
+                    sx={{ mt: 4 }}
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={isSubmitting}
+                    startIcon={<CheckOutlined />}
+                  >
+                    {isSubmitting ? "Saving changes..." : "Save changes"}
+                  </Button>
+                )}
+              />
             </Dialog>
           ),
         },
@@ -178,41 +157,19 @@ export default function TrackSubmission() {
       path={[{ name: "MAPF Tracker", url: "/" }]}
     >
       <Stack>
-        <Formik<{ key: string }>
-          validationSchema={Yup.object({
-            key: Yup.string().notOneOf(keys, "Key already added."),
-          })}
-          initialValues={{ key: "" }}
+        <AddKeyForm
+          keys={keys}
           onSubmit={handleApiFormSubmit}
-        >
-          {({ isSubmitting, isValid }) => (
-            <Form>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "start",
-                  gap: 2,
-                  "> *:first-child": { flex: 1 },
-                }}
-              >
-                <Field
-                  fullWidth
-                  name="key"
-                  label="Submission (API) key"
-                  variant="filled"
-                  required
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={isChecking || !isValid}
-                >
-                  {isChecking ? "Checking key" : "Add key"}
-                </Button>
-              </Box>
-            </Form>
+          submit={({ isValid }) => (
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isChecking || !isValid}
+            >
+              {isChecking ? "Checking key" : "Add key"}
+            </Button>
           )}
-        </Formik>
+        />
       </Stack>
       <Typography color="text.secondary">
         Don't have a submission (API) key?{" "}
@@ -223,9 +180,17 @@ export default function TrackSubmission() {
           Request one here.
         </Link>
       </Typography>
-
       <Card>
-        <DataGrid columns={columns} rows={rows} />
+        <DataGrid
+          slotProps={{ row: { style: { cursor: "pointer" } } }}
+          columns={columns}
+          rows={rows}
+          onRowClick={(row) =>
+            navigate<SubmissionLocationState>("/submissionSummary", {
+              apiKey: row.id,
+            })
+          }
+        />
       </Card>
     </Layout>
   );

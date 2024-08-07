@@ -1,6 +1,8 @@
-import React from "react";
+import { useLocationState } from "hooks/useNavigation";
+import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import SubmissionSummary from "./SubmissionSummary";
 
 export default function SubmissionSummaryPage() {
-  return <SubmissionSummary apiKey={"hello_world"} />;
+  const { apiKey } = useLocationState<SubmissionLocationState>();
+  return <SubmissionSummary apiKey={apiKey} />;
 }

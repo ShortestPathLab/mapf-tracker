@@ -2,7 +2,7 @@ import { Dictionary } from 'lodash';
 import { Item } from 'linked-list';
 import { List } from 'linked-list';
 
-export declare function checkDomainCollision({ next, domain, }: CheckParameters): CheckResult;
+export declare function checkDomainCollision({ next, domain, timestep, }: CheckParameters): CheckResult;
 
 export declare function checkDomainOutOfBounds({ next, prev, domain, timestep, }: CheckParameters): CheckResult;
 
