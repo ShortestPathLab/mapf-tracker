@@ -10,7 +10,7 @@ import { Reader } from "./core/Reader";
 import { Seeker } from "./core/Seeker";
 import { DoneException } from "./exceptions/DoneException";
 import type { Dictionary } from "lodash";
-import { some, zip } from "lodash-es";
+import { some, zip } from "lodash";
 import { checkEdgeCollision } from "./checks/checkEdgeCollision";
 
 type ValidationParameters = {
@@ -71,8 +71,8 @@ export const createOffsetMap = (
 
 export const sumPositions = (as: Point[], bs: Point[]) =>
   zip(as, bs).map(([a, b]) => ({
-    x: a.x + b.x,
-    y: a.y + b.y,
+    x: (a?.x ?? 0) + (b?.x ?? 0),
+    y: (a?.y ?? 0) + (b?.y ?? 0),
   }));
 
 export function validate({

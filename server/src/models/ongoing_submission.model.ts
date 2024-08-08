@@ -1,28 +1,36 @@
 import { Mongoose } from "mongoose";
 
 export default (mongoose: Mongoose) => {
-  const schema = new mongoose.Schema({
-    apiKey: {
-      type: String,
-      required: true,
+  const schema = new mongoose.Schema(
+    {
+      apiKey: {
+        type: String,
+        required: true,
+      },
+      mapId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "maps",
+        required: true,
+      },
+      scenarioId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "scenarios",
+        required: true,
+      },
+      index: Number,
+      lowerCost: Number,
+      solutionCost: Number,
+      solutionPath: String,
+      validation: {
+        isValidationRun: Boolean,
+        errors: [String],
+        outcome: String,
+      },
+      error: { isError: Boolean, errorMessage: String },
+      agentCountIntent: Number,
     },
-    mapId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "maps",
-      required: true,
-    },
-    scenarioId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "scenarios",
-      required: true,
-    },
-    index: Number,
-    lowerCost: Number,
-    solutionCost: Number,
-    solutionPath: String,
-    validated: Boolean,
-    error: { isError: Boolean, errorMessage: String },
-  });
+    { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  );
 
   schema.method("toJSON", function () {
     const { __v, _id, ...object } = this.toObject();

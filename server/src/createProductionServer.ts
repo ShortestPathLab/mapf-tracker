@@ -3,6 +3,7 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 import { log } from "./logging";
+import { getPort } from "getPort";
 
 export function createProductionServer(app: Application) {
   const privateKey = fs.readFileSync("./credential/privkey.pem", "utf8");
@@ -11,7 +12,7 @@ export function createProductionServer(app: Application) {
   const httpsServer = https.createServer(credentials, app);
 
   const https_port = 5443;
-  const http_port = 5000;
+  const http_port = getPort();
   httpsServer.listen(https_port, () =>
     log.info(`Listening on port ${https_port} for https`)
   );

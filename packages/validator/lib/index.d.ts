@@ -6,11 +6,11 @@ export declare function checkDomainCollision({ next, domain, timestep, }: CheckP
 
 export declare function checkDomainOutOfBounds({ next, prev, domain, timestep, }: CheckParameters): CheckResult;
 
-export declare function checkEdgeCollision({ actions, next, prev, }: CheckParameters): CheckResult;
+export declare function checkEdgeCollision({ actions, next, prev, timestep, }: CheckParameters): CheckResult;
 
 export declare function checkGoalReached({ current, goals, }: FinalCheckParameters): CheckResult;
 
-export declare function checkImmediateCollision({ next, }: CheckParameters): CheckResult;
+export declare function checkImmediateCollision({ next, timestep, }: CheckParameters): CheckResult;
 
 declare type CheckParameters = {
     prev: Point[];
@@ -26,6 +26,7 @@ export declare function checkRange(n: number, chunk: Chunk): "low" | "in-range" 
 
 declare type CheckResult = {
     errors?: string[];
+    errorAgents?: number[];
 };
 
 export declare class Chunk extends Item {

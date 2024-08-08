@@ -1,11 +1,13 @@
-import { log } from "../logging";
-import db from "../models";
+import { log } from "logging";
+import db from "models";
+import { once } from "lodash";
 
-export const connectToDatabase = async () => {
+export const connectToDatabase = once(async () => {
   try {
-    await db.mongoose.connect(db.url, {});
+    const connection = await db.mongoose.connect(db.url, {});
     log.info(`Connected to database at ${new URL(db.url).hostname}`);
+    return connection;
   } catch (e) {
     log.error(e, "Cannot connect to the database");
   }
-};
+});

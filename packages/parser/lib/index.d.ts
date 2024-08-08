@@ -12,4 +12,17 @@ export declare function parseScenario(scenarioData: string, agentCount: number, 
     agents: string[];
 };
 
+export declare function parseScenarioMeta(scenarioData: string, agentCount?: number): {
+    sources: {
+        x: number;
+        y: number;
+    }[];
+    goals: {
+        x: number;
+        y: number;
+    }[];
+    width: number;
+    height: number;
+};
+
 export { }

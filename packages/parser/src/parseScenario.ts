@@ -1,11 +1,7 @@
 import { Reader } from "validator";
-import { chain } from "lodash-es";
+import { chain, map } from "lodash-es";
 
-export function parseScenario(
-  scenarioData: string,
-  agentCount: number,
-  solutionData: string
-) {
+export function parseScenarioMeta(scenarioData: string, agentCount?: number) {
   // extract the content from the .scen file
   const scenContent = scenarioData.trim().split(/\r?\n/);
 
@@ -13,12 +9,32 @@ export function parseScenario(
 
   const [, , width, height] = scenContent[0].split("\t");
 
-  const sources = scenContent
+  const instances = scenContent
     .map((line) => {
-      const [, , , , x, y] = line.split("\t");
-      return { x: +x, y: +y };
+      const [, , , , sourceX, sourceY, goalX, goalY] = line.split("\t");
+      return {
+        source: { x: +sourceX, y: +sourceY },
+        goal: { x: +goalX, y: +goalY },
+      };
     })
-    .slice(0, agentCount);
+    .slice(0, agentCount || scenContent.length);
+  return {
+    sources: map(instances, "source"),
+    goals: map(instances, "goal"),
+    width: +width,
+    height: +height,
+  };
+}
+
+export function parseScenario(
+  scenarioData: string,
+  agentCount: number,
+  solutionData: string
+) {
+  const { sources, width, height } = parseScenarioMeta(
+    scenarioData,
+    agentCount
+  );
 
   const paths = solutionData.trim().split("\n");
 
@@ -42,8 +58,8 @@ export function parseScenario(
   return {
     paths,
     sources,
-    x: +width,
-    y: +height,
+    x: width,
+    y: height,
     timespan,
     agents: paths,
   };

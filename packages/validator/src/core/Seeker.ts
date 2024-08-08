@@ -1,5 +1,5 @@
 import { List } from "linked-list";
-import { times } from "lodash-es";
+import { times } from "lodash";
 import { LowerOutOfRangeException } from "../exceptions/LowerOutOfRangeException";
 import { Chunk } from "./Chunk";
 import { Reader } from "./Reader";

@@ -3,6 +3,7 @@ import { Point } from "../core/Point";
 
 export type CheckResult = {
   errors?: string[];
+  errorAgents?: number[];
 };
 export type CheckParameters = {
   prev: Point[];

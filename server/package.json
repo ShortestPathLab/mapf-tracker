@@ -7,13 +7,12 @@
     "installClient": "cd ../client; npm i",
     "installServer": "npm i",
     "install_all": "npm run installClient; npm run installServer",
-    "build": "npm run install_all; npm run buildClient",
+    "build": "vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "ISC",
   "devDependencies": {
     "@types/apicache": "^1.6.6",
-    "@types/bun": "^1.1.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
@@ -23,6 +22,8 @@
     "concurrently": "^7.6.0"
   },
   "dependencies": {
+    "@types/bun": "^1.1.6",
+    "@types/js-yaml": "^4.0.9",
     "apicache": "^1.6.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -32,11 +33,13 @@
     "date-and-time": "^2.4.1",
     "dotenv": "^16.4.5",
     "express": "^4.18.1",
+    "js-yaml": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mail": "file:../packages/mail",
     "mime-types": "^2.1.35",
     "mongoose": "^6.4.2",
+    "parser": "../packages/parser",
     "pino": "^9.3.2",
     "pino-http": "^10.2.0",
     "pino-pretty": "^11.2.2",
@@ -44,11 +47,20 @@
     "serve-index": "^1.9.1",
     "typescript": "^5.4.5",
     "validator": "file:../packages/validator",
+    "vite": "^5.3.4",
+    "vite-node": "^2.0.4",
+    "vite-tsconfig-paths": "^4.3.2",
     "zod": "^3.23.8"
   },
   "type": "module",
   "trustedDependencies": [
+    "bun",
+    "esbuild",
     "mail",
+    "msgpackr-extract",
+    "parser",
+    "puppeteer",
+    "redis-memory-server",
     "validator"
   ]
 }

@@ -1,4 +1,5 @@
 import pino from "pino";
+import { dump } from "js-yaml";
 
 const logger = pino();
 
@@ -6,7 +7,8 @@ type Level = "debug" | "info" | "warn" | "error" | "trace" | "fatal";
 
 export const raw = (level: Level, ...params: Params) => {
   const [source, msg, ...payload] = params;
-  logger[level](payload, `[${source}] ${msg}`);
+  logger[level](`[${source}] ${msg}`);
+  if (payload?.length) for (const p of payload) console[level](p);
 };
 
 type Args = [msg?: any, ...payload: any[]];
@@ -24,11 +26,6 @@ export const context = (name: string) =>
   } as { [K in Level]: (...a: Args) => void });
 
 export let log = context("Main");
-
-console.log = log.info;
-console.warn = log.warn;
-console.error = log.error;
-console.info = log.info;
 
 export const setContext = (name: string) => {
   log = context(name);

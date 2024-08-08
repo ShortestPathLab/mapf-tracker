@@ -1,10 +1,12 @@
+import { Job } from "bullmq";
 import { RequestHandler } from "express";
-import { log } from "../logging";
-import db, { OngoingSubmission } from "../models";
+import { getPort } from "getPort";
+import { log } from "logging";
+import db, { OngoingSubmission } from "models";
 import { Types } from "mongoose";
-import { queryClient } from "../query";
-import { createSubmissionValidator } from "../validation/createSubmissionValidator";
-import { fatal } from "../validation/fatal";
+import { queryClient, text } from "query";
+import { createSubmissionValidator } from "validation/createSubmissionValidator";
+import { fatal } from "validation/zod";
 import z from "zod";
 
 const Map = db.maps;
@@ -43,9 +45,13 @@ const createSubmissionSchema = z
     map_name: z.string(),
     scen_type: z.string(),
     type_id: z.number().int().nonnegative(),
+    agent_count_intent: z.number().int().positive(),
     solution_path: z
       .string()
-      .regex(/^[lrudw]*$/, "Should only contain `l`, `r`, `u`, `d`, `w`"),
+      .regex(
+        /^([lrudw]|[0-9])*$/,
+        "Should only contain `l`, `r`, `u`, `d`, `w`"
+      ),
   })
   .transform(async ({ api_key, ...v }, ctx) => {
     const key = await SubmissionKey.findOne({ api_key });
@@ -90,10 +96,25 @@ export const create: RequestHandler<{}, {}, unknown> = async (
       lowerCost: data.lower_cost,
       solutionCost: data.solution_cost,
       solutionPath: data.solution_path,
+      agentCountIntent: data.agent_count_intent,
       error: { isError: false, errorMessage: "" },
     }).save();
     log.info("Submission received", doc);
-    validator.queue.add("validate", id);
+    validator.queue.add(
+      "validate",
+      {
+        ...id,
+        map: await text(
+          `http://localhost:${getPort()}/res/maps/${data.map.map_name}.map`
+        ),
+        scenario: await text(
+          `http://localhost:${getPort()}/res/scens/${data.map.map_name}-${
+            data.scenario.scen_type
+          }-${data.scenario.type_id}.scen`
+        ),
+      },
+      { lifo: true }
+    );
     res.json(doc.id);
   } catch (e) {
     log.error(e);

@@ -1,19 +1,27 @@
 import { CheckParameters, CheckResult } from "../core/Check";
-import { find } from "lodash-es";
+import { find } from "lodash";
+import { serialisePoint as $ } from "../core/Point";
 
 export function checkDomainCollision({
   next,
   domain,
   timestep,
 }: CheckParameters): CheckResult {
-  const collision = find(next, ({ x, y }) => domain.cells[y][x]);
-  return collision
-    ? {
-        errors: [
-          `agent collision with environment, at timestep ${timestep}, position=${JSON.stringify(
-            collision
-          )}`,
-        ],
-      }
-    : {};
+  const point = find(
+    next.map((c, i) => [c, i] as const),
+    ([{ x, y }]) => domain.cells[y][x]
+  );
+  if (point) {
+    const [p, i] = point;
+    return {
+      errorAgents: [i],
+      errors: [
+        `agent ${i} collision with environment, at timestep ${timestep}, ${$(
+          p
+        )}`,
+      ],
+    };
+  } else {
+    return {};
+  }
 }
