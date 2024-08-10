@@ -1,8 +1,8 @@
-import models from "./src/models";
+import { SolutionPath } from "./src/models";
 
-const cursor = models.solution_paths.collection.find();
+const cursor = SolutionPath.collection.find();
 
 while (cursor.hasNext()) {
   // load only one document from the resultset into memory
-  var thisdoc = cursor.next();
+  const thisdoc = cursor.next();
 }

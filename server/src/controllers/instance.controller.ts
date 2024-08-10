@@ -1,10 +1,6 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-const Instance = db.instances;
-
-import mongoose from "mongoose";
-
-const { ObjectId } = mongoose.Types;
+import { Infer, Instance, Scenario } from "models";
+import { Types } from "mongoose";
 
 export const findAll: RequestHandler = (req, res) => {
   Instance.find({})
@@ -20,7 +16,7 @@ export const findAll: RequestHandler = (req, res) => {
 };
 
 export const findNonEmptyByScenId: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
       $match: {
@@ -108,7 +104,11 @@ export const downloadMapByID: RequestHandler = (req, res) => {
       solution_date: 1,
     }
   )
-    .populate("scen_id", { scen_type: 1, type_id: 1, _id: 0 })
+    .populate<{ scen_id: Infer<typeof Scenario> }>("scen_id", {
+      scen_type: 1,
+      type_id: 1,
+      _id: 0,
+    })
     .then((data) => {
       const transformedDataArray = data.map((row) => ({
         scen_type: row.scen_id.scen_type,
@@ -133,21 +133,17 @@ export const downloadMapByID: RequestHandler = (req, res) => {
 };
 
 export const test: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
       $match: {
         map_id: id,
         $or: [
           {
-            solution_algo_id: new mongoose.Types.ObjectId(
-              "636cf9b1a1b36ac2118eb15f"
-            ),
+            solution_algo_id: new Types.ObjectId("636cf9b1a1b36ac2118eb15f"),
           },
           {
-            lower_algo_id: new mongoose.Types.ObjectId(
-              "636cf9b1a1b36ac2118eb15f"
-            ),
+            lower_algo_id: new Types.ObjectId("636cf9b1a1b36ac2118eb15f"),
           },
         ],
       },
@@ -221,7 +217,7 @@ export const findPathById: RequestHandler = (req, res) => {
 };
 
 export const downloadRowById: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   Instance.aggregate([
     {
       $match: { _id: id },
@@ -265,7 +261,7 @@ export const downloadRowById: RequestHandler = (req, res) => {
 };
 
 export const get_map_level_summary: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   const query1 = Instance.aggregate([
     { $match: { map_id: id } },
     {
@@ -311,29 +307,33 @@ export const get_map_level_summary: RequestHandler = (req, res) => {
 
   Promise.all([query1, query2, query3])
     .then((result) => {
-      const final_results = [];
-      result[0].forEach((element) => {
-        const entry = {};
-        entry["name"] = element._id.agents;
-        entry["total"] = element.count;
-        entry["Unknown"] = element.count;
-        entry["Closed"] = 0;
-        entry["Solved"] = 0;
-        final_results.push(entry);
-      });
-      result[1].forEach((element) => {
-        final_results[parseInt(element._id.agents) - 1]["Closed"] =
-          element.count;
-      });
-      result[2].forEach((element) => {
-        final_results[parseInt(element._id.agents) - 1]["Solved"] =
-          element.count -
-          final_results[parseInt(element._id.agents) - 1]["Closed"];
-        final_results[parseInt(element._id.agents) - 1]["Unknown"] =
-          final_results[parseInt(element._id.agents) - 1]["total"] -
-          element.count;
-      });
-      res.send(final_results);
+      const [r0, r1, r2] = result;
+      if (r0 && r1 && r2) {
+        const final_results = [];
+        r0.forEach((element) => {
+          const entry = {
+            name: element._id.agents,
+            total: element.count,
+            Unknown: element.count,
+            Closed: 0,
+            Solved: 0,
+          };
+          final_results.push(entry);
+        });
+        r1.forEach((element) => {
+          final_results[parseInt(element._id.agents) - 1]["Closed"] =
+            element.count;
+        });
+        r2.forEach((element) => {
+          final_results[parseInt(element._id.agents) - 1]["Solved"] =
+            element.count -
+            final_results[parseInt(element._id.agents) - 1]["Closed"];
+          final_results[parseInt(element._id.agents) - 1]["Unknown"] =
+            final_results[parseInt(element._id.agents) - 1]["total"] -
+            element.count;
+        });
+        res.send(final_results);
+      }
     })
     .catch((err) => {
       res.status(500).send({

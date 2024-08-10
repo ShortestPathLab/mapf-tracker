@@ -1,4 +1,9 @@
-import { InferSchemaType, Mongoose, Schema } from "mongoose";
+import {
+  InferSchemaType,
+  Mongoose,
+  Schema,
+  model as createModel,
+} from "mongoose";
 
 const schema = new Schema({
   map_id: { type: Schema.Types.ObjectId, ref: "map" },
@@ -9,14 +14,4 @@ const schema = new Schema({
   instances_solved: Number,
 });
 
-export type Scenario = InferSchemaType<typeof schema>;
-
-export default (mongoose: Mongoose) => {
-  schema.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
-  });
-
-  return mongoose.model("scenario", schema);
-};
+export const model = createModel("scenario", schema);

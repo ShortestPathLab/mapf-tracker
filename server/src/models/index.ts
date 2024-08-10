@@ -1,39 +1,26 @@
-import mongoose from "mongoose";
-import dbConfig from "../config/db.config";
-import algorithmModel from "./Algorithm";
-import instanceModel from "./Instance";
-import mapModel from "./Map";
-import ongoingSubmissionModel from "./OngoingSubmission";
-import requestModel from "./Request";
-import scenarioModel from "./Scenario";
-import solutionPathModel from "./SolutionPath";
-import submissionModel from "./Submission";
-import submissionKeyModel from "./SubmissionKey";
-import userModel from "./User";
+import mongoose, { Model } from "mongoose";
+import config from "config/db";
 
 mongoose.Promise = global.Promise;
 
-export const OngoingSubmission = ongoingSubmissionModel(mongoose);
-export const Map = mapModel(mongoose);
-export const Scenario = scenarioModel(mongoose);
-export const Instance = instanceModel(mongoose);
-export const Submission = submissionModel(mongoose);
-export const Algorithm = algorithmModel(mongoose);
-export const User = userModel(mongoose);
-export const SolutionPath = solutionPathModel(mongoose);
-export const Request = requestModel(mongoose);
-export const SubmissionKey = submissionKeyModel(mongoose);
+export { model as Algorithm } from "./Algorithm";
+export { model as Instance } from "./Instance";
+export { model as Map } from "./Map";
+export { model as OngoingSubmission } from "./OngoingSubmission";
+export { model as Request } from "./Request";
+export { model as Scenario } from "./Scenario";
+export { model as SolutionPath } from "./SolutionPath";
+export { model as Submission } from "./Submission";
+export { model as SubmissionKey } from "./SubmissionKey";
+export { model as User } from "./User";
 
-export default {
-  mongoose,
-  url: dbConfig.url,
-  maps: Map,
-  scenarios: Scenario,
-  instances: Instance,
-  submissions: Submission,
-  algorithms: Algorithm,
-  users: User,
-  solution_paths: SolutionPath,
-  requests: Request,
-  submission_keys: SubmissionKey,
-};
+export const url = config.url;
+
+export type Infer<T extends Model<any, any, any, any>> = T extends Model<
+  infer R,
+  any,
+  any,
+  any
+>
+  ? R
+  : never;

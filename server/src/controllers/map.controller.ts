@@ -1,6 +1,5 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-const Map = db.maps;
+import { Map } from "models";
 
 export const findAll: RequestHandler = (req, res) => {
   Map.find({})

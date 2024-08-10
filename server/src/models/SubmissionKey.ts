@@ -1,24 +1,15 @@
-import { Mongoose } from "mongoose";
+import { Schema, model as createModel } from "mongoose";
 
-export default (mongoose: Mongoose) => {
-  const schema = new mongoose.Schema(
-    {
-      request_id: { type: mongoose.Schema.Types.ObjectId, ref: "request" },
-      api_key: String,
-      creationDate: Date,
-      expirationDate: Date,
-    },
-    {
-      versionKey: false,
-    }
-  );
+const schema = new Schema(
+  {
+    request_id: { type: Schema.Types.ObjectId, ref: "request" },
+    api_key: String,
+    creationDate: Date,
+    expirationDate: Date,
+  },
+  {
+    versionKey: false,
+  }
+);
 
-  schema.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
-  });
-
-  const Submission_key = mongoose.model("submission_key", schema);
-  return Submission_key;
-};
+export const model = createModel("submission_key", schema);

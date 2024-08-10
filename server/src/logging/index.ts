@@ -15,15 +15,20 @@ type Args = [msg?: any, ...payload: any[]];
 
 type Params = [source: string, ...Args];
 
-export const context = (name: string) =>
-  ({
-    debug: (msg, ...p) => raw("debug", name, msg, ...p),
-    info: (msg, ...p) => raw("info", name, msg, ...p),
-    warn: (msg, ...p) => raw("warn", name, msg, ...p),
-    error: (msg, ...p) => raw("error", name, msg, ...p),
-    trace: (msg, ...p) => raw("trace", name, msg, ...p),
-    fatal: (msg, ...p) => raw("fatal", name, msg, ...p),
-  } as { [K in Level]: (...a: Args) => void });
+export const context = (name: string) => {
+  const r =
+    (l: Level) =>
+    (msg: any, ...p: any[]) =>
+      raw(l, name, msg, ...p);
+  return {
+    debug: r("debug"),
+    info: r("info"),
+    warn: r("warn"),
+    error: r("error"),
+    trace: r("trace"),
+    fatal: r("fatal"),
+  } as { [K in Level]: (...a: Args) => void };
+};
 
 export let log = context("Main");
 

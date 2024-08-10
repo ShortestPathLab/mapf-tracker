@@ -1,10 +1,9 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-const Solution_path = db.solution_paths;
+import { SolutionPath } from "models";
 
 export const find_path: RequestHandler = (req, res) => {
   const { id } = req.params;
-  Solution_path.findById(id)
+  SolutionPath.findById(id)
     .then((data) => {
       res.send(data);
     })

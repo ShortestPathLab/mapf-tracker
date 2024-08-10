@@ -1,29 +1,21 @@
-import { Mongoose } from "mongoose";
+import { Schema, model as createModel } from "mongoose";
 
-export default (mongoose: Mongoose) => {
-  const schema = new mongoose.Schema(
-    {
-      algo_name: String,
-      authors: String,
-      papers: String,
-      github: String,
-      comments: String,
-      user_id: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-      best_lower: Number,
-      best_solution: Number,
-      instances_closed: Number,
-      instances_solved: Number,
-    },
-    {
-      versionKey: false,
-    }
-  );
+const schema = new Schema(
+  {
+    algo_name: String,
+    authors: String,
+    papers: String,
+    github: String,
+    comments: String,
+    user_id: { type: Schema.Types.ObjectId, ref: "user" },
+    best_lower: Number,
+    best_solution: Number,
+    instances_closed: Number,
+    instances_solved: Number,
+  },
+  {
+    versionKey: false,
+  }
+);
 
-  schema.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
-  });
-
-  return mongoose.model("algorithm", schema);
-};
+export const model = createModel("algorithm", schema);

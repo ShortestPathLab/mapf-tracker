@@ -1,16 +1,16 @@
 import { mail } from "mail";
-import mongoose from "mongoose";
-import db from "../models/index";
-import { RequestHandler } from "express";
+import { Types } from "mongoose";
 import date from "date-and-time";
+import { RequestHandler } from "express";
 
-const Algorithm = db.algorithms;
-const Instance = db.instances;
-const Solution_path = db.solution_paths;
-const Map = db.maps;
-const Scenario = db.scenarios;
-const Submission = db.submissions;
-const Request = db.requests;
+import {
+  Algorithm,
+  Instance,
+  Map,
+  Scenario,
+  SolutionPath,
+  Submission,
+} from "models";
 
 export const sendMail: RequestHandler = (req, res) => {
   console.log("in sendding maillllllllllll");
@@ -138,9 +138,8 @@ export const createAlgo: RequestHandler = (req, res) => {
     best_solution: 0,
     instances_closed: 0,
   });
-  console.log(algo);
   algo
-    .save(algo)
+    .save()
     .then((data) => {
       res.send(data);
     })
@@ -153,7 +152,7 @@ export const createAlgo: RequestHandler = (req, res) => {
 };
 
 export const getMapSubmittedInfo: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   const query1 = Map.find({}).catch((err) => {
     res.status(500).send({
       message:
@@ -228,7 +227,9 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
   Promise.all([query1, query2, query3, query4, query5])
     .then((result) => {
       const map_info = {};
-      result[0].forEach((element) => {
+      const [r0, r1, r2, r3, r4] = result;
+      if (!(r0 && r1 && r2 && r3 && r4)) return;
+      r0.forEach((element) => {
         map_info[element.id] = {};
         map_info[element.id].map_name = element.map_name;
         map_info[element.id].map_size = element.map_size;
@@ -240,16 +241,16 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
         map_info[element.id].closed = 0;
         map_info[element.id].solved = 0;
       });
-      result[1].forEach((element) => {
+      r1.forEach((element) => {
         map_info[element._id.map_id].best_lower = element.count;
       });
-      result[2].forEach((element) => {
+      r2.forEach((element) => {
         map_info[element._id.map_id].best_solution = element.count;
       });
-      result[3].forEach((element) => {
+      r3.forEach((element) => {
         map_info[element._id.map_id].solved = element.count;
       });
-      result[4].forEach((element) => {
+      r4.forEach((element) => {
         map_info[element._id.map_id].closed = element.count;
       });
       const final_results = [];
@@ -266,7 +267,7 @@ export const getMapSubmittedInfo: RequestHandler = (req, res) => {
 };
 
 export const submitData = async (req, res) => {
-  const algo_id = new mongoose.Types.ObjectId(req.params.id);
+  const algo_id = new Types.ObjectId(req.params.id);
   if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
@@ -420,7 +421,7 @@ export const submitData = async (req, res) => {
     if (curr_submission.solution_cost !== null) {
       if (curr_instance.solution_cost === null) {
         let path_id = null;
-        await Solution_path.collection
+        await SolutionPath.collection
           .insertOne({ instance_id, solution_path: path })
           .then((result) => {
             path_id = result.insertedId;
@@ -457,7 +458,7 @@ export const submitData = async (req, res) => {
             });
           });
           let path_id = null;
-          await Solution_path.collection
+          await SolutionPath.collection
             .insertOne({ instance_id, solution_path: path })
             .then((result) => {
               path_id = result.insertedId;
@@ -551,7 +552,7 @@ export const submitData = async (req, res) => {
 };
 
 export const updateProgress = async (req, res) => {
-  const algo_id = new mongoose.Types.ObjectId(req.params.id);
+  const algo_id = new Types.ObjectId(req.params.id);
   if (!req.body) {
     res.status(400).send({ message: "Content can not be empty!" });
     return;
@@ -615,8 +616,8 @@ export const updateProgress = async (req, res) => {
             err.message || "Some error occurred while counting document.",
         });
       });
-      total_s = total_s + num_s;
-      total_l = total_l + num_l;
+      total_s += num_s as number;
+      total_l += num_l as number;
       await Scenario.updateOne(
         { _id: scen_id },
         {

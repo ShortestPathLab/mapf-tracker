@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import express, { json, urlencoded } from "express";
-import { log } from "./logging";
+import { pick } from "lodash";
 import path from "path";
 import logger from "pino-http";
 import { connectToDatabase } from "./connection";
@@ -9,8 +9,7 @@ import { createDevServer } from "./createDevServer";
 import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
-import { pick } from "lodash";
-import { dump } from "js-yaml";
+import { log } from "./logging";
 
 export const app = express();
 

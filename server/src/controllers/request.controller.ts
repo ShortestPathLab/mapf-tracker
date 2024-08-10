@@ -1,8 +1,6 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
 import mongoose from "mongoose";
-const Request = db.requests;
-const Submission_key = db.submission_keys;
+import { Request, SubmissionKey } from "models";
 import crypto from "crypto";
 
 export const findAll: RequestHandler = (req, res) => {
@@ -54,7 +52,7 @@ export const create = async (req, res) => {
   });
 
   request
-    .save(request)
+    .save()
     .then((data) => {
       res.send(data);
     })
@@ -97,15 +95,14 @@ export const updateRequest = async (req, res) => {
       const creationDate = new Date();
       const expirationDate = new Date();
       expirationDate.setMonth(expirationDate.getMonth() + 1); // API key valid for one month
-      const submission_key = new Submission_key({
+      const submission_key = new SubmissionKey({
         request_id: id,
         api_key: apiKey,
         creationDate,
         expirationDate,
       });
-      console.log(submission_key);
 
-      submission_key.save(submission_key).catch((err) => {
+      submission_key.save().catch((err) => {
         res.status(500).send({
           message:
             err.message ||

@@ -1,8 +1,6 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-import mongoose from "mongoose";
-const Algorithm = db.algorithms;
-const Submission = db.submissions;
+import { Algorithm, Submission } from "models";
+import { Types } from "mongoose";
 
 export const findAll: RequestHandler = (req, res) => {
   Algorithm.find({}, { _id: 0, algo_name: 1 })
@@ -664,7 +662,7 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
 };
 
 export const findBestLowerGroup: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { best_lower: true } },
@@ -799,7 +797,7 @@ export const findBestLowerGroup: RequestHandler = (req, res) => {
 };
 
 export const findBestSolutionGroup = async (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { best_solution: true } },
@@ -934,7 +932,7 @@ export const findBestSolutionGroup = async (req, res) => {
 };
 
 export const findBestClosedGroup: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { $expr: { $eq: ["$lower_cost", "$solution_cost"] } } },
@@ -1074,7 +1072,7 @@ export const findBestClosedGroup: RequestHandler = (req, res) => {
 };
 
 export const findBestSolvedGroup: RequestHandler = (req, res) => {
-  const id = new mongoose.Types.ObjectId(req.params.id);
+  const id = new Types.ObjectId(req.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { $expr: { $ne: ["$solution_cost", null] } } },
@@ -1307,7 +1305,7 @@ export const findOne: RequestHandler = (req, res) => {
 };
 
 export const findScenBestClosed: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1387,7 +1385,7 @@ export const findScenBestClosed: RequestHandler = (req, res) => {
 };
 
 export const findScenBestSolved: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1467,7 +1465,7 @@ export const findScenBestSolved: RequestHandler = (req, res) => {
 };
 
 export const findScenBestLower: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1547,7 +1545,7 @@ export const findScenBestLower: RequestHandler = (req, res) => {
 };
 
 export const findScenBestSolution: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1627,7 +1625,7 @@ export const findScenBestSolution: RequestHandler = (req, res) => {
 };
 
 export const findAgentBestClosed: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1685,7 +1683,7 @@ export const findAgentBestClosed: RequestHandler = (req, res) => {
 };
 
 export const findAgentBestSolved: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1743,7 +1741,7 @@ export const findAgentBestSolved: RequestHandler = (req, res) => {
 };
 
 export const findAgentBestLower: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1801,7 +1799,7 @@ export const findAgentBestLower: RequestHandler = (req, res) => {
 };
 
 export const findAgentBestSolution: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.id);
+  const map_id = new Types.ObjectId(req.params.id);
   Submission.aggregate([
     {
       $match: {
@@ -1859,8 +1857,8 @@ export const findAgentBestSolution: RequestHandler = (req, res) => {
 };
 
 export const findAgentSolutionCost: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.mapId);
-  const scen_id = new mongoose.Types.ObjectId(req.params.scenId);
+  const map_id = new Types.ObjectId(req.params.mapId);
+  const scen_id = new Types.ObjectId(req.params.scenId);
   Submission.aggregate([
     {
       $match: {
@@ -1916,8 +1914,8 @@ export const findAgentSolutionCost: RequestHandler = (req, res) => {
 };
 
 export const findAgentLower: RequestHandler = (req, res) => {
-  const map_id = new mongoose.Types.ObjectId(req.params.mapId);
-  const scen_id = new mongoose.Types.ObjectId(req.params.scenId);
+  const map_id = new Types.ObjectId(req.params.mapId);
+  const scen_id = new Types.ObjectId(req.params.scenId);
   Submission.aggregate([
     {
       $match: {

@@ -1,12 +1,11 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-const Solution_submission = db.submissions;
+import { SolutionPath } from "models";
 import { Types } from "mongoose";
 
 export const findLeadingSolutionByInstance_id: RequestHandler = (req, res) => {
   const { id } = req.params;
 
-  Solution_submission.find({
+  SolutionPath.find({
     instance_id: new Types.ObjectId(id),
     isleading: true,
   })
@@ -31,7 +30,7 @@ export const findLeadingSolutionByInstance_idAndAgents: RequestHandler = (
   const { id } = req.params;
   const num = req.params.agents;
 
-  Solution_submission.find({
+  SolutionPath.find({
     instance_id: new Types.ObjectId(id),
     agents: Number(num),
   })

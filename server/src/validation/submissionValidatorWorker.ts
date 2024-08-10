@@ -9,7 +9,9 @@ import {
   range,
   values,
 } from "lodash";
-import { Document, Model } from "mongoose";
+import { context } from "logging";
+import { Infer, OngoingSubmission } from "models";
+import { Document } from "mongoose";
 import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
 import {
@@ -22,14 +24,13 @@ import {
   validate,
 } from "validator";
 import { connectToDatabase } from "../connection";
-import { context } from "../logging";
-import { OngoingSubmission } from "../models";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
 import { usingMessageHandler } from "./usingWorker";
 
-type OngoingSubmission = (typeof OngoingSubmission extends Model<infer R>
-  ? R
-  : never) & { createdAt?: number; updatedAt?: number };
+type OngoingSubmission = Infer<typeof OngoingSubmission> & {
+  createdAt?: number;
+  updatedAt?: number;
+};
 const validationResultsKey =
   "validation" as const satisfies keyof OngoingSubmission;
 

@@ -1,11 +1,10 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
 import mongoose from "mongoose";
-const Submission_key = db.submission_keys;
+import { SubmissionKey } from "models";
 import crypto from "crypto";
 
 export const findAll: RequestHandler = (req, res) => {
-  Submission_key.find({})
+  SubmissionKey.find({})
     .then((data) => {
       res.send(data);
     })
@@ -20,7 +19,7 @@ export const findAll: RequestHandler = (req, res) => {
 export const findByRequestId: RequestHandler = (req, res) => {
   const requestId = req.params.request_id; // or req.query.request_id if it's a query parameter
   console.log(requestId);
-  Submission_key.find({ request_id: requestId })
+  SubmissionKey.find({ request_id: requestId })
     .then((data) => {
       if (!data) {
         res.status(404).send({
@@ -42,12 +41,12 @@ export const findByRequestId: RequestHandler = (req, res) => {
 export const findByApiKey: RequestHandler = (req, res) => {
   const { apiKey } = req.params; // Assuming apiKey is passed in req.params
   console.log("request api key : ", apiKey);
-  Submission_key.findOne({ api_key: apiKey })
+  SubmissionKey.findOne({ api_key: apiKey })
     .then((data) => {
       if (!data)
         res
           .status(404)
-          .send({ message: `Not found Submission_key with apiKey ${apiKey}` });
+          .send({ message: `Not found SubmissionKey with apiKey ${apiKey}` });
       else {
         res.send(data);
         console.log("data for aubmission key is : ", data);
@@ -55,7 +54,7 @@ export const findByApiKey: RequestHandler = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: `Error retrieving Submission_key with apiKey=${apiKey}`,
+        message: `Error retrieving SubmissionKey with apiKey=${apiKey}`,
       });
     });
 };
@@ -69,7 +68,7 @@ export const create = async (req, res) => {
   const expirationDate = new Date();
   expirationDate.setMonth(expirationDate.getMonth() + 1); // API key valid for one month
 
-  const submission_key = new Submission_key({
+  const submission_key = new SubmissionKey({
     request_id: req.body.request_id,
     api_key: apiKey,
     creationDate,
@@ -77,7 +76,7 @@ export const create = async (req, res) => {
   });
 
   submission_key
-    .save(submission_key)
+    .save()
     .then((data) => {
       res.send(data);
     })

@@ -1,6 +1,5 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-const Scenario = db.scenarios;
+import { Scenario } from "models";
 
 export const findAll: RequestHandler = (req, res) => {
   Scenario.find({})

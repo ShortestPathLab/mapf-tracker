@@ -1,9 +1,8 @@
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import config from "../config/auth.config";
-import db from "../models/index";
+import config from "../config/auth";
 
-const User = db.users;
+import { User } from "models";
 
 export const signin: RequestHandler = (req, res) => {
   User.findOne({

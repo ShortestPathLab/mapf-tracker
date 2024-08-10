@@ -1,6 +1,5 @@
-import db from "../models/index";
 import { RequestHandler } from "express";
-const Submission = db.submissions;
+import { Submission } from "models";
 import { Types } from "mongoose";
 
 const { ObjectId } = Types;

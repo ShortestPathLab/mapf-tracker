@@ -1,20 +1,12 @@
-import { Job } from "bullmq";
 import { RequestHandler } from "express";
 import { getPort } from "getPort";
 import { log } from "logging";
-import db, { OngoingSubmission } from "models";
-import { Map } from "models/Map";
-import { Scenario } from "models/Scenario";
-import { Document } from "mongoose";
+import { Infer, Map, OngoingSubmission, Scenario, SubmissionKey } from "models";
 import { Types } from "mongoose";
 import { queryClient, text } from "query";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import { fatal } from "validation/zod";
 import z from "zod";
-
-const Map = db.maps;
-const Scenario = db.scenarios;
-const SubmissionKey = db.submission_keys;
 
 const handler = queryClient(OngoingSubmission);
 
@@ -78,8 +70,8 @@ const createSubmissionSchema = z
   });
 
 type Data = {
-  map: Map;
-  scenario: Scenario;
+  map: Infer<typeof Map>;
+  scenario: Infer<typeof Scenario>;
 };
 
 const getScenario = async ({ scenario, map }: Data) =>
