@@ -14,11 +14,12 @@ const run = usingWorkerTask<SubmissionValidatorData, any>(
 const QUEUE_NAME = "validation";
 
 export const createPair = async (id: string) => {
+  const name = `${QUEUE_NAME}-${id}`;
   const server = await createQueue<SubmissionValidatorData, {}, "validate">({
-    name: QUEUE_NAME + id,
+    name,
   });
   const worker = new BullmqWorker(
-    QUEUE_NAME + id,
+    name,
     async (job: Job<SubmissionValidatorData>) => {
       const log = context(`Validation Dispatcher ${id}`);
       log.info(`Dispatching job ${job.id}`);

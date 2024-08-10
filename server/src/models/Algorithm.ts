@@ -15,7 +15,8 @@ export default (mongoose: Mongoose) => {
       instances_solved: Number,
     },
     {
-      versionKey: false,     }
+      versionKey: false,
+    }
   );
 
   schema.method("toJSON", function () {
@@ -24,6 +25,5 @@ export default (mongoose: Mongoose) => {
     return object;
   });
 
-  const Algorithm = mongoose.model("algorithm", schema);
-  return Algorithm;
+  return mongoose.model("algorithm", schema);
 };

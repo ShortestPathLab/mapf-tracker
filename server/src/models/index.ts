@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import dbConfig from "../config/db.config";
-import algorithmModel from "./algorithm.model";
-import instanceModel from "./instance.model";
-import mapModel from "./map.model";
-import ongoingSubmissionModel from "./ongoing_submission.model";
-import requestModel from "./request.model";
-import scenarioModel from "./scenario.model";
-import solutionPathModel from "./solution_path.model";
-import submissionModel from "./submission.model";
-import submissionKeyModel from "./submission_key.model";
-import userModel from "./user.model";
+import algorithmModel from "./Algorithm";
+import instanceModel from "./Instance";
+import mapModel from "./Map";
+import ongoingSubmissionModel from "./OngoingSubmission";
+import requestModel from "./Request";
+import scenarioModel from "./Scenario";
+import solutionPathModel from "./SolutionPath";
+import submissionModel from "./Submission";
+import submissionKeyModel from "./SubmissionKey";
+import userModel from "./User";
 
 mongoose.Promise = global.Promise;
 
