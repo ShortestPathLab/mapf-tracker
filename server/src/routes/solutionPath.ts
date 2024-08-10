@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as solution_path from "../controllers/solution_path.controller";
+import * as solution_path from "../controllers/solutionPath";
 
 export default (app) => {
   const router = Router();

@@ -4,14 +4,11 @@ import config from "../config/auth";
 
 import { User } from "models";
 
-export const signin: RequestHandler = (req, res) => {
-  User.findOne({
-    username: req.body.username,
-  }).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
+export const signin: RequestHandler = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      username: req.body.username,
+    });
 
     if (!user) {
       return res.status(404).send({ message: "User Not found." });
@@ -26,12 +23,14 @@ export const signin: RequestHandler = (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, config.secret, {
-      expiresIn: 86400,
+      expiresIn: 86_400,
     });
     res.status(200).send({
       id: user._id,
       username: user.username,
       accessToken: token,
     });
-  });
+  } catch (err) {
+    res.status(500).send({ message: err });
+  }
 };

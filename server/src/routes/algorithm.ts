@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as algorithm from "../controllers/algorithm.controller";
+import * as algorithm from "../controllers/algorithm";
 import { middleware as cache } from "apicache";
 
 export default (app) => {

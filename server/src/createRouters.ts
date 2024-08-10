@@ -1,16 +1,17 @@
-import mapRoutes from "./routes/map.routes";
-import instanceRoutes from "./routes/instance.routes";
-import submissionRoutes from "./routes/submission.routes";
-import solutionSubmissionRoutes from "./routes/solution_submission.routes";
-import scenarioRoutes from "./routes/scenario.routes";
-import algorithmRoutes from "./routes/algorithm.routes";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
-import solutionPathRoutes from "./routes/solution_path.routes";
-import requestRoutes from "./routes/request.routes";
-import submissionKeyRoutes from "./routes/submission_key.routes";
-import ongoingSubmissionRoutes from "./routes/ongoing_submission.routes";
+import mapRoutes from "./routes/map";
+import instanceRoutes from "./routes/instance";
+import submissionRoutes from "./routes/submission";
+import solutionSubmissionRoutes from "./routes/solutionSubmission";
+import scenarioRoutes from "./routes/scenario";
+import algorithmRoutes from "./routes/algorithm";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/user";
+import solutionPathRoutes from "./routes/solutionPath";
+import requestRoutes from "./routes/request";
+import submissionKeyRoutes from "./routes/submissionKey";
+import ongoingSubmissionRoutes from "./routes/ongoingSubmission";
 import { Application } from "express";
+
 export const createRouters = (app: Application) => {
   mapRoutes(app);
   instanceRoutes(app);

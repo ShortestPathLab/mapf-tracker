@@ -1,5 +1,5 @@
 import { authJwt } from "../middlewares";
-import * as controller from "../controllers/user.controller";
+import * as controller from "../controllers/user";
 
 export default (app) => {
   app.use((req, res, next) => {

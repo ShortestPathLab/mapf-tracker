@@ -4,7 +4,7 @@ import {
   findAll,
   findByApiKey,
   findById,
-} from "../controllers/ongoing_submission.controller";
+} from "../controllers/ongoingSubmission";
 
 export default (app: Application) => {
   const router = Router();

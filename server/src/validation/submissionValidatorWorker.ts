@@ -40,10 +40,18 @@ const log = context(`Validation Worker ${id(6)}`);
 
 type Outcome = "valid" | "skipped" | "invalid" | "error" | "outdated";
 
-type A = Document<unknown, OngoingSubmission, OngoingSubmission> &
+type OngoingSubmissionDocument = Document<
+  unknown,
+  OngoingSubmission,
+  OngoingSubmission
+> &
   OngoingSubmission;
 
-async function saveResults(submission: A[], outdated: A[], errors: string[]) {
+async function saveResults(
+  submission: OngoingSubmissionDocument[],
+  outdated: OngoingSubmissionDocument[],
+  errors: string[]
+) {
   log.info("Saving results");
   for (const s of submission) {
     s.set(validationResultsKey, {
@@ -80,7 +88,7 @@ async function validateGroup({
   sources: Point[];
   goals: Point[];
   agentCount: number;
-  submission: A[];
+  submission: OngoingSubmissionDocument[];
   mode?: SubmissionValidatorData["mode"];
 }) {
   log.info(`Validating for agent count ${agentCount}`);

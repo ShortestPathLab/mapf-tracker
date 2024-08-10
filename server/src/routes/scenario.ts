@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as scen from "../controllers/scenario.controller";
+import * as scen from "../controllers/scenario";
 import { middleware as cache } from "apicache";
 export default (app) => {
   const router = Router();

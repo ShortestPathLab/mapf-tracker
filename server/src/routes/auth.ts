@@ -1,4 +1,4 @@
-import * as controller from "../controllers/auth.controller";
+import * as controller from "../controllers/auth";
 
 export default (app) => {
   app.use((req, res, next) => {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as instance from "../controllers/instance.controller";
+import * as instance from "../controllers/instance";
 import { middleware as cache } from "apicache";
 
 export default (app) => {

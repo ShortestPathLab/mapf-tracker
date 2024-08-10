@@ -40,7 +40,7 @@
     "lodash": "^4.17.21",
     "mail": "file:../packages/mail",
     "mime-types": "^2.1.35",
-    "mongoose": "^6.4.2",
+    "mongoose": "7",
     "parser": "../packages/parser",
     "pino": "^9.3.2",
     "pino-http": "^10.2.0",

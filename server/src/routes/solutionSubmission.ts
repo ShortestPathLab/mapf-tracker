@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as solution_submission from "../controllers/solution_submission.controller";
+import * as solution_submission from "../controllers/solutionSubmission";
 
 export default (app) => {
   const router = Router();
