@@ -3,6 +3,9 @@ import { RequestHandler } from "express";
 import { getPort } from "getPort";
 import { log } from "logging";
 import db, { OngoingSubmission } from "models";
+import { Map } from "models/map.model";
+import { Scenario } from "models/scenario.model";
+import { Document } from "mongoose";
 import { Types } from "mongoose";
 import { queryClient, text } from "query";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
@@ -74,7 +77,22 @@ const createSubmissionSchema = z
     return { ...v, scenario };
   });
 
-const { validator } = await createSubmissionValidator();
+type Data = {
+  map: Map;
+  scenario: Scenario;
+};
+
+const getScenario = async ({ scenario, map }: Data) =>
+  await text(
+    `http://localhost:${getPort()}/res/scens/${map.map_name}-${
+      scenario.scen_type
+    }-${scenario.type_id}.scen`
+  );
+
+const getMap = async ({ map }: Data) =>
+  await text(`http://localhost:${getPort()}/res/maps/${map.map_name}.map`);
+
+const { add } = await createSubmissionValidator({ workerCount: 8 });
 
 export const create: RequestHandler<{}, {}, unknown> = async (
   { body },
@@ -99,21 +117,11 @@ export const create: RequestHandler<{}, {}, unknown> = async (
       solutionPath: data.solution_path,
     }).save();
     log.info("Submission received", doc);
-    validator.queue.add(
-      "validate",
-      {
-        ...id,
-        map: await text(
-          `http://localhost:${getPort()}/res/maps/${data.map.map_name}.map`
-        ),
-        scenario: await text(
-          `http://localhost:${getPort()}/res/scens/${data.map.map_name}-${
-            data.scenario.scen_type
-          }-${data.scenario.type_id}.scen`
-        ),
-      },
-      { lifo: true }
-    );
+    add({
+      ...id,
+      map: await getMap(data),
+      scenario: await getScenario(data),
+    });
     res.json(doc.id);
   } catch (e) {
     log.error(e);

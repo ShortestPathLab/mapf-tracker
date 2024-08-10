@@ -169,34 +169,25 @@ export async function run(data: SubmissionValidatorData): Promise<{
       scenarioId,
       agentCountIntent,
     });
+
     if (every(submission, (c) => c.validation?.isValidationRun)) {
       log.info("Validation already run on submission set");
       return { result: { outcome: "skipped" } };
     }
 
-    const groups = chain(submission)
-      .groupBy("agentCountIntent")
-      .entries()
-      .value();
-
-    const errors: string[] = [];
-
     const cells = parseMap(map);
     const { sources, goals, width, height } = parseScenarioMeta(scenario);
 
-    for (const [k, group] of groups) {
-      const outcome = await validateGroup({
-        agentCount: +k,
-        sources,
-        goals,
-        width,
-        height,
-        cells,
-        submission: group,
-        mode,
-      });
-      errors.push(...outcome.errors);
-    }
+    const { errors } = await validateGroup({
+      agentCount: agentCountIntent,
+      sources,
+      goals,
+      width,
+      height,
+      cells,
+      submission,
+      mode,
+    });
 
     return {
       result: { outcome: errors?.length ? "invalid" : "valid", errors },

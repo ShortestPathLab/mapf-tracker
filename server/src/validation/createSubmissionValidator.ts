@@ -5,8 +5,7 @@ import { createQueue } from "./createQueue";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
 import { usingWorkerTask } from "./usingWorker";
 import { path } from "./submissionValidatorWorker";
-
-const log = context("Validation Dispatcher");
+import stringHash from "string-hash";
 
 const run = usingWorkerTask<SubmissionValidatorData, any>(
   () => new Worker(path)
@@ -14,39 +13,57 @@ const run = usingWorkerTask<SubmissionValidatorData, any>(
 
 const QUEUE_NAME = "validation";
 
+export const createPair = async (id: string) => {
+  const server = await createQueue<SubmissionValidatorData, {}, "validate">({
+    name: QUEUE_NAME + id,
+  });
+  const worker = new BullmqWorker(
+    QUEUE_NAME + id,
+    async (job: Job<SubmissionValidatorData>) => {
+      const log = context(`Validation Dispatcher ${id}`);
+      log.info(`Dispatching job ${job.id}`);
+      const out = await run(job.data);
+      log.info(`Job ${job.id} returned`, out);
+      return out;
+    },
+    {
+      // Do not change this value to anything more than 1, as it'll introduce race conditions.
+      concurrency: 1,
+      connection: {
+        host: server.host,
+        port: server.port,
+      },
+    }
+  );
+  return { server, worker };
+};
+
+const id = ({
+  apiKey,
+  mapId,
+  scenarioId,
+  agentCountIntent,
+}: SubmissionValidatorData) =>
+  stringHash(JSON.stringify({ apiKey, mapId, scenarioId, agentCountIntent }));
+
 export const createSubmissionValidator = async ({
   workerCount = 1,
 }: { workerCount?: number } = {}) => {
-  const validator = await createQueue<SubmissionValidatorData, {}, "validate">({
-    name: QUEUE_NAME,
-  });
-  const workers = times(
-    workerCount,
-    (i) =>
-      new BullmqWorker(
-        QUEUE_NAME,
-        async (job: Job<SubmissionValidatorData>) => {
-          log.info(`Dispatching job ${job.id}`);
-          const out = await run(job.data);
-          log.info(`Job ${job.id} returned`, out);
-          return out;
-        },
-        {
-          concurrency: 1,
-          connection: {
-            host: validator.host,
-            port: validator.port,
-          },
-        }
-      )
+  const instances = await Promise.all(
+    times(workerCount, (i) => createPair(`${i}`))
   );
-
   return {
-    validator,
-    workers,
+    add: (data: SubmissionValidatorData) => {
+      instances[id(data) % workerCount].server.queue.add("validate", data, {
+        lifo: true,
+      });
+    },
+    instances,
     close: async () => {
-      for (const w of workers) await w.close();
-      await validator.close();
+      for (const { server: queue, worker } of instances) {
+        await worker.close();
+        await queue.close();
+      }
     },
   };
 };

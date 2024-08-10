@@ -7,8 +7,8 @@ export const toBlob = (r: Response) => r.blob();
 export const toText = (r: Response) => r.text();
 
 export const json = <T>(p: string) => fetch(p).then(toJson) as Promise<T>;
-export const text = <T>(p: string) => fetch(p).then(toText) as Promise<T>;
-export const blob = <T>(p: string) => fetch(p).then(toBlob) as Promise<T>;
+export const text = (p: string) => fetch(p).then(toText);
+export const blob = (p: string) => fetch(p).then(toBlob);
 
 export const queryClient =
   <T>(model: Model<T>) =>
