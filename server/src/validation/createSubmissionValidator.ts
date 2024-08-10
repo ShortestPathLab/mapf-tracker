@@ -32,7 +32,7 @@ export const createSubmissionValidator = async ({
           return out;
         },
         {
-          concurrency: 16,
+          concurrency: 1,
           connection: {
             host: validator.host,
             port: validator.port,

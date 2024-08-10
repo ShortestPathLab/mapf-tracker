@@ -143,9 +143,9 @@ function logOutcome(
           a - 1
         } agents constitutes a valid solution.`
       );
-  } else {
-    log.info("Passed validation");
+    return;
   }
+  log.info("Passed validation");
 }
 
 export async function run(data: SubmissionValidatorData): Promise<{
@@ -154,15 +154,20 @@ export async function run(data: SubmissionValidatorData): Promise<{
     outcome: Outcome;
   };
 }> {
-  log.info("Received job", pick(data, "apiKey", "mapId", "scenarioId"));
+  log.info(
+    "Received job",
+    pick(data, "apiKey", "mapId", "scenarioId", "agentCountIntent")
+  );
   await connectToDatabase();
   try {
-    const { apiKey, mapId, scenarioId, map, scenario } = data;
+    const { apiKey, mapId, scenarioId, map, scenario, agentCountIntent, mode } =
+      data;
 
     const submission = await OngoingSubmission.find({
       apiKey,
       mapId,
       scenarioId,
+      agentCountIntent,
     });
     if (every(submission, (c) => c.validation?.isValidationRun)) {
       log.info("Validation already run on submission set");
@@ -188,7 +193,7 @@ export async function run(data: SubmissionValidatorData): Promise<{
         height,
         cells,
         submission: group,
-        mode: data.mode,
+        mode,
       });
       errors.push(...outcome.errors);
     }

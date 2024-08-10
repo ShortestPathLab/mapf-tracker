@@ -89,6 +89,7 @@ export const create: RequestHandler<{}, {}, unknown> = async (
       apiKey: data.key.api_key,
       mapId: data.map.id,
       scenarioId: data.scenario.id,
+      agentCountIntent: data.agent_count_intent,
     };
     const doc = await new OngoingSubmission({
       ...id,
@@ -96,8 +97,6 @@ export const create: RequestHandler<{}, {}, unknown> = async (
       lowerCost: data.lower_cost,
       solutionCost: data.solution_cost,
       solutionPath: data.solution_path,
-      agentCountIntent: data.agent_count_intent,
-      error: { isError: false, errorMessage: "" },
     }).save();
     log.info("Submission received", doc);
     validator.queue.add(

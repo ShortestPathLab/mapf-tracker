@@ -5,4 +5,5 @@ export type SubmissionValidatorData = {
   apiKey: string;
   scenarioId: string;
   mode?: "abort-early" | "comprehensive";
+  agentCountIntent?: number;
 };

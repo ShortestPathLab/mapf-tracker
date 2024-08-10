@@ -26,11 +26,17 @@ export default (mongoose: Mongoose) => {
         errors: [String],
         outcome: String,
       },
-      error: { isError: Boolean, errorMessage: String },
       agentCountIntent: Number,
     },
     { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
   );
+
+  schema.index({
+    apiKey: "text",
+    mapId: "text",
+    scenarioId: "text",
+    agentCountIntent: 1,
+  });
 
   schema.method("toJSON", function () {
     const { __v, _id, ...object } = this.toObject();

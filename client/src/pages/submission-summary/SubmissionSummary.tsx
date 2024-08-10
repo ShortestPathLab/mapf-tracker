@@ -24,6 +24,7 @@ export type Props = {
   apiKey?: ReactNode;
   summaryStats?: { name: string; count: number }[];
   detailStats?: { name: string; stats: { name: string; count: number }[] }[];
+  children?: ReactNode;
 };
 
 export default function SubmissionSummary({
@@ -32,6 +33,7 @@ export default function SubmissionSummary({
   apiKey = "sample_api_key",
   summaryStats = defaultSummary,
   detailStats = defaultDetails,
+  children,
 }: Props) {
   return (
     <Stack
@@ -130,6 +132,7 @@ export default function SubmissionSummary({
           </Accordion>
         ))}
       </Stack>
+      {children}
       <Button
         variant="contained"
         disableElevation

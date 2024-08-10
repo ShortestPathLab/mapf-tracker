@@ -8,6 +8,7 @@ import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import SystemDemo from "pages/demo";
+import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
@@ -19,7 +20,6 @@ import ContributePage from "./pages/contribute";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Summary from "./pages/dashboard/DashboardPage";
 import DownloadPage from "./pages/get-dataset";
-import SubmissionSummary from "./pages/submission-summary/SubmissionSummary";
 import TrackSubmission from "./pages/submissions";
 import UserMapPage from "./pages/UserMapPage";
 import { Visualiser } from "./pages/visualiser";
@@ -87,7 +87,7 @@ export default function App() {
                         <Route path="/submissions" element={<Submissions />} />
                         <Route
                           path="/submissionSummary"
-                          element={<SubmissionSummary />}
+                          element={<SubmissionSummaryPage />}
                         />
                         <Route
                           path="/contributes"

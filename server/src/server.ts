@@ -9,6 +9,8 @@ import { createDevServer } from "./createDevServer";
 import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
+import { pick } from "lodash";
+import { dump } from "js-yaml";
 
 export const app = express();
 
@@ -23,7 +25,19 @@ app.use(
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: true }));
-app.use(logger());
+app.use(
+  logger({
+    customSuccessMessage: (req) => `[Server] ${req.method} ${req.url}`,
+    serializers: {
+      req(req) {
+        return pick(req, "url", "method", "id", "body");
+      },
+      res(res) {
+        return pick(res, "statusCode", "body");
+      },
+    },
+  })
+);
 
 await connectToDatabase();
 
