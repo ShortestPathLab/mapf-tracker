@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router, Application } from "express";
 import * as solution_submission from "../controllers/solutionSubmission";
 
-export default (app) => {
+export default (app: Application) => {
   const router = Router();
   router.get(
     "/leadingSolution/:id",

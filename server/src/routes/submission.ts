@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router, Application } from "express";
 import * as submission from "../controllers/submission";
 
-export default (app) => {
+export default (app: Application) => {
   const router = Router();
 
   router.get("/instance/:id", submission.findByInstance_id);

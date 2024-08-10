@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router, Application } from "express";
 import * as submission_key from "../controllers/submissionKey";
 
-export default (app) => {
+export default (app: Application) => {
   const router = Router();
   router.get("/", submission_key.findAll);
   router.get("/:apiKey", submission_key.findByApiKey);

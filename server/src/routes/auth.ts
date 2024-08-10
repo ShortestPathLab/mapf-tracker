@@ -1,6 +1,7 @@
+import { Application } from "express";
 import * as controller from "../controllers/auth";
 
-export default (app) => {
+export default (app: Application) => {
   app.use((req, res, next) => {
     res.header(
       "Access-Control-Allow-Headers",

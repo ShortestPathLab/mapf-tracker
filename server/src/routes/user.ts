@@ -1,7 +1,8 @@
 import { authJwt } from "../middlewares";
 import * as controller from "../controllers/user";
+import { Application } from "express";
 
-export default (app) => {
+export default (app: Application) => {
   app.use((req, res, next) => {
     res.header(
       "Access-Control-Allow-Headers",
