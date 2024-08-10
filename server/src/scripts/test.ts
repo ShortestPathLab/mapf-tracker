@@ -1,4 +1,4 @@
-import { SolutionPath } from "./src/models";
+import { SolutionPath } from "models";
 
 const cursor = SolutionPath.collection.find();
 

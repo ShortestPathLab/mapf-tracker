@@ -1,6 +1,7 @@
 import { Schema, model as createModel } from "mongoose";
+import { createSchema } from "./createSchema";
 
-const schema = new Schema(
+const schema = createSchema(
   {
     algo_name: String,
     authors: String,

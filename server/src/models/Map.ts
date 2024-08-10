@@ -1,6 +1,7 @@
-import { InferSchemaType, Schema, model as createModel } from "mongoose";
+import { model as createModel } from "mongoose";
+import { createSchema } from "./createSchema";
 
-const schema = new Schema({
+const schema = createSchema({
   map_name: String,
   map_size: String,
   map_type: String,

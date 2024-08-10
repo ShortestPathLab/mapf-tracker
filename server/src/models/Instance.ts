@@ -1,6 +1,7 @@
 import { Schema, model as createModel } from "mongoose";
+import { createSchema } from "./createSchema";
 
-const schema = new Schema({
+const schema = createSchema({
   map_id: { type: Schema.Types.ObjectId, ref: "map" },
   scen_id: { type: Schema.Types.ObjectId, ref: "scenario" },
   agents: Number,

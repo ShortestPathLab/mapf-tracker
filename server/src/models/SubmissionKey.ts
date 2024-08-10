@@ -1,6 +1,7 @@
 import { Schema, model as createModel } from "mongoose";
+import { createSchema } from "./createSchema";
 
-const schema = new Schema(
+const schema = createSchema(
   {
     request_id: { type: Schema.Types.ObjectId, ref: "request" },
     api_key: String,
