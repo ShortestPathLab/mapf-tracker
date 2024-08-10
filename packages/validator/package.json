@@ -6,7 +6,7 @@
   "scripts": {
     "test": "vitest",
     "build": "vite build",
-    "postinstall": "npm run build"
+    "postinstall": "vite build"
   },
   "author": "",
   "license": "ISC",
