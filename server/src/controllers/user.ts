@@ -1,8 +1,12 @@
-import { mail } from "mail";
-import { Types } from "mongoose";
 import date from "date-and-time";
 import { RequestHandler } from "express";
+import { mail } from "mail";
+import { Types } from "mongoose";
 
+import { randomBytes } from "crypto";
+import { addMonths } from "date-fns";
+import { startCase } from "lodash";
+import { log } from "logging";
 import {
   Algorithm,
   Instance,
@@ -14,9 +18,6 @@ import {
   SubmissionKey,
 } from "models";
 import z from "zod";
-import { randomBytes } from "crypto";
-import { log } from "logging";
-import { addMonths } from "date-fns";
 
 function sendMail1({
   apiKey,
@@ -32,7 +33,7 @@ function sendMail1({
   status: "approved" | "not-reviewed" | "rejected";
   comments?: string;
 }) {
-  let subjectText = `Dear ${requesterName},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
+  let subjectText = `Dear ${requesterName},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(status)}\nComments: ${comments}`;
 
   if (status === "approved") {
     subjectText += `\n\nYour API key is: ${apiKey}`;
@@ -88,29 +89,28 @@ export const sendMail: RequestHandler<
   {
     requestId: string;
     requesterEmail: string;
-    requesterName;
     status: "approved" | "not-reviewed" | "rejected";
     comments?: string;
   }
 > = (req, res) => {
-  console.log("in sendding maillllllllllll");
-  const request_email = req.body.requesterEmail;
-  const request_name = req.body.requesterName;
-  const { status, comments } = req.body;
-  let subjectText = `Dear ${request_name},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
+  // console.log("in sendding maillllllllllll");
+  // const request_email = req.body.requesterEmail;
+  // const request_name = req.body.requesterName;
+  // const { status, comments } = req.body;
+  // let subjectText = `Dear ${request_name},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(status)}\nComments: ${comments}`;
 
-  if (status === "approved") {
-    const apiKey = req.body;
-    subjectText += `\n\nYour API key is: ${apiKey}`;
-  } else {
-    subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
-  }
-  mail(
-    "noreply@pathfinding.ai",
-    request_email,
-    "Submission Request Status",
-    subjectText
-  );
+  // if (status === "approved") {
+  //   const apiKey = req.body;
+  //   subjectText += `\n\nYour API key is: ${apiKey}`;
+  // } else {
+  //   subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
+  // }
+  // mail(
+  //   "noreply@pathfinding.ai",
+  //   request_email,
+  //   "Submission Request Status",
+  //   subjectText
+  // );
 };
 
 export const findSubmittedAlgoByID: RequestHandler = (req, res) => {
