@@ -36,8 +36,10 @@ const WORLD_UNIVERSITIES_API =
 
 export function SubmissionKeyRequestForm({
   submit = () => <></>,
+  disabled,
   ...props
 }: Partial<FormikConfig<Request>> & {
+  disabled?: boolean;
   submit?: (state: FormikProps<Request>) => ReactNode;
 }) {
   const { data: options = [] } = useQuery({
@@ -49,7 +51,15 @@ export function SubmissionKeyRequestForm({
         .value(),
   });
   const renderLabel = (label: ReactNode) => (
-    <Typography variant="h6" sx={{ fontSize: "1em", pt: 2 }}>
+    <Typography
+      variant="h6"
+      sx={{
+        fontSize: "1em",
+        pt: 2,
+        pb: 1,
+        color: disabled ? "text.secondary" : "text.primary",
+      }}
+    >
       {label}
     </Typography>
   );
@@ -74,12 +84,14 @@ export function SubmissionKeyRequestForm({
             {renderRow(
               <Field<Request>
                 name="requesterName"
+                disabled={disabled}
                 label="Name"
                 placeholder="John Doe"
                 required
               />,
               <Field<Request>
                 name="requesterEmail"
+                disabled={disabled}
                 type="email"
                 label="Contact email"
                 placeholder="john.doe@example.com"
@@ -88,8 +100,10 @@ export function SubmissionKeyRequestForm({
             )}
             <Field<Request, typeof Autocomplete>
               freeSolo
+              disabled={disabled}
               as={Autocomplete}
               autoCompleteProps={{
+                defaultValue: state.initialValues.requesterAffilation,
                 freeSolo: true,
                 options,
                 getOptionDisabled: (o) => o === DISABLED_OPTION,
@@ -114,12 +128,14 @@ export function SubmissionKeyRequestForm({
             {renderRow(
               <Field<Request>
                 name="algorithmName"
+                disabled={disabled}
                 label="Algorithm name"
                 placeholder="Constraint-based search"
                 required
               />,
               <Field<Request>
                 name="authorName"
+                disabled={disabled}
                 label="Authors"
                 placeholder="John Doe, Wei Zhang, Joe Smith"
                 required
@@ -127,6 +143,7 @@ export function SubmissionKeyRequestForm({
             )}
             <Field<Request>
               name="paperReference"
+              disabled={disabled}
               label="Paper references"
               multiline
               placeholder="APA references to papers describing your algorithm, separate with a new line"
@@ -135,13 +152,21 @@ export function SubmissionKeyRequestForm({
             />
             <Field<Request>
               name="googleScholar"
+              disabled={disabled}
               type="url"
               label="Google Scholar link"
               required
             />
-            <Field<Request> name="dblp" type="url" label="DBLP link" required />
+            <Field<Request>
+              name="dblp"
+              type="url"
+              label="DBLP link"
+              required
+              disabled={disabled}
+            />
             <Field<Request>
               name="githubLink"
+              disabled={disabled}
               type="url"
               label="GitHub link"
               required
@@ -149,6 +174,7 @@ export function SubmissionKeyRequestForm({
             {renderLabel("Other info")}
             <Field<Request>
               multiline
+              disabled={disabled}
               minRows={3}
               name="justification"
               label="Justification"
@@ -157,6 +183,7 @@ export function SubmissionKeyRequestForm({
             />
             <Field<Request>
               name="comments"
+              disabled={disabled}
               label="Comments"
               fullWidth
               minRows={4}

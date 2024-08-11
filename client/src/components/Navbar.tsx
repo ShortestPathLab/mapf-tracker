@@ -190,7 +190,7 @@ function ResponsiveAppBar() {
         borderBottom: (t) => `1px solid ${t.palette.divider}`,
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth={false}>
         <Toolbar disableGutters>
           <ButtonBase sx={{ borderRadius: 1 }}>
             <Stack direction="row" alignItems="center" gap={1}>
@@ -266,7 +266,7 @@ function ResponsiveAppBar() {
                   disableElevation
                   disableRipple
                 >
-                  Submissions
+                  Algorithms
                 </Button>
               </MenuItem>
               <MenuItem
@@ -365,7 +365,7 @@ function ResponsiveAppBar() {
                 color: "text.primary",
               }}
             >
-              Submissions
+              Algorithms
             </Button>
             <Divider
               orientation="vertical"

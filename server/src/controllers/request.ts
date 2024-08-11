@@ -86,8 +86,8 @@ export const updateRequest = async (req, res) => {
 
     // request was reviewed and approved
     if (
-      previousStatus === "Not Reviewed" &&
-      reviewStatus.status === "Approved"
+      previousStatus === "not-reviewed" &&
+      reviewStatus.status === "approved"
     ) {
       console.log("innnnnn here");
       // generate new submission key api for the user

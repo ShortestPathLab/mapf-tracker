@@ -12,7 +12,7 @@ export function SubmitRequestForm() {
   const notify = useSnackbar();
   const navigate = useNavigate();
 
-  const { mutate: submit } = useMutation({
+  const { mutateAsync: submit } = useMutation({
     mutationFn: async (request: Request) =>
       post(`${APIConfig.apiUrl}/request/create`, request),
     mutationKey: ["requestSubmissionKey"],

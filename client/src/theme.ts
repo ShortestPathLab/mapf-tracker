@@ -68,7 +68,10 @@ export const theme = (t: "light" | "dark") =>
       },
       MuiButton: {
         defaultProps: { disableElevation: true },
-        styleOverrides: { contained: { padding: "16px 32px" } },
+        styleOverrides: {
+          contained: { padding: "16px 32px" },
+          outlined: { padding: "16px 32px" },
+        },
       },
     },
   });

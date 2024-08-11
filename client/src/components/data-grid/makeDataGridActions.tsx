@@ -36,6 +36,7 @@ export function makeDataGridActions<T>({
     align: "right",
     headerAlign: "right",
     minWidth: 200,
+    type: "actions",
     renderCell: ({ row }) => (
       <Stack
         direction="row"

@@ -7,21 +7,100 @@ import {
   Algorithm,
   Instance,
   Map,
+  Request,
   Scenario,
   SolutionPath,
   Submission,
+  SubmissionKey,
 } from "models";
+import z from "zod";
+import { randomBytes } from "crypto";
+import { log } from "logging";
+import { addMonths } from "date-fns";
 
-export const sendMail: RequestHandler = (req, res) => {
+function sendMail1({
+  apiKey,
+  requesterEmail,
+  requesterName,
+  status,
+  comments,
+}: {
+  apiKey: string;
+  requestId: string;
+  requesterEmail: string;
+  requesterName;
+  status: "approved" | "not-reviewed" | "rejected";
+  comments?: string;
+}) {
+  let subjectText = `Dear ${requesterName},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
+
+  if (status === "approved") {
+    subjectText += `\n\nYour API key is: ${apiKey}`;
+  } else {
+    subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
+  }
+  log.info("Preparing mail", { apiKey, requesterEmail });
+  mail(
+    "noreply@pathfinding.ai",
+    requesterEmail,
+    "Submission Request Status",
+    subjectText
+  );
+}
+
+export const createKeyAndSendMail: RequestHandler<
+  unknown,
+  unknown,
+  { requestId: string }
+> = async (req, res) => {
+  log.info("Hi");
+  const { requestId } = z.object({ requestId: z.string() }).parse(req.body);
+  const {
+    requesterEmail,
+    requesterName,
+    reviewStatus: { comments, status },
+  } = await Request.findById(requestId);
+  log.info("Creating API key");
+  const apiKey = randomBytes(16).toString("hex");
+  const creationDate = new Date();
+  const expirationDate = addMonths(creationDate, 1);
+  await new SubmissionKey({
+    request_id: requestId,
+    creationDate,
+    expirationDate,
+    api_key: apiKey,
+  }).save();
+  log.info("Sending mail");
+  sendMail1({
+    apiKey,
+    requestId,
+    requesterEmail,
+    requesterName,
+    comments,
+    status,
+  });
+  res.json({ success: true });
+};
+
+export const sendMail: RequestHandler<
+  unknown,
+  unknown,
+  {
+    requestId: string;
+    requesterEmail: string;
+    requesterName;
+    status: "approved" | "not-reviewed" | "rejected";
+    comments?: string;
+  }
+> = (req, res) => {
   console.log("in sendding maillllllllllll");
   const request_email = req.body.requesterEmail;
   const request_name = req.body.requesterName;
-  const { status } = req.body;
-  const { comments } = req.body;
+  const { status, comments } = req.body;
   let subjectText = `Dear ${request_name},\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${status}\nComments: ${comments}`;
 
-  if (status === "Approved") {
-    const apiKey = req.body.api_key;
+  if (status === "approved") {
+    const apiKey = req.body;
     subjectText += `\n\nYour API key is: ${apiKey}`;
   } else {
     subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;

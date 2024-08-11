@@ -11,3 +11,4 @@ export const request = <T = null>(
 
 export const post = <T = null>(p: string, t = null) => request<T>(p, t);
 export const get = <T = null>(p: string) => request<T>(p, undefined, "get");
+export const del = <T = null>(p: string) => request<T>(p, undefined, "delete");

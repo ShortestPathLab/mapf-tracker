@@ -350,6 +350,14 @@ export function ManagedModal({
                     slotProps?.paper
                   )}
                 >
+                  {!!title && (
+                    <ModalAppBar
+                      onClose={close}
+                      {...(title
+                        ? { children: <AppBarTitle>{title}</AppBarTitle> }
+                        : ModalAppBarProps)}
+                    />
+                  )}
                   {chi2}
                 </Box>
               </Popover>

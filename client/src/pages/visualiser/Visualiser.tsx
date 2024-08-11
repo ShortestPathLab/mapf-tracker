@@ -173,7 +173,7 @@ export default function Visualiser() {
           ]}
         />
       </Stack>
-      (
+
       <AutoSize>
         {(size) =>
           isLoading ? (
@@ -217,7 +217,7 @@ export default function Visualiser() {
           )
         }
       </AutoSize>
-      )
+
       <Stack
         sx={{
           position: "fixed",

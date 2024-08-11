@@ -18,8 +18,8 @@ const schema = createSchema({
     type: {
       status: {
         type: String,
-        enum: ["Not Reviewed", "Approved", "Rejected"],
-        default: "Not Reviewed",
+        enum: ["not-reviewed", "approved", "rejected"],
+        default: "not-reviewed",
       },
       comments: {
         type: String,
@@ -27,7 +27,7 @@ const schema = createSchema({
       },
     },
     default: {
-      status: "Not Reviewed",
+      status: "not-reviewed",
       comments: "",
     },
     _id: false,

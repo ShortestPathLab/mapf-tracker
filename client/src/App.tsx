@@ -17,8 +17,9 @@ import { useTitleBar } from "./hooks/useTitleBar";
 import AboutPage from "./pages/about";
 import Submissions from "./pages/AlgorithmsPage";
 import ContributePage from "./pages/contribute";
-import Dashboard from "./pages/dashboard/Dashboard";
-import Summary from "./pages/dashboard/DashboardPage";
+import AdminDashboard from "./pages/admin-dashboard";
+import AdminDashboardOld from "./pages/admin-dashboard/index.old";
+import Summary from "./pages/summary/DashboardPage";
 import DownloadPage from "./pages/get-dataset";
 import TrackSubmission from "./pages/submissions";
 import UserMapPage from "./pages/UserMapPage";
@@ -26,7 +27,7 @@ import { Visualiser } from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function App() {
   const themeState = useReducer((prev) => {
@@ -57,10 +58,7 @@ export default function App() {
                 }}
               >
                 <Navbar />
-                <Box
-                  sx={{ px: 4, pb: 32, position: "relative" }}
-                  key={pathname === "/" ? "/benchmarks" : pathname}
-                >
+                <Box sx={{ px: 4, pb: 32, position: "relative" }}>
                   <Fade in={true}>
                     <Stack>
                       <Routes>
@@ -99,10 +97,20 @@ export default function App() {
                           element={<TrackSubmission />}
                         />
                         <Route
-                          path="/dashboard"
+                          path="/dashboard/:section?"
                           element={
                             localStorage.getItem("user") !== null ? (
-                              <Dashboard />
+                              <AdminDashboard />
+                            ) : (
+                              <Navigate to="/" />
+                            )
+                          }
+                        />
+                        <Route
+                          path="/dashboard-old"
+                          element={
+                            localStorage.getItem("user") !== null ? (
+                              <AdminDashboardOld />
                             ) : (
                               <Navigate to="/" />
                             )

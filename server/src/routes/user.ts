@@ -11,6 +11,7 @@ export default (app: Application) => {
     next();
   });
 
+  app.post("/api/user/notify", controller.createKeyAndSendMail);
   app.put("/api/user/sendMail", [authJwt.verifyToken], controller.sendMail);
 
   app.get(

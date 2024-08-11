@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { getPort } from "getPort";
+import { each } from "lodash";
 import { log } from "logging";
 import { Infer, Map, OngoingSubmission, Scenario, SubmissionKey } from "models";
 import { Types } from "mongoose";
@@ -28,6 +29,17 @@ export const findById = handler(z.object({ id: z.string() }), ({ id }) => ({
 export const findByApiKey = handler(
   z.object({ apiKey: z.string() }),
   ({ apiKey }) => ({ apiKey })
+);
+/**
+ * Delete by id
+ */
+export const deleteById = handler(
+  z.object({ id: z.string() }),
+  ({ id }) => new Types.ObjectId(id),
+  async (docs) => {
+    for (const d of docs) await d.deleteOne();
+    return { count: 1 };
+  }
 );
 
 // create a new ongoing submission

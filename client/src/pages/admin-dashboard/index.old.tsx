@@ -5,7 +5,7 @@ import SearchIcon from "@mui/icons-material/SearchOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
-import { DialogTitle, Stack } from "@mui/material";
+import { Card, DialogTitle, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";

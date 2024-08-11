@@ -16,6 +16,8 @@ import {
   useFormikContext,
 } from "formik";
 import { ComponentProps, ComponentType, forwardRef, Ref } from "react";
+import { paper } from "theme";
+
 export function Field<
   Schema extends {} = any,
   T extends ComponentType<{}> = typeof TextField
@@ -60,6 +62,22 @@ export function Field<
   );
 }
 
+export const Select = forwardRef(
+  (props: TextFieldProps, ref: Ref<HTMLDivElement>) => (
+    <TextField
+      select
+      {...props}
+      SelectProps={{
+        MenuProps: {
+          slotProps: { paper: { sx: paper() } },
+        },
+        ...props.SelectProps,
+      }}
+      ref={ref}
+    />
+  )
+);
+
 export const Autocomplete = forwardRef(function <
   Value,
   Multiple extends boolean | undefined,
@@ -69,6 +87,7 @@ export const Autocomplete = forwardRef(function <
 >(
   {
     autoCompleteProps,
+    disabled,
     ...props
   }: {
     autoCompleteProps?: Omit<
@@ -87,6 +106,7 @@ export const Autocomplete = forwardRef(function <
   const form = useFormikContext();
   return (
     <MuiAutocomplete
+      disabled={disabled}
       {...autoCompleteProps}
       onBlur={(e) => form.setFieldValue(props.name, e.target["value" as any])}
       renderInput={(props1) => <TextField ref={ref} {...props} {...props1} />}
