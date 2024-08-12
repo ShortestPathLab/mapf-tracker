@@ -1,13 +1,14 @@
 import { MenuItem, Stack } from "@mui/material";
 import { Field, Select } from "components/Field";
 import { Form, Formik, FormikConfig, FormikProps } from "formik";
-import { noop, startCase } from "lodash";
-import { ReactNode } from "react";
-import { ReviewOutcome } from "./useRequestsQuery";
+import { noop, once, startCase } from "lodash";
+import { ReactNode, useMemo } from "react";
+import { ReviewOutcome } from "../../../queries/useRequestsQuery";
 import { StatusChip } from "./StatusChip";
 
 export type SetReviewOutcomeFormProps = {
   submit: (state: FormikProps<ReviewOutcome>) => ReactNode;
+  onTouched?: () => void;
 } & Partial<FormikConfig<ReviewOutcome>>;
 
 export const reviewOutcomes = [
@@ -17,8 +18,10 @@ export const reviewOutcomes = [
 ] as ReviewOutcome["status"][];
 export function SetReviewOutcomeForm({
   submit = () => <></>,
+  onTouched,
   ...props
 }: SetReviewOutcomeFormProps) {
+  const touch = useMemo(() => once(() => onTouched?.()), []);
   return (
     <Formik<ReviewOutcome>
       initialValues={{ status: "not-reviewed" }}
@@ -26,7 +29,7 @@ export function SetReviewOutcomeForm({
       {...props}
     >
       {(state) => (
-        <Form>
+        <Form onChangeCapture={touch}>
           <Stack gap={2}>
             <Field<ReviewOutcome, typeof Select>
               as={Select}

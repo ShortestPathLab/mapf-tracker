@@ -1,7 +1,7 @@
 import { Card } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { Prose } from "layout";
-import Accordion from "./Accordion";
+import Accordion from "components/Accordion";
 import CallForSubmissionContent from "./callForSubmission.md";
 import Faq from "./faq.md";
 import Format from "./format.mdx";
@@ -35,7 +35,7 @@ export function Info() {
           content: <Format />,
         },
       ].map(({ title, content }) => (
-        <Accordion title={title}>
+        <Accordion label={title}>
           <Prose sx={{ mt: -2, overflow: "hidden" }}>{content}</Prose>
         </Accordion>
       ))}

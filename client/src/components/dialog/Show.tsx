@@ -38,23 +38,30 @@ export function getTransitionProps(
 
 const styles = {
   entering: {
-    transform: "translateY(0)",
-    opacity: 1,
+    transform: "scale(101%)",
+    opacity: 0,
   },
   entered: {
-    transform: "translateY(0)",
+    transform: "scale(100%)",
     opacity: 1,
   },
-  exiting: {},
-  exited: {},
-  unmounted: {},
+  exiting: {
+    transform: "scale(99%)",
+    opacity: 0,
+  },
+  exited: {
+    opacity: 0,
+  },
+  unmounted: {
+    opacity: 0,
+  },
 } as any;
 
 /**
  * The Fade transition is used by the [Modal](/material-ui/react-modal/) component.
  * It uses [react-transition-group](https://github.com/reactjs/react-transition-group) internally.
  */
-const Swipe = React.forwardRef<any, any>((props, ref) => {
+const Show = React.forwardRef<any, any>((props, ref) => {
   const theme = useTheme();
   const defaultTimeout = {
     enter: theme.transitions.duration.enteringScreen,
@@ -179,8 +186,8 @@ const Swipe = React.forwardRef<any, any>((props, ref) => {
       {(state: any, childProps: any) => {
         return React.cloneElement(children, {
           style: {
-            transform: "translateY(100vh)",
-            opacity: 1,
+            transform: "scale(101%)",
+            opacity: 0,
             visibility: state === "exited" && !inProp ? "hidden" : undefined,
             ...styles[state],
             ...style,
@@ -194,4 +201,4 @@ const Swipe = React.forwardRef<any, any>((props, ref) => {
   );
 });
 
-export default Swipe;
+export default Show;

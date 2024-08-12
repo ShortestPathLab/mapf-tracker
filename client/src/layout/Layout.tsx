@@ -27,8 +27,9 @@ export default function Layout({
   title?: string;
   path?: PageHeaderProps["path"];
 }) {
+  const sm = useSm();
   return (
-    <Stack sx={{ mx: "auto", width, maxWidth: "100%", gap: 4, py: 6 }}>
+    <Stack sx={{ mx: "auto", width, maxWidth: "100%", gap: 4, py: sm ? 0 : 6 }}>
       {render({
         header: <PageHeader {...{ current: title, path }} />,
         children,

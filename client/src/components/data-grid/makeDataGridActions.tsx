@@ -23,20 +23,20 @@ export type Item<T> = {
 };
 
 export function makeDataGridActions<T>({
-  items,
-  menuItems,
+  items = [],
+  menuItems = [],
 }: {
   items?: Item<T>[];
   menuItems?: Item<T>[];
 }): GridColDef<T> {
+  const len = items.length + (menuItems.length ? 1 : 0);
   return {
     flex: 1,
     field: "Actions",
     headerName: "",
     align: "right",
     headerAlign: "right",
-    minWidth: 200,
-    type: "actions",
+    minWidth: 48 * len,
     renderCell: ({ row }) => (
       <Stack
         direction="row"

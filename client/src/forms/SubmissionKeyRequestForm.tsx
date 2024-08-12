@@ -2,10 +2,10 @@ import { createFilterOptions, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Autocomplete, Field } from "components/Field";
 import { Form, Formik, FormikConfig, FormikProps } from "formik";
-import { chain, noop } from "lodash";
+import { chain, noop, once } from "lodash";
 import { json } from "queries/query";
 import { Request, requestSchema } from "queries/useRequestQuery";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { paper } from "theme";
 
 const defaultRequest: Request = {
@@ -34,14 +34,19 @@ const DISABLED_OPTION = "Keep typing to see suggestions";
 const WORLD_UNIVERSITIES_API =
   "https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json";
 
+export type SubmissionKeyRequestFormProps = Partial<FormikConfig<Request>> & {
+  disabled?: boolean;
+  onTouched?: () => void;
+  submit?: (state: FormikProps<Request>) => ReactNode;
+};
+
 export function SubmissionKeyRequestForm({
   submit = () => <></>,
   disabled,
+  onTouched,
   ...props
-}: Partial<FormikConfig<Request>> & {
-  disabled?: boolean;
-  submit?: (state: FormikProps<Request>) => ReactNode;
-}) {
+}: SubmissionKeyRequestFormProps) {
+  const touch = useMemo(() => once(() => onTouched?.()), []);
   const { data: options = [] } = useQuery({
     queryKey: ["universities"],
     queryFn: async () =>
@@ -78,7 +83,7 @@ export function SubmissionKeyRequestForm({
       {...props}
     >
       {(state) => (
-        <Form>
+        <Form onChangeCapture={touch}>
           <Stack gap={2}>
             {renderLabel("About you")}
             {renderRow(
@@ -111,7 +116,7 @@ export function SubmissionKeyRequestForm({
                   s.inputValue.length > 2
                     ? filterOptions(o, s)
                     : [DISABLED_OPTION],
-                ListboxProps: { sx: paper() },
+                ListboxProps: { sx: paper(2) },
               }}
               name="requesterAffilation"
               getOptionDisabled={(o) => o === DISABLED_OPTION}

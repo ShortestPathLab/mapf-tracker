@@ -4,7 +4,7 @@ import {
   EditOutlined,
   EmailOutlined,
 } from "@mui/icons-material";
-import { Card, Stack } from "@mui/material";
+import { Box, Card, Stack, useTheme } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
@@ -16,19 +16,91 @@ import { IconCard } from "components/IconCard";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { AddKeyForm } from "forms/AddKeyForm";
-import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
+import {
+  SubmissionKeyRequestForm,
+  SubmissionKeyRequestFormProps,
+} from "forms/SubmissionKeyRequestForm";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
-import { zipWith } from "lodash";
+import { merge, zipWith } from "lodash";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
-import { cloneElement } from "react";
+import { ReactNode, cloneElement, useState } from "react";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
 import { SubmissionLocationState } from "./SubmissionLocationState";
+import { DialogContentProps, useDialog } from "hooks/useDialog";
+import { queryClient } from "App";
+import { useSm } from "components/dialog/useSmallDisplay";
+
+function Floating({ children }: { children?: ReactNode }) {
+  const sm = useSm();
+  const { spacing, zIndex } = useTheme();
+  return (
+    <>
+      <Box
+        sx={{
+          visibility: sm ? "none" : "hidden",
+          zIndex: zIndex.modal + 1,
+          position: "fixed",
+          bottom: spacing(2),
+          left: spacing(2),
+          right: spacing(2),
+          width: "auto",
+        }}
+      >
+        {children}
+      </Box>
+      <Box sx={{ visibility: sm ? "hidden" : "none" }}>{children}</Box>
+    </>
+  );
+}
+
+function SubmissionKeyRequestFormDialog({
+  onProps,
+  onClose,
+  ...props
+}: SubmissionKeyRequestFormProps & DialogContentProps) {
+  const notify = useSnackbar();
+  return (
+    <Stack sx={{ mt: -2 }}>
+      <SubmissionKeyRequestForm
+        onTouched={() => onProps?.({ preventClose: true })}
+        submit={({ isSubmitting, submitForm }) => (
+          <Floating>
+            <Button
+              fullWidth
+              sx={{ mt: 4, boxShadow: (t) => t.shadows[2] }}
+              onClick={async () => {
+                notify("Saving changes");
+                await submitForm();
+                notify("Changed saved");
+                onClose?.();
+              }}
+              variant="contained"
+              size="large"
+              disabled={isSubmitting}
+              startIcon={<CheckOutlined />}
+            >
+              Save changes
+            </Button>
+          </Floating>
+        )}
+        {...props}
+      />
+    </Stack>
+  );
+}
 
 export default function TrackSubmission() {
   const navigate = useNavigate();
-
+  const { open: showRequestDetails, dialog: requestDetails } = useDialog(
+    SubmissionKeyRequestFormDialog,
+    {
+      slotProps: { modal: { width: 640 } },
+      padded: true,
+      title: "Edit request details",
+    }
+  );
   const { mutateAsync: checkKey, isPending: isChecking } = useMutation({
     mutationFn: (key: string) =>
       get(`${APIConfig.apiUrl}/submission_key/${key}`),
@@ -47,39 +119,36 @@ export default function TrackSubmission() {
 
   const notify = useSnackbar();
 
-  const handleRequestDetailUpdated = async (
-    values,
-    { setSubmitting, resetForm }
-  ) => {
+  const handleRequestDetailUpdated = async ({
+    key,
+    id,
+    ...values
+  }: Request & { id: string; key: string }) => {
     try {
-      const response = await fetch(
-        `${APIConfig.apiUrl}/request/update/${values.id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        }
-      );
+      const response = await fetch(`${APIConfig.apiUrl}/request/update/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
       const data = await response.json();
       if (response.ok) {
         console.log("Request updated successfully:", data);
+        queryClient.invalidateQueries({
+          queryKey: ["submissionRequestDetails", key],
+        });
       } else {
         console.error("Error updating request:", data);
       }
     } catch (error) {
       console.error("Error:", error);
     }
-    setSubmitting(false);
-    push("Saved successfully");
+    notify("Saved successfully");
   };
 
-  const handleApiFormSubmit = async (
-    { key: key },
-    { setSubmitting, resetForm }
-  ) => {
+  const handleApiFormSubmit = async ({ key }, { resetForm }) => {
     notify("Checking your key");
     const { ok } = await checkKey(key);
     if (ok) {
@@ -93,13 +162,14 @@ export default function TrackSubmission() {
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const columns: GridColDef<Request & { id: string }>[] = [
+  const columns: GridColDef<Request & { id: string; key: string }>[] = [
     {
       field: "Icon",
       renderCell: () => <IconCard icon={<EmailOutlined />} />,
       flex: 0,
+      fold: true,
     },
-    { field: "id", headerName: "Key", width: 80 },
+    { field: "key", headerName: "Key", width: 80 },
     {
       field: "requesterName",
       headerName: "Requester",
@@ -113,32 +183,12 @@ export default function TrackSubmission() {
         {
           icon: <EditOutlined />,
           name: "Edit request details",
-          render: (row, trigger) => (
-            <Dialog
-              slotProps={{ modal: { width: 640 } }}
-              padded
-              title="Edit request details"
-              trigger={(onClick) => cloneElement(trigger, { onClick })}
-            >
-              <SubmissionKeyRequestForm
-                initialValues={row}
-                onSubmit={handleRequestDetailUpdated}
-                submit={({ isSubmitting }) => (
-                  <Button
-                    fullWidth
-                    sx={{ mt: 4 }}
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={isSubmitting}
-                    startIcon={<CheckOutlined />}
-                  >
-                    {isSubmitting ? "Saving changes..." : "Save changes"}
-                  </Button>
-                )}
-              />
-            </Dialog>
-          ),
+          action: (row) =>
+            showRequestDetails({
+              initialValues: row,
+              onSubmit: (values) =>
+                handleRequestDetailUpdated(merge(row, values)),
+            }),
         },
       ],
       menuItems: [
@@ -182,7 +232,7 @@ export default function TrackSubmission() {
       </Typography>
       <Card>
         <DataGrid
-          slotProps={{ row: { style: { cursor: "pointer" } } }}
+          clickable
           columns={columns}
           rows={rows}
           onRowClick={(row) =>
@@ -192,6 +242,7 @@ export default function TrackSubmission() {
           }
         />
       </Card>
+      {requestDetails}
     </Layout>
   );
 }

@@ -25,6 +25,7 @@ export default function Table() {
       field: "Icon",
       renderCell: () => <IconCard />,
       flex: 0,
+      fold: true,
     },
     {
       field: "type_id",
@@ -118,7 +119,7 @@ export default function Table() {
 
   return (
     <DataGrid
-      slotProps={{ row: { style: { cursor: "pointer" } } }}
+      clickable
       isLoading={isLoading}
       columns={columns}
       rows={data}

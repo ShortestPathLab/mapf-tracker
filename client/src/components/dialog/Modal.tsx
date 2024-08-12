@@ -4,11 +4,13 @@ import {
   AppBar,
   Box,
   BoxProps,
+  Button,
   Dialog,
   Fade,
   IconButton,
   Popover,
   PopoverProps,
+  Stack,
   Toolbar,
   Typography,
   useTheme,
@@ -18,7 +20,9 @@ import PopupState, { bindPopover } from "material-ui-popup-state";
 import { useScrollState } from "./useScrollState";
 import { useSm } from "./useSmallDisplay";
 
-import { merge } from "lodash";
+import { DialogContentProps } from "hooks/useDialog";
+import { useModalDepth } from "hooks/useModalProviderValue";
+import { delay, merge } from "lodash";
 import { PopupState as State } from "material-ui-popup-state/hooks";
 import {
   ComponentProps,
@@ -33,6 +37,7 @@ import {
 import { paper, useAcrylic, usePaper } from "theme";
 import { Scroll } from "./Scrollbars";
 import Swipe from "./Swipe";
+import Show from "./Show";
 
 export function AppBarTitle({ children }: { children?: ReactNode }) {
   return (
@@ -170,6 +175,34 @@ export function ModalAppBar({
   );
 }
 
+const unsavedChangesHintText = "Unsaved changes will be permanently lost.";
+
+function ConfirmDialog({
+  onClose,
+  onAccept,
+}: DialogContentProps & { onAccept?: () => void }) {
+  return (
+    <Stack gap={4}>
+      <Typography color="text.secondary" sx={{ mt: -1 }}>
+        {unsavedChangesHintText}
+      </Typography>
+      <Stack direction="row" sx={{ gap: 2, justifyContent: "flex-end" }}>
+        <Button onClick={() => onClose?.()} color="inherit">
+          Continue editing
+        </Button>
+        <Button
+          onClick={() => onAccept?.()}
+          variant="contained"
+          color="error"
+          sx={{ px: 2, py: 1 }}
+        >
+          Close without saving
+        </Button>
+      </Stack>
+    </Stack>
+  );
+}
+
 export default function Modal({
   children,
   actions,
@@ -185,12 +218,20 @@ export default function Modal({
   }, [children]);
   const theme = useTheme();
   const sm = useSm();
-
+  const globalDepth = useModalDepth();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [contentRef, setContentRef] = useState<HTMLElement | null>(null);
   const [hasOverflowingChildren, setHasOverflowingChildren] = useState(false);
   const [childHeight, setChildHeight] = useState(0);
-  const depth = 1;
+  const [depth, setDepth] = useState(1);
+  useEffect(() => {
+    if (!props.open || !globalDepth) return;
+    setDepth(globalDepth.current);
+    globalDepth.current++;
+    return () => {
+      globalDepth.current--;
+    };
+  }, [globalDepth, setDepth, props.open]);
 
   const mt = 95 - 5 * depth;
 
@@ -222,8 +263,12 @@ export default function Modal({
       {...props}
       open={sm ? props.open && !!depth : props.open}
       keepMounted={false}
-      TransitionComponent={sm ? Swipe : undefined}
+      TransitionComponent={sm ? Swipe : Show}
       TransitionProps={{
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+        ...(sm && {
+          timeout: theme.transitions.duration.standard * 2,
+        }),
         unmountOnExit: true,
         mountOnEnter: true,
       }}
@@ -292,7 +337,10 @@ export function ManagedModal({
   children,
   popover,
   slotProps,
+  preventClose,
+  showTitleInPopover,
 }: {
+  preventClose?: boolean;
   padded?: boolean;
   title?: string;
   options?: ComponentProps<typeof Modal>;
@@ -303,21 +351,43 @@ export function ManagedModal({
   appBar?: ModalAppBarProps;
   children?: ((state: State) => ReactNode) | ReactNode;
   popover?: boolean;
+  showTitleInPopover?: boolean;
   slotProps?: {
     popover?: Partial<PopoverProps>;
     paper?: Partial<BoxProps>;
     modal?: Partial<ComponentProps<typeof Modal>>;
   };
 }) {
+  const { transitions } = useTheme();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const paper = usePaper();
   const acrylic = useAcrylic();
   const sm = useSm();
   const shouldDisplayPopover = popover && !sm;
   const chi = children ?? slotProps?.modal?.children;
+  useEffect(() => {
+    if (!preventClose) return;
+    const f = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      return unsavedChangesHintText;
+    };
+    window.addEventListener("beforeunload", f);
+    return () => {
+      window.removeEventListener("beforeunload", f);
+    };
+  }, [preventClose]);
   return (
     <PopupState variant="popover">
       {(state) => {
-        const { open, close, isOpen } = state;
+        const { open, close: close1, isOpen } = state;
+        const close = (force?: boolean) => {
+          if (force || !preventClose) {
+            close1();
+            slotProps?.modal?.onClose?.({}, "backdropClick");
+          } else {
+            setConfirmOpen(true);
+          }
+        };
         const chi2 = typeof chi === "function" ? chi(state) : chi;
         return (
           <>
@@ -350,9 +420,9 @@ export function ManagedModal({
                     slotProps?.paper
                   )}
                 >
-                  {!!title && (
+                  {!!title && showTitleInPopover && (
                     <ModalAppBar
-                      onClose={close}
+                      onClose={() => close()}
                       {...(title
                         ? { children: <AppBarTitle>{title}</AppBarTitle> }
                         : ModalAppBarProps)}
@@ -362,9 +432,13 @@ export function ManagedModal({
                 </Box>
               </Popover>
             ) : (
-              <Modal open={isOpen} onClose={close} {...slotProps?.modal}>
+              <Modal
+                open={isOpen}
+                {...slotProps?.modal}
+                onClose={() => close()}
+              >
                 <ModalAppBar
-                  onClose={close}
+                  onClose={() => close()}
                   {...(title
                     ? { children: <AppBarTitle>{title}</AppBarTitle> }
                     : ModalAppBarProps)}
@@ -372,6 +446,20 @@ export function ManagedModal({
                 {padded ? <Box sx={{ p: sm ? 2 : 3 }}>{chi2}</Box> : chi2}
               </Modal>
             )}
+            <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+              <ModalAppBar onClose={() => setConfirmOpen(false)}>
+                <AppBarTitle>Close with unsaved changes?</AppBarTitle>
+              </ModalAppBar>
+              <Box sx={{ p: sm ? 2 : 3 }}>
+                <ConfirmDialog
+                  onClose={() => setConfirmOpen(false)}
+                  onAccept={() => {
+                    setConfirmOpen(false);
+                    delay(() => close(true), transitions.duration.shortest);
+                  }}
+                />
+              </Box>
+            </Modal>
           </>
         );
       }}

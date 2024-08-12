@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import React from "react";
+import usePortal from "react-useportal";
 
 type A = (
   message?: string,
@@ -55,6 +56,7 @@ export function useSnackbarAction<T extends []>() {
 }
 
 export function SnackbarProvider({ children }: { children?: ReactNode }) {
+  const { Portal } = usePortal({ bindTo: document.body });
   const [snackPack, setSnackPack] = useState<readonly SnackbarMessage[]>([]);
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<SnackbarMessage | undefined>(
@@ -102,45 +104,48 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
       <SnackbarContext.Provider value={handleMessage}>
         {children}
       </SnackbarContext.Provider>
-      <Snackbar
-        sx={{
-          "> .MuiPaper-root": {
-            bgcolor: "background.paper",
-            color: "text.primary",
-          },
-        }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        key={current?.key}
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        TransitionProps={{ onExited: handleExited }}
-        message={current?.message}
-        action={
-          <>
-            {current?.action && (
-              <Button
-                variant="text"
-                onClick={(e) => {
-                  current?.action?.();
-                  handleClose?.(e);
-                }}
-                color="primary"
+      <Portal>
+        <Snackbar
+          sx={{
+            "> .MuiPaper-root": {
+              bgcolor: "background.paper",
+              color: "text.primary",
+              zIndex: (t) => t.zIndex.modal + 10,
+            },
+          }}
+          anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+          key={current?.key}
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          TransitionProps={{ onExited: handleExited }}
+          message={current?.message}
+          action={
+            <>
+              {current?.action && (
+                <Button
+                  variant="text"
+                  onClick={(e) => {
+                    current?.action?.();
+                    handleClose?.(e);
+                  }}
+                  color="primary"
+                >
+                  {current?.actionLabel}
+                </Button>
+              )}
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                sx={{ p: 0.5 }}
+                onClick={handleClose}
               >
-                {current?.actionLabel}
-              </Button>
-            )}
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              sx={{ p: 0.5 }}
-              onClick={handleClose}
-            >
-              <CloseIcon />
-            </IconButton>
-          </>
-        }
-      />
+                <CloseIcon />
+              </IconButton>
+            </>
+          }
+        />
+      </Portal>
     </>
   );
 }

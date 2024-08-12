@@ -26,13 +26,16 @@ export const requestSchema = object({
   comments: string(),
 });
 
-const requestQuery = (id: string) => ({
-  queryKey: ["benchmarks", id],
-  queryFn: () => json<Request>(`${APIConfig.apiUrl}/request/id/${id}`),
-  enabled: !!id,
+const requestQuery = (key: string) => ({
+  queryKey: ["submissionRequestDetails", key],
+  queryFn: async () => ({
+    ...(await json<Request>(`${APIConfig.apiUrl}/request/key/${key}`)),
+    key,
+  }),
+  enabled: !!key,
 });
 
-export const useRequestData = (id: string) => useQuery(requestQuery(id));
+export const useRequestData = (key: string) => useQuery(requestQuery(key));
 
-export const useRequestsData = (ids: string[]) =>
-  useQueries({ queries: map(ids, requestQuery) });
+export const useRequestsData = (keys: string[]) =>
+  useQueries({ queries: map(keys, requestQuery) });

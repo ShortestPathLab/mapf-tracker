@@ -41,6 +41,7 @@ export default function Table() {
       field: "Icon",
       renderCell: () => <IconCard icon={<RouteOutlined />} />,
       flex: 0,
+      fold: true,
     },
     {
       field: "agents",
@@ -142,7 +143,7 @@ export default function Table() {
 
   return (
     <DataGrid
-      slotProps={{ row: { style: { cursor: "pointer" } } }}
+      clickable
       isLoading={isLoading}
       columnGroupingModel={[
         {

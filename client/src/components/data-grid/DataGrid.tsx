@@ -29,6 +29,7 @@ export type GridColDef<T extends GridValidRowModel> = MuiGridColDef<T> & {
 };
 
 export default function DataGrid<T extends GridValidRowModel = {}>({
+  clickable,
   columns,
   rows,
   extras,
@@ -39,6 +40,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
   extras?: ReactNode;
   isLoading?: ReactNode;
   shouldIncludeItem?: (p: T, s: string) => boolean;
+  clickable?: boolean;
 } & { columns: GridColDef<T>[] }) {
   const sm = useSm();
   const center = useCss({ display: "flex", alignItems: "center" });
@@ -76,7 +78,11 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
           sx={{
             "--DataGrid-containerBackground": "transparent",
             border: "none",
+            "& .MuiDataGrid-cell:nth-child(2)": {
+              pl: 2,
+            },
           }}
+          slotProps={clickable && { row: { style: { cursor: "pointer" } } }}
           autoHeight
           rowHeight={88}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}

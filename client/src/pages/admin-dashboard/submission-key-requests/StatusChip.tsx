@@ -1,6 +1,6 @@
 import { Chip, ChipProps } from "@mui/material";
 import { startCase } from "lodash";
-import { ReviewOutcome } from "./useRequestsQuery";
+import { ReviewOutcome } from "../../../queries/useRequestsQuery";
 
 export const StatusChip = ({
   status,

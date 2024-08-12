@@ -26,6 +26,10 @@ import UserMapPage from "./pages/UserMapPage";
 import { Visualiser } from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
+import {
+  useModalProviderValue,
+  ModalContext,
+} from "hooks/useModalProviderValue";
 
 export const queryClient = new QueryClient();
 
@@ -36,6 +40,7 @@ export default function App() {
     return next;
   }, (localStorage.getItem("theme") || "dark") as any);
   const [mode] = themeState;
+  const modalProviderValue = useModalProviderValue();
 
   const t = useMemo(() => theme(mode), [mode]);
 
@@ -45,97 +50,105 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeContext.Provider value={themeState}>
-        <ThemeProvider theme={t}>
-          <ConfirmProvider>
-            <SnackbarProvider>
-              <Stack
-                sx={{
-                  bgcolor: "background.default",
-                  minHeight: "100svh",
-                  color: "text.primary",
-                  transition: (t) => t.transitions.create("background-color"),
-                }}
-              >
-                <Navbar />
-                <Box sx={{ px: 4, pb: 32, position: "relative" }}>
-                  <Fade in={true}>
-                    <Stack>
-                      <Routes>
-                        <Route
-                          path="/"
-                          element={<BenchmarksRootLevelPage showHeader />}
-                        />
-                        <Route
-                          path="/benchmarks"
-                          element={<BenchmarksRootLevelPage />}
-                        />
-                        <Route
-                          path="/scenarios"
-                          element={<BenchmarksMapLevelPage />}
-                        />
-                        <Route
-                          path="/instances"
-                          element={<BenchmarksScenarioLevelPage />}
-                        />
-                        <Route path="/visualization" element={<Visualiser />} />
-                        <Route path="/summary" element={<Summary />} />
-                        <Route path="/aboutUs" element={<AboutPage />} />
-                        <Route path="/systemDemo" element={<SystemDemo />} />
-                        <Route path="/submissions" element={<Submissions />} />
-                        <Route
-                          path="/submissionSummary"
-                          element={<SubmissionSummaryPage />}
-                        />
-                        <Route
-                          path="/contributes"
-                          element={<ContributePage />}
-                        />
-                        <Route path="/download" element={<DownloadPage />} />
-                        <Route
-                          path="/trackSubmission"
-                          element={<TrackSubmission />}
-                        />
-                        <Route
-                          path="/dashboard/:section?"
-                          element={
-                            localStorage.getItem("user") !== null ? (
-                              <AdminDashboard />
-                            ) : (
-                              <Navigate to="/" />
-                            )
-                          }
-                        />
-                        <Route
-                          path="/dashboard-old"
-                          element={
-                            localStorage.getItem("user") !== null ? (
-                              <AdminDashboardOld />
-                            ) : (
-                              <Navigate to="/" />
-                            )
-                          }
-                        />
-                        <Route
-                          path="/user/maps"
-                          element={
-                            localStorage.getItem("user") !== null ? (
-                              <UserMapPage />
-                            ) : (
-                              <Navigate to="/" />
-                            )
-                          }
-                        />
-                      </Routes>
-                    </Stack>
-                  </Fade>
-                </Box>
-              </Stack>
-              <ReactQueryDevtools />
-            </SnackbarProvider>
-          </ConfirmProvider>
-        </ThemeProvider>
-      </ThemeContext.Provider>
+      <ModalContext.Provider value={modalProviderValue}>
+        <ThemeContext.Provider value={themeState}>
+          <ThemeProvider theme={t}>
+            <ConfirmProvider>
+              <SnackbarProvider>
+                <Stack
+                  sx={{
+                    bgcolor: "background.default",
+                    minHeight: "100svh",
+                    color: "text.primary",
+                    transition: (t) => t.transitions.create("background-color"),
+                  }}
+                >
+                  <Navbar />
+                  <Box sx={{ px: 4, pb: 32, position: "relative" }}>
+                    <Fade in={true}>
+                      <Stack>
+                        <Routes>
+                          <Route
+                            path="/"
+                            element={<BenchmarksRootLevelPage showHeader />}
+                          />
+                          <Route
+                            path="/benchmarks"
+                            element={<BenchmarksRootLevelPage />}
+                          />
+                          <Route
+                            path="/scenarios"
+                            element={<BenchmarksMapLevelPage />}
+                          />
+                          <Route
+                            path="/instances"
+                            element={<BenchmarksScenarioLevelPage />}
+                          />
+                          <Route
+                            path="/visualization"
+                            element={<Visualiser />}
+                          />
+                          <Route path="/summary" element={<Summary />} />
+                          <Route path="/aboutUs" element={<AboutPage />} />
+                          <Route path="/systemDemo" element={<SystemDemo />} />
+                          <Route
+                            path="/submissions"
+                            element={<Submissions />}
+                          />
+                          <Route
+                            path="/submissionSummary"
+                            element={<SubmissionSummaryPage />}
+                          />
+                          <Route
+                            path="/contributes"
+                            element={<ContributePage />}
+                          />
+                          <Route path="/download" element={<DownloadPage />} />
+                          <Route
+                            path="/trackSubmission"
+                            element={<TrackSubmission />}
+                          />
+                          <Route
+                            path="/dashboard/:section?"
+                            element={
+                              localStorage.getItem("user") !== null ? (
+                                <AdminDashboard />
+                              ) : (
+                                <Navigate to="/" />
+                              )
+                            }
+                          />
+                          <Route
+                            path="/dashboard-old"
+                            element={
+                              localStorage.getItem("user") !== null ? (
+                                <AdminDashboardOld />
+                              ) : (
+                                <Navigate to="/" />
+                              )
+                            }
+                          />
+                          <Route
+                            path="/user/maps"
+                            element={
+                              localStorage.getItem("user") !== null ? (
+                                <UserMapPage />
+                              ) : (
+                                <Navigate to="/" />
+                              )
+                            }
+                          />
+                        </Routes>
+                      </Stack>
+                    </Fade>
+                  </Box>
+                </Stack>
+                <ReactQueryDevtools />
+              </SnackbarProvider>
+            </ConfirmProvider>
+          </ThemeProvider>
+        </ThemeContext.Provider>
+      </ModalContext.Provider>
     </QueryClientProvider>
   );
 }

@@ -46,6 +46,7 @@ export default function SubmissionSummaryPage() {
       field: "Icon",
       renderCell: () => <IconCard icon={<RouteOutlined />} />,
       flex: 0,
+      fold: true,
     },
     {
       field: "agentCountIntent",
