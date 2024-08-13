@@ -1,10 +1,10 @@
 import { FolderOutlined, ShowChartOutlined } from "@mui/icons-material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Stack, Tab } from "@mui/material";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
-import { useSm } from "components/dialog/useSmallDisplay";
 
 export default function Layout({
   width = 1488,
@@ -29,11 +29,26 @@ export default function Layout({
 }) {
   const sm = useSm();
   return (
-    <Stack sx={{ mx: "auto", width, maxWidth: "100%", gap: 4, py: sm ? 0 : 6 }}>
-      {render({
-        header: <PageHeader {...{ current: title, path }} />,
-        children,
-      })}
+    <Stack
+      sx={{
+        mx: "auto",
+        width,
+        maxWidth: "100%",
+        gap: 4,
+        py: sm ? 2 : 6,
+      }}
+    >
+      <Stack
+        sx={{
+          gap: 4,
+          px: sm ? 2 : 3,
+        }}
+      >
+        {render({
+          header: <PageHeader {...{ current: title, path }} />,
+          children,
+        })}
+      </Stack>
     </Stack>
   );
 }

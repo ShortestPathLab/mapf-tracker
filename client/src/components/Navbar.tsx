@@ -2,6 +2,7 @@ import {
   DarkModeOutlined,
   ExpandMoreOutlined,
   LightModeOutlined,
+  MenuOutlined,
   RouteOutlined,
   SortOutlined,
 } from "@mui/icons-material";
@@ -45,10 +46,15 @@ import * as React from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeContext } from "utils/ThemeProvider";
 import { useSnackbar } from "./Snackbar";
+import { useSm } from "./dialog/useSmallDisplay";
+import { paper } from "theme";
+
+export const navbarHeight = (sm?: boolean) => (sm ? 48 : 64);
 
 const settings = ["Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
+  const sm = useSm();
   const [mode, toggleMode] = React.useContext(ThemeContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -175,7 +181,24 @@ function ResponsiveAppBar() {
     event.stopPropagation();
   };
 
-  return (
+  return sm ? (
+    <AppBar sx={{ background: "transparent" }}>
+      <Toolbar
+        sx={{
+          height: 64,
+          ...paper(),
+          borderRadius: 0,
+          border: "none",
+          borderBottom: (t) => `1px solid ${t.palette.divider}`,
+        }}
+      >
+        <IconButton edge="start">
+          <MenuOutlined />
+        </IconButton>
+        <Typography variant="h6">Tracker</Typography>
+      </Toolbar>
+    </AppBar>
+  ) : (
     // <AppBar  style={{position:"static",background: "grey"}}>
     <AppBar
       elevation={0}

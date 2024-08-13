@@ -64,7 +64,7 @@ export default function App() {
                   }}
                 >
                   <Navbar />
-                  <Box sx={{ px: 4, pb: 32, position: "relative" }}>
+                  <Box sx={{ pb: 32, position: "relative" }}>
                     <Fade in={true}>
                       <Stack>
                         <Routes>

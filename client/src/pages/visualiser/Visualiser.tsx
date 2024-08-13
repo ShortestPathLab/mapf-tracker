@@ -30,6 +30,8 @@ import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
+import { navbarHeight } from "components/Navbar";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 const SCALE_SHOW_GRID_THRESHOLD = 30;
 
@@ -80,6 +82,7 @@ export default function Visualiser() {
   const state = useLocationState<VisualiserLocationState>();
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
+  const sm = useSm();
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -154,7 +157,7 @@ export default function Visualiser() {
         top: 0,
       }}
     >
-      <Stack sx={{ position: "fixed", p: 4, top: 88, left: 0 }}>
+      <Stack sx={{ position: "fixed", p: 4, top: navbarHeight(sm), left: 0 }}>
         <PageHeader
           current="View"
           path={[

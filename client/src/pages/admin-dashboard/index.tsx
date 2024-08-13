@@ -6,16 +6,24 @@ import { useNavigate } from "hooks/useNavigation";
 import { head } from "lodash";
 import { useParams } from "react-router-dom";
 import { pages } from "./pages";
+import { navbarHeight } from "components/Navbar";
 
 export default function index() {
   const md = useMd();
+  const sm = useSm();
   const { section } = useParams();
   const navigate = useNavigate();
   return (
     <TabContext value={section ?? head(pages()).value}>
       <Stack
         direction="row"
-        sx={{ position: "fixed", top: 88, left: 0, bottom: 0, right: 0 }}
+        sx={{
+          position: "fixed",
+          top: navbarHeight(sm),
+          left: 0,
+          bottom: 0,
+          right: 0,
+        }}
       >
         {!md && (
           <Tabs
@@ -40,7 +48,7 @@ export default function index() {
           {pages().map(({ value, content }) => (
             <TabPanel value={value} sx={{ p: 0, height: "100%" }}>
               <Scroll y style={{ height: "100%" }}>
-                <Box sx={{ p: md ? 2 : 3 }}>{content}</Box>
+                <Box sx={{ py: md ? 2 : 3 }}>{content}</Box>
               </Scroll>
             </TabPanel>
           ))}
