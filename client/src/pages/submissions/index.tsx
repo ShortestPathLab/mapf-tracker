@@ -235,9 +235,9 @@ export default function TrackSubmission() {
           clickable
           columns={columns}
           rows={rows}
-          onRowClick={(row) =>
+          onRowClick={({ row }) =>
             navigate<SubmissionLocationState>("/submissionSummary", {
-              apiKey: row.id,
+              apiKey: row.key,
             })
           }
         />

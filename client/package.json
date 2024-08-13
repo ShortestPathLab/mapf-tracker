@@ -74,5 +74,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "trustedDependencies": [
+    "es5-ext",
+    "validator"
+  ]
 }

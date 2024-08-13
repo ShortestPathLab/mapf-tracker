@@ -1,5 +1,8 @@
 import { LinearProgress, Stack, Tooltip, Typography } from "@mui/material";
-import { round } from "lodash";
+import { round, floor } from "lodash";
+
+const formatValue = (v: number) =>
+  v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%";
 
 export const cellRendererBar = ({ value }: { value?: number }) => (
   <Tooltip title={`${round(value * 100, 4)}%`}>
@@ -18,7 +21,7 @@ export const cellRendererBar = ({ value }: { value?: number }) => (
         variant="determinate"
       />
       <Typography variant="overline" sx={{ width: 32, textAlign: "right" }}>
-        {`${round(value * 100)}%`}
+        {formatValue(value)}
       </Typography>
     </Stack>
   </Tooltip>

@@ -15,6 +15,12 @@ export const findAll: RequestHandler = (req, res) => {
     });
 };
 
+export const findByKey: RequestHandler = async (req, res) => {
+  const { key } = req.params;
+  const { request_id } = await SubmissionKey.findOne({ api_key: key });
+  res.json(await Request.findById(request_id));
+};
+
 export const findByInstance_id: RequestHandler = (req, res) => {
   const { id } = req.params;
 

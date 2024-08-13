@@ -40,8 +40,6 @@ export function MapProportionChart() {
       render={() => (
         <RadarChart>
           <Legend />
-          <PolarRadiusAxis domain={[0, 1]} />
-          <PolarAngleAxis dataKey="name" />
           {map(
             [
               {
@@ -66,6 +64,8 @@ export function MapProportionChart() {
             )
           )}
           <PolarGrid />
+          <PolarRadiusAxis stroke={palette.text.primary} domain={[0, 1]} />
+          <PolarAngleAxis dataKey="name" />
           <ChartTooltip formatter={formatPercentage} />
         </RadarChart>
       )}
