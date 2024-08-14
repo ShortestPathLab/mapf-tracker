@@ -888,7 +888,7 @@ export default function UserMapPage() {
       <PageHeader
         current={`Submission ${location.state.algo_id.slice(0, 5)}`}
         path={[
-          { name: "MAPF Tracker", url: "/" },
+          { name: "Home", url: "/" },
           { name: "Dashboard", url: "/dashboard" },
         ]}
       />

@@ -8,7 +8,7 @@ export default function Page() {
     <Layout
       title="Submit an algorithm"
       width={1280}
-      path={[{ name: "MAPF Tracker", url: "/" }]}
+      path={[{ name: "Home", url: "/" }]}
     >
       <Stack
         sx={{

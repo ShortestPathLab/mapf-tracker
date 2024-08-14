@@ -1,10 +1,28 @@
-import { FolderOutlined, ShowChartOutlined } from "@mui/icons-material";
+import {
+  ArrowBackOutlined,
+  FolderOutlined,
+  ShowChartOutlined,
+} from "@mui/icons-material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Stack, Tab } from "@mui/material";
-import { useSm } from "components/dialog/useSmallDisplay";
+import {
+  AppBar as MuiAppBar,
+  Box,
+  IconButton,
+  Stack,
+  Tab,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { useMd, useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
+import AppBar from "components/appbar";
+import { Scroll } from "components/dialog/Scrollbars";
+import { last, startCase } from "lodash";
+import { useNavigate } from "hooks/useNavigation";
+import Enter from "components/dialog/Enter";
+import { navbarHeight } from "components/Navbar";
 
 export default function Layout({
   width = 1488,
@@ -18,37 +36,74 @@ export default function Layout({
   path,
   children,
 }: {
-  width?: number;
+  width?: string | number;
   children?: ReactNode;
   render?: (components: {
-    header: ReactNode;
+    header?: ReactNode;
     children?: ReactNode;
   }) => ReactNode;
   title?: string;
   path?: PageHeaderProps["path"];
 }) {
+  const navigate = useNavigate();
   const sm = useSm();
-  return (
+  const md = useMd();
+  const header = <PageHeader {...{ current: title, path }} />;
+  const content = (
     <Stack
       sx={{
-        mx: "auto",
-        width,
-        maxWidth: "100%",
+        bgcolor: "background.default",
         gap: 4,
+        px: sm ? 2 : 3,
+        maxWidth: width,
+        mx: "auto",
         py: sm ? 2 : 6,
       }}
     >
-      <Stack
-        sx={{
-          gap: 4,
-          px: sm ? 2 : 3,
-        }}
-      >
-        {render({
-          header: <PageHeader {...{ current: title, path }} />,
-          children,
-        })}
-      </Stack>
+      {render({
+        header,
+        children,
+      })}
+    </Stack>
+  );
+  return (
+    <Stack
+      sx={{
+        height: "100%",
+        width: "100%",
+        bgcolor: "background.default",
+      }}
+    >
+      <AppBar />
+      {md && path?.length > 1 && (
+        <MuiAppBar
+          position="fixed"
+          sx={{ color: "text.primary", boxShadow: "none" }}
+        >
+          <Toolbar
+            sx={{
+              bgcolor: "background.paper",
+              borderBottom: (t) => `1px solid ${t.palette.background.default}`,
+            }}
+          >
+            <IconButton
+              edge="start"
+              onClick={() => {
+                const { state, url } = last(path);
+                navigate(url, state);
+              }}
+            >
+              <ArrowBackOutlined />
+            </IconButton>
+            <Typography variant="h6" sx={{ ml: 1 }}>
+              {startCase(title)}
+            </Typography>
+          </Toolbar>
+        </MuiAppBar>
+      )}
+      <Scroll y style={{ flex: 1, transform: "translateZ(0)" }}>
+        {md ? content : <Enter in>{content}</Enter>}
+      </Scroll>
     </Stack>
   );
 }

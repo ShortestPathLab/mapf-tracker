@@ -48,7 +48,7 @@ export default function SubmissionSummary({
       <PageHeader
         current="Submission progress"
         path={[
-          { name: "MAPF Tracker", url: "/" },
+          { name: "Home", url: "/" },
           { name: "Submit an algorithm", url: "/contributes" },
           { name: "Manage submissions", url: "/trackSubmission" },
         ]}

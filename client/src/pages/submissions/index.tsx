@@ -204,7 +204,7 @@ export default function TrackSubmission() {
     <Layout
       width={960}
       title="Track Submissions"
-      path={[{ name: "MAPF Tracker", url: "/" }]}
+      path={[{ name: "Home", url: "/" }]}
     >
       <Stack>
         <AddKeyForm

@@ -15,11 +15,7 @@ import { people } from "./people";
 
 export default function Page() {
   return (
-    <Layout
-      width={720}
-      title="About"
-      path={[{ name: "MAPF Tracker", url: "/" }]}
-    >
+    <Layout width={720} title="About" path={[{ name: "Home", url: "/" }]}>
       <Prose>
         <Content />
       </Prose>

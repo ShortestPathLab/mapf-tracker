@@ -7,8 +7,9 @@ import {
 import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";
 import SubmissionKeyRequestsPage from "./submission-key-requests";
+import { once } from "lodash";
 
-export const pages = () => [
+export const pages = once(() => [
   {
     value: "",
     label: "Overview",
@@ -30,4 +31,4 @@ export const pages = () => [
     content: <ApiKeysPage />,
     icon: <VpnKeyOutlined />,
   },
-];
+]);

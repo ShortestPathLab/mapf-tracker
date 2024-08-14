@@ -95,7 +95,7 @@ export default function index() {
     <Layout
       title="Submission key requests"
       path={[
-        { name: "MAPF Tracker", url: "/" },
+        { name: "Home", url: "/" },
         { name: "Dashboard", url: "/dashboard" },
       ]}
     >

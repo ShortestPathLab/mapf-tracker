@@ -15,7 +15,7 @@ export default function Page() {
     <Layout
       title={capitalize(`${scenType}-${scenTypeID}`)}
       path={[
-        { name: "MAPF Tracker", url: "/" },
+        { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
         ,
         {

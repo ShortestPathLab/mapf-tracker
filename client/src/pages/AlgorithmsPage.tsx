@@ -37,6 +37,7 @@ import {
 } from "recharts";
 import { APIConfig } from "../core/config";
 import PageHeader from "../layout/PageHeader";
+import { Layout } from "layout";
 
 const angle = {
   Warehouse: -40,
@@ -471,418 +472,197 @@ export default function Submissions() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
-    <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
-      <Stack sx={{ maxWidth: 960 }}>
-        <PageHeader
-          current="Submissions"
-          path={[{ name: "MAPF Tracker", url: "/" }]}
-        />
-      </Stack>
-
-      <Card>
-        <Stack direction="row" sx={{ p: 2, gap: 4 }}>
-          <TextField
-            id="outlined-basic"
-            onChange={(searchVal) => requestSearch(searchVal.target.value)}
-            variant="filled"
-            label="Filter by algorithm name"
-            value={searched}
-            sx={{ width: 420 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <FilterListOutlined />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  {searched === "" ? null : (
-                    <IconButton
-                      onClick={(searchVal) =>
-                        cancelSearch(searchVal.target.value)
-                      }
-                    >
-                      <CancelOutlined />
-                    </IconButton>
-                  )}
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Box flex={1}></Box>
-          <Button
-            sx={{ minWidth: "max-content" }}
-            size="medium"
-            onClick={() => {
-              setDense(!dense);
-            }}
-          >
-            {dense ? "Comfortable margins" : "Compact margins"}
-          </Button>
-        </Stack>
-        <TableContainer sx={{ width: "100%" }}>
-          <Table
-            // frozen table set max-content
-            sx={{ width: "100%" }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-            style={{ tableLayout: "auto" }}
-          >
-            <colgroup>
-              <col style={{ minWidth: "200px" }} width="20%" />
-              <col style={{ minWidth: "200px" }} width="20%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "200px" }} width="15%" />
-              <col style={{ minWidth: "100px" }} width="10%" />
-            </colgroup>
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
-            <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow
-                      sx={{ cursor: "pointer" }}
-                      hover
-                      tabIndex={-1}
-                      key={row.id}
-                    >
-                      <TableCell
-                        id={labelId}
-                        scope="row"
-                        padding="normal"
-                        align="left"
+    <Layout title="Submissions" path={[{ name: "Home", url: "/" }]}>
+      <Stack sx={{ gap: 4 }}>
+        <Card>
+          <Stack direction="row" sx={{ p: 2, gap: 4 }}>
+            <TextField
+              id="outlined-basic"
+              onChange={(searchVal) => requestSearch(searchVal.target.value)}
+              variant="filled"
+              label="Filter by algorithm name"
+              value={searched}
+              sx={{ width: 420 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FilterListOutlined />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {searched === "" ? null : (
+                      <IconButton
+                        onClick={(searchVal) =>
+                          cancelSearch(searchVal.target.value)
+                        }
                       >
-                        {row.algo_name}
-                      </TableCell>
-                      <TableCell align="left">{row.authors}</TableCell>
-                      <TableCell align="left">{row.best_lower}</TableCell>
-                      <TableCell align="left">{row.best_solution}</TableCell>
-                      <TableCell align="left">{row.instances_closed}</TableCell>
-                      <TableCell align="left">{row.instances_solved}</TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          onClick={(event) =>
-                            handleAlgoDetailClickOpen(event, "paper", row)
-                          }
-                        >
-                          <InfoIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  sx={{ cursor: "pointer" }}
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={9} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-        <Dialog
-          open={openAlgoDetail}
-          onClose={handleAlgoDetailClose}
-          scroll={scrollAlgoDetail}
-          aria-labelledby="scroll-dialog-title"
-          aria-describedby="scroll-dialog-description"
-          fullWidth={true}
-          maxWidth={"md"}
-          disableScrollLock={true}
-          PaperProps={{
-            style: { mb: 2, borderRadius: 10 },
-          }}
-          // PaperProps={{ sx: { width: "100%"}}}
-        >
-          <DialogContent
-            dividers={scrollAlgoDetail === "paper"}
-            sx={{ width: 850, display: "flex" }}
-          >
-            <Table sx={{ width: 500 }}>
+                        <CancelOutlined />
+                      </IconButton>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Box flex={1}></Box>
+            <Button
+              sx={{ minWidth: "max-content" }}
+              size="medium"
+              onClick={() => {
+                setDense(!dense);
+              }}
+            >
+              {dense ? "Comfortable margins" : "Compact margins"}
+            </Button>
+          </Stack>
+          <TableContainer sx={{ width: "100%" }}>
+            <Table
+              // frozen table set max-content
+              sx={{ width: "100%" }}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              style={{ tableLayout: "auto" }}
+            >
               <colgroup>
-                {/*<col width="120" />*/}
-                {/*<col width="150" />*/}
-                {/*<col width="65" />*/}
-                {/*<col width="200" />*/}
-                <col width="120" />
-                <col width="150" />
-                <col width="50" />
-                <col width="150" />
+                <col style={{ minWidth: "200px" }} width="20%" />
+                <col style={{ minWidth: "200px" }} width="20%" />
+                <col style={{ minWidth: "200px" }} width="15%" />
+                <col style={{ minWidth: "200px" }} width="15%" />
+                <col style={{ minWidth: "200px" }} width="15%" />
+                <col style={{ minWidth: "200px" }} width="15%" />
+                <col style={{ minWidth: "100px" }} width="10%" />
               </colgroup>
+              <EnhancedTableHead
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+              />
               <TableBody>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    Algorithm Name:
-                  </TableCell>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    {algodata.algo_name}
-                  </TableCell>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    Authors:{" "}
-                  </TableCell>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    {algodata.authors}
-                  </TableCell>
-                </TableRow>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
-                    {" "}
-                    Github Link:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{ paddingRight: 0, paddingLeft: 0 }}
-                    colSpan={3}
-                  >
-                    <Link href={algodata.github} underline="hover">
-                      {algodata.github}
-                    </Link>
-                  </TableCell>
-                </TableRow>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell
+                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+                 rows.slice().sort(getComparator(order, orderBy)) */}
+                {stableSort(rows, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const labelId = `enhanced-table-checkbox-${index}`;
+                    return (
+                      <TableRow
+                        sx={{ cursor: "pointer" }}
+                        hover
+                        tabIndex={-1}
+                        key={row.id}
+                      >
+                        <TableCell
+                          id={labelId}
+                          scope="row"
+                          padding="normal"
+                          align="left"
+                        >
+                          {row.algo_name}
+                        </TableCell>
+                        <TableCell align="left">{row.authors}</TableCell>
+                        <TableCell align="left">{row.best_lower}</TableCell>
+                        <TableCell align="left">{row.best_solution}</TableCell>
+                        <TableCell align="left">
+                          {row.instances_closed}
+                        </TableCell>
+                        <TableCell align="left">
+                          {row.instances_solved}
+                        </TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            onClick={(event) =>
+                              handleAlgoDetailClickOpen(event, "paper", row)
+                            }
+                          >
+                            <InfoIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    sx={{ cursor: "pointer" }}
                     style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
+                      height: (dense ? 33 : 53) * emptyRows,
                     }}
                   >
-                    {" "}
-                    Paper Reference:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                    colSpan={3}
-                  >
-                    {" "}
-                    {algodata.papers}{" "}
-                  </TableCell>
-                </TableRow>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                  >
-                    {" "}
-                    Comments:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                    colSpan={3}
-                  >
-                    {" "}
-                    {algodata.comments}
-                  </TableCell>
-                </TableRow>
+                    <TableCell colSpan={9} />
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
-            {/*<ResponsiveContainer width={500} height={380}>*/}
-            <div style={{ width: 30 }} />
-            {/*<Card   sx={{  width : 350, height: 464, mb: 2, }}>*/}
-            <Box sx={{ width: 350, height: 464 }}>
-              <Toolbar
-                sx={{
-                  pl: { sm: 2 },
-                  pr: { xs: 1, sm: 1 },
-                }}
-              >
-                <Typography
-                  sx={{ flex: "1 1 100%" }}
-                  variant="h8"
-                  id="tableTitle"
-                  component="div"
-                >
-                  Summary
-                  <IconButton
-                    onClick={() => {
-                      handleOpenInfo(`domainCompare-${domainQuery}`);
-                    }}
-                  >
-                    <InfoIcon />
-                  </IconButton>
-                </Typography>
-                <FormControl
-                  sx={{ m: 1, minWidth: 120, width: 300 }}
-                  size="small"
-                >
-                  <Select
-                    displayEmpty={true}
-                    value={domainQuery}
-                    onChange={handleDomainQueryChange}
-                    inputProps={{ "aria-label": "Without label" }}
-                  >
-                    <MenuItem value={"#Instances Closed"}>
-                      Instances Closed
-                    </MenuItem>
-                    <MenuItem value={"#Instances Solved"}>
-                      Instances Solved
-                    </MenuItem>
-                    <MenuItem value={"#Best Lower-bounds"}>
-                      Best Lower Bound
-                    </MenuItem>
-                    <MenuItem value={"#Best Solutions"}>Best Solution</MenuItem>
-                  </Select>
-                </FormControl>
-              </Toolbar>
-              {domainLoading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  width={350}
-                  height={400}
-                >
-                  <CircularProgress size={80} />
-                </Box>
-              ) : (
-                <RadarChart
-                  width={350}
-                  height={400}
-                  cx="50%"
-                  cy="60%"
-                  outerRadius="80%"
-                  data={algoChartData}
-                >
-                  {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
-                  <Legend
-                    verticalAlign="top"
-                    align="center"
-                    wrapperStyle={{
-                      fontFamily: "Inter Tight",
-                    }}
-                  />
-                  <PolarGrid />
-                  <PolarAngleAxis
-                    dataKey="name"
-                    tick={<CustomizedLabel />}
-                    style={{
-                      fontFamily: "Inter Tight",
-                    }}
-                  />
-                  <Tooltip
-                    wrapperStyle={{ fontFamily: "Inter Tight" }}
-                    formatter={(tick) => {
-                      const value = tick * 100;
-                      return `${value.toFixed(2)}%`;
-                    }}
-                  />
-                  <PolarRadiusAxis
-                    angle={38.5}
-                    domain={[0, algoChartData.length > 0 ? "dataMax" : 1]}
-                    tickFormatter={(tick) => {
-                      const value = tick * 100;
-                      return `${value.toFixed(0)}%`;
-                    }}
-                  />
-                  <Radar
-                    key={"State of The Art"}
-                    dataKey={"State of The Art"}
-                    fillOpacity={0.6}
-                    stroke={`#87ceeb`}
-                    fill={`#87ceeb`}
-                  />
-                  <Radar
-                    key={algodata.algo_name}
-                    dataKey={algodata.algo_name}
-                    fillOpacity={0.6}
-                    stroke={`#ff4500`}
-                    fill={`#ff4500`}
-                  />
-                </RadarChart>
-              )}
-            </Box>
-            {/*</Card>*/}
-            {/*</ResponsiveContainer>*/}
-          </DialogContent>
-          {/*<DialogActions>*/}
-          {/*    <Button onClick={handleAlgoDetailClose}>Cancel</Button>*/}
-          {/*</DialogActions>*/}
-        </Dialog>
-        <Dialog
-          open={openMonitorDetail}
-          onClose={() => setOpenMonitorDetail(false)}
-          fullWidth={true}
-          aria-labelledby="scroll-dialog-title"
-          aria-describedby="scroll-dialog-description"
-          maxWidth={"sm"}
-          disableScrollLock={true}
-          PaperProps={{
-            style: { mb: 2, borderRadius: 10 },
-          }}
-          // PaperProps={{ sx: { width: "100%"}}}
-        >
-          <DialogContent sx={{ width: 550, display: "flex" }}>
-            <Table sx={{ width: 550 }}>
-              <colgroup>
-                {/*<col width="120" />*/}
-                {/*<col width="150" />*/}
-                {/*<col width="65" />*/}
-                {/*<col width="200" />*/}
-                <col width="150" />
-                <col width="150" />
-                <col width="150" />
-                <col width="50" />
-              </colgroup>
-              <TableBody>
-                <TableRow sx={{ cursor: "pointer" }}>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                  >
-                    {" "}
-                    Description:{" "}
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      paddingRight: 0,
-                      paddingLeft: 0,
-                      verticalAlign: "top",
-                    }}
-                    colSpan={3}
-                  >
-                    {infoDescription.description}
-                  </TableCell>
-                </TableRow>
-                {infoDescription.c_axis != null ? (
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          <Dialog
+            open={openAlgoDetail}
+            onClose={handleAlgoDetailClose}
+            scroll={scrollAlgoDetail}
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
+            fullWidth={true}
+            maxWidth={"md"}
+            disableScrollLock={true}
+            PaperProps={{
+              style: { mb: 2, borderRadius: 10 },
+            }}
+            // PaperProps={{ sx: { width: "100%"}}}
+          >
+            <DialogContent
+              dividers={scrollAlgoDetail === "paper"}
+              sx={{ width: 850, display: "flex" }}
+            >
+              <Table sx={{ width: 500 }}>
+                <colgroup>
+                  {/*<col width="120" />*/}
+                  {/*<col width="150" />*/}
+                  {/*<col width="65" />*/}
+                  {/*<col width="200" />*/}
+                  <col width="120" />
+                  <col width="150" />
+                  <col width="50" />
+                  <col width="150" />
+                </colgroup>
+                <TableBody>
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                      Algorithm Name:
+                    </TableCell>
+                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                      {" "}
+                      {algodata.algo_name}
+                    </TableCell>
+                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                      {" "}
+                      Authors:{" "}
+                    </TableCell>
+                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                      {" "}
+                      {algodata.authors}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell style={{ paddingRight: 0, paddingLeft: 0 }}>
+                      {" "}
+                      Github Link:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{ paddingRight: 0, paddingLeft: 0 }}
+                      colSpan={3}
+                    >
+                      <Link href={algodata.github} underline="hover">
+                        {algodata.github}
+                      </Link>
+                    </TableCell>
+                  </TableRow>
                   <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
@@ -892,7 +672,7 @@ export default function Submissions() {
                       }}
                     >
                       {" "}
-                      Category-axis:{" "}
+                      Paper Reference:{" "}
                     </TableCell>
                     <TableCell
                       style={{
@@ -901,85 +681,11 @@ export default function Submissions() {
                         verticalAlign: "top",
                       }}
                       colSpan={3}
-                    >
-                      {infoDescription.c_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {infoDescription.v_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
                     >
                       {" "}
-                      Value-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.v_axis}
+                      {algodata.papers}{" "}
                     </TableCell>
                   </TableRow>
-                ) : null}
-
-                {infoDescription.x_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      X-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.x_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {infoDescription.y_axis != null ? (
-                  <TableRow sx={{ cursor: "pointer" }}>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                    >
-                      {" "}
-                      Y-axis:{" "}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        paddingRight: 0,
-                        paddingLeft: 0,
-                        verticalAlign: "top",
-                      }}
-                      colSpan={3}
-                    >
-                      {infoDescription.y_axis}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                {infoDescription.comment != null ? (
                   <TableRow sx={{ cursor: "pointer" }}>
                     <TableCell
                       style={{
@@ -999,19 +705,315 @@ export default function Submissions() {
                       }}
                       colSpan={3}
                     >
-                      {infoDescription.comment}
+                      {" "}
+                      {algodata.comments}
                     </TableCell>
                   </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </DialogContent>
-        </Dialog>
-      </Card>
-      {/*<FormControlLabel*/}
-      {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
-      {/*    label="Dense padding"*/}
-      {/*/>*/}
-    </Stack>
+                </TableBody>
+              </Table>
+              {/*<ResponsiveContainer width={500} height={380}>*/}
+              <div style={{ width: 30 }} />
+              {/*<Card   sx={{  width : 350, height: 464, mb: 2, }}>*/}
+              <Box sx={{ width: 350, height: 464 }}>
+                <Toolbar
+                  sx={{
+                    pl: { sm: 2 },
+                    pr: { xs: 1, sm: 1 },
+                  }}
+                >
+                  <Typography
+                    sx={{ flex: "1 1 100%" }}
+                    variant="h8"
+                    id="tableTitle"
+                    component="div"
+                  >
+                    Summary
+                    <IconButton
+                      onClick={() => {
+                        handleOpenInfo(`domainCompare-${domainQuery}`);
+                      }}
+                    >
+                      <InfoIcon />
+                    </IconButton>
+                  </Typography>
+                  <FormControl
+                    sx={{ m: 1, minWidth: 120, width: 300 }}
+                    size="small"
+                  >
+                    <Select
+                      displayEmpty={true}
+                      value={domainQuery}
+                      onChange={handleDomainQueryChange}
+                      inputProps={{ "aria-label": "Without label" }}
+                    >
+                      <MenuItem value={"#Instances Closed"}>
+                        Instances Closed
+                      </MenuItem>
+                      <MenuItem value={"#Instances Solved"}>
+                        Instances Solved
+                      </MenuItem>
+                      <MenuItem value={"#Best Lower-bounds"}>
+                        Best Lower Bound
+                      </MenuItem>
+                      <MenuItem value={"#Best Solutions"}>
+                        Best Solution
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Toolbar>
+                {domainLoading ? (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    width={350}
+                    height={400}
+                  >
+                    <CircularProgress size={80} />
+                  </Box>
+                ) : (
+                  <RadarChart
+                    width={350}
+                    height={400}
+                    cx="50%"
+                    cy="60%"
+                    outerRadius="80%"
+                    data={algoChartData}
+                  >
+                    {/*<text x="50%" y="0" dominantBaseline="hanging" fontSize="20"  textAnchor={'middle'} style = {{ fontFamily: "Inter Tight" }}>Solution</text>*!/*/}
+                    <Legend
+                      verticalAlign="top"
+                      align="center"
+                      wrapperStyle={{
+                        fontFamily: "Inter Tight",
+                      }}
+                    />
+                    <PolarGrid />
+                    <PolarAngleAxis
+                      dataKey="name"
+                      tick={<CustomizedLabel />}
+                      style={{
+                        fontFamily: "Inter Tight",
+                      }}
+                    />
+                    <Tooltip
+                      wrapperStyle={{ fontFamily: "Inter Tight" }}
+                      formatter={(tick) => {
+                        const value = tick * 100;
+                        return `${value.toFixed(2)}%`;
+                      }}
+                    />
+                    <PolarRadiusAxis
+                      angle={38.5}
+                      domain={[0, algoChartData.length > 0 ? "dataMax" : 1]}
+                      tickFormatter={(tick) => {
+                        const value = tick * 100;
+                        return `${value.toFixed(0)}%`;
+                      }}
+                    />
+                    <Radar
+                      key={"State of The Art"}
+                      dataKey={"State of The Art"}
+                      fillOpacity={0.6}
+                      stroke={`#87ceeb`}
+                      fill={`#87ceeb`}
+                    />
+                    <Radar
+                      key={algodata.algo_name}
+                      dataKey={algodata.algo_name}
+                      fillOpacity={0.6}
+                      stroke={`#ff4500`}
+                      fill={`#ff4500`}
+                    />
+                  </RadarChart>
+                )}
+              </Box>
+              {/*</Card>*/}
+              {/*</ResponsiveContainer>*/}
+            </DialogContent>
+            {/*<DialogActions>*/}
+            {/*    <Button onClick={handleAlgoDetailClose}>Cancel</Button>*/}
+            {/*</DialogActions>*/}
+          </Dialog>
+          <Dialog
+            open={openMonitorDetail}
+            onClose={() => setOpenMonitorDetail(false)}
+            fullWidth={true}
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
+            maxWidth={"sm"}
+            disableScrollLock={true}
+            PaperProps={{
+              style: { mb: 2, borderRadius: 10 },
+            }}
+            // PaperProps={{ sx: { width: "100%"}}}
+          >
+            <DialogContent sx={{ width: 550, display: "flex" }}>
+              <Table sx={{ width: 550 }}>
+                <colgroup>
+                  {/*<col width="120" />*/}
+                  {/*<col width="150" />*/}
+                  {/*<col width="65" />*/}
+                  {/*<col width="200" />*/}
+                  <col width="150" />
+                  <col width="150" />
+                  <col width="150" />
+                  <col width="50" />
+                </colgroup>
+                <TableBody>
+                  <TableRow sx={{ cursor: "pointer" }}>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                    >
+                      {" "}
+                      Description:{" "}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        paddingRight: 0,
+                        paddingLeft: 0,
+                        verticalAlign: "top",
+                      }}
+                      colSpan={3}
+                    >
+                      {infoDescription.description}
+                    </TableCell>
+                  </TableRow>
+                  {infoDescription.c_axis != null ? (
+                    <TableRow sx={{ cursor: "pointer" }}>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                      >
+                        {" "}
+                        Category-axis:{" "}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                        colSpan={3}
+                      >
+                        {infoDescription.c_axis}
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+                  {infoDescription.v_axis != null ? (
+                    <TableRow sx={{ cursor: "pointer" }}>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                      >
+                        {" "}
+                        Value-axis:{" "}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                        colSpan={3}
+                      >
+                        {infoDescription.v_axis}
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+
+                  {infoDescription.x_axis != null ? (
+                    <TableRow sx={{ cursor: "pointer" }}>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                      >
+                        {" "}
+                        X-axis:{" "}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                        colSpan={3}
+                      >
+                        {infoDescription.x_axis}
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+                  {infoDescription.y_axis != null ? (
+                    <TableRow sx={{ cursor: "pointer" }}>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                      >
+                        {" "}
+                        Y-axis:{" "}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                        colSpan={3}
+                      >
+                        {infoDescription.y_axis}
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+                  {infoDescription.comment != null ? (
+                    <TableRow sx={{ cursor: "pointer" }}>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                      >
+                        {" "}
+                        Comments:{" "}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          paddingRight: 0,
+                          paddingLeft: 0,
+                          verticalAlign: "top",
+                        }}
+                        colSpan={3}
+                      >
+                        {infoDescription.comment}
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+                </TableBody>
+              </Table>
+            </DialogContent>
+          </Dialog>
+        </Card>
+        {/*<FormControlLabel*/}
+        {/*    control={<Switch checked={dense} onChange={handleChangeDense} />}*/}
+        {/*    label="Dense padding"*/}
+        {/*/>*/}
+      </Stack>
+    </Layout>
   );
 }

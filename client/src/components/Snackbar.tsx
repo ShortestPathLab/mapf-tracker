@@ -108,8 +108,6 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
         <Snackbar
           sx={{
             "> .MuiPaper-root": {
-              bgcolor: "background.paper",
-              color: "text.primary",
               zIndex: (t) => t.zIndex.modal + 10,
             },
           }}

@@ -1,8 +1,12 @@
-import { Box, Fade, Stack } from "@mui/material";
+import { Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Navbar from "components/Navbar";
+import { Route, Router } from "components/Router";
+import {
+  ModalContext,
+  useModalProviderValue,
+} from "hooks/useModalProviderValue";
 import { ConfirmProvider } from "material-ui-confirm";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
@@ -10,26 +14,23 @@ import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import SystemDemo from "pages/demo";
 import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import "./App.css";
 import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
-import AboutPage from "./pages/about";
 import Submissions from "./pages/AlgorithmsPage";
-import ContributePage from "./pages/contribute";
+import UserMapPage from "./pages/UserMapPage";
+import AboutPage from "./pages/about";
 import AdminDashboard from "./pages/admin-dashboard";
 import AdminDashboardOld from "./pages/admin-dashboard/index.old";
-import Summary from "./pages/summary/DashboardPage";
+import ContributePage from "./pages/contribute";
 import DownloadPage from "./pages/get-dataset";
 import TrackSubmission from "./pages/submissions";
-import UserMapPage from "./pages/UserMapPage";
-import { Visualiser } from "./pages/visualiser";
+import Summary from "./pages/summary/DashboardPage";
+import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
-import {
-  useModalProviderValue,
-  ModalContext,
-} from "hooks/useModalProviderValue";
+import { NotFound } from "pages/NotFound";
 
 export const queryClient = new QueryClient();
 
@@ -44,10 +45,7 @@ export default function App() {
 
   const t = useMemo(() => theme(mode), [mode]);
 
-  const { pathname } = useLocation();
-
   useTitleBar(mode === "dark" ? "#15181c" : "#ffffff");
-
   return (
     <QueryClientProvider client={queryClient}>
       <ModalContext.Provider value={modalProviderValue}>
@@ -55,94 +53,7 @@ export default function App() {
           <ThemeProvider theme={t}>
             <ConfirmProvider>
               <SnackbarProvider>
-                <Stack
-                  sx={{
-                    bgcolor: "background.default",
-                    minHeight: "100svh",
-                    color: "text.primary",
-                    transition: (t) => t.transitions.create("background-color"),
-                  }}
-                >
-                  <Navbar />
-                  <Box sx={{ pb: 32, position: "relative" }}>
-                    <Fade in={true}>
-                      <Stack>
-                        <Routes>
-                          <Route
-                            path="/"
-                            element={<BenchmarksRootLevelPage showHeader />}
-                          />
-                          <Route
-                            path="/benchmarks"
-                            element={<BenchmarksRootLevelPage />}
-                          />
-                          <Route
-                            path="/scenarios"
-                            element={<BenchmarksMapLevelPage />}
-                          />
-                          <Route
-                            path="/instances"
-                            element={<BenchmarksScenarioLevelPage />}
-                          />
-                          <Route
-                            path="/visualization"
-                            element={<Visualiser />}
-                          />
-                          <Route path="/summary" element={<Summary />} />
-                          <Route path="/aboutUs" element={<AboutPage />} />
-                          <Route path="/systemDemo" element={<SystemDemo />} />
-                          <Route
-                            path="/submissions"
-                            element={<Submissions />}
-                          />
-                          <Route
-                            path="/submissionSummary"
-                            element={<SubmissionSummaryPage />}
-                          />
-                          <Route
-                            path="/contributes"
-                            element={<ContributePage />}
-                          />
-                          <Route path="/download" element={<DownloadPage />} />
-                          <Route
-                            path="/trackSubmission"
-                            element={<TrackSubmission />}
-                          />
-                          <Route
-                            path="/dashboard/:section?"
-                            element={
-                              localStorage.getItem("user") !== null ? (
-                                <AdminDashboard />
-                              ) : (
-                                <Navigate to="/" />
-                              )
-                            }
-                          />
-                          <Route
-                            path="/dashboard-old"
-                            element={
-                              localStorage.getItem("user") !== null ? (
-                                <AdminDashboardOld />
-                              ) : (
-                                <Navigate to="/" />
-                              )
-                            }
-                          />
-                          <Route
-                            path="/user/maps"
-                            element={
-                              localStorage.getItem("user") !== null ? (
-                                <UserMapPage />
-                              ) : (
-                                <Navigate to="/" />
-                              )
-                            }
-                          />
-                        </Routes>
-                      </Stack>
-                    </Fade>
-                  </Box>
-                </Stack>
+                <Content />
                 <ReactQueryDevtools />
               </SnackbarProvider>
             </ConfirmProvider>
@@ -150,5 +61,84 @@ export default function App() {
         </ThemeContext.Provider>
       </ModalContext.Provider>
     </QueryClientProvider>
+  );
+}
+export function Content() {
+  const routes: Route[] = [
+    { path: "/", content: <BenchmarksRootLevelPage showHeader /> },
+    { path: "/benchmarks", content: <BenchmarksRootLevelPage /> },
+    {
+      path: "/scenarios",
+      content: <BenchmarksMapLevelPage />,
+      parent: "/benchmarks",
+    },
+    {
+      path: "/instances",
+      content: <BenchmarksScenarioLevelPage />,
+      parent: "/scenarios",
+    },
+    { path: "/visualization", content: <Visualiser />, parent: "/instances" },
+    { path: "/summary", content: <Summary /> },
+    { path: "/about", content: <AboutPage /> },
+    { path: "/systemDemo", content: <SystemDemo /> },
+    { path: "/submissions", content: <Submissions /> },
+    {
+      path: "/submissionSummary",
+      content: <SubmissionSummaryPage />,
+      parent: "/submissions",
+    },
+    { path: "/contributes", content: <ContributePage /> },
+    { path: "/download", content: <DownloadPage /> },
+    { path: "/trackSubmission", content: <TrackSubmission /> },
+    {
+      path: "/dashboard/:section?",
+      content:
+        localStorage.getItem("user") !== null ? (
+          <AdminDashboard />
+        ) : (
+          <Navigate to="/" />
+        ),
+    },
+    {
+      path: "/dashboard-old",
+      content:
+        localStorage.getItem("user") !== null ? (
+          <AdminDashboardOld />
+        ) : (
+          <Navigate to="/" />
+        ),
+    },
+    {
+      path: "/user/maps",
+      content:
+        localStorage.getItem("user") !== null ? (
+          <UserMapPage />
+        ) : (
+          <Navigate to="/" />
+        ),
+    },
+  ];
+  return (
+    <Router
+      fallback={<NotFound />}
+      routes={routes.map(({ content, ...props }) => ({
+        ...props,
+        content: (
+          <Box
+            sx={{
+              width: "100dvw",
+              height: "100dvh",
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
+          >
+            {content}
+          </Box>
+        ),
+      }))}
+    />
   );
 }

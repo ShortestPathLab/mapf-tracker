@@ -32,6 +32,7 @@ import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
 import { navbarHeight } from "components/Navbar";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { paper } from "theme";
 
 const SCALE_SHOW_GRID_THRESHOLD = 30;
 
@@ -126,8 +127,6 @@ export default function Visualiser() {
   const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
   const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
 
-  const scenarioString = capitalize(`${state.scenType}-${state.scenTypeID}`);
-
   // ──────────────────────────────────────────────────────────────────────
 
   const viewport = useRef<PixiViewport | null>(null);
@@ -150,124 +149,103 @@ export default function Visualiser() {
   return (
     <Box
       sx={{
-        width: "100vw",
-        height: "100vh",
-        position: "fixed",
-        left: 0,
-        top: 0,
+        width: "100dvw",
+        height: "100%",
       }}
     >
-      <Stack sx={{ position: "fixed", p: 4, top: navbarHeight(sm), left: 0 }}>
-        <PageHeader
-          current="View"
-          path={[
-            { name: "MAPF Tracker", url: "/" },
-            { name: "Benchmarks", url: "/benchmarks" },
-            {
-              name: capitalize(state.map_name),
-              url: "/scenarios",
-              state,
-            },
-            {
-              name: scenarioString,
-              url: "/instances",
-              state,
-            },
-          ]}
-        />
-      </Stack>
-
       <AutoSize>
-        {(size) =>
-          isLoading ? (
+        {(size) => (
+          <>
+            {isLoading ? (
+              <Stack
+                sx={{ ...size, alignItems: "center", justifyContent: "center" }}
+              >
+                <CircularProgress />
+              </Stack>
+            ) : (
+              <Stage
+                {...size}
+                renderOnComponentChange
+                options={{
+                  antialias: true,
+                  powerPreference: "high-performance",
+                }}
+              >
+                <Graphics
+                  draw={$bg(
+                    theme.palette.background.default,
+                    size.width,
+                    size.height
+                  )}
+                />
+                <Viewport
+                  {...size}
+                  key={`${size.width},${size.height}`}
+                  ref={viewport}
+                >
+                  <Container
+                    scale={scale(size.width, size.height)}
+                    x={offsetX(size.width, size.height)}
+                    y={offsetY(size.width, size.height)}
+                  >
+                    <Graphics draw={drawAgents} />
+                    <Graphics draw={drawMap} />
+                    {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
+                  </Container>
+                </Viewport>
+              </Stage>
+            )}{" "}
             <Stack
-              sx={{ ...size, alignItems: "center", justifyContent: "center" }}
-            >
-              <CircularProgress />
-            </Stack>
-          ) : (
-            <Stage
-              {...size}
-              renderOnComponentChange
-              options={{
-                antialias: true,
-                powerPreference: "high-performance",
+              sx={{
+                position: "fixed",
+                right: 0,
+                top: size.height,
+                transform: "translateY(-100%)",
+                p: 4,
               }}
             >
-              <Graphics
-                draw={$bg(
-                  theme.palette.background.default,
-                  size.width,
-                  size.height
-                )}
-              />
-              <Viewport
-                {...size}
-                key={`${size.width},${size.height}`}
-                ref={viewport}
-              >
-                <Container
-                  scale={scale(size.width, size.height)}
-                  x={offsetX(size.width, size.height)}
-                  y={offsetY(size.width, size.height)}
-                >
-                  <Graphics draw={drawAgents} />
-                  <Graphics draw={drawMap} />
-                  {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
-                </Container>
-              </Viewport>
-            </Stage>
-          )
-        }
+              <Card sx={{ py: 1, px: 2, ...paper() }}>
+                <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+                  <Typography sx={{ px: 2 }}>
+                    {step} / {timespan}
+                  </Typography>
+                  <Divider orientation="vertical" flexItem />
+                  {[
+                    {
+                      name: "Restart",
+                      icon: <FirstPageOutlined />,
+                      action: restart,
+                    },
+                    {
+                      name: "Step back",
+                      icon: <ChevronLeftOutlined />,
+                      action: backwards,
+                    },
+                    {
+                      name: paused ? "Play" : "Pause",
+                      icon: paused ? (
+                        <PlayArrowOutlined sx={{ color: "primary.main" }} />
+                      ) : (
+                        <PauseOutlined sx={{ color: "primary.main" }} />
+                      ),
+                      action: paused ? play : pause,
+                    },
+                    {
+                      name: "Step forwards",
+                      icon: <ChevronRightOutlined />,
+                      action: forwards,
+                    },
+                  ].map(({ name, icon, action }) => (
+                    <Tooltip title={name}>
+                      <IconButton onClick={action}>{icon}</IconButton>
+                    </Tooltip>
+                  ))}
+                </Stack>
+              </Card>
+            </Stack>
+          </>
+        )}
       </AutoSize>
-
-      <Stack
-        sx={{
-          position: "fixed",
-          right: 0,
-          bottom: 0,
-          p: 4,
-        }}
-      >
-        <Card sx={{ py: 1, px: 2 }}>
-          <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-            <Typography sx={{ px: 2 }}>
-              {step} / {timespan}
-            </Typography>
-            <Divider orientation="vertical" flexItem />
-            {[
-              {
-                name: "Restart",
-                icon: <FirstPageOutlined />,
-                action: restart,
-              },
-              {
-                name: "Step back",
-                icon: <ChevronLeftOutlined />,
-                action: backwards,
-              },
-              {
-                name: paused ? "Play" : "Pause",
-                icon: paused ? (
-                  <PlayArrowOutlined sx={{ color: "primary.main" }} />
-                ) : (
-                  <PauseOutlined sx={{ color: "primary.main" }} />
-                ),
-                action: paused ? play : pause,
-              },
-              {
-                name: "Step forwards",
-                icon: <ChevronRightOutlined />,
-                action: forwards,
-              },
-            ].map(({ name, icon, action }) => (
-              <Tooltip title={name}>
-                <IconButton onClick={action}>{icon}</IconButton>
-              </Tooltip>
-            ))}
-          </Stack>
-        </Card>
-      </Stack>
     </Box>
   );
 }

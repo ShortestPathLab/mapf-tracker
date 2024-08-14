@@ -35,6 +35,7 @@ export function Field<
       error?: ErrorMessageProps & FormHelperTextProps;
     };
   }) {
+  const { errors, touched } = useFormikContext<Schema>();
   return (
     <Box {...slotProps.root}>
       <FormikField
@@ -43,6 +44,7 @@ export function Field<
         label="Unlabelled"
         fullWidth
         name={name}
+        color={errors[name] && touched[name] ? "error" : undefined}
         {...fieldProps}
       />
       <ErrorMessage

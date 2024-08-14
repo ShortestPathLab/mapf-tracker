@@ -15,6 +15,7 @@ import { Grid, Layout } from "layout";
 import { filter } from "lodash";
 import { useRequestsQuery } from "queries/useRequestsQuery";
 import { pages } from "../pages";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 const sections = () => {
   const [, ...rest] = pages();
@@ -24,12 +25,9 @@ const sections = () => {
 export default function index() {
   const { data: requests } = useRequestsQuery();
   const navigate = useNavigate();
+  const sm = useSm();
   return (
-    <Layout
-      width={960}
-      title="Overview"
-      path={[{ name: "MAPF Tracker", url: "/" }]}
-    >
+    <Layout width={960} title="Overview" path={[{ name: "Home", url: "/" }]}>
       <Stack gap={6}>
         <Grid>
           <Card sx={{ p: 4 }}>
@@ -57,7 +55,9 @@ export default function index() {
           </Card>
         </Grid>
         <Stack sx={{ gap: 2 }}>
-          <Typography variant="h3">Manage this platform</Typography>
+          <Typography variant={sm ? "h4" : "h3"}>
+            Manage this platform
+          </Typography>
           <List sx={{ mx: -2 }}>
             {sections().map(({ label, icon, value, description }) => (
               <>

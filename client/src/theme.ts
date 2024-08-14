@@ -83,6 +83,8 @@ export function useAcrylic(color?: string): SxProps<Theme> {
   };
 }
 
+const solid = (b: string) => `linear-gradient(to bottom, ${b}, ${b})`;
+
 export const paper = (elevation: number = 1) => ({
   borderRadius: 1,
   backdropFilter: "blur(16px)",
@@ -92,10 +94,16 @@ export const paper = (elevation: number = 1) => ({
     palette.mode === "dark"
       ? shadows[1]
       : shadows[Math.max(floor(elevation) - 1, 0)],
-  backgroundColor: ({ palette }) =>
-    palette.mode === "dark"
-      ? alpha(palette.action.disabledBackground, elevation * 0.02)
-      : palette.background.paper,
+  backgroundImage: ({ palette }) =>
+    `${solid(
+      palette.mode === "dark"
+        ? alpha(palette.action.disabledBackground, elevation * 0.02)
+        : palette.background.paper
+    )}, ${solid(
+      palette.mode === "dark"
+        ? alpha(palette.background.default, 0.5)
+        : palette.background.paper
+    )}`,
   border: ({ palette }) =>
     palette.mode === "dark"
       ? `1px solid ${alpha(palette.text.primary, elevation * 0.08)}`

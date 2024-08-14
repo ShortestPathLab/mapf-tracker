@@ -5,7 +5,10 @@ export default function index() {
     <Layout
       width={960}
       title="API keys"
-      path={[{ name: "MAPF Tracker", url: "/" }]}
+      path={[
+        { name: "Home", url: "/" },
+        { name: "Dashboard", url: "/dashboard" },
+      ]}
     >
       Todo
     </Layout>

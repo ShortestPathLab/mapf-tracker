@@ -10,26 +10,31 @@ import {
 export function useNavigate() {
   const navigate = useRouterNavigate();
   return useCallback(
-    <T extends {}>(url: string, state?: T) => {
+    <T extends {} = {}, U extends {} = {}>(
+      url: string,
+      state?: T,
+      session?: U
+    ) => {
       const items = entries(state);
       navigate(
         items.length
           ? `${url}?${map(items, ([k, v]) => `${k}=${v}`).join("&")}`
           : url,
-        { state }
+        { state: { saved: state, session } }
       );
     },
     [navigate]
   );
 }
 
-export function useLocationState<T extends {}>() {
-  const location: Location<T> = useRouterLocation();
+export function useLocationState<T extends {} = {}, U extends {} = {}>() {
+  const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
   return useMemo(() => {
     const params = Object.fromEntries(new URLSearchParams(location.search));
     return {
       ...mapValues(params, (v) => (isNaN(+v) ? v : +v)),
-      ...location.state,
+      ...location.state?.saved,
+      ...location.state?.session,
     };
   }, [location]);
 }

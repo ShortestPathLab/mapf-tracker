@@ -9,7 +9,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
   return (
     <Layout
       title="Benchmarks"
-      path={[{ name: "MAPF Tracker", url: "/" }]}
+      path={[{ name: "Home", url: "/" }]}
       render={({ header, children }) => (
         <>
           <IndexHeader in={showHeader} />

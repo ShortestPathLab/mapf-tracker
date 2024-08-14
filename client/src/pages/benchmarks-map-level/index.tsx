@@ -14,7 +14,7 @@ export default function Page() {
     <Layout
       title={capitalize(mapName)}
       path={[
-        { name: "MAPF Tracker", url: "/" },
+        { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
       ]}
       render={makePreviewImagePageRenderFunction(`/mapf-svg/${mapName}.svg`)}

@@ -7,19 +7,17 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 export function IndexHeader(props: CollapseProps) {
+  const sm = useSm();
   return (
     <Collapse {...props} sx={{ mb: -4 }}>
       <Stack
         sx={{
           gap: 2,
-          pb: 8,
-          px: 8,
-          maxWidth: 680,
-          alignItems: "center",
-          textAlign: "center",
-          mx: "auto",
+          pb: sm ? 4 : 8,
+          maxWidth: "90vw",
           display: location.pathname === "/visualization" ? "none" : "",
         }}
       >
@@ -48,7 +46,7 @@ export function IndexHeader(props: CollapseProps) {
           A database for benchmark results in Multi-Agent Pathfinding (MAPF)
         </Typography>
       </Stack>
-      <Divider sx={{ mb: 8 }} />
+      <Divider sx={{ mb: sm ? 4 : 8 }} />
     </Collapse>
   );
 }

@@ -105,8 +105,8 @@ function ResponsiveAppBar() {
       window.location.href = "https://movingai.com/benchmarks/mapf/index.html";
     } else if (page === "Summary") {
       navigate("/summary");
-    } else if (page === "AboutUs") {
-      navigate("/aboutUs");
+    } else if (page === "about") {
+      navigate("/about");
     } else if (page === "Submissions") {
       navigate("/submissions");
     } else if (page === "SystemDemo") {
@@ -321,10 +321,7 @@ function ResponsiveAppBar() {
                   Dataset
                 </Button>
               </MenuItem>
-              <MenuItem
-                key="AboutUs"
-                onClick={() => handleCloseNavMenu("AboutUs")}
-              >
+              <MenuItem key="about" onClick={() => handleCloseNavMenu("about")}>
                 <Button
                   sx={{ textTransform: "none" }}
                   startIcon={<PeopleIcon />}
@@ -418,8 +415,8 @@ function ResponsiveAppBar() {
               Demo
             </Button>
             <Button
-              key="AboutUs"
-              onClick={() => handleCloseNavMenu("AboutUs")}
+              key="about"
+              onClick={() => handleCloseNavMenu("about")}
               sx={{
                 my: 2,
                 px: 2,

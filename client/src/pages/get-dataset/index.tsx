@@ -7,7 +7,7 @@ export default function Page() {
     <Layout
       width={960}
       title="Get the dataset"
-      path={[{ name: "MAPF Tracker", url: "/" }]}
+      path={[{ name: "Home", url: "/" }]}
     >
       <Prose
         sx={{

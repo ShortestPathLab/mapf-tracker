@@ -13,10 +13,10 @@ import {
   RequestWithReviewOutcome,
   useRequestsUpdateMutation,
   useSendOutcomeMutation,
-} from "../../../queries/useRequestsQuery";
+} from "queries/useRequestsQuery";
 
-const hintText = (data: RequestWithReviewOutcome) =>
-  `A new submission (API) key will be generated and sent to ${data.requesterEmail} along with the review outcome and comments`;
+const hintText = (data?: RequestWithReviewOutcome) =>
+  `A new submission (API) key will be generated and sent to ${data?.requesterEmail} along with the review outcome and comments`;
 
 export function ConfirmNotifyDialog({
   data,
@@ -33,10 +33,10 @@ export function ConfirmNotifyDialog({
     <Stack sx={{ gap: 2 }}>
       <List sx={{ mx: -2, mt: -2 }}>
         <ListItem>
-          <ListItemText primary={data.requesterName} secondary="Recipient" />
+          <ListItemText primary={data?.requesterName} secondary="Recipient" />
         </ListItem>
         <ListItem>
-          <ListItemText primary={data.requesterEmail} secondary="Address" />
+          <ListItemText primary={data?.requesterEmail} secondary="Address" />
         </ListItem>
       </List>
       <SetReviewOutcomeForm

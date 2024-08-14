@@ -717,10 +717,7 @@ export default function Dashboard() {
 
   return (
     <Stack sx={{ mx: "auto", width: 1488, maxWidth: "100%", gap: 4, py: 6 }}>
-      <PageHeader
-        current="Dashboard"
-        path={[{ name: "MAPF Tracker", url: "/" }]}
-      />
+      <PageHeader current="Dashboard" path={[{ name: "Home", url: "/" }]} />
       <Card>
         <Toolbar
           sx={{
