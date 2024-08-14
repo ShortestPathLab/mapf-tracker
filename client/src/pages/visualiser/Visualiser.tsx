@@ -206,10 +206,14 @@ export default function Visualiser() {
             >
               <Card sx={{ py: 1, px: 2, ...paper() }}>
                 <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-                  <Typography sx={{ px: 2 }}>
-                    {step} / {timespan}
-                  </Typography>
-                  <Divider orientation="vertical" flexItem />
+                  {!sm && (
+                    <>
+                      <Typography sx={{ px: 2 }}>
+                        {step} / {timespan}
+                      </Typography>
+                      <Divider orientation="vertical" flexItem />
+                    </>
+                  )}
                   {[
                     {
                       name: "Restart",

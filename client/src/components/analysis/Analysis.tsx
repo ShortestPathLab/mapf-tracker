@@ -34,14 +34,12 @@ export function Analysis({ template }: { template: Template[] }) {
   return (
     <Stack direction="column" sx={{ gap: 2 }}>
       {map(template, ({ variants, name }) => (
-        <Card>
-          <Stack direction="column">
-            <Typography sx={{ p: 2 }} variant="h6">
-              {name}
-            </Typography>
-            <Chart data={variants} />
-          </Stack>
-        </Card>
+        <Stack direction="column">
+          <Typography sx={{ p: 2 }} variant="h6">
+            {name}
+          </Typography>
+          <Chart data={variants} />
+        </Stack>
       ))}
     </Stack>
   );

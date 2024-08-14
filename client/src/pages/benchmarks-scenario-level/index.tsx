@@ -6,13 +6,16 @@ import { capitalize } from "lodash";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 export default function Page() {
   const state = useLocationState<ScenarioLevelLocationState>();
   const { mapName, scenType, scenTypeID, mapId, scenId } = state;
+  const sm = useSm();
   return (
     <Layout
       title={capitalize(`${scenType}-${scenTypeID}`)}
+      slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },

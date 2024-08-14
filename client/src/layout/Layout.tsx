@@ -5,25 +5,25 @@ import {
 } from "@mui/icons-material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
-  AppBar as MuiAppBar,
   Box,
+  Card,
   IconButton,
+  AppBar as MuiAppBar,
   Stack,
+  StackProps,
   Tab,
   Toolbar,
   Typography,
-  Card,
 } from "@mui/material";
+import AppBar from "components/appbar";
+import Enter from "components/dialog/Enter";
+import { Scroll } from "components/dialog/Scrollbars";
 import { useMd, useSm } from "components/dialog/useSmallDisplay";
+import { useNavigate } from "hooks/useNavigation";
+import { last, merge, startCase } from "lodash";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
-import AppBar from "components/appbar";
-import { Scroll } from "components/dialog/Scrollbars";
-import { last, startCase } from "lodash";
-import { useNavigate } from "hooks/useNavigation";
-import Enter from "components/dialog/Enter";
-import { navbarHeight } from "components/Navbar";
 
 export default function Layout({
   width = 1488,
@@ -36,6 +36,7 @@ export default function Layout({
   title,
   path,
   children,
+  slotProps,
 }: {
   width?: string | number;
   children?: ReactNode;
@@ -45,6 +46,7 @@ export default function Layout({
   }) => ReactNode;
   title?: string;
   path?: PageHeaderProps["path"];
+  slotProps?: { content?: StackProps };
 }) {
   const navigate = useNavigate();
   const sm = useSm();
@@ -52,14 +54,19 @@ export default function Layout({
   const header = <PageHeader {...{ current: title, path }} />;
   const content = (
     <Stack
-      sx={{
-        bgcolor: "background.default",
-        gap: 4,
-        px: sm ? 2 : 3,
-        maxWidth: width,
-        mx: "auto",
-        py: sm ? 2 : 6,
-      }}
+      {...merge(
+        {
+          sx: {
+            bgcolor: "background.default",
+            gap: 4,
+            px: sm ? 2 : 3,
+            maxWidth: width,
+            mx: "auto",
+            py: sm ? 2 : 6,
+          },
+        },
+        slotProps?.content
+      )}
     >
       {render({
         header,
@@ -84,7 +91,6 @@ export default function Layout({
           <Toolbar
             sx={{
               bgcolor: "background.paper",
-              borderBottom: (t) => `1px solid ${t.palette.background.default}`,
             }}
           >
             <IconButton
@@ -124,35 +130,46 @@ export function DataInspectorLayout({
   const sm = useSm();
   return (
     <TabContext value={tab}>
-      <TabList
-        variant="fullWidth"
-        sx={{
-          mx: sm ? -2 : 0,
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}
-        onChange={setFromParam(setTab)}
-      >
-        <Tab
-          sx={{ px: sm ? 2 : 6 }}
-          label={dataTabName}
-          value="data"
-          icon={<FolderOutlined />}
-        />
-        <Tab
-          sx={{ px: sm ? 2 : 6 }}
-          label={analysisTabName}
-          value="analysis"
-          icon={<ShowChartOutlined />}
-        />
-      </TabList>
-      {[
-        { value: "data", content: dataContent },
-        { value: "analysis", content: analysisContent },
-      ].map(({ value, content }) => (
-        <TabPanel sx={{ p: 0 }} value={value}>
-          {sm ? <Box sx={{ m: -2 }}>{content}</Box> : <Card>{content}</Card>}
-        </TabPanel>
-      ))}
+      <Stack>
+        <TabList
+          variant="fullWidth"
+          sx={{
+            pb: 0,
+            position: "sticky",
+            top: 0,
+            zIndex: 2,
+            bgcolor: sm ? "background.paper" : "background.default",
+            mx: sm ? -2 : 0,
+            borderBottom: (t) => `1px solid ${t.palette.divider}`,
+          }}
+          onChange={setFromParam(setTab)}
+        >
+          <Tab
+            sx={{ px: sm ? 2 : 6 }}
+            label={dataTabName}
+            value="data"
+            icon={<FolderOutlined />}
+          />
+          <Tab
+            sx={{ px: sm ? 2 : 6 }}
+            label={analysisTabName}
+            value="analysis"
+            icon={<ShowChartOutlined />}
+          />
+        </TabList>
+        {[
+          { value: "data", content: dataContent },
+          { value: "analysis", content: analysisContent },
+        ].map(({ value, content }) => (
+          <TabPanel sx={{ p: 0, pt: 2 }} value={value}>
+            {sm ? (
+              <Box sx={{ m: -2, bgcolor: "background.default" }}>{content}</Box>
+            ) : (
+              <Card>{content}</Card>
+            )}
+          </TabPanel>
+        ))}
+      </Stack>
     </TabContext>
   );
 }

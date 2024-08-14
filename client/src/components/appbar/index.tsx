@@ -161,8 +161,6 @@ export default function index() {
               <Toolbar
                 sx={{
                   bgcolor: "background.paper",
-                  borderBottom: (t) =>
-                    `1px solid ${t.palette.background.default}`,
                 }}
               >
                 {md && (

@@ -25,7 +25,12 @@ export default function PageHeader({ path = [], current }: PageHeaderProps) {
   const navigate = useNavigate();
   const sm = useSm();
   return (
-    <Stack sx={{ gap: 2, mb: sm ? 0 : 2 }}>
+    <Stack
+      sx={{
+        gap: 2,
+        mb: sm ? -2 : 2,
+      }}
+    >
       {!sm && (
         <Breadcrumbs sx={{ overflowY: "auto" }}>
           {path.map(({ name, url, state }) => (
@@ -43,7 +48,7 @@ export default function PageHeader({ path = [], current }: PageHeaderProps) {
           </Typography>
         </Breadcrumbs>
       )}
-      <Typography variant={sm ? "h3" : "h2"}>{current}</Typography>
+      <Typography variant="h2">{startCase(current)}</Typography>
     </Stack>
   );
 }
