@@ -1,11 +1,10 @@
-import { Card } from "@mui/material";
+import { Analysis } from "components/analysis/Analysis";
+import { useLocationState } from "hooks/useNavigation";
 import Layout, { DataInspectorLayout } from "layout/Layout";
 import { makePreviewImagePageRenderFunction } from "layout/render";
 import { capitalize } from "lodash";
-import { useLocationState } from "hooks/useNavigation";
-import Table from "./Table";
 import { MapLevelLocationState } from "./MapLevelLocationState";
-import { Analysis } from "components/analysis/Analysis";
+import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
 
 export default function Page() {
@@ -21,16 +20,8 @@ export default function Page() {
     >
       <DataInspectorLayout
         analysisTabName={`Analyse ${mapName}`}
-        data={
-          <Card>
-            <Table />
-          </Card>
-        }
-        analysis={
-          <Card>
-            <Analysis template={analysisTemplate(mapName, mapId)} />
-          </Card>
-        }
+        data={<Table />}
+        analysis={<Analysis template={analysisTemplate(mapName, mapId)} />}
       />
     </Layout>
   );

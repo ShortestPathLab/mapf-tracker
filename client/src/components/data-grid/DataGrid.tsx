@@ -81,6 +81,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
             "& .MuiDataGrid-cell:nth-child(2)": {
               pl: 2,
             },
+            "& .MuiDataGrid-columnHeader:nth-child(2)": { pl: 2 },
           }}
           slotProps={clickable && { row: { style: { cursor: "pointer" } } }}
           autoHeight

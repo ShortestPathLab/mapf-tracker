@@ -1,8 +1,7 @@
-import { Card } from "@mui/material";
-import Layout, { DataInspectorLayout } from "layout/Layout";
-import Table from "./Table";
-import { IndexHeader } from "./IndexHeader";
 import { Analysis } from "components/analysis/Analysis";
+import Layout, { DataInspectorLayout } from "layout/Layout";
+import { IndexHeader } from "./IndexHeader";
+import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
 
 export default function Page({ showHeader }: { showHeader?: boolean }) {
@@ -19,16 +18,8 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
       )}
     >
       <DataInspectorLayout
-        data={
-          <Card>
-            <Table />
-          </Card>
-        }
-        analysis={
-          <Card>
-            <Analysis template={analysisTemplate} />
-          </Card>
-        }
+        data={<Table />}
+        analysis={<Analysis template={analysisTemplate} />}
       />
     </Layout>
   );

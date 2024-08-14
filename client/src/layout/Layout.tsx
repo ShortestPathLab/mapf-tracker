@@ -12,6 +12,7 @@ import {
   Tab,
   Toolbar,
   Typography,
+  Card,
 } from "@mui/material";
 import { useMd, useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
@@ -125,7 +126,10 @@ export function DataInspectorLayout({
     <TabContext value={tab}>
       <TabList
         variant="fullWidth"
-        sx={{ borderBottom: (t) => `1px solid ${t.palette.divider}` }}
+        sx={{
+          mx: sm ? -2 : 0,
+          borderBottom: (t) => `1px solid ${t.palette.divider}`,
+        }}
         onChange={setFromParam(setTab)}
       >
         <Tab
@@ -141,12 +145,14 @@ export function DataInspectorLayout({
           icon={<ShowChartOutlined />}
         />
       </TabList>
-      <TabPanel sx={{ p: 0 }} value="data">
-        {dataContent}
-      </TabPanel>
-      <TabPanel sx={{ p: 0 }} value="analysis">
-        {analysisContent}
-      </TabPanel>
+      {[
+        { value: "data", content: dataContent },
+        { value: "analysis", content: analysisContent },
+      ].map(({ value, content }) => (
+        <TabPanel sx={{ p: 0 }} value={value}>
+          {sm ? <Box sx={{ m: -2 }}>{content}</Box> : <Card>{content}</Card>}
+        </TabPanel>
+      ))}
     </TabContext>
   );
 }

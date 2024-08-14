@@ -1,11 +1,10 @@
-import { Card } from "@mui/material";
+import { Analysis } from "components/analysis/Analysis";
+import { useLocationState } from "hooks/useNavigation";
 import Layout, { DataInspectorLayout } from "layout/Layout";
 import { makePreviewImagePageRenderFunction } from "layout/render";
 import { capitalize } from "lodash";
-import { useLocationState } from "hooks/useNavigation";
-import Table from "./Table";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
-import { Analysis } from "components/analysis/Analysis";
+import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
 
 export default function Page() {
@@ -17,34 +16,27 @@ export default function Page() {
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
-        ,
         {
           name: capitalize(mapName),
           url: "/scenarios",
-          state: state,
+          state,
         },
       ]}
       render={makePreviewImagePageRenderFunction(`/mapf-svg/${mapName}.svg`)}
     >
       <DataInspectorLayout
         analysisTabName={`Analyse ${scenType}-${scenTypeID}`}
-        data={
-          <Card>
-            <Table />
-          </Card>
-        }
+        data={<Table />}
         analysis={
-          <Card>
-            <Analysis
-              template={analysisTemplate(
-                scenType,
-                scenTypeID,
-                mapName,
-                scenId,
-                mapId
-              )}
-            />
-          </Card>
+          <Analysis
+            template={analysisTemplate(
+              scenType,
+              scenTypeID,
+              mapName,
+              scenId,
+              mapId
+            )}
+          />
         }
       />
     </Layout>
