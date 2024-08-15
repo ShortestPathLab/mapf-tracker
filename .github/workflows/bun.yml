@@ -34,7 +34,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
       - name: Build dependencies
-        run: cd packages/validator && bun install
+        run: cd packages/validator && bun pm trust --all && bun install && bun run build
       - name: Build
         run: cd client && bun install
       - name: Setup Pages
