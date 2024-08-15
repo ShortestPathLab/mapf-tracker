@@ -36,7 +36,7 @@ jobs:
       - name: Build dependencies
         run: cd packages/validator && bun install
       - name: Build
-        run: cd client && bun pm trust --all && bun install && bun run build
+        run: cd client && bun install && bun run build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
