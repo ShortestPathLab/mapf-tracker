@@ -1,4 +1,4 @@
-import { entries, isInteger, isNaN, map, mapValues } from "lodash";
+import { entries, isInteger, isNaN, map, mapValues, startsWith } from "lodash";
 import { useCallback, useMemo } from "react";
 import {
   Location,
@@ -6,7 +6,17 @@ import {
   generatePath,
   useNavigate as useRouterNavigate,
 } from "react-router-dom";
+function isValidHttpUrl(string: string) {
+  let url: URL;
 
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+}
 export function useNavigate() {
   const navigate = useRouterNavigate();
   return useCallback(
@@ -15,6 +25,10 @@ export function useNavigate() {
       state?: T,
       session?: U
     ) => {
+      if (isValidHttpUrl(url)) {
+        open(url);
+        return;
+      }
       const items = entries(state);
       navigate(
         items.length

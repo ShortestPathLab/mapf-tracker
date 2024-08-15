@@ -5,22 +5,22 @@ import Accordion from "components/Accordion";
 import CallForSubmissionContent from "./callForSubmission.md";
 import Faq from "./faq.md";
 import Format from "./format.mdx";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 export function Info() {
+  const sm = useSm();
   return (
     <Card
       elevation={0}
       sx={{
-        p: 4,
+        p: sm ? 2 : 3,
         flex: 1,
         minWidth: 0,
         // Special case for accordion
-        pb: 1,
+        pb: 0,
+        pt: 0,
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Call for submissions
-      </Typography>
       {[
         {
           title: "Why are we benchmarking pathfinding algorithms?",

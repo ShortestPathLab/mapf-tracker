@@ -205,7 +205,10 @@ export default function TrackSubmission() {
     <Layout
       width={960}
       title="Track Submissions"
-      path={[{ name: "Home", url: "/" }]}
+      path={[
+        { name: "Home", url: "/" },
+        { name: "Submit an Algorithm", url: "/contributes" },
+      ]}
     >
       <Stack>
         <AddKeyForm

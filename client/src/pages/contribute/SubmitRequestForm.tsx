@@ -1,16 +1,17 @@
 import { CheckOutlined } from "@mui/icons-material";
-import { Button, Card, Stack, Typography, Link } from "@mui/material";
+import { Button, Card, Stack, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
+import { FlatCard } from "components/FlatCard";
 import { useSnackbar } from "components/Snackbar";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { APIConfig } from "core/config";
 import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
 import { post } from "queries/mutation";
 import { Request } from "queries/useRequestQuery";
-import { useNavigate } from "react-router-dom";
 
 export function SubmitRequestForm() {
   const notify = useSnackbar();
-  const navigate = useNavigate();
+  const sm = useSm();
 
   const { mutateAsync: submit } = useMutation({
     mutationFn: async (request: Request) =>
@@ -19,8 +20,8 @@ export function SubmitRequestForm() {
   });
 
   return (
-    <Card sx={{ p: 4, flex: 1, minWidth: 0 }}>
-      <Stack>
+    <Card sx={{ minWidth: 0 }}>
+      <Stack sx={{ p: sm ? 2 : 3 }}>
         <Stack gap={2} mb={2}>
           <Typography variant="h4" gutterBottom>
             Request a submission key
@@ -28,15 +29,6 @@ export function SubmitRequestForm() {
           <Typography variant="body1">
             Ready to submit your algorithm to our tracker? Fill out this form
             and our team will get back to you with your submission key.
-          </Typography>
-          <Typography variant="body1">
-            Already have a submission key?{" "}
-            <Link
-              onClick={() => navigate("/trackSubmission")}
-              sx={{ cursor: "pointer" }}
-            >
-              Continue here.
-            </Link>
           </Typography>
         </Stack>
         <SubmissionKeyRequestForm

@@ -90,8 +90,12 @@ export function Content() {
       parent: "/submissions",
     },
     { path: "/contributes", content: <ContributePage /> },
+    {
+      path: "/trackSubmission",
+      content: <TrackSubmission />,
+      parent: "/contributes",
+    },
     { path: "/download", content: <DownloadPage /> },
-    { path: "/trackSubmission", content: <TrackSubmission /> },
     {
       path: "/dashboard/:section?",
       content: credentials ? <AdminDashboard /> : <Navigate to="/" />,

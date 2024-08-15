@@ -17,6 +17,7 @@ import {
   Avatar,
   Box,
   Button,
+  ButtonBase,
   Divider,
   IconButton,
   List,
@@ -36,16 +37,17 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { ReactNode } from "react";
 import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
-import { useMd } from "../dialog/useSmallDisplay";
+import { useLg, useMd } from "../dialog/useSmallDisplay";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
 
 const drawerWidth = 320;
 
-export const appbarHeight = (sm?: boolean) => (sm ? 56 : 64);
+export const appbarHeight = (md?: boolean) => (md ? 56 : 64);
 
 export default function index() {
-  const md = useMd();
+  const lg = useLg();
+  const md = useLg();
   const navigate = useNavigate();
   const [mode, toggleMode] = useMode();
   const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
@@ -93,7 +95,12 @@ export default function index() {
         },
         { label: "Dataset", url: "/download", icon: <FileDownloadOutlined /> },
         { label: "About", url: "/about", icon: <InfoOutlined /> },
-        { label: "Github", url: "/", icon: <GitHub /> },
+        {
+          label: "Github",
+          url: "https://github.com/ShortestPathLab/winter-project-mapf-tracker/tree/main",
+          icon: <GitHub />,
+          iconButton: true,
+        },
       ],
     },
     {
@@ -173,21 +180,25 @@ export default function index() {
               <Toolbar
                 sx={{
                   bgcolor: "background.paper",
+                  height: appbarHeight(md),
                 }}
               >
-                {md && (
+                {lg && (
                   <IconButton
                     edge="start"
-                    sx={{ mr: 1 }}
+                    sx={{ mr: 1, color: "text.primary" }}
                     {...bindTrigger(state)}
                   >
                     <MenuOutlined />
                   </IconButton>
                 )}
-                <Typography variant="h6" sx={{ mr: 2 }}>
-                  {appName}
-                </Typography>
-                {!md && (
+                <ButtonBase
+                  sx={{ mr: 2, borderRadius: 1 }}
+                  onClick={() => navigate("/")}
+                >
+                  <Typography variant="h6">{appName}</Typography>
+                </ButtonBase>
+                {!lg && (
                   <Stack
                     direction="row"
                     sx={{ flex: 1, gap: 1, alignItems: "center" }}
@@ -219,6 +230,7 @@ export default function index() {
                                 <IconButton
                                   edge={last ? "end" : undefined}
                                   onClick={clickHandler(url, action)}
+                                  sx={{ color: "text.primary" }}
                                 >
                                   {avatar ?? icon}
                                 </IconButton>
@@ -251,7 +263,7 @@ export default function index() {
               variant="temporary"
               ModalProps={{ keepMounted: true }}
               sx={{
-                display: md ? "block" : "none",
+                display: lg ? "block" : "none",
                 "& .MuiDrawer-paper": {
                   borderRadius: (t) =>
                     `0 ${t.shape.borderRadius}px ${t.shape.borderRadius}px 0`,
@@ -283,7 +295,7 @@ export default function index() {
                 ))}
               </Stack>
             </SwipeableDrawer>
-            <Box sx={{ height: appbarHeight(md) }}></Box>
+            <Box sx={{ height: appbarHeight(md) }} />
           </>
         )}
       </PopupState>

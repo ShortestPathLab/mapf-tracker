@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { merge } from "lodash";
 import { ReactNode } from "react";
+import { useSm } from "./dialog/useSmallDisplay";
 
 export default function Accordion({
   label,
@@ -21,6 +22,7 @@ export default function Accordion({
   label?: ReactNode;
   children?: ReactNode;
 } & MuiAccordionProps) {
+  const sm = useSm();
   return (
     <MuiAccordion elevation={0} {...props} slotProps={slotProps}>
       <AccordionSummary
@@ -29,7 +31,12 @@ export default function Accordion({
           slotProps?.summary
         )}
       >
-        <Typography {...merge({ variant: "h6" }, slotProps?.label)}>
+        <Typography
+          {...merge(
+            { variant: sm ? "body1" : "h6", sx: { mr: 2 } },
+            slotProps?.label
+          )}
+        >
           {label}
         </Typography>
       </AccordionSummary>
