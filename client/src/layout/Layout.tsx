@@ -24,6 +24,7 @@ import { last, merge, startCase } from "lodash";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
+import { FlatCard } from "components/FlatCard";
 
 export default function Layout({
   width = 1488,
@@ -162,11 +163,7 @@ export function DataInspectorLayout({
           { value: "analysis", content: analysisContent },
         ].map(({ value, content }) => (
           <TabPanel sx={{ p: 0, pt: 2 }} value={value}>
-            {sm ? (
-              <Box sx={{ m: -2, bgcolor: "background.default" }}>{content}</Box>
-            ) : (
-              <Card>{content}</Card>
-            )}
+            <FlatCard>{content}</FlatCard>
           </TabPanel>
         ))}
       </Stack>

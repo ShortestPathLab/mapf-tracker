@@ -31,6 +31,7 @@ import { SubmissionLocationState } from "./SubmissionLocationState";
 import { DialogContentProps, useDialog } from "hooks/useDialog";
 import { queryClient } from "App";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { FlatCard } from "components/FlatCard";
 
 function Floating({ children }: { children?: ReactNode }) {
   const sm = useSm();
@@ -230,7 +231,7 @@ export default function TrackSubmission() {
           Request one here.
         </Link>
       </Typography>
-      <Card>
+      <FlatCard>
         <DataGrid
           clickable
           columns={columns}
@@ -241,7 +242,7 @@ export default function TrackSubmission() {
             })
           }
         />
-      </Card>
+      </FlatCard>
       {requestDetails}
     </Layout>
   );

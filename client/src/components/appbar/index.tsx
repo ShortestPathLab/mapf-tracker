@@ -1,15 +1,16 @@
 import {
-  AssessmentOutlined,
-  BuildOutlined,
+  AnimationOutlined,
+  CodeOutlined,
   DarkModeOutlined,
-  DownloadOutlined,
+  FileDownloadOutlined,
   FileUploadOutlined,
   GitHub,
   InfoOutlined,
   LightModeOutlined,
   MenuOutlined,
   PersonOutlined,
-  PlayCircleOutlineOutlined,
+  SortOutlined,
+  StackedLineChartOutlined,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -59,6 +60,7 @@ export default function index() {
   const groups: {
     grow?: boolean;
     items: {
+      primary?: boolean;
       iconButton?: boolean;
       label?: string;
       avatar?: ReactNode;
@@ -73,12 +75,12 @@ export default function index() {
         {
           label: "Benchmarks",
           url: "/benchmarks",
-          icon: <AssessmentOutlined />,
+          icon: <StackedLineChartOutlined />,
         },
         {
           label: "Submissions",
           url: "/submissions",
-          icon: <FileUploadOutlined />,
+          icon: <SortOutlined />,
         },
       ],
     },
@@ -87,21 +89,31 @@ export default function index() {
         {
           label: "Demo",
           url: "/systemDemo",
-          icon: <PlayCircleOutlineOutlined />,
+          icon: <AnimationOutlined />,
         },
-        { label: "Dataset", url: "/download", icon: <DownloadOutlined /> },
+        { label: "Dataset", url: "/download", icon: <FileDownloadOutlined /> },
         { label: "About", url: "/about", icon: <InfoOutlined /> },
         { label: "Github", url: "/", icon: <GitHub /> },
       ],
     },
     {
       grow: true,
+      items: [
+        {
+          primary: true,
+          label: "Make a submission",
+          url: "/contributes",
+          icon: <FileUploadOutlined />,
+        },
+      ],
+    },
+    {
       items: credentials
         ? [
             {
               iconButton: true,
               label: "Manage this platform",
-              icon: <BuildOutlined />,
+              icon: <CodeOutlined />,
               url: "/dashboard",
             },
             {
@@ -200,6 +212,7 @@ export default function index() {
                             iconButton,
                             last,
                             avatar,
+                            primary,
                           }) =>
                             iconButton ? (
                               <Tooltip title={label}>
@@ -212,8 +225,13 @@ export default function index() {
                               </Tooltip>
                             ) : (
                               <Button
-                                sx={{ px: 1, minWidth: "max-content" }}
-                                color="inherit"
+                                sx={{
+                                  px: primary ? 2 : 1,
+                                  py: 1,
+                                  minWidth: "max-content",
+                                }}
+                                color={primary ? "primary" : "inherit"}
+                                variant={primary ? "contained" : "text"}
                                 onClick={clickHandler(url, action)}
                               >
                                 {label}

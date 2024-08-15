@@ -1,5 +1,6 @@
 import { SearchOutlined } from "@mui/icons-material";
 import {
+  ButtonBase,
   CircularProgress,
   InputAdornment,
   Stack,
@@ -11,6 +12,8 @@ import {
   DataGrid as MuiDataGrid,
   DataGridProps as MuiDataGridProps,
   GridToolbar,
+  GridRow,
+  GridRowProps,
 } from "@mui/x-data-grid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map, snakeCase } from "lodash";
@@ -27,6 +30,14 @@ function includeItemByFuzzyJSONString<T>(item: T, input: string): boolean {
 export type GridColDef<T extends GridValidRowModel> = MuiGridColDef<T> & {
   fold?: boolean;
 };
+
+function ButtonRow(props: GridRowProps) {
+  return (
+    <ButtonBase sx={{ "& .MuiDataGrid-cell": { outline: "none !important" } }}>
+      <GridRow {...props} />
+    </ButtonBase>
+  );
+}
 
 export default function DataGrid<T extends GridValidRowModel = {}>({
   clickable,
@@ -83,9 +94,9 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
             },
             "& .MuiDataGrid-columnHeader:nth-child(2)": { pl: 2 },
           }}
-          slotProps={clickable && { row: { style: { cursor: "pointer" } } }}
           autoHeight
           rowHeight={88}
+          slots={clickable && { row: ButtonRow }}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[10, 25, 50, 100]}
           {...rest}

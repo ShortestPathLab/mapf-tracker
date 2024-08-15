@@ -28,7 +28,7 @@ export default function PageHeader({ path = [], current }: PageHeaderProps) {
     <Stack
       sx={{
         gap: 2,
-        mb: sm ? -2 : 2,
+        mb: sm ? -1 : 2,
       }}
     >
       {!sm && (

@@ -35,6 +35,8 @@ import {
   useOngoingSubmissionQuery,
   ValidationOutcome,
 } from "queries/useOngoingSubmissionQuery";
+import { FlatCard } from "components/FlatCard";
+import { Layout } from "layout";
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useLocationState<SubmissionLocationState>();
@@ -110,37 +112,47 @@ export default function SubmissionSummaryPage() {
   ];
 
   return (
-    <SubmissionSummary
-      apiKey={apiKey}
-      summaryStats={[
-        { name: "Submitted", count: data?.length },
-        {
-          name: "Validated",
-          count: filter(data, (c) => c.validation?.isValidationRun)?.length,
-        },
-        {
-          name: "Failed",
-          count: filter(data, (c) => c.validation?.errors?.length)?.length,
-        },
-        {
-          name: "Placeholder",
-          count: -1,
-        },
-      ]}
-      detailStats={[
-        {
-          name: "Placeholder",
-          stats: [
-            { name: "Placeholder", count: -1 },
-            { name: "Placeholder", count: -1 },
-            { name: "Placeholder", count: -1 },
-          ],
-        },
+    <Layout
+      title="Submission progress"
+      width={960}
+      path={[
+        { name: "Home", url: "/" },
+        { name: "Submit an algorithm", url: "/contributes" },
+        { name: "Manage submissions", url: "/trackSubmission" },
       ]}
     >
-      <Card>
-        <DataGrid columns={columns} rows={data} />
-      </Card>
-    </SubmissionSummary>
+      <SubmissionSummary
+        apiKey={apiKey}
+        summaryStats={[
+          { name: "Submitted", count: data?.length },
+          {
+            name: "Validated",
+            count: filter(data, (c) => c.validation?.isValidationRun)?.length,
+          },
+          {
+            name: "Failed",
+            count: filter(data, (c) => c.validation?.errors?.length)?.length,
+          },
+          {
+            name: "Placeholder",
+            count: -1,
+          },
+        ]}
+        detailStats={[
+          {
+            name: "Placeholder",
+            stats: [
+              { name: "Placeholder", count: -1 },
+              { name: "Placeholder", count: -1 },
+              { name: "Placeholder", count: -1 },
+            ],
+          },
+        ]}
+      >
+        <FlatCard>
+          <DataGrid columns={columns} rows={data} />
+        </FlatCard>
+      </SubmissionSummary>
+    </Layout>
   );
 }

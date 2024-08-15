@@ -31,6 +31,7 @@ import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
 import { NotFound } from "pages/NotFound";
+import { useCredentials } from "queries/useLogInQuery";
 
 export const queryClient = new QueryClient();
 
@@ -45,7 +46,7 @@ export default function App() {
 
   const t = useMemo(() => theme(mode), [mode]);
 
-  useTitleBar(mode === "dark" ? "#15181c" : "#ffffff");
+  useTitleBar(mode === "dark" ? "#17191d" : "#ffffff");
   return (
     <QueryClientProvider client={queryClient}>
       <ModalContext.Provider value={modalProviderValue}>
@@ -64,6 +65,7 @@ export default function App() {
   );
 }
 export function Content() {
+  const { data: credentials } = useCredentials();
   const routes: Route[] = [
     { path: "/", content: <BenchmarksRootLevelPage showHeader /> },
     { path: "/benchmarks", content: <BenchmarksRootLevelPage /> },
@@ -92,30 +94,15 @@ export function Content() {
     { path: "/trackSubmission", content: <TrackSubmission /> },
     {
       path: "/dashboard/:section?",
-      content:
-        localStorage.getItem("user") !== null ? (
-          <AdminDashboard />
-        ) : (
-          <Navigate to="/" />
-        ),
+      content: credentials ? <AdminDashboard /> : <Navigate to="/" />,
     },
     {
       path: "/dashboard-old",
-      content:
-        localStorage.getItem("user") !== null ? (
-          <AdminDashboardOld />
-        ) : (
-          <Navigate to="/" />
-        ),
+      content: credentials ? <AdminDashboardOld /> : <Navigate to="/" />,
     },
     {
       path: "/user/maps",
-      content:
-        localStorage.getItem("user") !== null ? (
-          <UserMapPage />
-        ) : (
-          <Navigate to="/" />
-        ),
+      content: credentials ? <UserMapPage /> : <Navigate to="/" />,
     },
   ];
   return (

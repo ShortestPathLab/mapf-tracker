@@ -42,6 +42,8 @@ export function makeDataGridActions<T>({
         direction="row"
         gap={1}
         alignItems="center"
+        onTouchStart={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
         {map(items, ({ name, action, icon, render = (_, c) => c }) => (

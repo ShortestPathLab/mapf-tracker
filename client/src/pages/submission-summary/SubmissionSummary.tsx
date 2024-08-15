@@ -36,23 +36,7 @@ export default function SubmissionSummary({
   children,
 }: Props) {
   return (
-    <Stack
-      sx={{
-        maxWidth: 960,
-        width: "100%",
-        mx: "auto",
-        py: 8,
-        gap: 4,
-      }}
-    >
-      <PageHeader
-        current="Submission progress"
-        path={[
-          { name: "Home", url: "/" },
-          { name: "Submit an algorithm", url: "/contributes" },
-          { name: "Manage submissions", url: "/trackSubmission" },
-        ]}
-      />
+    <>
       <Typography>
         API Key: <code>{apiKey}</code>
       </Typography>
@@ -141,6 +125,6 @@ export default function SubmissionSummary({
       >
         Finish Submission
       </Button>
-    </Stack>
+    </>
   );
 }
