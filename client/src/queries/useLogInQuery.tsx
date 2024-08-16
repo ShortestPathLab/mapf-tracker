@@ -31,9 +31,8 @@ export function useCredentials() {
 }
 export function useLogInMutation() {
   const logIn = useMutation({
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["credentials"] });
-    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["credentials"] }),
     mutationFn: async ({ username, password }: LogInFormData) => {
       const result = await post(`${APIConfig.apiUrl}/auth/signin`, {
         username,
@@ -48,9 +47,8 @@ export function useLogInMutation() {
     },
   });
   const logOut = useMutation({
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["credentials"] });
-    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["credentials"] }),
     mutationFn: async () => {
       localStorage.removeItem("user");
       return true;

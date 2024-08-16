@@ -7,6 +7,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   Box,
   Card,
+  Fade,
   IconButton,
   AppBar as MuiAppBar,
   Stack,
@@ -14,19 +15,22 @@ import {
   Tab,
   Toolbar,
   Typography,
+  useScrollTrigger,
 } from "@mui/material";
-import AppBar from "components/appbar";
+import AppBar, { appbarHeight } from "components/appbar";
 import Enter from "components/dialog/Enter";
-import { Scroll } from "components/dialog/Scrollbars";
+import { Scroll, useScroll } from "components/dialog/Scrollbars";
 import { useMd, useSm } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { last, merge, startCase } from "lodash";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { setFromParam } from "utils/set";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 import { FlatCard } from "components/FlatCard";
+import { useScrollState } from "components/dialog/useScrollState";
 
 export default function Layout({
+  collapse = true,
   width = 1488,
   render = ({ header, children }) => (
     <>
@@ -39,6 +43,7 @@ export default function Layout({
   children,
   slotProps,
 }: {
+  collapse?: boolean;
   width?: string | number;
   children?: ReactNode;
   render?: (components: {
@@ -49,9 +54,10 @@ export default function Layout({
   path?: PageHeaderProps["path"];
   slotProps?: { content?: StackProps };
 }) {
+  const md = useMd();
+  const [, isTop, , , setPanel] = useScrollState(appbarHeight(md));
   const navigate = useNavigate();
   const sm = useSm();
-  const md = useMd();
   const header = <PageHeader {...{ current: title, path }} />;
   const content = (
     <Stack
@@ -70,7 +76,7 @@ export default function Layout({
       )}
     >
       {render({
-        header,
+        header: !md || collapse ? header : undefined,
         children,
       })}
     </Stack>
@@ -103,13 +109,19 @@ export default function Layout({
             >
               <ArrowBackOutlined />
             </IconButton>
-            <Typography variant="h6" sx={{ ml: 1 }}>
-              {startCase(title)}
-            </Typography>
+            <Fade in={!isTop || !collapse}>
+              <Typography variant="h6" sx={{ ml: 1 }}>
+                {startCase(title)}
+              </Typography>
+            </Fade>
           </Toolbar>
         </MuiAppBar>
       )}
-      <Scroll y style={{ flex: 1, transform: "translateZ(0)" }}>
+      <Scroll
+        y
+        style={{ flex: 1, transform: "translateZ(0)" }}
+        ref={(p) => setPanel(p)}
+      >
         {md ? content : <Enter in>{content}</Enter>}
       </Scroll>
     </Stack>

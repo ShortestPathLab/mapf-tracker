@@ -46,10 +46,10 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
       );
     },
     onSettled: async () => {
-      await client.invalidateQueries({
+      notify("Entry deleted");
+      return await client.invalidateQueries({
         queryKey: [QUERY_KEY, key],
       });
-      notify("Entry deleted");
     },
   });
 }

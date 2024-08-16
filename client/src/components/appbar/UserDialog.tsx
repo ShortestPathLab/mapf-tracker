@@ -14,10 +14,12 @@ import {
   useLogInMutation,
   Credentials,
 } from "../../queries/useLogInQuery";
+import { useNavigate } from "hooks/useNavigation";
 
 export function UserDialog({ onClose }: DialogContentProps) {
   const { data: credentials } = useCredentials();
   const notify = useSnackbar();
+  const navigate = useNavigate();
   const {
     logOut: { mutateAsync: logOut },
   } = useLogInMutation();
@@ -36,6 +38,7 @@ export function UserDialog({ onClose }: DialogContentProps) {
           notify("Logging out");
           await logOut();
           notify("Logged out");
+          navigate("/");
           onClose?.();
         }}
       >

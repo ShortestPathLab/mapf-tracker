@@ -5,7 +5,15 @@ import {
   OverlayScrollbarsComponentProps,
 } from "overlayscrollbars-react";
 import "overlayscrollbars/styles/overlayscrollbars.css";
-import { ForwardedRef, ReactNode, forwardRef, useCallback } from "react";
+import {
+  ForwardedRef,
+  ReactNode,
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import { useCss } from "react-use";
 
 type ScrollProps = {
@@ -15,6 +23,12 @@ type ScrollProps = {
   px?: number;
   py?: number;
 };
+
+const ScrollContext = createContext<HTMLDivElement | null>(null);
+
+export function useScroll() {
+  return useContext(ScrollContext);
+}
 
 export const Scroll = forwardRef(
   (
@@ -28,6 +42,7 @@ export const Scroll = forwardRef(
     }: ScrollProps & OverlayScrollbarsComponentProps,
     ref: ForwardedRef<HTMLDivElement>
   ) => {
+    const [panel, setPanel] = useState<HTMLDivElement | null>(null);
     const { palette, spacing } = useTheme();
     const cls = useCss({
       "--os-padding-perpendicular": "2px",
@@ -61,6 +76,7 @@ export const Scroll = forwardRef(
               } else {
                 ref.current = viewport as HTMLDivElement;
               }
+              setPanel(viewport as HTMLDivElement);
             }
           }
         }
@@ -68,25 +84,31 @@ export const Scroll = forwardRef(
       [ref]
     );
     return (
-      <OverlayScrollbarsComponent
-        options={{
-          overflow: { x: x ? "scroll" : "hidden", y: y ? "scroll" : "hidden" },
-          scrollbars: {
-            autoHide: "leave",
-            theme: palette.mode === "dark" ? "os-theme-light" : "os-theme-dark",
-          },
-        }}
-        {...rest}
-        style={{
-          width: "100%",
-          height: "100%",
-          ...rest.style,
-        }}
-        className={`${cls} scrollbars ${rest.className}`}
-        events={{ initialized: handleRef }}
-      >
-        {children}
-      </OverlayScrollbarsComponent>
+      <ScrollContext.Provider value={panel}>
+        <OverlayScrollbarsComponent
+          options={{
+            overflow: {
+              x: x ? "scroll" : "hidden",
+              y: y ? "scroll" : "hidden",
+            },
+            scrollbars: {
+              autoHide: "leave",
+              theme:
+                palette.mode === "dark" ? "os-theme-light" : "os-theme-dark",
+            },
+          }}
+          {...rest}
+          style={{
+            width: "100%",
+            height: "100%",
+            ...rest.style,
+          }}
+          className={`${cls} scrollbars ${rest.className}`}
+          events={{ initialized: handleRef }}
+        >
+          {children}
+        </OverlayScrollbarsComponent>
+      </ScrollContext.Provider>
     );
   }
 );

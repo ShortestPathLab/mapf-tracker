@@ -30,7 +30,7 @@ import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
-import { NotFound } from "pages/NotFound";
+import { NotFoundPage } from "pages/NotFound";
 import { useCredentials } from "queries/useLogInQuery";
 
 export const queryClient = new QueryClient();
@@ -65,7 +65,6 @@ export default function App() {
   );
 }
 export function Content() {
-  const { data: credentials } = useCredentials();
   const routes: Route[] = [
     { path: "/", content: <BenchmarksRootLevelPage showHeader /> },
     { path: "/benchmarks", content: <BenchmarksRootLevelPage /> },
@@ -98,20 +97,20 @@ export function Content() {
     { path: "/download", content: <DownloadPage /> },
     {
       path: "/dashboard/:section?",
-      content: credentials ? <AdminDashboard /> : <Navigate to="/" />,
+      content: <AdminDashboard />,
     },
     {
       path: "/dashboard-old",
-      content: credentials ? <AdminDashboardOld /> : <Navigate to="/" />,
+      content: <AdminDashboardOld />,
     },
     {
       path: "/user/maps",
-      content: credentials ? <UserMapPage /> : <Navigate to="/" />,
+      content: <UserMapPage />,
     },
   ];
   return (
     <Router
-      fallback={<NotFound />}
+      fallback={<NotFoundPage />}
       routes={routes.map(({ content, ...props }) => ({
         ...props,
         content: (

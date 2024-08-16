@@ -116,10 +116,11 @@ export default function Table() {
           render: (row, trigger) => (
             <Dialog
               slotProps={{ modal: { width: 720 } }}
-              appBar={{ children: <Title>Benchmark details</Title> }}
+              title="Benchmark details"
+              padded
               trigger={(onClick) => cloneElement(trigger, { onClick })}
             >
-              <Box sx={{ p: 1 }}>
+              <Box sx={{ m: -2 }}>
                 <BenchmarkDetails benchmark={row.map_name} />
               </Box>
             </Dialog>

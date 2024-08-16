@@ -17,6 +17,7 @@ export default function index() {
 
   return (
     <Layout
+      collapse={false}
       width="none"
       title="Visualise"
       path={[

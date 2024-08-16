@@ -23,9 +23,7 @@ export function useRequestsQuery() {
 export function useRequestsUpdateMutation() {
   return useMutation({
     mutationKey: ["requestsUpdate"],
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
     mutationFn: ({
       id: key,
       value: values,
@@ -38,9 +36,7 @@ export function useRequestsUpdateMutation() {
 export function useSendOutcomeMutation() {
   return useMutation({
     mutationKey: ["requestsSendOutcome"],
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
-    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
     mutationFn: (id: string) =>
       post(`${APIConfig.apiUrl}/user/notify`, { requestId: id }),
   });
