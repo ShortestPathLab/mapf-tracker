@@ -19,6 +19,12 @@ import {
 } from "models";
 import z from "zod";
 
+const titles = {
+  approved: "Your submission (API) key for MAPF Tracker",
+  "not-reviewed": "Your submission request status for MAPF Tracker",
+  rejected: "Your submission request for MAPF Tracker was rejected",
+};
+
 function sendMail1({
   apiKey,
   requesterEmail,
@@ -29,7 +35,7 @@ function sendMail1({
   apiKey: string;
   requestId: string;
   requesterEmail: string;
-  requesterName;
+  requesterName:string;
   status: "approved" | "not-reviewed" | "rejected";
   comments?: string;
 }) {
@@ -43,12 +49,7 @@ function sendMail1({
     subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
   }
   log.info("Preparing mail", { apiKey, requesterEmail });
-  mail(
-    "noreply@pathfinding.ai",
-    requesterEmail,
-    "Submission Request Status",
-    subjectText
-  );
+  mail("noreply@pathfinding.ai", requesterEmail, titles[status], subjectText);
 }
 
 export const createKeyAndSendMail: RequestHandler<

@@ -8,7 +8,8 @@
     "installServer": "npm i",
     "install_all": "npm run installClient; npm run installServer",
     "build": "vite build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:email": "email dev --dir src/emails"
   },
   "license": "ISC",
   "devDependencies": {
@@ -26,6 +27,7 @@
     "concurrently": "^7.6.0"
   },
   "dependencies": {
+    "@react-email/components": "0.0.23",
     "apicache": "^1.6.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -46,6 +48,8 @@
     "pino": "^9.3.2",
     "pino-http": "^10.2.0",
     "pino-pretty": "^11.2.2",
+    "react": "^18.3.1",
+    "react-email": "3.0.1",
     "redis-memory-server": "^0.11.0",
     "serve-index": "^1.9.1",
     "string-hash": "^1.1.3",
