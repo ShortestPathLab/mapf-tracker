@@ -12,7 +12,7 @@ export declare function checkGoalReached({ current, goals, }: FinalCheckParamete
 
 export declare function checkImmediateCollision({ next, timestep, }: CheckParameters): CheckResult;
 
-declare type CheckParameters = {
+export declare type CheckParameters = {
     prev: Point[];
     next: Point[];
     actions: string[];
@@ -20,11 +20,12 @@ declare type CheckParameters = {
     sources: Point[];
     timestep: number;
     goals?: Point[];
+    done?: boolean[];
 };
 
 export declare function checkRange(n: number, chunk: Chunk): "low" | "in-range" | "high";
 
-declare type CheckResult = {
+export declare type CheckResult = {
     errors?: string[];
     errorAgents?: number[];
 };
@@ -74,7 +75,7 @@ export declare type Domain = {
 export declare class DoneException extends Error {
 }
 
-declare type FinalCheckParameters = {
+export declare type FinalCheckParameters = {
     current: Point[];
     domain: Domain;
     sources: Point[];
@@ -126,15 +127,15 @@ export declare const sumPositions: (as: Point[], bs: Point[]) => {
     y: number;
 }[];
 
-export declare function validate({ paths, domain, sources, goals, checks, finalChecks, onError, }: ValidationParameters): boolean;
+export declare function validate({ paths, domain, sources, goals, onTimestep, onFinish, onError, }: ValidationParameters): boolean;
 
 declare type ValidationParameters = {
     paths: string[];
     domain: Domain;
     sources: Point[];
     goals?: Point[];
-    checks?: ((args: CheckParameters) => CheckResult)[];
-    finalChecks?: ((args: FinalCheckParameters) => CheckResult)[];
+    onTimestep?: ((args: CheckParameters) => CheckResult)[];
+    onFinish?: ((args: FinalCheckParameters) => CheckResult)[];
     /**
      * @returns Stops validation if return value is true, otherwise continue validation
      */

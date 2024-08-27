@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 
 import { randomBytes } from "crypto";
 import { addMonths } from "date-fns";
-import { startCase } from "lodash";
+import { range, startCase } from "lodash";
 import { log } from "logging";
 import {
   Algorithm,
@@ -33,7 +33,9 @@ function sendMail1({
   status: "approved" | "not-reviewed" | "rejected";
   comments?: string;
 }) {
-  let subjectText = `Dear ${requesterName},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(status)}\nComments: ${comments}`;
+  let subjectText = `Dear ${requesterName},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(
+    status
+  )}\nComments: ${comments}`;
 
   if (status === "approved") {
     subjectText += `\n\nYour API key is: ${apiKey}`;
@@ -98,7 +100,6 @@ export const sendMail: RequestHandler<
   // const request_name = req.body.requesterName;
   // const { status, comments } = req.body;
   // let subjectText = `Dear ${request_name},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(status)}\nComments: ${comments}`;
-
   // if (status === "approved") {
   //   const apiKey = req.body;
   //   subjectText += `\n\nYour API key is: ${apiKey}`;
@@ -627,151 +628,5 @@ export const submitData = async (req, res) => {
       });
     });
   }
-  return res.status(200).send({ message: "Update successful" });
-};
-
-export const updateProgress = async (req, res) => {
-  const algo_id = new Types.ObjectId(req.params.id);
-  if (!req.body) {
-    res.status(400).send({ message: "Content can not be empty!" });
-    return;
-  }
-  const algo = await Algorithm.findOne({ _id: algo_id }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while finding algorithm.",
-    });
-  });
-  if (!algo) {
-    res.status(400).send({ message: "Error: algorithm not found" });
-    return;
-  }
-  const map = await Map.findOne({ map_name: req.body.map_name }).catch(
-    (err) => {
-      res.status(400).send({
-        message: err.message || "Some error occurred while finding map.",
-      });
-    }
-  );
-  if (!map) {
-    res.status(400).send({ message: "Error: map not found" });
-    return;
-  }
-  const map_id = map._id;
-  const scen_type = ["even", "random"];
-  let total_s = 0;
-  let total_l = 0;
-  for (let i = 1; i < 26; i++) {
-    for (const scen_t of scen_type) {
-      const scen = await Scenario.findOne({
-        map_id,
-        type_id: i,
-        scen_type: scen_t,
-      }).catch((err) => {
-        res.status(400).send({
-          message: err.message || "Some error occurred while finding scenario.",
-        });
-      });
-      if (!scen) {
-        res.status(400).send({ message: "Error: scenario not found" });
-        return;
-      }
-      const scen_id = scen._id;
-
-      const num_s = await Instance.countDocuments({
-        scen_id,
-        closed: true,
-      }).catch((err) => {
-        res.status(400).send({
-          message:
-            err.message || "Some error occurred while counting document.",
-        });
-      });
-      const num_l = await Instance.countDocuments({
-        scen_id,
-        solution_cost: { $ne: null },
-      }).catch((err) => {
-        res.status(400).send({
-          message:
-            err.message || "Some error occurred while counting document.",
-        });
-      });
-      total_s += num_s as number;
-      total_l += num_l as number;
-      await Scenario.updateOne(
-        { _id: scen_id },
-        {
-          $set: {
-            instances_closed: num_s,
-            instances_solved: num_l,
-          },
-        }
-      ).catch((err) => {
-        res.status(400).send({
-          message:
-            err.message || "Some error occurred while updating scenario.",
-        });
-      });
-    }
-  }
-  await Map.updateOne(
-    { _id: map_id },
-    {
-      $set: {
-        instances_closed: total_s,
-        instances_solved: total_l,
-      },
-    }
-  ).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while updating map.",
-    });
-  });
-  const lower = await Submission.countDocuments({
-    algo_id,
-    best_lower: true,
-  }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while counting document.",
-    });
-  });
-  const solution = await Submission.countDocuments({
-    algo_id,
-    best_solution: true,
-  }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while counting document.",
-    });
-  });
-  const closed = await Submission.countDocuments({
-    algo_id,
-    $expr: { $eq: ["$lower_cost", "$solution_cost"] },
-  }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while counting document.",
-    });
-  });
-  const solved = await Submission.countDocuments({
-    algo_id,
-    $expr: { $ne: ["$solution_cost", null] },
-  }).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while counting document.",
-    });
-  });
-  await Algorithm.updateOne(
-    { _id: algo_id },
-    {
-      $set: {
-        best_lower: lower,
-        best_solution: solution,
-        instances_closed: closed,
-        instances_solved: solved,
-      },
-    }
-  ).catch((err) => {
-    res.status(400).send({
-      message: err.message || "Some error occurred while updating algorithm.",
-    });
-  });
   return res.status(200).send({ message: "Update successful" });
 };

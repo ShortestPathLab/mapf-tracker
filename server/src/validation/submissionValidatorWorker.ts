@@ -1,5 +1,6 @@
 import {
   chain,
+  each,
   every,
   filter,
   isInteger,
@@ -8,6 +9,7 @@ import {
   pick,
   range,
   values,
+  zip,
 } from "lodash";
 import { context } from "logging";
 import { Infer, OngoingSubmission } from "models";
@@ -20,12 +22,15 @@ import {
   checkEdgeCollision,
   checkGoalReached,
   checkImmediateCollision,
+  CheckResult,
+  FinalCheckParameters,
   Point,
   validate,
 } from "validator";
 import { connectToDatabase } from "../connection";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
 import { usingMessageHandler } from "./usingWorker";
+import { CheckParameters } from "validator";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -46,6 +51,30 @@ type OngoingSubmissionDocument = Document<
   OngoingSubmission
 > &
   OngoingSubmission;
+
+function createSolutionCostChecker(expected: number[]) {
+  const costs: number[] = [];
+  return [
+    ({ done }: CheckParameters): CheckResult => {
+      each(done, (c, i) => {
+        costs[i] += +!c[i];
+      });
+      return {};
+    },
+    ({}: FinalCheckParameters): CheckResult => {
+      const error = zip(expected, costs)
+        .map(([a, b], i) => [a, b, i])
+        .find(([a, b]) => a !== b);
+      if (error) {
+        const [a, b, i] = error;
+        return {
+          errors: [`agent cost incorrect, expected ${a}, got ${b}`],
+          errorAgents: [i],
+        };
+      }
+    },
+  ] as const;
+}
 
 async function saveResults(
   submission: OngoingSubmissionDocument[],
@@ -104,19 +133,26 @@ async function validateGroup({
     .thru((c) => c + 1)
     .value();
 
+  const costs = range(0, b).map((_, i) => cache[i]?.solutionCost ?? 0);
+
   const errors: string[] = [];
   const errorAgents: number[][] = [];
+
+  const [updateSolutionCost, checkSolutionCost] =
+    createSolutionCostChecker(costs);
+
   validate({
     domain: { cells, width, height },
     paths: range(b).map((i) => cache[`${i}`]?.solutionPath ?? "w"),
     sources: sources.slice(0, b),
-    checks: [
+    onTimestep: [
       checkImmediateCollision,
       checkDomainOutOfBounds,
       checkDomainCollision,
       checkEdgeCollision,
+      updateSolutionCost,
     ],
-    finalChecks: [checkGoalReached],
+    onFinish: [checkGoalReached, checkSolutionCost],
     goals: goals.slice(0, b),
     onError: (c) => {
       errors.push(...c.errors);

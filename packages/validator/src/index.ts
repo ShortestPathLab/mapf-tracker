@@ -9,5 +9,6 @@ export * from "./core/Reader";
 export * from "./core/Domain";
 export * from "./core/Seeker";
 export * from "./core/Point";
+export * from "./core/Check";
 export * from "./core/Chunk";
 export * from "./validate";

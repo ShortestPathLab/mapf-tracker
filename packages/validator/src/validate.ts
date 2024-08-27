@@ -18,8 +18,8 @@ type ValidationParameters = {
   domain: Domain;
   sources: Point[];
   goals?: Point[];
-  checks?: ((args: CheckParameters) => CheckResult)[];
-  finalChecks?: ((args: FinalCheckParameters) => CheckResult)[];
+  onTimestep?: ((args: CheckParameters) => CheckResult)[];
+  onFinish?: ((args: FinalCheckParameters) => CheckResult)[];
   /**
    * @returns Stops validation if return value is true, otherwise continue validation
    */
@@ -80,8 +80,8 @@ export function validate({
   domain,
   sources,
   goals = [],
-  checks = [checkImmediateCollision, checkEdgeCollision],
-  finalChecks = [],
+  onTimestep = [checkImmediateCollision, checkEdgeCollision],
+  onFinish = [],
   onError = () => false,
 }: ValidationParameters) {
   const as = paths.map(processAgent);
@@ -90,7 +90,7 @@ export function validate({
   while (some(as, (c) => !c.done(i))) {
     const actions = createActionMap(i, as);
     const next = sumPositions(prev, createOffsetMap(actions));
-    for (const check of checks) {
+    for (const check of onTimestep) {
       const result = check({
         timestep: i,
         prev,
@@ -99,6 +99,7 @@ export function validate({
         domain,
         sources,
         goals,
+        done: as.map((c) => c.done(i)),
       });
       // Stop validation if onError returns true.
       if (result.errors?.length && onError(result)) return false;
@@ -106,7 +107,7 @@ export function validate({
     prev = next;
     i++;
   }
-  for (const check of finalChecks) {
+  for (const check of onFinish) {
     const result = check({
       timestep: i,
       current: prev,

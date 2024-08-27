@@ -21,7 +21,7 @@
     exec(`echo "${body}" | mail`, {
       params: [to],
       args: {
-        subject,
+        subject: `"${subject}"`,
         append: `from:${from}`
       }
     });

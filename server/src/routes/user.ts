@@ -1,6 +1,7 @@
 import { authJwt } from "../middlewares";
 import * as controller from "../controllers/user";
 import { Application } from "express";
+import { submitHandler } from "controllers/sync";
 
 export default (app: Application) => {
   app.use((req, res, next) => {
@@ -10,10 +11,10 @@ export default (app: Application) => {
     );
     next();
   });
-
+  //FIXME: update JWT
   app.post("/api/user/notify", controller.createKeyAndSendMail);
   app.put("/api/user/sendMail", [authJwt.verifyToken], controller.sendMail);
-
+  app.post("/api/user/submit", submitHandler);
   app.get(
     "/api/userAlgo/:id",
     [authJwt.verifyToken],
@@ -39,10 +40,5 @@ export default (app: Application) => {
     "/api/user/submitChunkResults/:id",
     [authJwt.verifyToken],
     controller.submitData
-  );
-  app.put(
-    "/api/user/updateProgress/:id",
-    [authJwt.verifyToken],
-    controller.updateProgress
   );
 };

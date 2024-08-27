@@ -1,5 +1,6 @@
 import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
+import { Types } from "mongoose";
 
 const schema = createSchema(
   {
@@ -13,6 +14,7 @@ const schema = createSchema(
     best_solution: Number,
     instances_closed: Number,
     instances_solved: Number,
+    requestId: { type: Types.ObjectId, ref: "users" },
   },
   {
     versionKey: false,

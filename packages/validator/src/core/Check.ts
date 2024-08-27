@@ -13,6 +13,7 @@ export type CheckParameters = {
   sources: Point[];
   timestep: number;
   goals?: Point[];
+  done?: boolean[];
 };
 
 export type FinalCheckParameters = {
