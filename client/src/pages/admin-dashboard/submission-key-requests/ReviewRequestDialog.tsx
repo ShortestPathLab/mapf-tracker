@@ -40,7 +40,7 @@ export function ReviewRequestDialog({
   const notify = useSnackbar();
   const { open: showConfirmation, dialog: confirmationDialog } = useDialog(
     ConfirmNotifyDialog,
-    { padded: true, title: "Generate and send API key" }
+    { padded: true, title: "Respond to request" }
   );
   const { mutateAsync: updateRequest } = useRequestsUpdateMutation();
   return (
@@ -122,7 +122,7 @@ export function ReviewRequestDialog({
                       <SendOutlined />
                     </ListItemIcon>
                     <ListItemText
-                      primary={`Save and send an API key to ${data?.requesterEmail}`}
+                      primary={`Save and send a response to ${data?.requesterEmail}`}
                     />
                   </ListItemButton>
                 </List>

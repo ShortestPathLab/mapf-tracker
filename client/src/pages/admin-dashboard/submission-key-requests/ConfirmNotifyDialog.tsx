@@ -16,7 +16,7 @@ import {
 } from "queries/useRequestsQuery";
 
 const hintText = (data?: RequestWithReviewOutcome) =>
-  `A new submission (API) key will be generated and sent to ${data?.requesterEmail} along with the review outcome and comments`;
+  `A response email will sent to ${data?.requesterEmail} along with the review outcome and comments. If the request was approved, a new submission (API) key will be included.`;
 
 export function ConfirmNotifyDialog({
   data,
@@ -61,13 +61,13 @@ export function ConfirmNotifyDialog({
                 onConfirm?.();
                 notify("Saving outcome");
                 await submitForm();
-                notify("Requesting for an API key to be sent");
+                notify("Queueing a response to be sent");
                 await sendOutcome(data?.id);
-                notify("Successfully requested for an API key to be sent");
+                notify("Successfully queued a response to be sent");
                 onClose?.();
               }}
             >
-              Generate and send API key
+              Send response
             </Button>
           </>
         )}

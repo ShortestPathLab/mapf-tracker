@@ -32,7 +32,7 @@ export default function index() {
   );
   const { open: showConfirmation, dialog: confirmationDialog } = useDialog(
     ConfirmNotifyDialog,
-    { padded: true, title: "Generate and send API key" }
+    { padded: true, title: "Respond to request" }
   );
 
   const columns: GridColDef<RequestWithReviewOutcome>[] = [
@@ -90,7 +90,7 @@ export default function index() {
           action: (row) => showDetails({ data: row }),
         },
         {
-          name: "Send outcome",
+          name: "Respond to request",
           icon: <SendOutlined />,
           action: (row) => showConfirmation({ data: row }),
         },
