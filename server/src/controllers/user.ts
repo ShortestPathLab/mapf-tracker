@@ -19,6 +19,12 @@ import {
 } from "models";
 import z from "zod";
 
+const titles = {
+  approved: "Your submission (API) key for MAPF Tracker",
+  "not-reviewed": "Your submission request status for MAPF Tracker",
+  rejected: "Your submission request for MAPF Tracker was rejected",
+};
+
 function sendMail1({
   apiKey,
   requesterEmail,
@@ -29,11 +35,13 @@ function sendMail1({
   apiKey: string;
   requestId: string;
   requesterEmail: string;
-  requesterName;
+  requesterName:string;
   status: "approved" | "not-reviewed" | "rejected";
   comments?: string;
 }) {
-  let subjectText = `Dear ${requesterName},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(status)}\nComments: ${comments}`;
+  let subjectText = `Dear ${requesterName},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(
+    status
+  )}\nComments: ${comments}`;
 
   if (status === "approved") {
     subjectText += `\n\nYour API key is: ${apiKey}`;
@@ -41,12 +49,7 @@ function sendMail1({
     subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
   }
   log.info("Preparing mail", { apiKey, requesterEmail });
-  mail(
-    "noreply@pathfinding.ai",
-    requesterEmail,
-    "Submission Request Status",
-    subjectText
-  );
+  mail("noreply@pathfinding.ai", requesterEmail, titles[status], subjectText);
 }
 
 export const createKeyAndSendMail: RequestHandler<
@@ -98,7 +101,6 @@ export const sendMail: RequestHandler<
   // const request_name = req.body.requesterName;
   // const { status, comments } = req.body;
   // let subjectText = `Dear ${request_name},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(status)}\nComments: ${comments}`;
-
   // if (status === "approved") {
   //   const apiKey = req.body;
   //   subjectText += `\n\nYour API key is: ${apiKey}`;
