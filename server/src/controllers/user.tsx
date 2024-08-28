@@ -18,6 +18,10 @@ import {
   SubmissionKey,
 } from "models";
 import z from "zod";
+import { render } from "@react-email/components";
+import ReviewOutcome from "emails/ReviewOutcome";
+import { R } from "vite-node/index-CCsqCcr7";
+import React from "react";
 
 const titles = {
   approved: "Your submission (API) key for MAPF Tracker",
@@ -25,7 +29,7 @@ const titles = {
   rejected: "Your submission request for MAPF Tracker was rejected",
 };
 
-function sendMail1({
+async function sendMail1({
   apiKey,
   requesterEmail,
   requesterName,
@@ -35,7 +39,7 @@ function sendMail1({
   apiKey: string;
   requestId: string;
   requesterEmail: string;
-  requesterName:string;
+  requesterName: string;
   status: "approved" | "not-reviewed" | "rejected";
   comments?: string;
 }) {
@@ -43,13 +47,24 @@ function sendMail1({
     status
   )}\nComments: ${comments}`;
 
-  if (status === "approved") {
-    subjectText += `\n\nYour API key is: ${apiKey}`;
-  } else {
-    subjectText += `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
-  }
+  subjectText +=
+    status === "approved"
+      ? `\n\nYour API key is: ${apiKey}`
+      : `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
   log.info("Preparing mail", { apiKey, requesterEmail });
-  mail("noreply@pathfinding.ai", requesterEmail, titles[status], subjectText);
+  mail(
+    "noreply@pathfinding.ai",
+    requesterEmail,
+    titles[status],
+    await render(
+      <ReviewOutcome
+        apiKey={apiKey}
+        status={status}
+        name={requesterName}
+        comments={comments}
+      />
+    )
+  );
 }
 
 export const createKeyAndSendMail: RequestHandler<
@@ -75,7 +90,7 @@ export const createKeyAndSendMail: RequestHandler<
     api_key: apiKey,
   }).save();
   log.info("Sending mail");
-  sendMail1({
+  await sendMail1({
     apiKey,
     requestId,
     requesterEmail,
