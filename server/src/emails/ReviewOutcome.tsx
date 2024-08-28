@@ -46,9 +46,11 @@ export default function ReviewOutcome({
       {text}
     </Text>
   );
-  const renderLabel = (label: ReactNode) => (
-    <Text className="text-[#666666] text-[14px] leading-none !-mb-2">
+  const renderItem = (label: ReactNode, value: ReactNode) => (
+    <Text className="text-[#666666] text-[14px] leading-[24px]">
       {label}
+      <br />
+      <span className="text-black">{value}</span>
     </Text>
   );
   return (
@@ -71,28 +73,20 @@ export default function ReviewOutcome({
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
               Your MAPF Tracker submission key request has been reviewed
             </Heading>
-            {renderText(<>{`Hello ${name || "user"},`}</>)}
-
+            {renderText(`Hello ${name || "user"},`)}
             {renderText(
               <>
                 Thank you for using MAPF Tracker. The following is the outcome
                 of your request review:
               </>
             )}
-            {renderLabel("Outcome")}
-            {renderText(startCase(status))}
-            {status === "approved" && (
-              <>
-                {renderLabel("Your submission key")}
-                {renderText(<CodeInline>{apiKey}</CodeInline>)}
-              </>
-            )}
-            {comments && (
-              <>
-                {renderLabel("Comments")}
-                {renderText(<>{comments}</>)}
-              </>
-            )}
+            {renderItem("Outcome", startCase(status))}
+            {status === "approved" &&
+              renderItem(
+                "Your submission key",
+                <CodeInline>{apiKey}</CodeInline>
+              )}
+            {comments && renderItem("Comments", comments)}
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             {renderText(
               <>
