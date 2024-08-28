@@ -4,14 +4,16 @@ import {
   EditOutlined,
   EmailOutlined,
 } from "@mui/icons-material";
-import { Box, Card, Stack, useTheme } from "@mui/material";
+import { Box, Stack, useTheme } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "App";
 import { DataGrid, makeDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog } from "components/dialog";
+import { useSm } from "components/dialog/useSmallDisplay";
+import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
@@ -20,18 +22,15 @@ import {
   SubmissionKeyRequestForm,
   SubmissionKeyRequestFormProps,
 } from "forms/SubmissionKeyRequestForm";
+import { DialogContentProps, useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
 import { merge, zipWith } from "lodash";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
-import { ReactNode, cloneElement, useState } from "react";
+import { ReactNode } from "react";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
 import { SubmissionLocationState } from "./SubmissionLocationState";
-import { DialogContentProps, useDialog } from "hooks/useDialog";
-import { queryClient } from "App";
-import { useSm } from "components/dialog/useSmallDisplay";
-import { FlatCard } from "components/FlatCard";
 
 function Floating({ children }: { children?: ReactNode }) {
   const sm = useSm();
@@ -110,12 +109,12 @@ export default function TrackSubmission() {
 
   const [keys, { push, filter }] =
     useLocalStorageList<string>("submission-keys");
-
+  console.log(keys);
   const results = useRequestsData(keys);
 
   const rows = zipWith(keys, results, (key, { data }) => ({
-    id: key,
     ...data,
+    id: key,
   }));
 
   const notify = useSnackbar();
@@ -136,7 +135,6 @@ export default function TrackSubmission() {
 
       const data = await response.json();
       if (response.ok) {
-        console.log("Request updated successfully:", data);
         queryClient.invalidateQueries({
           queryKey: ["submissionRequestDetails", key],
         });
@@ -196,7 +194,10 @@ export default function TrackSubmission() {
         {
           icon: <DeleteOutlined />,
           name: "Remove key",
-          action: (row) => filter((k) => k !== row.id),
+          action: (row) => {
+            filter((k) => k !== row.key);
+            notify("Removed key");
+          },
         },
       ],
     }),
