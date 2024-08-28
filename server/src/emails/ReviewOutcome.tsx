@@ -91,8 +91,7 @@ export default function ReviewOutcome({
             {renderText(
               <>
                 This email was sent from an automated service. If you have any
-                questions or concerns, please reply to this email to get in
-                touch with the MAPF Tracker team.
+                questions or concerns, please email the MAPF Tracker team.
               </>,
               true
             )}
