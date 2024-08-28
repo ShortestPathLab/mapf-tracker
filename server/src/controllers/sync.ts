@@ -13,7 +13,7 @@ import {
   Submission,
   SubmissionKey,
 } from "models";
-import { format } from "date-and-time";
+import { format } from "date-fns";
 import { Document } from "mongoose";
 import { createAlgo } from "./user";
 import { log } from "logging";

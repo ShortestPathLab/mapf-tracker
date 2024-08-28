@@ -1,11 +1,12 @@
-import date from "date-and-time";
 import { RequestHandler } from "express";
 import { mail } from "mail";
 import { Types } from "mongoose";
 
+import { render } from "@react-email/components";
 import { randomBytes } from "crypto";
-import { addMonths } from "date-fns";
-import { range, startCase } from "lodash";
+import { addMonths, format } from "date-fns";
+import ReviewOutcome from "emails/ReviewOutcome";
+import { startCase } from "lodash";
 import { log } from "logging";
 import {
   Algorithm,
@@ -17,11 +18,8 @@ import {
   Submission,
   SubmissionKey,
 } from "models";
-import z from "zod";
-import { render } from "@react-email/components";
-import ReviewOutcome from "emails/ReviewOutcome";
-import { R } from "vite-node/index-CCsqCcr7";
 import React from "react";
+import z from "zod";
 
 const titles = {
   approved: "Your submission (API) key for MAPF Tracker",
@@ -43,28 +41,17 @@ async function sendMail1({
   status: "approved" | "not-reviewed" | "rejected";
   comments?: string;
 }) {
-  let subjectText = `Dear ${requesterName},\n\nHope this email finds you well. Our team has reviewed your request and here is your request status:\n\nStatus: ${startCase(
-    status
-  )}\nComments: ${comments}`;
-
-  subjectText +=
-    status === "approved"
-      ? `\n\nYour API key is: ${apiKey}`
-      : `\n\nUnfortunately, your request was not approved. Please review the comments and submit your request again with the correct information.`;
   log.info("Preparing mail", { apiKey, requesterEmail });
-  mail(
-    "noreply@pathfinding.ai",
-    requesterEmail,
-    titles[status],
-    await render(
-      <ReviewOutcome
-        apiKey={apiKey}
-        status={status}
-        name={requesterName}
-        comments={comments}
-      />
-    )
+  const a = await render(
+    <ReviewOutcome
+      apiKey={apiKey}
+      status={status}
+      name={requesterName}
+      comments={comments}
+    />
   );
+  log.info(a);
+  mail("noreply@pathfinding.ai", requesterEmail, titles[status], a);
 }
 
 export const createKeyAndSendMail: RequestHandler<
@@ -433,7 +420,7 @@ export const submitData = async (req, res) => {
           : parseInt(req.body[index].solution_cost),
       best_lower: false,
       best_solution: false,
-      date: date.format(new Date(), "YYYY-MM-DD"),
+      date: format(new Date(), "YYYY-MM-DD"),
       agents: parseInt(req.body[index].agents),
       scen_id,
     };

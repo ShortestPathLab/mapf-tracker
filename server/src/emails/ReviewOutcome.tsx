@@ -41,15 +41,13 @@ export default function ReviewOutcome({
     <Text
       className={`${
         secondary ? "text-[#666666]" : "text-black"
-      } text-[14px] leading-[24px]`}
+      } text-[14px] mb-[24px]`}
     >
       {text}
     </Text>
   );
   const renderLabel = (label: ReactNode) => (
-    <Text className="text-[#666666] text-[14px] leading-none !-mb-2">
-      {label}
-    </Text>
+    <Text className="text-[#666666] text-[14px] mb-[0px]">{label}</Text>
   );
   return (
     <Html>
