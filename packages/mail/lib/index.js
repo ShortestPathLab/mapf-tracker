@@ -15,11 +15,13 @@ async function exec(path, { params = [], args = {}, flags = [] } = {}, errorsAsO
     return trim(stdout);
   } else throw new ExecError(stderr);
 }
+const escape = (str) => str.replace(/"/g, '\\"');
 function mail(from, to, subject, body) {
-  exec(`echo "${body}" | mail`, {
+  exec(`echo "${escape(body)}" | mail`, {
     params: [to],
     args: {
-      subject: `"${subject}"`,
+      subject: `"${escape(subject)}
+Content-Type: text/html"`,
       append: `from:${from}`
     }
   });
