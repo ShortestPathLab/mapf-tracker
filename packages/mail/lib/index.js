@@ -1,5 +1,6 @@
 import execSh from "exec-sh";
 import { entries, trim } from "lodash";
+import { Shescape } from "shescape";
 const sh = execSh.promise;
 class ExecError extends Error {
 }
@@ -15,14 +16,16 @@ async function exec(path, { params = [], args = {}, flags = [] } = {}, errorsAsO
     return trim(stdout);
   } else throw new ExecError(stderr);
 }
-const escape = (str) => str.replace(/"/g, '\\"');
+const shescape = new Shescape({
+  shell: true
+});
 function mail(from, to, subject, body) {
-  exec(`echo "${escape(body)}" | mail`, {
-    params: [to],
+  exec(`echo ${shescape.quote(body)} | mail`, {
+    params: [shescape.escape(to)],
     args: {
-      subject: `"${escape(subject)}
-Content-Type: text/html"`,
-      append: `from:${from}`
+      subject: shescape.quote(`${subject}
+Content-Type: text/html`),
+      append: `from:${shescape.escape(from)}`
     }
   });
 }

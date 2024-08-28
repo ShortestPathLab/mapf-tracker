@@ -39,7 +39,7 @@ export default function ReviewOutcome({
 }: Props) {
   const renderText = (text: ReactNode, secondary?: boolean) => (
     <Text
-      className={`${
+      className={`text-left ${
         secondary ? "text-[#666666]" : "text-black"
       } text-[14px] mb-[24px]`}
     >
@@ -47,7 +47,7 @@ export default function ReviewOutcome({
     </Text>
   );
   const renderItem = (label: ReactNode, value: ReactNode) => (
-    <Text className="text-[#666666] text-[14px] leading-[24px]">
+    <Text className="text-left text-[#666666] text-[14px] leading-[24px]">
       {label}
       <br />
       <span className="text-black">{value}</span>
@@ -71,7 +71,7 @@ export default function ReviewOutcome({
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Your MAPF Tracker submission key request has been reviewed
+              Your submission key request has been reviewed
             </Heading>
             {renderText(`Hello ${name || "user"},`)}
             {renderText(

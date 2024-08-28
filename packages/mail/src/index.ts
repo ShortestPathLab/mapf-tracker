@@ -1,13 +1,16 @@
 import { exec } from "./exec";
+import { Shescape } from "shescape";
 
-const escape = (str: string) => str.replace(/"/g, '\\"');
+const shescape = new Shescape({
+  shell: true,
+});
 
 export function mail(from: string, to: string, subject: string, body: string) {
-  exec(`echo "${escape(body)}" | mail`, {
-    params: [to],
+  exec(`echo ${shescape.quote(body)} | mail`, {
+    params: [shescape.escape(to)],
     args: {
-      subject: `"${escape(subject)}\nContent-Type: text/html"`,
-      append: `from:${from}`,
+      subject: shescape.quote(`${subject}\nContent-Type: text/html`),
+      append: `from:${shescape.escape(from)}`,
     },
   });
 }

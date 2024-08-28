@@ -1,6 +1,6 @@
 (function(global, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("exec-sh"), require("lodash")) : typeof define === "function" && define.amd ? define(["exports", "exec-sh", "lodash"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.mail = {}, global.execSh, global.lodash));
-})(this, function(exports2, execSh, lodash) {
+  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("exec-sh"), require("lodash"), require("shescape")) : typeof define === "function" && define.amd ? define(["exports", "exec-sh", "lodash", "shescape"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.mail = {}, global.execSh, global.lodash, global.shescape$1));
+})(this, function(exports2, execSh, lodash, shescape$1) {
   "use strict";
   const sh = execSh.promise;
   class ExecError extends Error {
@@ -17,14 +17,16 @@
       return lodash.trim(stdout);
     } else throw new ExecError(stderr);
   }
-  const escape = (str) => str.replace(/"/g, '\\"');
+  const shescape = new shescape$1.Shescape({
+    shell: true
+  });
   function mail(from, to, subject, body) {
-    exec(`echo "${escape(body)}" | mail`, {
-      params: [to],
+    exec(`echo ${shescape.quote(body)} | mail`, {
+      params: [shescape.escape(to)],
       args: {
-        subject: `"${escape(subject)}
-Content-Type: text/html"`,
-        append: `from:${from}`
+        subject: shescape.quote(`${subject}
+Content-Type: text/html`),
+        append: `from:${shescape.escape(from)}`
       }
     });
   }
