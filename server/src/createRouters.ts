@@ -10,6 +10,7 @@ import solutionPathRoutes from "./routes/solutionPath";
 import requestRoutes from "./routes/request";
 import submissionKeyRoutes from "./routes/submissionKey";
 import ongoingSubmissionRoutes from "./routes/ongoingSubmission";
+import pipelineRoutes from "./routes/pipeline";
 import { Application } from "express";
 
 export const createRouters = (app: Application) => {
@@ -25,4 +26,5 @@ export const createRouters = (app: Application) => {
   requestRoutes(app);
   submissionKeyRoutes(app);
   ongoingSubmissionRoutes(app);
+  pipelineRoutes(app);
 };

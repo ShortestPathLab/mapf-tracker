@@ -3,40 +3,26 @@ import {
   InfoOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
-import {
-  Box,
-  Card,
-  Chip,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { Chip } from "@mui/material";
 import { DataGrid, makeDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
+import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
-import { APIConfig } from "core/config";
 import { format, parseISO } from "date-fns";
 import { useLocationState } from "hooks/useNavigation";
-import { capitalize, entries, filter, startCase } from "lodash";
+import { Layout } from "layout";
+import { capitalize, filter } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
-import { json } from "queries/query";
-import { cloneElement } from "react";
-import SubmissionSummary from "./SubmissionSummary";
-import GenericDetailsList from "./GenericDetailsList";
-import { del } from "queries/mutation";
-import { queryClient as client } from "App";
-import { useSnackbar } from "components/Snackbar";
 import {
   OngoingSubmission,
   useDeleteOngoingSubmissionMutation,
   useOngoingSubmissionQuery,
   ValidationOutcome,
 } from "queries/useOngoingSubmissionQuery";
-import { FlatCard } from "components/FlatCard";
-import { Layout } from "layout";
+import { cloneElement } from "react";
+import GenericDetailsList from "./GenericDetailsList";
+import SubmissionSummary from "./SubmissionSummary";
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useLocationState<SubmissionLocationState>();

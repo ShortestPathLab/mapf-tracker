@@ -29,7 +29,7 @@ import {
 } from "validator";
 import { connectToDatabase } from "../connection";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
-import { usingMessageHandler } from "./usingWorker";
+import { usingMessageHandler } from "../queue/usingWorker";
 import { CheckParameters } from "validator";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {

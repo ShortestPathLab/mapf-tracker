@@ -44,6 +44,7 @@
     "lodash": "^4.17.21",
     "mail": "file:../packages/mail",
     "mime-types": "^2.1.35",
+    "mockingoose": "^2.16.2",
     "mongoose": "7",
     "parser": "../packages/parser",
     "pino": "^9.3.2",

@@ -2,9 +2,10 @@ import { RedisMemoryServer } from "redis-memory-server";
 import {
   Queue as BullMqQueue,
   QueueOptions as BullMqQueueOptions,
+  QueueEvents,
 } from "bullmq";
 import { RedisMemoryServerOptsT } from "redis-memory-server/lib/RedisMemoryServer";
-import { log } from "../logging";
+import { log } from "logging";
 
 type QueueOptions = {
   name: string;
@@ -21,6 +22,7 @@ class Queue<
   queue: BullMqQueue<DataType, ResultType, NameType>;
   host: string;
   port: number;
+  events: QueueEvents;
   constructor(private options: QueueOptions) {}
   async setup() {
     this.server = new RedisMemoryServer(this.options.server);
@@ -29,10 +31,12 @@ class Queue<
     log.info(
       `Queue '${this.options.name}' started at ${this.host}:${this.port}`
     );
-    this.queue = new BullMqQueue(this.options.name, {
+    const options = {
       ...this.options?.queue,
       connection: { host: this.host, port: this.port },
-    });
+    };
+    this.queue = new BullMqQueue(this.options.name, options);
+    this.events = new QueueEvents(this.options.name, options);
     this.queue.on("error", log.error);
   }
   async close() {

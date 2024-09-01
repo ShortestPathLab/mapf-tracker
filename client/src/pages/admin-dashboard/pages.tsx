@@ -1,4 +1,5 @@
 import {
+  AccountTreeOutlined,
   CallReceivedOutlined,
   DashboardOutlined,
   SpaceDashboardOutlined,
@@ -7,6 +8,7 @@ import {
 import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";
 import SubmissionKeyRequestsPage from "./submission-key-requests";
+import PipelinesPage from "./pipelines";
 import { once } from "lodash";
 
 export const pages = once(() => [
@@ -30,5 +32,12 @@ export const pages = once(() => [
     description: "Manage submission (API) keys",
     content: <ApiKeysPage />,
     icon: <VpnKeyOutlined />,
+  },
+  {
+    value: "pipelines",
+    label: "Pipelines",
+    description: "Manage pipelines",
+    content: <PipelinesPage />,
+    icon: <AccountTreeOutlined />,
   },
 ]);

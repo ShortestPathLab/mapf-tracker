@@ -2,7 +2,7 @@ import { model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 
 const schema = createSchema({
-  map_name: String,
+  map_name: { type: String, index: true },
   map_size: String,
   map_type: String,
   scens: Number,

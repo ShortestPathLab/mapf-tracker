@@ -259,11 +259,6 @@ interface SubmissionItem {
   solution_plan: string;
 }
 
-interface SubmitDataRequestBody {
-  id: string;
-  data: SubmissionItem[];
-}
-
 const findAlgorithm = async (algoId: Types.ObjectId) => {
   const algo = await Algorithm.findOne({ _id: algoId });
   if (!algo) throw new Error("Error: algorithm not found");
