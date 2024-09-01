@@ -57,7 +57,7 @@ export function StageStatusDialog({
       <StageStatus data={data} sx={{ ml: -2 }} />
       <Button
         variant="contained"
-        disabled={isPending}
+        disabled={isPending || data.status === "running"}
         onClick={async () => {
           notify("Scheduling run");
           await mutateAsync();
@@ -127,6 +127,7 @@ export default function index() {
   const { data: { nodes, edges } = {}, isLoading } = usePipelineViewerData();
   return (
     <Layout
+      flat
       width="100%"
       title="Pipelines"
       path={[

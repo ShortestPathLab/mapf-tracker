@@ -36,7 +36,7 @@ export const pages = once(() => [
   {
     value: "pipelines",
     label: "Pipelines",
-    description: "Manage pipelines",
+    description: "View and run data-processing jobs",
     content: <PipelinesPage />,
     icon: <AccountTreeOutlined />,
   },

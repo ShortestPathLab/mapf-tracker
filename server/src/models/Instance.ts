@@ -3,7 +3,7 @@ import { createSchema } from "./createSchema";
 
 const schema = createSchema({
   map_id: { type: Schema.Types.ObjectId, ref: "map" },
-  scen_id: { type: Schema.Types.ObjectId, ref: "scenario" },
+  scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
   agents: Number,
 
   lower_cost: Number,

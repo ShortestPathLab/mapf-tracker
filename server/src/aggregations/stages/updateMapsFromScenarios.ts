@@ -32,9 +32,6 @@ export const updateMapsFromScenarios = () =>
     {
       $project: {
         scenarios: 0,
-        instances: 1,
-        instances_closed: 1,
-        instances_solved: 1,
       },
     },
     {

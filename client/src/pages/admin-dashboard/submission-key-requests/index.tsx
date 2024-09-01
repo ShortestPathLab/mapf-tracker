@@ -20,7 +20,6 @@ import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
 
 export default function index() {
-  const sm = useSm();
   const { data: requests } = useRequestsQuery();
   const { open: showDetails, dialog: detailsDialog } = useDialog(
     ReviewRequestDialog,
@@ -100,6 +99,7 @@ export default function index() {
 
   return (
     <Layout
+      flat
       title="Submission key requests"
       path={[
         { name: "Home", url: "/" },

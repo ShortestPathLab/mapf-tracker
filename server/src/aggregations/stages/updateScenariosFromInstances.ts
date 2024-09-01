@@ -43,7 +43,7 @@ export const updateScenariosFromInstances = () =>
     },
     {
       $merge: {
-        into: "Scenarios",
+        into: "scenarios",
         whenMatched: "merge",
         whenNotMatched: "fail",
       },

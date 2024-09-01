@@ -42,7 +42,9 @@ export default function Layout({
   path,
   children,
   slotProps,
+  flat,
 }: {
+  flat?: boolean;
   collapse?: boolean;
   width?: string | number;
   children?: ReactNode;
@@ -97,7 +99,8 @@ export default function Layout({
         >
           <Toolbar
             sx={{
-              bgcolor: "background.paper",
+              bgcolor:
+                flat && isTop ? "background.default" : "background.paper",
             }}
           >
             <IconButton

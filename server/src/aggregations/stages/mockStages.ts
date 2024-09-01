@@ -10,6 +10,7 @@ export const mockStageB: PipelineStage = {
   },
   key: "mockStageB",
 };
+
 export const mockStageCExpectError: PipelineStage = {
   dependents: [],
   run: async () => {
