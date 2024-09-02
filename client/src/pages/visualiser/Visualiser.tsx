@@ -17,22 +17,20 @@ import {
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { useLocationState } from "hooks/useNavigation";
-import PageHeader from "layout/PageHeader";
-import { capitalize, each, min, range, trim } from "lodash";
+import { each, min, range, trim } from "lodash";
 import memoizee from "memoizee";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { Graphics as PixiGraphics } from "pixi.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AutoSize from "react-virtualized-auto-sizer";
+import { paper } from "theme";
 import { colors } from "utils/colors";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
-import { navbarHeight } from "components/Navbar";
-import { useSm } from "components/dialog/useSmallDisplay";
-import { paper } from "theme";
 
 const SCALE_SHOW_GRID_THRESHOLD = 30;
 

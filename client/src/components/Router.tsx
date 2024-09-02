@@ -1,9 +1,9 @@
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Enter from "components/dialog/Enter";
 import { useMd } from "components/dialog/useSmallDisplay";
+import { filter, map, some } from "lodash";
 import { ReactNode } from "react";
 import { matchPath, useLocation } from "react-router-dom";
-import { filter, map, some } from "lodash";
 
 export type Route = {
   path: string;
@@ -43,7 +43,28 @@ export function Router({
       }}
     >
       {some(routes.map((r) => matchPath(r.path, pathname)))
-        ? routes.map((r) => createRoute(r, r.content))
+        ? routes.map((r) =>
+            createRoute(
+              r,
+              <Box
+                sx={
+                  md
+                    ? {
+                        position: "absolute",
+                        zIndex: (t) => t.zIndex.appBar + 1,
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        bgcolor: "background.default",
+                      }
+                    : { height: "100dvh", width: "100%" }
+                }
+              >
+                {r.content}
+              </Box>
+            )
+          )
         : fallback}
     </Stack>
   );

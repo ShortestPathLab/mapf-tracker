@@ -13,6 +13,7 @@ export { model as SolutionPath } from "./SolutionPath";
 export { model as Submission } from "./Submission";
 export { model as SubmissionKey } from "./SubmissionKey";
 export { model as User } from "./User";
+export { model as PipelineStatus } from "./PipelineStatus";
 
 export const url = config.url;
 

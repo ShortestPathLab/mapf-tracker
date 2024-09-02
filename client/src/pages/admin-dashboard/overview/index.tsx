@@ -16,6 +16,7 @@ import { filter } from "lodash";
 import { useRequestsQuery } from "queries/useRequestsQuery";
 import { pages } from "../pages";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { Sidebar } from "../Sidebar";
 
 const sections = () => {
   const [, ...rest] = pages();

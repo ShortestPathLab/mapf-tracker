@@ -11,19 +11,17 @@ import { useMemo } from "react";
 
 const REFETCH_MS = 1000;
 
-const sentenceCase = (id: string): any => capitalize(startCase(id));
-
 function layout<T extends Node>(nodes: Partial<T>[], edges: Edge[]) {
   const graph = new dagre.graphlib.Graph();
   graph.setDefaultEdgeLabel(() => ({}));
 
   graph.setGraph({ rankdir: "LR" });
-  nodes.forEach((node) => graph.setNode(node.id, { width: 500, height: 60 }));
+  nodes.forEach((node) => graph.setNode(node.id, { width: 500, height: 100 }));
   edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   dagre.layout(graph);
   return graph as dagre.graphlib.Graph<T>;
 }
-type StatusType = "invalidated" | "done" | "running" | "error";
+type StatusType = "invalidated" | "done" | "running" | "error" | "pending";
 
 type Status = {
   type: StatusType;
@@ -35,6 +33,7 @@ type PipelineStatusResult = {
   key: string;
   dependents: string[];
   status: Status;
+  description?: string;
 };
 
 export const usePipelineStatus = () =>
@@ -62,16 +61,12 @@ export const usePipelineViewerData = () => {
       const nodes = map(result, (p) => ({
         id: p.key,
         data: {
-          key: p.key,
-          label: sentenceCase(p.key),
-          status: p.status.type,
-          lastRun: p.status.timestamp,
-          original: p,
+          stage: p.key,
         },
       }));
       const edges = flatMap(result, (p) =>
         map(p.dependents, (d) => ({
-          id: d,
+          id: `${d}-${p.key}`,
           data: { label: d },
           source: p.key,
           target: d,
@@ -102,9 +97,5 @@ export const usePipelineViewerData = () => {
 };
 
 export type PipelineStageNodeData = {
-  key: string;
-  label: string;
-  status: "invalidated" | "done" | "running" | "error";
-  lastRun?: number;
-  original?: PipelineStatusResult;
+  stage: string;
 };

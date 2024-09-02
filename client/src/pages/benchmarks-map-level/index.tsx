@@ -1,6 +1,7 @@
 import { Analysis } from "components/analysis/Analysis";
 import { useLocationState } from "hooks/useNavigation";
-import Layout, { DataInspectorLayout } from "layout/Layout";
+import Layout from "layout/Layout";
+import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { makePreviewImagePageRenderFunction } from "layout/render";
 import { capitalize } from "lodash";
 import { MapLevelLocationState } from "./MapLevelLocationState";
@@ -13,6 +14,7 @@ export default function Page() {
   const sm = useSm();
   return (
     <Layout
+      width="none"
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       title={capitalize(mapName)}
       path={[

@@ -2,6 +2,7 @@ import { ArrowBackOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Breadcrumbs,
+  Divider,
   IconButton,
   Link,
   Stack,
@@ -21,8 +22,7 @@ export type PageHeaderProps = {
   current?: string;
 };
 
-export default function PageHeader({ path = [], current }: PageHeaderProps) {
-  const navigate = useNavigate();
+export default function PageHeader({ current }: PageHeaderProps) {
   const sm = useSm();
   return (
     <Stack
@@ -31,23 +31,6 @@ export default function PageHeader({ path = [], current }: PageHeaderProps) {
         mb: sm ? -1 : 2,
       }}
     >
-      {!sm && (
-        <Breadcrumbs sx={{ overflowY: "auto" }}>
-          {path.map(({ name, url, state }) => (
-            <Link
-              sx={{ cursor: "pointer" }}
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate(url, state)}
-            >
-              <Typography variant="body1">{name}</Typography>
-            </Link>
-          ))}
-          <Typography color="text.primary" variant="body1">
-            {current}
-          </Typography>
-        </Breadcrumbs>
-      )}
       <Typography variant="h2">{startCase(current)}</Typography>
     </Stack>
   );

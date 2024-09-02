@@ -3,7 +3,7 @@ import { PipelineStage } from "../pipeline";
 import { stage as updateInstances } from "./updateInstancesFromSubmissions";
 import { stage as updateAlgorithms } from "./updateAlgorithmsFromSubmissions";
 import { stage as updateSolutionPaths } from "./updateSolutionPathsFromSubmissions";
-
+import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistoryFromSubmissions";
 /**
  * Periodically run aggregation pipeline to update submission model
  * with total lower/solution costs and last updated date.
@@ -68,5 +68,10 @@ export const stage: PipelineStage = {
   run: async () => ({
     result: await updateSubmissionsWithOngoingSubmissions(),
   }),
-  dependents: [updateInstances, updateAlgorithms, updateSolutionPaths],
+  dependents: [
+    updateInstances,
+    updateAlgorithms,
+    updateSolutionPaths,
+    updateInstancesSubmissionHistoryFromSubmissions,
+  ],
 };

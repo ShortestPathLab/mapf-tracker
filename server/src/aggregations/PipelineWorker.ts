@@ -2,6 +2,8 @@ import { connectToDatabase } from "connection";
 import { stages } from "../aggregations";
 import { usingMessageHandler } from "../queue/usingWorker";
 import { PipelineTaskData, PipelineTaskResult } from "./PipelineTaskData";
+import { set } from "models/PipelineStatus";
+import { now } from "lodash";
 
 async function run({
   stage,
@@ -10,6 +12,8 @@ async function run({
   if (!(stage in stages)) return { error: "invalid stage" };
   try {
     await connectToDatabase();
+    //FIXME: Someone separate this to be handled in the main thread
+    set(stage, { type: "running", stage, variables, timestamp: now() });
     await stages[stage as keyof typeof stages].run(variables);
     return {};
   } catch (e) {

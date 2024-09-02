@@ -1,6 +1,7 @@
 import { Analysis } from "components/analysis/Analysis";
 import { useLocationState } from "hooks/useNavigation";
-import Layout, { DataInspectorLayout } from "layout/Layout";
+import Layout from "layout/Layout";
+import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { makePreviewImagePageRenderFunction } from "layout/render";
 import { capitalize } from "lodash";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
@@ -14,6 +15,7 @@ export default function Page() {
   const sm = useSm();
   return (
     <Layout
+      width="none"
       title={capitalize(`${scenType}-${scenTypeID}`)}
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       path={[

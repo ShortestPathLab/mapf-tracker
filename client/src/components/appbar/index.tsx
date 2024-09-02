@@ -9,6 +9,7 @@ import {
   LightModeOutlined,
   MenuOutlined,
   PersonOutlined,
+  RouteOutlined,
   SortOutlined,
   StackedLineChartOutlined,
 } from "@mui/icons-material";
@@ -37,9 +38,10 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { ReactNode } from "react";
 import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
-import { useLg, useMd } from "../dialog/useSmallDisplay";
+import { useLg } from "../dialog/useSmallDisplay";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
+import { matchPath, useLocation } from "react-router-dom";
 
 const drawerWidth = 320;
 
@@ -48,6 +50,8 @@ export const appbarHeight = (md?: boolean) => (md ? 56 : 64);
 export default function index() {
   const lg = useLg();
   const md = useLg();
+
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const [mode, toggleMode] = useMode();
   const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
@@ -168,136 +172,106 @@ export default function index() {
   return (
     <>
       <PopupState variant="popover">
-        {(state) => (
-          <>
-            <AppBar
-              sx={{
-                color: "text.primary",
-                boxShadow: "none",
-              }}
-              position="fixed"
-            >
-              <Toolbar
-                sx={{
-                  bgcolor: "background.paper",
-                  height: appbarHeight(md),
-                }}
-              >
-                {lg && (
-                  <IconButton
-                    edge="start"
-                    sx={{ mr: 1, color: "text.primary" }}
-                    {...bindTrigger(state)}
-                  >
-                    <MenuOutlined />
-                  </IconButton>
-                )}
-                <ButtonBase
-                  sx={{ mr: 2, borderRadius: 1 }}
-                  onClick={() => navigate("/")}
-                >
-                  <Typography variant="h6">{appName}</Typography>
-                </ButtonBase>
-                {!lg && (
-                  <Stack
-                    direction="row"
-                    sx={{ flex: 1, gap: 1, alignItems: "center" }}
-                  >
-                    {groups.map(({ items, grow }) => (
-                      <>
-                        {grow ? (
-                          <Box sx={{ flexGrow: 1 }} />
-                        ) : (
-                          <Divider
-                            sx={{ mx: 1 }}
-                            flexItem
-                            orientation="vertical"
-                          />
-                        )}
-                        {items.map(
-                          ({
-                            label,
-                            icon,
-                            url,
-                            action,
-                            iconButton,
-                            last,
-                            avatar,
-                            primary,
-                          }) =>
-                            iconButton ? (
-                              <Tooltip title={label}>
-                                <IconButton
-                                  edge={last ? "end" : undefined}
-                                  onClick={clickHandler(url, action)}
-                                  sx={{ color: "text.primary" }}
-                                >
-                                  {avatar ?? icon}
-                                </IconButton>
-                              </Tooltip>
-                            ) : (
-                              <Button
-                                sx={{
-                                  px: primary ? 2 : 1,
-                                  py: 1,
-                                  minWidth: "max-content",
-                                }}
-                                color={primary ? "primary" : "inherit"}
-                                variant={primary ? "contained" : "text"}
-                                onClick={clickHandler(url, action)}
-                              >
-                                {label}
-                              </Button>
-                            )
-                        )}
-                      </>
-                    ))}
-                  </Stack>
-                )}
-              </Toolbar>
-            </AppBar>
-            <SwipeableDrawer
-              onOpen={() => state.open()}
-              {...bindMenu(state)}
-              elevation={1}
-              variant="temporary"
-              ModalProps={{ keepMounted: true }}
-              sx={{
-                display: lg ? "block" : "none",
-                "& .MuiDrawer-paper": {
-                  borderRadius: (t) =>
-                    `0 ${t.shape.borderRadius}px ${t.shape.borderRadius}px 0`,
-                  boxSizing: "border-box",
-                  width: drawerWidth,
-                  maxWidth: "90vw",
-                  bgcolor: "background.default",
-                },
-              }}
-            >
-              <Stack>
-                <Stack sx={{ p: 2 }}>
-                  <Typography variant="h6">{appName}</Typography>
-                </Stack>
-                {groups.map(({ items }, i) => (
-                  <>
-                    {!!i && <Divider flexItem />}
-                    <List>
-                      {items.map(({ icon, label, url, action, avatar }) => (
+        {(state) => {
+          const contents = (
+            <Stack sx={{ color: "text.primary" }}>
+              <Stack sx={{ p: md ? 2 : 3 }}>
+                <Typography variant="h6">{appName}</Typography>
+              </Stack>
+              {groups.map(({ items }, i) => (
+                <>
+                  {!!i && <Divider flexItem />}
+                  <List>
+                    {items.map(({ icon, label, url, action, avatar }) => {
+                      const selected = url && !!matchPath(`${url}/*`, pathname);
+                      return (
                         <ListItemButton
+                          sx={{
+                            color: selected && "primary.main",
+                            px: md ? 2 : 3,
+                            // Looks more comfortable when there's space on the right
+                            pr: 4,
+                          }}
                           onClick={clickHandler(url, action, state.close)}
                         >
-                          <ListItemIcon>{avatar ?? icon}</ListItemIcon>
+                          <ListItemIcon
+                            sx={{ color: selected && "primary.main" }}
+                          >
+                            {avatar ?? icon}
+                          </ListItemIcon>
                           <ListItemText primary={label} />
                         </ListItemButton>
-                      ))}
-                    </List>
-                  </>
-                ))}
-              </Stack>
-            </SwipeableDrawer>
-            <Box sx={{ height: appbarHeight(md) }} />
-          </>
-        )}
+                      );
+                    })}
+                  </List>
+                </>
+              ))}
+            </Stack>
+          );
+          return (
+            <>
+              {lg && (
+                <Box>
+                  <AppBar
+                    sx={{
+                      color: "text.primary",
+                      boxShadow: "none",
+                    }}
+                    position="absolute"
+                  >
+                    <Toolbar
+                      sx={{
+                        bgcolor: "background.paper",
+                        height: appbarHeight(md),
+                      }}
+                    >
+                      {lg && (
+                        <IconButton
+                          edge="start"
+                          sx={{ mr: 1, color: "action" }}
+                          {...bindTrigger(state)}
+                        >
+                          <MenuOutlined />
+                        </IconButton>
+                      )}
+                    </Toolbar>
+                  </AppBar>
+                </Box>
+              )}
+              {!lg && (
+                <Box
+                  sx={{
+                    bgcolor: "background.paper",
+                    minWidth: "fit-content",
+                    borderRight: (t) => `1px solid ${t.palette.divider}`,
+                  }}
+                >
+                  {contents}
+                </Box>
+              )}
+              <SwipeableDrawer
+                onOpen={() => state.open()}
+                {...bindMenu(state)}
+                elevation={1}
+                variant="temporary"
+                ModalProps={{ keepMounted: true }}
+                sx={{
+                  display: lg ? "block" : "none",
+                  "& .MuiDrawer-paper": {
+                    borderRadius: (t) =>
+                      `0 ${t.shape.borderRadius}px ${t.shape.borderRadius}px 0`,
+                    boxSizing: "border-box",
+                    width: drawerWidth,
+                    maxWidth: "90vw",
+                    bgcolor: "background.default",
+                  },
+                }}
+              >
+                {contents}
+              </SwipeableDrawer>
+            </>
+          );
+        }}
       </PopupState>
       {logInDialog}
       {userDialog}

@@ -1,18 +1,18 @@
 import { Layout } from "layout";
-import { Sidebar } from "../Sidebar";
+import Statistics from "./Statistics";
 
 export default function index() {
   return (
     <Layout
       flat
-      width={960}
-      title="API keys"
+      width="none"
+      title="Statistics"
       path={[
         { name: "Home", url: "/" },
         { name: "Dashboard", url: "/dashboard" },
       ]}
     >
-      Todo
+      <Statistics />
     </Layout>
   );
 }

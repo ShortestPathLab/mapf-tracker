@@ -1,20 +1,21 @@
-import { Box } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
+import { Box, Stack } from "@mui/material";
+import { SxProps, Theme, ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, Router } from "components/Router";
+import AppBar from "components/appbar";
 import {
   ModalContext,
   useModalProviderValue,
 } from "hooks/useModalProviderValue";
 import { ConfirmProvider } from "material-ui-confirm";
+import { NotFoundPage } from "pages/NotFound";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import SystemDemo from "pages/demo";
 import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
-import { Navigate } from "react-router-dom";
 import "./App.css";
 import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
@@ -30,8 +31,7 @@ import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
-import { NotFoundPage } from "pages/NotFound";
-import { useCredentials } from "queries/useLogInQuery";
+import { useLg, useMd } from "components/dialog/useSmallDisplay";
 
 export const queryClient = new QueryClient();
 
@@ -65,6 +65,8 @@ export default function App() {
   );
 }
 export function Content() {
+  const lg = useLg();
+
   const routes: Route[] = [
     { path: "/", content: <BenchmarksRootLevelPage showHeader /> },
     { path: "/benchmarks", content: <BenchmarksRootLevelPage /> },
@@ -109,26 +111,18 @@ export function Content() {
     },
   ];
   return (
-    <Router
-      fallback={<NotFoundPage />}
-      routes={routes.map(({ content, ...props }) => ({
-        ...props,
-        content: (
-          <Box
-            sx={{
-              width: "100dvw",
-              height: "100dvh",
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-            }}
-          >
-            {content}
-          </Box>
-        ),
-      }))}
-    />
+    <Stack
+      direction={lg ? "column" : "row"}
+      sx={{
+        height: "100%",
+        width: "100%",
+        bgcolor: "background.default",
+      }}
+    >
+      <AppBar />
+      <Box sx={{ flex: 1 }}>
+        <Router fallback={<NotFoundPage />} routes={routes} />
+      </Box>
+    </Stack>
   );
 }

@@ -1,5 +1,6 @@
 import { Algorithm } from "models";
 import { PipelineStage } from "../pipeline";
+import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistoryFromSubmissions";
 
 export const updateAlgorithmsFromSubmissions = () =>
   Algorithm.aggregate([
@@ -63,5 +64,17 @@ export const stage: PipelineStage = {
   run: async () => ({
     result: await updateAlgorithmsFromSubmissions(),
   }),
-  dependents: [],
+  dependents: [updateInstancesSubmissionHistoryFromSubmissions],
+  description: `
+This pipeline aggregates all submissions for each algorithm and updates the
+algorithm model with the following information:
+- best_lower: The number of instances where the submission has the best lower
+  bound.
+- best_solution: The number of instances where the submission has the best
+  solution.
+- instances_closed: The number of instances where the submission has the best
+  lower bound and the best solution cost.
+- instances_solved: The number of instances where the submission has a valid
+  solution cost.
+  `,
 };

@@ -1,5 +1,6 @@
 import { Analysis } from "components/analysis/Analysis";
-import Layout, { DataInspectorLayout } from "layout/Layout";
+import Layout from "layout/Layout";
+import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
@@ -10,6 +11,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
   const sm = useSm();
   return (
     <Layout
+      width="none"
       title="Benchmarks"
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       path={[{ name: "Home", url: "/" }]}

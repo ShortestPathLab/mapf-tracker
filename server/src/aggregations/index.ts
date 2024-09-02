@@ -4,6 +4,7 @@ import { stage as updateScenariosFromInstances } from "./stages/updateScenariosF
 import { stage as updateInstancesFromSubmissions } from "./stages/updateInstancesFromSubmissions";
 import { stage as updateSolutionPathsFromSubmissions } from "./stages/updateSolutionPathsFromSubmissions";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "./stages/updateSubmissionsWithOngoingSubmissions";
+import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./stages/updateInstancesSubmissionHistoryFromSubmissions";
 import {
   mockStageA,
   mockStageB,
@@ -11,12 +12,13 @@ import {
 } from "./stages/mockStages";
 
 export const stages = {
-  updateAlgorithmsFromSubmissions,
   updateMapsFromScenarios,
   updateScenariosFromInstances,
   updateInstancesFromSubmissions,
   updateSolutionPathsFromSubmissions,
+  updateAlgorithmsFromSubmissions,
   updateSubmissionsWithOngoingSubmissions,
+  updateInstancesSubmissionHistoryFromSubmissions,
   mockStageA,
   mockStageB,
   mockStageCExpectError,

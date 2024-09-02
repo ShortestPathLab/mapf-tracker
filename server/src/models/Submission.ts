@@ -4,7 +4,7 @@ import { createSchema } from "./createSchema";
 const schema = createSchema(
   {
     map_id: { type: Schema.Types.ObjectId, ref: "map" },
-    instance_id: { type: Schema.Types.ObjectId, ref: "instance" },
+    instance_id: { type: Schema.Types.ObjectId, ref: "instance", index: true },
     algo_id: { type: Schema.Types.ObjectId, ref: "algorithm" },
     lower_cost: Number,
     solution_cost: Number,

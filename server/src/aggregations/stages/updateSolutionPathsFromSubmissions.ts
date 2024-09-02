@@ -48,4 +48,11 @@ export const stage: PipelineStage = {
   key: "updateSolutionPathsFromSubmissions",
   run: async () => ({ result: await updateSolutionPathsFromSubmissions() }),
   dependents: [],
+  description: `
+This pipeline aggregates all submissions for each instance and updates the
+instance model with the following information:
+- solution_path: The solution path that the submission has the best solution.
+
+The result is written back to the SolutionPath collection.
+`,
 };

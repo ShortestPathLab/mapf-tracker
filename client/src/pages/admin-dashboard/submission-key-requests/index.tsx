@@ -18,6 +18,7 @@ import {
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
+import { Sidebar } from "../Sidebar";
 
 export default function index() {
   const { data: requests } = useRequestsQuery();

@@ -2,24 +2,21 @@ import { Status, run, stages } from "aggregations";
 import { timeStamp } from "console";
 import { RequestHandler } from "express";
 import { chain, map } from "lodash";
+import { PipelineStatus } from "models";
+import { get, set } from "models/PipelineStatus";
 import z from "zod";
 
-const store: { [K in keyof typeof stages]?: Partial<Status> } = {};
-
-export const getStatus: RequestHandler = (req, res) => {
+export const getStatus: RequestHandler = async (req, res) => {
   return res.json(
-    chain(stages)
+    await chain(stages)
       .values()
-      .map(({ key, dependents }) => ({
+      .map(async ({ key, dependents, description }) => ({
         key,
+        description,
         dependents: map(dependents, "key"),
-        status: store[key] ?? {
-          status: "invalidated",
-          stage: key,
-          variables: {},
-          timeStamp: undefined,
-        },
+        status: await get(key),
       }))
+      .thru((c) => Promise.all(c))
       .value()
   );
 };
@@ -45,8 +42,8 @@ export const runStage: RequestHandler = async (req, res) => {
       stages[data.stage],
       {},
       {
-        onProgress: (args) => {
-          store[args.stage] = args;
+        onProgress: async (args) => {
+          await set(args.stage, args);
         },
       }
     );

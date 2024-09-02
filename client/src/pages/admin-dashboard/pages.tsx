@@ -1,5 +1,6 @@
 import {
   AccountTreeOutlined,
+  BarChartOutlined,
   CallReceivedOutlined,
   DashboardOutlined,
   SpaceDashboardOutlined,
@@ -9,6 +10,7 @@ import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";
 import SubmissionKeyRequestsPage from "./submission-key-requests";
 import PipelinesPage from "./pipelines";
+import StatisticsPage from "./statistics";
 import { once } from "lodash";
 
 export const pages = once(() => [
@@ -39,5 +41,12 @@ export const pages = once(() => [
     description: "View and run data-processing jobs",
     content: <PipelinesPage />,
     icon: <AccountTreeOutlined />,
+  },
+  {
+    value: "statistics",
+    label: "Statistics",
+    description: "View statistics",
+    content: <StatisticsPage />,
+    icon: <BarChartOutlined />,
   },
 ]);

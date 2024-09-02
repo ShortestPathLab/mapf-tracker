@@ -13,9 +13,10 @@ export type PipelineStage<
   key: string;
   run: (a?: T) => Promise<{ result: any; variables?: R }>;
   dependents: PipelineStage<R>[];
+  description?: string;
 };
 
-type StatusType = "invalidated" | "done" | "running" | "error";
+type StatusType = "invalidated" | "done" | "running" | "error" | "pending";
 
 export type Status = {
   type: StatusType;
@@ -53,7 +54,7 @@ export async function run<T extends Record<string, any> | void = void>(
     log.info(p, event);
   };
   each(stage.dependents, (d) => l("invalidated", d.key, {}));
-  l("running");
+  l("pending");
   const job = await dispatcher.server.queue.add("run", {
     stage: stage.key,
     variables,
