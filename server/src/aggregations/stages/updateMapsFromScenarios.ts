@@ -21,11 +21,17 @@ export const updateMapsFromScenarios = () =>
     {
       $addFields: {
         instances: { $sum: "$scenarios.instances" },
-        instances_closed: {
-          $sum: "$scenarios.instances_closed",
+        instances_closed: { $sum: "$scenarios.instances_closed" },
+        instances_solved: { $sum: "$scenarios.instances_solved" },
+      },
+    },
+    {
+      $addFields: {
+        proportion_instances_closed: {
+          $divide: ["$instances_closed", "$instances"],
         },
-        instances_solved: {
-          $sum: "$scenarios.instances_solved",
+        proportion_instances_solved: {
+          $divide: ["$instances_solved", "$instances"],
         },
       },
     },

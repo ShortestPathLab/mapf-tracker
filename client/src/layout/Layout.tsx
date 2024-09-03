@@ -123,7 +123,13 @@ export default function Layout({
           ref={(p) => setPanel(p)}
         >
           {!sm && <Crumbs path={path} current={title} />}
-          {md ? content : <Enter in>{content}</Enter>}
+          {md ? (
+            content
+          ) : (
+            <Enter in distance={4}>
+              {content}
+            </Enter>
+          )}
         </Scroll>
       </Stack>
     </>

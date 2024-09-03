@@ -78,6 +78,7 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
     // eslint-disable-next-line react/prop-types
     TransitionComponent = Transition,
     backdrop,
+    distance = 16,
     ...other
   } = props;
 
@@ -183,7 +184,7 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
             boxShadow: backdrop
               ? "0px -16px 0px 0px rgba(0,0,0,0.4)"
               : undefined,
-            transform: "translateY(16px)",
+            transform: `translateY(${distance}px)`,
             opacity: 0,
             visibility: state === "exited" && !inProp ? "hidden" : undefined,
             ...styles[state],

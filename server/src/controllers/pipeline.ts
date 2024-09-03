@@ -31,25 +31,28 @@ const stageSchema = z
     message: "stage must be defined",
   });
 
-export const runStage: RequestHandler = async (req, res) => {
-  const { data, success, error } = stageSchema.safeParse(req.params);
-  if (!success) {
-    res.status(400).json(error);
-    return;
-  }
-  try {
-    run(
-      stages[data.stage],
-      {},
-      {
-        onProgress: async (args) => {
-          await set(args.stage, args);
-        },
-      }
-    );
-    res.status(200).send({});
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: err.message });
-  }
-};
+export const runStage =
+  (one?: boolean): RequestHandler =>
+  async (req, res) => {
+    const { data, success, error } = stageSchema.safeParse(req.params);
+    if (!success) {
+      res.status(400).json(error);
+      return;
+    }
+    try {
+      run(
+        stages[data.stage],
+        {},
+        {
+          one,
+          onProgress: async (args) => {
+            await set(args.stage, args);
+          },
+        }
+      );
+      res.status(200).send({});
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ error: err.message });
+    }
+  };

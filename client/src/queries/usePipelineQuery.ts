@@ -48,8 +48,10 @@ export const usePipelineStatus = () =>
 export const usePipelineRunMutation = (stage: string) =>
   useMutation({
     mutationKey: ["pipelineRun"],
-    mutationFn: async () =>
-      get<{ message: string }>(`${APIConfig.apiUrl}/pipeline/run/${stage}`),
+    mutationFn: async (action: "run" | "runOne" = "run") =>
+      get<{ message: string }>(
+        `${APIConfig.apiUrl}/pipeline/${action}/${stage}`
+      ),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["pipeline"] }),
   });
 

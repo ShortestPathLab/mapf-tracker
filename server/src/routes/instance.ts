@@ -4,7 +4,7 @@ import { middleware as cache } from "apicache";
 
 export default (app: Application) => {
   const router = Router();
-  router.use(cache("1 day"));
+  // router.use(cache("1 day"));
   router.get("/", instance.findAll);
   router.get("/:id", instance.findNonEmptyByScenId);
   router.get("/getAlgo/:id", instance.findAlgosRecord);

@@ -5,6 +5,11 @@ export type CollectionWithInstances = {
   id: string;
 };
 
+export type CollectionWithProportions = {
+  proportion_instances_closed: number;
+  proportion_instances_solved: number;
+};
+
 export type Benchmark = {
   map_type: string;
   map_name: string;
@@ -13,7 +18,8 @@ export type Benchmark = {
   scens: number;
   original_link?: string;
   papers?: string;
-} & CollectionWithInstances;
+} & CollectionWithInstances &
+  CollectionWithProportions;
 
 export type ScenarioCollection = {
   type_id: number;

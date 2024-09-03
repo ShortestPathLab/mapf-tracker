@@ -1,6 +1,5 @@
 import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
-
 const schema = createSchema({
   map_id: { type: Schema.Types.ObjectId, ref: "map" },
   scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
@@ -9,9 +8,9 @@ const schema = createSchema({
   lower_cost: Number,
   lower_algos: [
     {
-      algo_name: String,
       algo_id: { type: Schema.Types.ObjectId, ref: "algorithm" },
       date: String,
+      value: Number,
     },
   ],
   lower_date: String,
@@ -22,6 +21,7 @@ const schema = createSchema({
       algo_name: String,
       algo_id: { type: Schema.Types.ObjectId, ref: "algorithm" },
       date: String,
+      value: Number,
     },
   ],
   solution_date: String,
@@ -32,5 +32,7 @@ const schema = createSchema({
     ref: "solution_path",
   },
 });
+
+schema.index({ map_id: 1, scen_id: 1, agents: 1 }, { unique: true });
 
 export const model = createModel("instance", schema);

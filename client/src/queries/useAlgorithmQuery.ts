@@ -25,10 +25,12 @@ export const useAlgorithmForInstanceData = (id: string) => {
         {
           id: string;
           lower_algos: (AlgorithmCollection & {
+            value: number;
             algo_id: string;
             date: string;
           })[];
           solution_algos: (AlgorithmCollection & {
+            value: number;
             algo_id: string;
             date: string;
           })[];

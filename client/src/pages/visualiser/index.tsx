@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useLocationState } from "hooks/useNavigation";
 import { Layout } from "layout";
-import { crumbsHeight } from "layout/Crumbs";
+import { topbarHeight } from "layout/topbarHeight";
 import { renderFixed } from "layout/renderFixed";
 import { capitalize } from "lodash";
 import Visualiser from "./Visualiser";
@@ -43,7 +43,7 @@ export default function index() {
           left: 0,
           right: 0,
           bottom: 0,
-          height: `calc(100dvh - ${crumbsHeight(sm) - 6}px)`,
+          height: `calc(100dvh - ${topbarHeight(sm) - 6}px)`,
           width: "100%",
         }}
       >

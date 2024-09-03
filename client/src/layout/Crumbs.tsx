@@ -2,8 +2,6 @@ import { Breadcrumbs, Divider, Link, Typography } from "@mui/material";
 import { useNavigate } from "hooks/useNavigation";
 import { PageHeaderProps } from "./PageHeader";
 
-export const crumbsHeight = (sm?: boolean) => (sm ? 0 : 72);
-
 export const Crumbs = ({ path, current }: PageHeaderProps) => {
   const navigate = useNavigate();
   return (

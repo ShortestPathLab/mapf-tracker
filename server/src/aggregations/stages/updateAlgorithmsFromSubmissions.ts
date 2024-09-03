@@ -1,63 +1,59 @@
-import { Algorithm } from "models";
+import { Algorithm, Submission } from "models";
 import { PipelineStage } from "../pipeline";
-import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistoryFromSubmissions";
+import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistory";
+import submission from "routes/submission";
+import { map } from "lodash";
 
-export const updateAlgorithmsFromSubmissions = () =>
-  Algorithm.aggregate([
-    {
-      $lookup: {
-        from: "submissions",
-        localField: "_id",
-        foreignField: "algo_id",
-        as: "submissions",
-      },
-    },
-    {
-      $addFields: {
-        best_lower: {
-          $size: {
-            $filter: {
-              input: "$submissions",
-              as: "submission",
-              cond: { $eq: ["$$submission.best_lower", true] },
-            },
+export const updateAlgorithmsFromSubmissions = async () =>
+  await Promise.all(
+    map(await Submission.distinct("algo_id"), (document) =>
+      Submission.aggregate([
+        { $match: { algo_id: document._id } },
+        {
+          $facet: {
+            best_lower: [{ $match: { best_lower: true } }, { $count: "count" }],
+            best_solution: [
+              { $match: { best_solution: true } },
+              { $count: "count" },
+            ],
+            instances_closed: [
+              { $match: { lower_cost: { $eq: "$solution_cost" } } },
+              { $count: "count" },
+            ],
+            instances_solved: [
+              { $match: { solution_cost: { $ne: null } } },
+              { $count: "count" },
+            ],
           },
         },
-        best_solution: {
-          $size: {
-            $filter: {
-              input: "$submissions",
-              as: "submission",
-              cond: { $eq: ["$$submission.best_solution", true] },
-            },
+        {
+          $addFields: {
+            _id: document._id,
+            best_lower: { $first: "$best_lower.count" },
+            best_solution: { $first: "$best_solution.count" },
+            instances_closed: { $first: "$instances_closed.count" },
+            instances_solved: { $first: "$instances_solved.count" },
           },
         },
-        instances_closed: {
-          $size: {
-            $filter: {
-              input: "$submissions",
-              as: "submission",
-              cond: {
-                $eq: ["$$submission.lower_cost", "$$submission.solution_cost"],
-              },
-            },
+        {
+          $project: {
+            _id: 1,
+            best_lower: { $ifNull: ["$best_lower", 0] },
+            best_solution: { $ifNull: ["$best_solution", 0] },
+            instances_closed: { $ifNull: ["$instances_closed", 0] },
+            instances_solved: { $ifNull: ["$instances_solved", 0] },
           },
         },
-        instances_solved: {
-          $size: {
-            $filter: {
-              input: "$submissions",
-              as: "submission",
-              cond: { $ne: ["$$submission.solution_cost", null] },
-            },
+        {
+          $merge: {
+            into: "algorithms",
+            whenMatched: "merge",
+            whenNotMatched: "insert",
           },
         },
-      },
-    },
-    {
-      $out: "algorithms",
-    },
-  ]);
+      ])
+    )
+  );
 
 export const stage: PipelineStage = {
   key: "updateAlgorithmsFromSubmissions",

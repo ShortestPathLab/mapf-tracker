@@ -5,7 +5,7 @@ const schema = createSchema(
   {
     map_id: { type: Schema.Types.ObjectId, ref: "map" },
     instance_id: { type: Schema.Types.ObjectId, ref: "instance", index: true },
-    algo_id: { type: Schema.Types.ObjectId, ref: "algorithm" },
+    algo_id: { type: Schema.Types.ObjectId, ref: "algorithm", index: true },
     lower_cost: Number,
     solution_cost: Number,
     best_lower: Boolean,
@@ -15,6 +15,11 @@ const schema = createSchema(
     agents: Number,
   },
   { versionKey: false }
+);
+
+schema.index(
+  { algo_id: 1, map_id: 1, scen_id: 1, agents: 1 },
+  { unique: true }
 );
 
 export const model = createModel("submission", schema);

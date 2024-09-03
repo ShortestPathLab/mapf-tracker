@@ -7,6 +7,7 @@ import {
   GitHub,
   InfoOutlined,
   LightModeOutlined,
+  LocationSearchingOutlined,
   MenuOutlined,
   PersonOutlined,
   RouteOutlined,
@@ -108,7 +109,6 @@ export default function index() {
       ],
     },
     {
-      grow: true,
       items: [
         {
           primary: true,
@@ -116,9 +116,16 @@ export default function index() {
           url: "/contributes",
           icon: <FileUploadOutlined />,
         },
+        {
+          primary: true,
+          label: "Track my submission",
+          url: "/trackSubmission",
+          icon: <LocationSearchingOutlined />,
+        },
       ],
     },
     {
+      grow: true,
       items: credentials
         ? [
             {
@@ -174,18 +181,24 @@ export default function index() {
       <PopupState variant="popover">
         {(state) => {
           const contents = (
-            <Stack sx={{ color: "text.primary" }}>
+            <Stack sx={{ color: "text.primary", minHeight: "100dvh" }}>
               <Stack sx={{ p: md ? 2 : 3 }}>
                 <Typography variant="h6">{appName}</Typography>
               </Stack>
-              {groups.map(({ items }, i) => (
+              {groups.map(({ items, grow }, i) => (
                 <>
-                  {!!i && <Divider flexItem />}
+                  {!!i &&
+                    (grow ? (
+                      <Box sx={{ flexGrow: 1 }} />
+                    ) : (
+                      <Divider flexItem />
+                    ))}
                   <List>
                     {items.map(({ icon, label, url, action, avatar }) => {
                       const selected = url && !!matchPath(`${url}/*`, pathname);
                       return (
                         <ListItemButton
+                          selected={selected}
                           sx={{
                             color: selected && "primary.main",
                             px: md ? 2 : 3,

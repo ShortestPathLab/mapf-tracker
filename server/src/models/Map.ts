@@ -9,6 +9,8 @@ const schema = createSchema({
   instances: Number,
   instances_closed: Number,
   instances_solved: Number,
+  proportion_instances_closed: Number,
+  proportion_instances_solved: Number,
 });
 
 export const model = createModel("map", schema);

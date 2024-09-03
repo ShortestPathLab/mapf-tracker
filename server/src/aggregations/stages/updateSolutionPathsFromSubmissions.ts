@@ -10,8 +10,9 @@ import { PipelineStage } from "../pipeline";
  * 4. Project the results to only include the solution_path field from the submission.
  * 5. Write the results to a new collection called "solution_path".
  */
-export const updateSolutionPathsFromSubmissions = () =>
-  SolutionPath.aggregate([
+export const updateSolutionPathsFromSubmissions = () => {
+  throw new Error("Not implemented");
+  return SolutionPath.aggregate([
     //TODO: Add a filter for only running this for specified subset of submissions
     {
       $lookup: {
@@ -43,6 +44,7 @@ export const updateSolutionPathsFromSubmissions = () =>
       $out: "solution_path",
     },
   ]);
+};
 
 export const stage: PipelineStage = {
   key: "updateSolutionPathsFromSubmissions",

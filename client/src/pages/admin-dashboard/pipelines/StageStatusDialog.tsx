@@ -23,18 +23,32 @@ export function StageStatusDialog({
   return (
     <Stack sx={{ gap: 4 }}>
       <StageStatus stage={stage} sx={{ ml: -2 }} />
-      <Button
-        variant="contained"
-        disabled={isPending || status?.type === "running"}
-        onClick={async () => {
-          notify("Scheduling run");
-          await mutateAsync();
-          notify("Scheduled run");
-          onClose?.();
-        }}
-      >
-        Run now
-      </Button>
+      <Stack sx={{ gap: 2 }}>
+        <Button
+          variant="contained"
+          disabled={isPending || status?.type === "running"}
+          onClick={async () => {
+            notify("Scheduling run");
+            await mutateAsync("run");
+            notify("Scheduled run");
+            onClose?.();
+          }}
+        >
+          Run pipeline from this stage
+        </Button>
+        <Button
+          variant="outlined"
+          disabled={isPending || status?.type === "running"}
+          onClick={async () => {
+            notify("Scheduling run");
+            await mutateAsync("runOne");
+            notify("Scheduled run");
+            onClose?.();
+          }}
+        >
+          Run this stage only
+        </Button>
+      </Stack>
       {!!description && (
         <Prose sx={{ color: "text.secondary" }}>
           <Markdown>{description}</Markdown>

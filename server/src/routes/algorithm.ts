@@ -4,7 +4,7 @@ import { middleware as cache } from "apicache";
 
 export default (app: Application) => {
   const router = Router();
-  router.use(cache("1 day"));
+  // router.use(cache("1 day"));
   router.get("/", algorithm.findAll);
   router.get("/all_detail", algorithm.findAllDetails);
   router.get("/algo_detail/:id", algorithm.findOne);

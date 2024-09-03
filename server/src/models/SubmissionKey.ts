@@ -4,9 +4,17 @@ import { createSchema } from "./createSchema";
 const schema = createSchema(
   {
     request_id: { type: Schema.Types.ObjectId, ref: "request" },
-    api_key: String,
+    api_key: { type: String, index: true },
     creationDate: Date,
     expirationDate: Date,
+    status: {
+      type: {
+        type: String,
+        enum: ["submitted", "default"],
+        default: "default",
+        index: true,
+      },
+    },
   },
   {
     versionKey: false,

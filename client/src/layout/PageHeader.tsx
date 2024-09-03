@@ -28,7 +28,7 @@ export default function PageHeader({ current }: PageHeaderProps) {
     <Stack
       sx={{
         gap: 2,
-        mb: sm ? -1 : 2,
+        mb: sm ? -1 : 0,
       }}
     >
       <Typography variant="h2">{startCase(current)}</Typography>

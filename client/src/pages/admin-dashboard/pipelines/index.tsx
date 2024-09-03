@@ -7,7 +7,7 @@ import { renderFixed } from "layout/renderFixed";
 import { usePipelineViewerData } from "queries/usePipelineQuery";
 import { CSSProperties } from "react";
 import { PipelineStageNode } from "./PipelineStageNode";
-import { crumbsHeight } from "layout/Crumbs";
+import { topbarHeight } from "layout/topbarHeight";
 
 export default function index() {
   const sm = useSm();
@@ -31,7 +31,7 @@ export default function index() {
           top: 0,
           left: 0,
           right: 0,
-          height: `calc(100dvh - ${crumbsHeight(sm)}px)`,
+          height: `calc(100dvh - ${topbarHeight(sm)}px)`,
         }}
       >
         {isLoading ? (

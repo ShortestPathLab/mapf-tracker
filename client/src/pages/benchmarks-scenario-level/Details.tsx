@@ -27,10 +27,10 @@ export default function Details({ id }: { id?: string }) {
             <List>
               {map(
                 orderBy(collection, "date", "desc"),
-                ({ algo_name, date }) => (
+                ({ algo_name, date, value }) => (
                   <ListItem>
                     <ListItemText
-                      secondary={formatDate(date)}
+                      secondary={`${value} on ${formatDate(date)}`}
                       primary={algo_name}
                     />
                   </ListItem>

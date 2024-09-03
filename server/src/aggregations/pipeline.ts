@@ -28,6 +28,7 @@ export type Status = {
 
 export type Options = {
   onProgress?: (args: Status) => void;
+  one?: boolean;
 };
 
 /**
@@ -72,5 +73,7 @@ export async function run<T extends Record<string, any> | void = void>(
     return;
   }
   l("done");
-  await Promise.all(map(stage.dependents, (d) => run(d, v, options)));
+  if (!options?.one) {
+    await Promise.all(map(stage.dependents, (d) => run(d, v, options)));
+  }
 }

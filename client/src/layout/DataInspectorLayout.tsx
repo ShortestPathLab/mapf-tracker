@@ -1,15 +1,14 @@
-import { FolderOutlined, ShowChartOutlined } from "@mui/icons-material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Stack, Tab } from "@mui/material";
+import { FlatCard } from "components/FlatCard";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
-import { FlatCard } from "components/FlatCard";
 
 export function DataInspectorLayout({
   data: dataContent,
   dataTabName = "Browse benchmarks",
-  analysisTabName = "Analyse dataset",
+  analysisTabName = "Analyse",
   analysis: analysisContent,
 }: {
   dataTabName?: ReactNode;
@@ -23,7 +22,7 @@ export function DataInspectorLayout({
     <TabContext value={tab}>
       <Stack>
         <TabList
-          variant="fullWidth"
+          variant={sm ? "fullWidth" : "standard"}
           sx={{
             pb: 0,
             position: "sticky",
@@ -36,16 +35,14 @@ export function DataInspectorLayout({
           onChange={setFromParam(setTab)}
         >
           <Tab
-            sx={{ px: sm ? 2 : 6 }}
+            sx={{ minWidth: 0, px: sm ? 2 : 0, mr: sm ? 0 : 4 }}
             label={dataTabName}
             value="data"
-            icon={<FolderOutlined />}
           />
           <Tab
-            sx={{ px: sm ? 2 : 6 }}
+            sx={{ minWidth: 0, px: sm ? 2 : 0, mr: sm ? 0 : 4 }}
             label={analysisTabName}
             value="analysis"
-            icon={<ShowChartOutlined />}
           />
         </TabList>
         {[
