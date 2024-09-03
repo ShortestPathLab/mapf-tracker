@@ -35,6 +35,7 @@ import Menu from "@mui/material/Menu";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import { APIConfig } from "core/config";
+import { Stack } from "@mui/material";
 
 const angle = {
   Warehouse: -40,
@@ -47,7 +48,7 @@ const angle = {
 };
 
 const getClosedInfo = (callback) => {
-  fetch(APIConfig.apiUrl + "/algorithm/getClosedInfo", { method: "GET" })
+  fetch(`${APIConfig.apiUrl}/algorithm/getClosedInfo`, { method: "GET" })
     .then((res) => res.json())
     .then((data) => {
       callback(data);
@@ -56,7 +57,7 @@ const getClosedInfo = (callback) => {
 };
 
 const getLowerBoundInfo = (callback) => {
-  fetch(APIConfig.apiUrl + "/algorithm/getLowerInfo/", { method: "GET" })
+  fetch(`${APIConfig.apiUrl}/algorithm/getLowerInfo/`, { method: "GET" })
     .then((res) => res.json())
     .then((data) => {
       callback(data);
@@ -65,7 +66,7 @@ const getLowerBoundInfo = (callback) => {
 };
 
 const getSoultionInfo = (callback) => {
-  fetch(APIConfig.apiUrl + "/algorithm/getSolutionInfo/", { method: "GET" })
+  fetch(`${APIConfig.apiUrl}/algorithm/getSolutionInfo/`, { method: "GET" })
     .then((res) => res.json())
     .then((data) => {
       callback(data);
@@ -76,7 +77,7 @@ const getSoultionInfo = (callback) => {
 export default function Summary() {
   const [mapData, setMapData] = React.useState([]);
   const [mapQueryResult, setMapQueryResult] = React.useState([]);
-  const [color, setColor] = React.useState(
+  const [color] = React.useState(
     Array(100)
       .fill()
       .map(
@@ -152,11 +153,11 @@ export default function Summary() {
 
     let domain_API = "";
     if (event.target.value === "#Instances Closed") {
-      domain_API = APIConfig.apiUrl + "/algorithm/getDomainClosedInfo";
+      domain_API = `${APIConfig.apiUrl}/algorithm/getDomainClosedInfo`;
     } else if (event.target.value === "#Best Lower-bounds") {
-      domain_API = APIConfig.apiUrl + "/algorithm/getDomainLowerInfo";
+      domain_API = `${APIConfig.apiUrl}/algorithm/getDomainLowerInfo`;
     } else {
-      domain_API = APIConfig.apiUrl + "/algorithm/getDomainSolutionInfo";
+      domain_API = `${APIConfig.apiUrl}/algorithm/getDomainSolutionInfo`;
     }
     fetch(domain_API, { method: "GET" })
       .then((res) => res.json())
@@ -168,7 +169,7 @@ export default function Summary() {
   };
 
   React.useEffect(() => {
-    const algorithm_API = APIConfig.apiUrl + "/algorithm/";
+    const algorithm_API = `${APIConfig.apiUrl}/algorithm/`;
     fetch(algorithm_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
@@ -181,122 +182,123 @@ export default function Summary() {
   }, []);
 
   React.useEffect(() => {
-    if (algorithm_name.length > 0) {
-      const map_API = APIConfig.apiUrl + "/map";
-      const closed_API = APIConfig.apiUrl + "/algorithm/getClosedInfo";
-      const domain_chart_API =
-        APIConfig.apiUrl + "/algorithm/getDomainClosedInfo";
-
-      Promise.all([
-        fetch(map_API, { method: "GET" }),
-        fetch(closed_API, { method: "GET" }),
-        fetch(domain_chart_API, { method: "GET" }),
-      ])
-        .then((values) => {
-          return Promise.all(values.map((r) => r.json()));
-        })
-        .then(([map_data, closed_data, domain_chart_data]) => {
-          setMapData(map_data);
-          setMapQueryResult(closed_data);
-          setDomainQueryResult(domain_chart_data);
-        })
-        .catch((err) => console.error(err));
+    if (algorithm_name.length <= 0) {
+      return;
     }
+    const map_API = `${APIConfig.apiUrl}/map`;
+    const closed_API = `${APIConfig.apiUrl}/algorithm/getClosedInfo`;
+    const domain_chart_API = `${APIConfig.apiUrl}/algorithm/getDomainClosedInfo`;
+
+    Promise.all([
+      fetch(map_API, { method: "GET" }),
+      fetch(closed_API, { method: "GET" }),
+      fetch(domain_chart_API, { method: "GET" }),
+    ])
+      .then((values) => {
+        return Promise.all(values.map((r) => r.json()));
+      })
+      .then(([map_data, closed_data, domain_chart_data]) => {
+        setMapData(map_data);
+        setMapQueryResult(closed_data);
+        setDomainQueryResult(domain_chart_data);
+      })
+      .catch((err) => console.error(err));
   }, [algorithm_name]);
 
   React.useEffect(() => {
-    if (mapData.length > 0) {
-      const progressChartData = [];
-      mapData.forEach((element) =>
-        progressChartData.push({
-          name: element.map_name,
-          total: element.instances,
-          Closed: element.instances_closed,
-          Solved: element.instances_solved - element.instances_closed,
-          Unknown: element.instances - element.instances_solved,
-        })
-      );
-      setProgressChartData(progressChartData);
+    if (mapData.length <= 0) {
+      return;
     }
+    const progressChartData = [];
+    mapData.forEach((element) =>
+      progressChartData.push({
+        name: element.map_name,
+        total: element.instances,
+        Closed: element.instances_closed,
+        Solved: element.instances_solved - element.instances_closed,
+        Unknown: element.instances - element.instances_solved,
+      })
+    );
+    setProgressChartData(progressChartData);
   }, [mapData]);
 
   React.useEffect(() => {
-    if (mapQueryResult.length > 0) {
-      const mapChartData = [];
-      [...new Set(mapData.map((item) => item.map_name))].forEach((element) =>
-        mapChartData.push({ name: element })
-      );
-      const algorithm = new Set();
-      for (var i = 0; i < mapQueryResult.length; i++) {
-        // iterate map
-        var mapIndex = mapChartData.findIndex(
-          (x) => x.name === mapQueryResult[i].map_name
-        );
-        for (var j = 0; j < mapQueryResult[i].solved_instances.length; j++) {
-          var algo = mapQueryResult[i].solved_instances[j];
-          algorithm.add(algo.algo_name);
-          mapChartData[mapIndex][algo.algo_name] = algo.count;
-        }
-      }
-      const unique_key = [];
-      const check_box_state = {};
-      algorithm.forEach(function (algo) {
-        unique_key.push(algo);
-        check_box_state[algo] = true;
-      });
-      unique_key.sort();
-      setMapFilterState(check_box_state);
-      setMapBarChartAlgorithms(unique_key);
-      setMapBarChartDisplayAlgorithms(unique_key);
-      setMapBarChartDisplayData(mapChartData);
-      setMapBarChartOriData(mapChartData);
+    if (mapQueryResult.length <= 0) {
+      return;
     }
+    const mapChartData = [];
+    [...new Set(mapData.map((item) => item.map_name))].forEach((element) =>
+      mapChartData.push({ name: element })
+    );
+    const algorithm = new Set();
+    for (const element of mapQueryResult) {
+      // iterate map
+      const mapIndex = mapChartData.findIndex(
+        (x) => x.name === element.map_name
+      );
+      for (const algo of element.solved_instances) {
+        algorithm.add(algo.algo_name);
+        mapChartData[mapIndex][algo.algo_name] = algo.count;
+      }
+    }
+    const unique_key = [];
+    const check_box_state = {};
+    algorithm.forEach((algo) => {
+      unique_key.push(algo);
+      check_box_state[algo] = true;
+    });
+    unique_key.sort();
+    setMapFilterState(check_box_state);
+    setMapBarChartAlgorithms(unique_key);
+    setMapBarChartDisplayAlgorithms(unique_key);
+    setMapBarChartDisplayData(mapChartData);
+    setMapBarChartOriData(mapChartData);
   }, [mapQueryResult]);
 
   React.useEffect(() => {
-    if (domainQueryResult.length > 0) {
-      const domainChartData = [];
-      [...new Set(mapData.map((item) => item.map_type))].forEach((element) =>
-        domainChartData.push({ name: element })
-      );
-
-      const algorithm = new Set();
-      for (var i = 0; i < domainQueryResult.length; i++) {
-        // iterate map
-        var domainIndex = domainChartData.findIndex(
-          (x) => x.name === domainQueryResult[i].map_type
-        );
-
-        for (var j = 0; j < domainQueryResult[i].results.length; j++) {
-          var algo = domainQueryResult[i].results[j];
-          algorithm.add(algo.algo_name);
-          domainChartData[domainIndex][algo.algo_name] = algo.count;
-        }
-      }
-      const unique_key = [];
-      const check_box_state = {};
-      algorithm.forEach(function (algo) {
-        unique_key.push(algo);
-        check_box_state[algo] = true;
-        domainChartData.forEach(function (element) {
-          if (element[algo] === undefined) {
-            element[algo] = 0;
-          }
-        });
-      });
-      unique_key.sort();
-
-      domainChartData.forEach(
-        (element) =>
-          (element.name =
-            element.name.charAt(0).toUpperCase() + element.name.slice(1))
-      );
-      setDomainFilterState(check_box_state);
-      setDomainBarChartAlgorithms(unique_key);
-      setDomainBarChartDisplayAlgorithms(unique_key);
-      setDomainBarChartDisplayData(domainChartData);
-      setDomainBarChartOriData(domainChartData);
+    if (domainQueryResult.length <= 0) {
+      return;
     }
+    const domainChartData = [];
+    [...new Set(mapData.map((item) => item.map_type))].forEach((element) =>
+      domainChartData.push({ name: element })
+    );
+
+    const algorithm = new Set();
+    for (const element of domainQueryResult) {
+      // iterate map
+      const domainIndex = domainChartData.findIndex(
+        (x) => x.name === element.map_type
+      );
+
+      for (const algo of element.results) {
+        algorithm.add(algo.algo_name);
+        domainChartData[domainIndex][algo.algo_name] = algo.count;
+      }
+    }
+    const unique_key = [];
+    const check_box_state = {};
+    algorithm.forEach((algo) => {
+      unique_key.push(algo);
+      check_box_state[algo] = true;
+      domainChartData.forEach((element) => {
+        if (element[algo] === undefined) {
+          element[algo] = 0;
+        }
+      });
+    });
+    unique_key.sort();
+
+    domainChartData.forEach(
+      (element) =>
+        (element.name =
+          element.name.charAt(0).toUpperCase() + element.name.slice(1))
+    );
+    setDomainFilterState(check_box_state);
+    setDomainBarChartAlgorithms(unique_key);
+    setDomainBarChartDisplayAlgorithms(unique_key);
+    setDomainBarChartDisplayData(domainChartData);
+    setDomainBarChartOriData(domainChartData);
   }, [domainQueryResult]);
 
   function CustomizedLabel(props) {
@@ -354,10 +356,10 @@ export default function Summary() {
   React.useEffect(() => {
     const displayData = [];
     // console.log(solvedChartOriData);
-    mapBarChartOriData.forEach(function (element) {
+    mapBarChartOriData.forEach((element) => {
       const mapData = {};
-      mapData["name"] = element["name"];
-      mapBarChartAlgorithms.forEach(function (algo) {
+      mapData.name = element.name;
+      mapBarChartAlgorithms.forEach((algo) => {
         if (mapFilterState[algo]) {
           mapData[algo] = element[algo];
         }
@@ -366,7 +368,7 @@ export default function Summary() {
     });
     // console.log(displayData);
     const displayKey = [];
-    mapBarChartAlgorithms.forEach(function (algo) {
+    mapBarChartAlgorithms.forEach((algo) => {
       if (mapFilterState[algo]) {
         displayKey.push(algo);
       }
@@ -378,10 +380,10 @@ export default function Summary() {
   React.useEffect(() => {
     const displayData = [];
     // console.log(solvedChartOriData);
-    domainBarChartOriData.forEach(function (element) {
+    domainBarChartOriData.forEach((element) => {
       const domainData = {};
-      domainData["name"] = element["name"];
-      domainBarChartAlgorithms.forEach(function (algo) {
+      domainData.name = element.name;
+      domainBarChartAlgorithms.forEach((algo) => {
         if (domainFilterState[algo]) {
           domainData[algo] = element[algo];
         }
@@ -391,7 +393,7 @@ export default function Summary() {
 
     // console.log(displayData);
     const displayKey = [];
-    domainBarChartAlgorithms.forEach(function (algo) {
+    domainBarChartAlgorithms.forEach((algo) => {
       if (domainFilterState[algo]) {
         displayKey.push(algo);
       }
@@ -431,9 +433,9 @@ export default function Summary() {
   };
 
   return (
-    <Box sx={{ width: "96%", paddingLeft: "2%", opacity: "0.95" }}>
-      <Box sx={{ width: "100%", display: "flex" }}>
-        <Card sx={{ width: "68%", mb: 2 }}>
+    <Stack sx={{ gap: 2 }}>
+      <Stack direction="row" sx={{ gap: 2 }}>
+        <Card sx={{ flex: 2 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -466,7 +468,7 @@ export default function Summary() {
                 interval={0}
                 textAnchor="end"
                 tickFormatter={(tick) =>
-                  tick === 0 ? "" : tick.substring(0, 5) + "..."
+                  tick === 0 ? "" : `${tick.substring(0, 5)}...`
                 }
                 dy={30}
                 dx={-5}
@@ -517,9 +519,7 @@ export default function Summary() {
             </AreaChart>
           </ResponsiveContainer>
         </Card>
-        <div style={{ width: "2%" }} />
-
-        <Card sx={{ width: "38%", mb: 2 }}>
+        <Card sx={{ flex: 1 }}>
           <Toolbar
             sx={{
               pl: { sm: 2 },
@@ -636,122 +636,118 @@ export default function Summary() {
             </RadarChart>
           </ResponsiveContainer>
         </Card>
-      </Box>
-      <Box sx={{ width: "100%" }}>
-        <Card sx={{ width: "100%", mb: 2 }}>
-          <Toolbar
-            sx={{
-              pl: { sm: 2 },
-              pr: { xs: 1, sm: 1 },
-            }}
+      </Stack>
+      <Card>
+        <Toolbar
+          sx={{
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          }}
+        >
+          <Typography
+            sx={{ flex: "1 1 100%" }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
           >
-            <Typography
-              sx={{ flex: "1 1 100%" }}
-              variant="h6"
-              id="tableTitle"
-              component="div"
-            >
-              Comparison between Algorithms on Maps
-            </Typography>
+            Comparison between Algorithms on Maps
+          </Typography>
 
-            <FormControl sx={{ m: 1, minWidth: 120, width: 300 }} size="small">
-              <Select
-                value={mapQuery}
-                displayEmpty={true}
-                onChange={handleChange}
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <MenuItem value={"#Instances Closed"}>
-                  #Instances Closed
-                </MenuItem>
-                <MenuItem value={"#Best Lower-bounds"}>
-                  #Best Lower-bounds
-                </MenuItem>
-                <MenuItem value={"#Best Solutions"}>#Best Solutions</MenuItem>
-              </Select>
-            </FormControl>
-            <IconButton
-              aria-controls="simple-menu"
-              aria-haspopup="true"
-              onClick={handleMapFilterClick}
+          <FormControl sx={{ m: 1, minWidth: 120, width: 300 }} size="small">
+            <Select
+              value={mapQuery}
+              displayEmpty={true}
+              onChange={handleChange}
+              inputProps={{ "aria-label": "Without label" }}
             >
-              <FilterListIcon />
-            </IconButton>
-            <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              // onClick ={handleMapFilterChange}
-              onClose={handleMapFilterClose}
-            >
-              {mapBarChartAlgorithms.map((algo) => (
-                <MenuItem key={algo} value={algo} onClick={handleMapTextClick}>
-                  <Checkbox
-                    checked={mapFilterState[algo]}
-                    onChange={handleMapFilterChange}
-                    name={algo}
-                  />
-                  <ListItemText primary={algo} />
-                </MenuItem>
-              ))}
-            </Menu>
-          </Toolbar>
-
-          <ResponsiveContainer width="100%" height={600}>
-            <BarChart data={mapBarChartDisplayData}>
-              <Legend
-                verticalAlign="top"
-                align="center"
-                wrapperStyle={{
-                  fontFamily: "Inter Tight",
-                }}
-              />
-              <Brush
-                y={510}
-                dataKey="name"
-                height={20}
-                stroke="rgba(0, 0, 0, 0.5)"
-              />
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                angle={-60}
-                height={80}
-                interval={0}
-                textAnchor="end"
-                tickFormatter={(tick) =>
-                  tick === 0 ? "" : tick.substring(0, 5) + "..."
-                }
-                dy={30}
-                style={{
-                  fontFamily: "Inter Tight",
-                }}
-              />
-              <YAxis
-                tickFormatter={(tick) => {
-                  return `${tick * 100}%`;
-                }}
-              />
-              <Tooltip
-                wrapperStyle={{ fontFamily: "Inter Tight" }}
-                formatter={(tick) => {
-                  const value = tick * 100;
-                  return `${value.toFixed(2)}%`;
-                }}
-              />
-              {mapBarChartDisplayAlgorithms.map((algo) => (
-                <Bar
-                  key={algo}
-                  dataKey={algo}
-                  stroke={color[algorithm_name.indexOf(algo)]}
-                  fill={color[algorithm_name.indexOf(algo)]}
+              <MenuItem value={"#Instances Closed"}>#Instances Closed</MenuItem>
+              <MenuItem value={"#Best Lower-bounds"}>
+                #Best Lower-bounds
+              </MenuItem>
+              <MenuItem value={"#Best Solutions"}>#Best Solutions</MenuItem>
+            </Select>
+          </FormControl>
+          <IconButton
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleMapFilterClick}
+          >
+            <FilterListIcon />
+          </IconButton>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            // onClick ={handleMapFilterChange}
+            onClose={handleMapFilterClose}
+          >
+            {mapBarChartAlgorithms.map((algo) => (
+              <MenuItem key={algo} value={algo} onClick={handleMapTextClick}>
+                <Checkbox
+                  checked={mapFilterState[algo]}
+                  onChange={handleMapFilterChange}
+                  name={algo}
                 />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-      </Box>
-    </Box>
+                <ListItemText primary={algo} />
+              </MenuItem>
+            ))}
+          </Menu>
+        </Toolbar>
+
+        <ResponsiveContainer width="100%" height={600}>
+          <BarChart data={mapBarChartDisplayData}>
+            <Legend
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{
+                fontFamily: "Inter Tight",
+              }}
+            />
+            <Brush
+              y={510}
+              dataKey="name"
+              height={20}
+              stroke="rgba(0, 0, 0, 0.5)"
+            />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              angle={-60}
+              height={80}
+              interval={0}
+              textAnchor="end"
+              tickFormatter={(tick) =>
+                tick === 0 ? "" : `${tick.substring(0, 5)}...`
+              }
+              dy={30}
+              style={{
+                fontFamily: "Inter Tight",
+              }}
+            />
+            <YAxis
+              tickFormatter={(tick) => {
+                return `${tick * 100}%`;
+              }}
+            />
+            <Tooltip
+              wrapperStyle={{ fontFamily: "Inter Tight" }}
+              formatter={(tick) => {
+                const value = tick * 100;
+                return `${value.toFixed(2)}%`;
+              }}
+            />
+            {mapBarChartDisplayAlgorithms.map((algo) => (
+              <Bar
+                key={algo}
+                dataKey={algo}
+                stroke={color[algorithm_name.indexOf(algo)]}
+                fill={color[algorithm_name.indexOf(algo)]}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+    </Stack>
   );
 }
