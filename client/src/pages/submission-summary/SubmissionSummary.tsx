@@ -40,7 +40,7 @@ export default function SubmissionSummary({
       <Typography>
         API Key: <code>{apiKey}</code>
       </Typography>
-      <Stack direction="row" sx={{ mt: 2, gap: 4, alignItems: "center" }}>
+      <Stack direction="row" sx={{ mt: 2, gap: 2, alignItems: "center" }}>
         {status}
         <Box sx={{ flex: 1 }} />
         {extras}
@@ -117,14 +117,6 @@ export default function SubmissionSummary({
         ))}
       </Stack>
       {children}
-      <Button
-        variant="contained"
-        disableElevation
-        size="large"
-        sx={{ alignSelf: "flex-end", bgcolor: "text.primary" }}
-      >
-        Finish Submission
-      </Button>
     </>
   );
 }

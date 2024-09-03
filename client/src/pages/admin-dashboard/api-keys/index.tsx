@@ -1,5 +1,4 @@
 import { Layout } from "layout";
-import { Sidebar } from "../Sidebar";
 
 export default function index() {
   return (

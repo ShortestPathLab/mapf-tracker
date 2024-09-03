@@ -1,7 +1,6 @@
-import { RequestHandler } from "express";
-import mongoose from "mongoose";
-import { SubmissionKey } from "models";
 import crypto from "crypto";
+import { RequestHandler } from "express";
+import { SubmissionKey } from "models";
 
 export const findAll: RequestHandler = (req, res) => {
   SubmissionKey.find({})

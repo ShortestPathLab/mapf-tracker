@@ -3,31 +3,52 @@ import {
   InfoOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
-import { Chip } from "@mui/material";
+import { Button, Chip, Typography } from "@mui/material";
 import { DataGrid, makeDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
+import { ConfirmDialog } from "components/dialog/Modal";
 import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
-import { format, parseISO } from "date-fns";
+import { format, isBefore, parseISO } from "date-fns";
+import { useDialog } from "hooks/useDialog";
 import { useLocationState } from "hooks/useNavigation";
 import { Layout } from "layout";
-import { capitalize, filter } from "lodash";
+import { capitalize, filter, now, startCase } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   OngoingSubmission,
   useDeleteOngoingSubmissionMutation,
+  useFinaliseOngoingSubmissionMutation,
   useOngoingSubmissionQuery,
   ValidationOutcome,
 } from "queries/useOngoingSubmissionQuery";
+import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
 import { cloneElement } from "react";
 import GenericDetailsList from "./GenericDetailsList";
 import SubmissionSummary from "./SubmissionSummary";
 
+const hintText =
+  "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key.";
 export default function SubmissionSummaryPage() {
   const { apiKey } = useLocationState<SubmissionLocationState>();
   const { data } = useOngoingSubmissionQuery(apiKey);
+  const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
   const { mutate: deleteEntry } = useDeleteOngoingSubmissionMutation(apiKey);
+  const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
+  const { open, close, dialog } = useDialog(ConfirmDialog, {
+    title: "Finalise submission",
+    padded: true,
+  });
+
+  const keyStatus = apiKeyData
+    ? apiKeyData?.status?.type === "submitted"
+      ? "submitted"
+      : apiKeyData?.expirationDate &&
+        isBefore(now(), parseISO(apiKeyData.expirationDate))
+      ? "in-progress"
+      : "expired"
+    : "unknown";
 
   const columns: GridColDef<OngoingSubmission>[] = [
     {
@@ -100,7 +121,7 @@ export default function SubmissionSummaryPage() {
   return (
     <Layout
       title="Submission progress"
-      width={960}
+      width="none"
       path={[
         { name: "Home", url: "/" },
         { name: "Submit an algorithm", url: "/contributes" },
@@ -108,6 +129,28 @@ export default function SubmissionSummaryPage() {
       ]}
     >
       <SubmissionSummary
+        status={
+          <>
+            <Chip
+              color={
+                {
+                  submitted: "success",
+                  "in-progress": "warning",
+                  expired: "error",
+                }[keyStatus] ?? "default"
+              }
+              label={startCase(keyStatus)}
+            />
+            <Typography variant="body2" color="text.secondary">
+              Expiry:{" "}
+              {apiKeyData?.expirationDate &&
+                format(
+                  parseISO(apiKeyData?.expirationDate),
+                  "hh:mm aaa, dd MMM yyyy"
+                )}
+            </Typography>
+          </>
+        }
         apiKey={apiKey}
         summaryStats={[
           { name: "Submitted", count: data?.length },
@@ -139,6 +182,29 @@ export default function SubmissionSummaryPage() {
           <DataGrid columns={columns} rows={data} />
         </FlatCard>
       </SubmissionSummary>
+      <Button
+        disabled={keyStatus === "submitted" || keyStatus === "expired"}
+        variant="contained"
+        disableElevation
+        size="large"
+        sx={{ alignSelf: "flex-end", bgcolor: "text.primary" }}
+        onClick={() =>
+          open({
+            hintText,
+            acceptLabel: "Submit now",
+            acceptProps: { color: "primary" },
+            closeLabel: "Cancel",
+            onAccept: () => {
+              finalise();
+              close();
+            },
+            onClose: close,
+          })
+        }
+      >
+        Finish Submission
+      </Button>
+      {dialog}
     </Layout>
   );
 }

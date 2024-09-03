@@ -88,7 +88,6 @@ export function Content() {
     {
       path: "/submissionSummary",
       content: <SubmissionSummaryPage />,
-      parent: "/submissions",
     },
     { path: "/contributes", content: <ContributePage /> },
     {

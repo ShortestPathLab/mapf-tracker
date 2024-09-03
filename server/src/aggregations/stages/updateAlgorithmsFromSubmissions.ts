@@ -28,7 +28,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
         },
         {
           $addFields: {
-            _id: document._id,
+            _id: { $toObjectId: document._id },
             best_lower: { $first: "$best_lower.count" },
             best_solution: { $first: "$best_solution.count" },
             instances_closed: { $first: "$instances_closed.count" },
@@ -44,6 +44,34 @@ export const updateAlgorithmsFromSubmissions = async () =>
             instances_solved: { $ifNull: ["$instances_solved", 0] },
           },
         },
+        {
+          $lookup: {
+            from: "submission_keys",
+            // algo_id has the same id as the submission_key_id
+            localField: "_id",
+            foreignField: "_id",
+            as: "request_id",
+          },
+        },
+        { $addFields: { request_id: { $first: "$request_id.request_id" } } },
+        {
+          $lookup: {
+            from: "requests",
+            localField: "request_id",
+            foreignField: "_id",
+            as: "request",
+          },
+        },
+        { $addFields: { request: { $first: "$request" } } },
+        {
+          $addFields: {
+            algo_name: "$request.algorithmName",
+            authors: "$request.authorName",
+            papers: "$request.paperReference",
+            github: "$request.githubLink",
+          },
+        },
+        { $project: { request: 0, requestId: 0 } },
         {
           $merge: {
             into: "algorithms",

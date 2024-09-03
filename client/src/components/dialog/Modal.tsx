@@ -5,6 +5,7 @@ import {
   Box,
   BoxProps,
   Button,
+  ButtonProps,
   Dialog,
   Fade,
   IconButton,
@@ -177,26 +178,37 @@ export function ModalAppBar({
 
 const unsavedChangesHintText = "Unsaved changes will be permanently lost.";
 
-function ConfirmDialog({
+export function ConfirmDialog({
   onClose,
   onAccept,
-}: DialogContentProps & { onAccept?: () => void }) {
+  hintText = unsavedChangesHintText,
+  closeLabel = "Continue editing",
+  acceptLabel = "Close without saving",
+  acceptProps,
+}: DialogContentProps & {
+  onAccept?: () => void;
+  hintText?: ReactNode;
+  closeLabel?: ReactNode;
+  acceptLabel?: ReactNode;
+  acceptProps?: ButtonProps;
+}) {
   return (
     <Stack gap={4}>
       <Typography color="text.secondary" sx={{ mt: -1 }}>
-        {unsavedChangesHintText}
+        {hintText}
       </Typography>
       <Stack direction="row" sx={{ gap: 2, justifyContent: "flex-end" }}>
         <Button onClick={() => onClose?.()} color="inherit">
-          Continue editing
+          {closeLabel}
         </Button>
         <Button
           onClick={() => onAccept?.()}
           variant="contained"
           color="error"
           sx={{ px: 2, py: 1 }}
+          {...acceptProps}
         >
-          Close without saving
+          {acceptLabel}
         </Button>
       </Stack>
     </Stack>

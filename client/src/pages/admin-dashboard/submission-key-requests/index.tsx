@@ -8,7 +8,6 @@ import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
 import { makeDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { useSm } from "components/dialog/useSmallDisplay";
 import { useDialog } from "hooks/useDialog";
 import { Layout } from "layout";
 import {
@@ -18,7 +17,6 @@ import {
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
-import { Sidebar } from "../Sidebar";
 
 export default function index() {
   const { data: requests } = useRequestsQuery();

@@ -10,7 +10,7 @@ export default function Page() {
   return (
     <Layout
       title="Submit an algorithm"
-      width={1280}
+      width="none"
       path={[{ name: "Home", url: "/" }]}
     >
       <Stack

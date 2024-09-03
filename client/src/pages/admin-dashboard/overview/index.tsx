@@ -10,13 +10,13 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid, Layout } from "layout";
 import { filter } from "lodash";
 import { useRequestsQuery } from "queries/useRequestsQuery";
 import { pages } from "../pages";
-import { useSm } from "components/dialog/useSmallDisplay";
-import { Sidebar } from "../Sidebar";
+import { usePipelineStatus } from "queries/usePipelineQuery";
 
 const sections = () => {
   const [, ...rest] = pages();
@@ -25,35 +25,45 @@ const sections = () => {
 
 export default function index() {
   const { data: requests } = useRequestsQuery();
+  const { data: pipelines } = usePipelineStatus();
   const navigate = useNavigate();
   const sm = useSm();
   return (
-    <Layout width={960} title="Overview" path={[{ name: "Home", url: "/" }]}>
+    <Layout width="none" title="Overview" path={[{ name: "Home", url: "/" }]}>
       <Stack gap={6}>
-        <Grid>
-          <Card sx={{ p: 4 }}>
-            <Stack gap={4}>
-              <Stack gap={1}>
-                <Typography variant="h2">
-                  {
-                    filter(requests, {
-                      reviewStatus: { status: "not-reviewed" },
-                    })?.length
-                  }
-                </Typography>
-                <Typography color="text.secondary" variant="body2">
-                  Submission key requests awaiting review
-                </Typography>
+        <Grid sx={{ gap: 2 }}>
+          {[
+            {
+              primary: filter(requests, {
+                reviewStatus: { status: "not-reviewed" },
+              })?.length,
+              secondary: "Submission key requests awaiting review",
+              action: () => navigate("/dashboard/submission-key-requests"),
+              actionLabel: "See requests",
+            },
+            {
+              primary: filter(pipelines, {
+                status: { type: "error" },
+              })?.length,
+              secondary: "Stages with error",
+              action: () => navigate("/dashboard/pipelines"),
+              actionLabel: "See pipelines",
+            },
+          ].map(({ primary, secondary, action, actionLabel }) => (
+            <Card sx={{ p: 4 }}>
+              <Stack gap={4}>
+                <Stack gap={1}>
+                  <Typography variant="h2">{primary}</Typography>
+                  <Typography color="text.secondary" variant="body2">
+                    {secondary}
+                  </Typography>
+                </Stack>
+                <Button variant="contained" sx={{ py: 2 }} onClick={action}>
+                  {actionLabel}
+                </Button>
               </Stack>
-              <Button
-                variant="contained"
-                sx={{ py: 2 }}
-                onClick={() => navigate("/dashboard/submission-key-requests")}
-              >
-                See requests
-              </Button>
-            </Stack>
-          </Card>
+            </Card>
+          ))}
         </Grid>
         <Stack sx={{ gap: 2 }}>
           <Typography variant={sm ? "h4" : "h3"}>

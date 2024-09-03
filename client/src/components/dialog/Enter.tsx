@@ -38,11 +38,11 @@ export function getTransitionProps(
 
 const styles = {
   entering: {
-    transform: "translateY(0)",
+    transform: "translateY(0) translateX(0)",
     opacity: 1,
   },
   entered: {
-    transform: "translateY(0)",
+    transform: "translateY(0) translateX(0)",
     opacity: 1,
   },
   exiting: {},
@@ -79,6 +79,7 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
     TransitionComponent = Transition,
     backdrop,
     distance = 16,
+    axis = "Y",
     ...other
   } = props;
 
@@ -184,11 +185,12 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
             boxShadow: backdrop
               ? "0px -16px 0px 0px rgba(0,0,0,0.4)"
               : undefined,
-            transform: `translateY(${distance}px)`,
+            transform: `translate${axis}(${distance}px)`,
             opacity: 0,
             visibility: state === "exited" && !inProp ? "hidden" : undefined,
             ...styles[state],
             ...style,
+            transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
             ...children.props.style,
           },
           ref: handleRef,

@@ -1,13 +1,15 @@
+import { run } from "aggregations";
+import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { RequestHandler } from "express";
 import { getPort } from "getPort";
-import { each } from "lodash";
 import { log } from "logging";
 import { Infer, Map, OngoingSubmission, Scenario, SubmissionKey } from "models";
+import { set } from "models/PipelineStatus";
 import { Types } from "mongoose";
 import { queryClient, text } from "query";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import { fatal } from "validation/zod";
-import z from "zod";
+import z, { RefinementCtx } from "zod";
 
 const handler = queryClient(OngoingSubmission);
 
@@ -42,6 +44,13 @@ export const deleteById = handler(
   }
 );
 
+const getKey = async (api_key: string | undefined, ctx: RefinementCtx) => {
+  const key = await SubmissionKey.findOne({ api_key });
+  if (!key) return fatal(ctx, "API key invalid");
+  if (new Date() > key.expirationDate) return fatal(ctx, "API key expired");
+  return key;
+};
+
 // create a new ongoing submission
 const createSubmissionSchema = z
   .object({
@@ -60,12 +69,10 @@ const createSubmissionSchema = z
         "Should only contain `l`, `r`, `u`, `d`, `w`"
       ),
   })
-  .transform(async ({ api_key, ...v }, ctx) => {
-    const key = await SubmissionKey.findOne({ api_key });
-    if (!key) return fatal(ctx, "API key invalid");
-    if (new Date() > key.expirationDate) return fatal(ctx, "API key expired");
-    return { ...v, key };
-  })
+  .transform(async ({ api_key, ...v }, ctx) => ({
+    ...v,
+    key: await getKey(api_key, ctx),
+  }))
   .transform(async ({ map_name, ...v }, ctx) => {
     const map = await Map.findOne({ map_name });
     if (!map) return fatal(ctx, "Map name invalid");
@@ -97,6 +104,26 @@ const getMap = async ({ map }: Data) =>
   await text(`http://localhost:${getPort()}/res/maps/${map.map_name}.map`);
 
 const { add } = await createSubmissionValidator({ workerCount: 8 });
+
+export const finalise: RequestHandler<{ key: string }, {}, unknown> = async (
+  req,
+  res
+) => {
+  const schema = z
+    .object({
+      key: z.string().length(32, "Should be 32 characters"),
+    })
+    .transform(({ key }, ctx) => getKey(key, ctx));
+  const { data, success, error } = await schema.safeParseAsync(req.params);
+  if (!success) return res.status(400).json(error.format());
+  await data.updateOne({ status: { type: "submitted" } });
+  run(updateSubmissionsWithOngoingSubmissions, undefined, {
+    onProgress: async (args) => {
+      await set(args.stage, args);
+    },
+  });
+  res.status(200).json({});
+};
 
 export const create: RequestHandler<{}, {}, unknown> = async (
   { body },

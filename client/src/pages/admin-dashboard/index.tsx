@@ -7,6 +7,7 @@ import { useCredentials } from "queries/useLogInQuery";
 import { matchPath, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { pages } from "./pages";
+import Enter from "components/dialog/Enter";
 
 export default function index() {
   const { data: credentials } = useCredentials();
@@ -21,7 +22,11 @@ export default function index() {
           height: "100%",
         }}
       >
-        <Sidebar />
+        <Enter axis="X" in distance={-8}>
+          <Box sx={{ height: "100%" }}>
+            <Sidebar sx={{ height: "100%" }} />
+          </Box>
+        </Enter>
         <Box
           sx={{
             flex: 1,
