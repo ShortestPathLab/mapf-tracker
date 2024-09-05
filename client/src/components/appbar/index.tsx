@@ -1,4 +1,5 @@
 import {
+  AddOutlined,
   AnimationOutlined,
   CodeOutlined,
   DarkModeOutlined,
@@ -11,6 +12,7 @@ import {
   LocationSearchingOutlined,
   MenuOutlined,
   PersonOutlined,
+  RemoveOutlined,
   RouteOutlined,
   SortOutlined,
   StackedLineChartOutlined,
@@ -191,7 +193,13 @@ export default function index() {
       <PopupState variant="popover">
         {(state) => {
           const contents = (
-            <Stack sx={{ color: "text.primary", minHeight: "100dvh" }}>
+            <Stack
+              sx={{
+                color: "text.primary",
+                minHeight: "100dvh",
+                "> *": { flexShrink: 0 },
+              }}
+            >
               <Stack sx={{ p: md ? 2 : 3 }}>
                 <Typography variant="h6">{appName}</Typography>
               </Stack>
@@ -209,10 +217,11 @@ export default function index() {
                           ))}
                         {label && (
                           <Stack
+                            onClick={toggle}
                             direction="row"
                             sx={{
                               px: md ? 2 : 3,
-                              py: md ? 0 : 1,
+                              py: 1,
                               alignItems: "center",
                             }}
                           >
@@ -224,21 +233,19 @@ export default function index() {
                               {label}
                             </Typography>
                             <IconButton
-                              onClick={toggle}
                               edge="end"
                               sx={{ color: "text.secondary" }}
                             >
-                              <ExpandMoreOutlined
-                                sx={{
-                                  transform: isOpen && "rotate(180deg)",
-                                  transition: "transform 0.3s",
-                                }}
-                              />
+                              {isOpen ? (
+                                <RemoveOutlined fontSize="small" />
+                              ) : (
+                                <AddOutlined fontSize="small" />
+                              )}
                             </IconButton>
                           </Stack>
                         )}
                         <Collapse in={isOpen}>
-                          <List sx={{ mt: -1 }}>
+                          <List sx={{ mt: label ? -1 : 0 }}>
                             {items.map(
                               ({ icon, label, url, action, avatar }) => {
                                 const selected =
