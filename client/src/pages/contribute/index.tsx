@@ -8,11 +8,7 @@ import TrackSubmissionHero from "./TrackSubmissionHero";
 export default function Page() {
   const sm = useSm();
   return (
-    <Layout
-      title="Submit an algorithm"
-      width="none"
-      path={[{ name: "Home", url: "/" }]}
-    >
+    <Layout title="Submit an algorithm" path={[{ name: "Home", url: "/" }]}>
       <Stack
         sx={{
           flexDirection: { md: "column", lg: "row" },

@@ -11,14 +11,13 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
   const sm = useSm();
   return (
     <Layout
-      width="none"
-      title="Benchmarks"
+      title={showHeader ? "Home" : "Benchmarks"}
+      description="View all benchmarks and their results"
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
-      path={[{ name: "Home", url: "/" }]}
+      path={showHeader ? [] : [{ name: "Home", url: "/" }]}
       render={({ header, children }) => (
         <>
-          <IndexHeader in={showHeader} />
-          {header}
+          {showHeader ? <IndexHeader in={showHeader} /> : header}
           {children}
         </>
       )}

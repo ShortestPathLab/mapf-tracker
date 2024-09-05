@@ -16,7 +16,6 @@ export default function index() {
   return (
     <Layout
       collapse={false}
-      width="none"
       flat
       title="Pipelines"
       path={[

@@ -2,6 +2,7 @@ import {
   AnimationOutlined,
   CodeOutlined,
   DarkModeOutlined,
+  ExpandMoreOutlined,
   FileDownloadOutlined,
   FileUploadOutlined,
   GitHub,
@@ -20,6 +21,7 @@ import {
   Box,
   Button,
   ButtonBase,
+  Collapse,
   Divider,
   IconButton,
   List,
@@ -66,6 +68,8 @@ export default function index() {
   const { data: credentials } = useCredentials();
   const groups: {
     grow?: boolean;
+    label?: string;
+    defaultOpen?: boolean;
     items: {
       primary?: boolean;
       iconButton?: boolean;
@@ -78,6 +82,7 @@ export default function index() {
     }[];
   }[] = [
     {
+      label: "Browse",
       items: [
         {
           label: "Benchmarks",
@@ -91,7 +96,27 @@ export default function index() {
         },
       ],
     },
+
     {
+      label: "Make a submission",
+      items: [
+        {
+          primary: true,
+          label: "Request an API key",
+          url: "/contributes",
+          icon: <FileUploadOutlined />,
+        },
+        {
+          primary: true,
+          label: "Manage my submission",
+          url: "/trackSubmission",
+          icon: <LocationSearchingOutlined />,
+        },
+      ],
+    },
+    {
+      label: "Docs",
+      defaultOpen: false,
       items: [
         {
           label: "Demo",
@@ -109,22 +134,7 @@ export default function index() {
       ],
     },
     {
-      items: [
-        {
-          primary: true,
-          label: "Make a submission",
-          url: "/contributes",
-          icon: <FileUploadOutlined />,
-        },
-        {
-          primary: true,
-          label: "Track my submission",
-          url: "/trackSubmission",
-          icon: <LocationSearchingOutlined />,
-        },
-      ],
-    },
-    {
+      label: "Maintenance",
       grow: true,
       items: credentials
         ? [
@@ -185,39 +195,85 @@ export default function index() {
               <Stack sx={{ p: md ? 2 : 3 }}>
                 <Typography variant="h6">{appName}</Typography>
               </Stack>
-              {groups.map(({ items, grow }, i) => (
-                <>
-                  {!!i &&
-                    (grow ? (
-                      <Box sx={{ flexGrow: 1 }} />
-                    ) : (
-                      <Divider flexItem />
-                    ))}
-                  <List>
-                    {items.map(({ icon, label, url, action, avatar }) => {
-                      const selected = url && !!matchPath(`${url}/*`, pathname);
-                      return (
-                        <ListItemButton
-                          selected={selected}
-                          sx={{
-                            color: selected && "primary.main",
-                            px: md ? 2 : 3,
-                            // Looks more comfortable when there's space on the right
-                            pr: 4,
-                          }}
-                          onClick={clickHandler(url, action, state.close)}
-                        >
-                          <ListItemIcon
-                            sx={{ color: selected && "primary.main" }}
+              {groups.map(({ items, grow, label, defaultOpen = true }, i) => (
+                <PopupState variant="popover">
+                  {({ isOpen: _isOpen, toggle }) => {
+                    const isOpen = defaultOpen ? !_isOpen : _isOpen;
+                    return (
+                      <>
+                        {!!i &&
+                          (grow ? (
+                            <Box sx={{ flexGrow: 1, minHeight: "10dvh" }} />
+                          ) : (
+                            <Divider flexItem />
+                          ))}
+                        {label && (
+                          <Stack
+                            direction="row"
+                            sx={{
+                              px: md ? 2 : 3,
+                              py: md ? 0 : 1,
+                              alignItems: "center",
+                            }}
                           >
-                            {avatar ?? icon}
-                          </ListItemIcon>
-                          <ListItemText primary={label} />
-                        </ListItemButton>
-                      );
-                    })}
-                  </List>
-                </>
+                            <Typography
+                              sx={{ flexGrow: 1 }}
+                              color="text.secondary"
+                              variant="overline"
+                            >
+                              {label}
+                            </Typography>
+                            <IconButton
+                              onClick={toggle}
+                              edge="end"
+                              sx={{ color: "text.secondary" }}
+                            >
+                              <ExpandMoreOutlined
+                                sx={{
+                                  transform: isOpen && "rotate(180deg)",
+                                  transition: "transform 0.3s",
+                                }}
+                              />
+                            </IconButton>
+                          </Stack>
+                        )}
+                        <Collapse in={isOpen}>
+                          <List sx={{ mt: -1 }}>
+                            {items.map(
+                              ({ icon, label, url, action, avatar }) => {
+                                const selected =
+                                  url && !!matchPath(`${url}/*`, pathname);
+                                return (
+                                  <ListItemButton
+                                    selected={selected}
+                                    sx={{
+                                      color: selected && "primary.main",
+                                      px: md ? 2 : 3,
+                                      // Looks more comfortable when there's space on the right
+                                      pr: 4,
+                                    }}
+                                    onClick={clickHandler(
+                                      url,
+                                      action,
+                                      state.close
+                                    )}
+                                  >
+                                    <ListItemIcon
+                                      sx={{ color: selected && "primary.main" }}
+                                    >
+                                      {avatar ?? icon}
+                                    </ListItemIcon>
+                                    <ListItemText primary={label} />
+                                  </ListItemButton>
+                                );
+                              }
+                            )}
+                          </List>
+                        </Collapse>
+                      </>
+                    );
+                  }}
+                </PopupState>
               ))}
             </Stack>
           );

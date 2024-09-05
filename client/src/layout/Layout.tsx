@@ -33,6 +33,7 @@ type LayoutProps = {
     children?: ReactNode;
   }) => ReactNode;
   title?: string;
+  description?: ReactNode;
   path?: PageHeaderProps["path"];
   slotProps?: {
     content?: StackProps;
@@ -41,7 +42,7 @@ type LayoutProps = {
 
 export default function Layout({
   collapse = true,
-  width = 1488,
+  width = "none",
   render = ({ header, children }) => (
     <>
       {header}
@@ -52,6 +53,7 @@ export default function Layout({
   path,
   children,
   slotProps,
+  description,
   flat,
 }: LayoutProps) {
   const lg = useLg();
@@ -59,7 +61,7 @@ export default function Layout({
   const sm = useSm();
   const [, isTop, , , setPanel] = useScrollState(appbarHeight(md));
   const navigate = useNavigate();
-  const header = <PageHeader {...{ current: title, path }} />;
+  const header = <PageHeader {...{ current: title, path, description }} />;
   const content = (
     <Stack
       {...merge(

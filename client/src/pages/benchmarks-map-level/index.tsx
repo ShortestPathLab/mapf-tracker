@@ -14,9 +14,9 @@ export default function Page() {
   const sm = useSm();
   return (
     <Layout
-      width="none"
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       title={capitalize(mapName)}
+      description={`View all benchmarks and their results for ${mapName}`}
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },

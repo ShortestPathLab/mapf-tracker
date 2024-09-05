@@ -12,6 +12,7 @@ import {
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { last, startCase } from "lodash";
+import { ReactNode } from "react";
 
 export type PageHeaderProps = {
   path?: {
@@ -20,9 +21,13 @@ export type PageHeaderProps = {
     state?: any;
   }[];
   current?: string;
+  description?: ReactNode;
 };
 
-export default function PageHeader({ current }: PageHeaderProps) {
+export default function PageHeader({
+  current = "",
+  description = "",
+}: PageHeaderProps) {
   const sm = useSm();
   return (
     <Stack
@@ -32,6 +37,11 @@ export default function PageHeader({ current }: PageHeaderProps) {
       }}
     >
       <Typography variant="h2">{startCase(current)}</Typography>
+      {description && (
+        <Typography color="text.secondary" variant="body2">
+          {description}
+        </Typography>
+      )}
     </Stack>
   );
 }

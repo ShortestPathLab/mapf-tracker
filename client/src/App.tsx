@@ -93,7 +93,6 @@ export function Content() {
     {
       path: "/trackSubmission",
       content: <TrackSubmission />,
-      parent: "/contributes",
     },
     { path: "/download", content: <DownloadPage /> },
     {

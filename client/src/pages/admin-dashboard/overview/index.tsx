@@ -29,42 +29,49 @@ export default function index() {
   const navigate = useNavigate();
   const sm = useSm();
   return (
-    <Layout width="none" title="Overview" path={[{ name: "Home", url: "/" }]}>
+    <Layout
+      title="Dashboard"
+      description="Review submission requests, issue submission keys, and run jobs"
+      path={[{ name: "Home", url: "/" }]}
+    >
       <Stack gap={6}>
-        <Grid sx={{ gap: 2 }}>
-          {[
-            {
-              primary: filter(requests, {
-                reviewStatus: { status: "not-reviewed" },
-              })?.length,
-              secondary: "Submission key requests awaiting review",
-              action: () => navigate("/dashboard/submission-key-requests"),
-              actionLabel: "See requests",
-            },
-            {
-              primary: filter(pipelines, {
-                status: { type: "error" },
-              })?.length,
-              secondary: "Stages with error",
-              action: () => navigate("/dashboard/pipelines"),
-              actionLabel: "See pipelines",
-            },
-          ].map(({ primary, secondary, action, actionLabel }) => (
-            <Card sx={{ p: 4 }}>
-              <Stack gap={4}>
-                <Stack gap={1}>
-                  <Typography variant="h2">{primary}</Typography>
-                  <Typography color="text.secondary" variant="body2">
-                    {secondary}
-                  </Typography>
+        <Stack sx={{ gap: 3 }}>
+          <Typography variant={sm ? "h4" : "h3"}>Requires attention</Typography>
+          <Grid sx={{ gap: 2 }}>
+            {[
+              {
+                primary: filter(requests, {
+                  reviewStatus: { status: "not-reviewed" },
+                })?.length,
+                secondary: "Submission key requests awaiting review",
+                action: () => navigate("/dashboard/submission-key-requests"),
+                actionLabel: "See requests",
+              },
+              {
+                primary: filter(pipelines, {
+                  status: { type: "error" },
+                })?.length,
+                secondary: "Stages with error",
+                action: () => navigate("/dashboard/pipelines"),
+                actionLabel: "See pipelines",
+              },
+            ].map(({ primary, secondary, action, actionLabel }) => (
+              <Card sx={{ p: sm ? 2 : 3 }}>
+                <Stack gap={sm ? 2 : 3}>
+                  <Stack gap={1}>
+                    <Typography variant="h2">{primary}</Typography>
+                    <Typography color="text.secondary" variant="body2">
+                      {secondary}
+                    </Typography>
+                  </Stack>
+                  <Button variant="contained" sx={{ py: 2 }} onClick={action}>
+                    {actionLabel}
+                  </Button>
                 </Stack>
-                <Button variant="contained" sx={{ py: 2 }} onClick={action}>
-                  {actionLabel}
-                </Button>
-              </Stack>
-            </Card>
-          ))}
-        </Grid>
+              </Card>
+            ))}
+          </Grid>
+        </Stack>
         <Stack sx={{ gap: 2 }}>
           <Typography variant={sm ? "h4" : "h3"}>
             Manage this platform

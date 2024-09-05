@@ -16,7 +16,7 @@ export function IndexHeader(props: CollapseProps) {
       <Stack
         sx={{
           gap: 2,
-          pb: sm ? 4 : 8,
+          pb: sm ? 2 : 3,
           maxWidth: "90vw",
           display: location.pathname === "/visualization" ? "none" : "",
         }}
@@ -46,7 +46,6 @@ export function IndexHeader(props: CollapseProps) {
           A database for benchmark results in Multi-Agent Pathfinding (MAPF)
         </Typography>
       </Stack>
-      <Divider sx={{ mb: sm ? 4 : 8 }} />
     </Collapse>
   );
 }

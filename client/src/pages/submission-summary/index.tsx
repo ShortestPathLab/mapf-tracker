@@ -120,8 +120,8 @@ export default function SubmissionSummaryPage() {
 
   return (
     <Layout
+      flat
       title="Submission progress"
-      width="none"
       path={[
         { name: "Home", url: "/" },
         { name: "Submit an algorithm", url: "/contributes" },

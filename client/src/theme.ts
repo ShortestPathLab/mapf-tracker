@@ -32,6 +32,7 @@ export const theme = (t: "light" | "dark") =>
         letterSpacing: "0px",
         fontWeight: 450,
       },
+      overline: { fontWeight: 550 },
       h1: { fontWeight: 550, fontSize: 42 },
       h2: { fontWeight: 550, fontSize: 36 },
       h3: { fontWeight: 500, fontSize: 24 },

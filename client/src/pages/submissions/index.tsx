@@ -92,6 +92,7 @@ function SubmissionKeyRequestFormDialog({
 }
 
 export default function TrackSubmission() {
+  const sm = useSm();
   const navigate = useNavigate();
   const { open: showRequestDetails, dialog: requestDetails } = useDialog(
     SubmissionKeyRequestFormDialog,
@@ -109,7 +110,6 @@ export default function TrackSubmission() {
 
   const [keys, { push, filter }] =
     useLocalStorageList<string>("submission-keys");
-  console.log(keys);
   const results = useRequestsData(keys);
 
   const rows = zipWith(keys, results, (key, { data }) => ({
@@ -204,12 +204,21 @@ export default function TrackSubmission() {
   ];
   return (
     <Layout
-      width={960}
+      slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       title="Track Submissions"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Submit an Algorithm", url: "/contributes" },
-      ]}
+      description={
+        <>
+          Once you have an API key, you can upload and submit your solutions
+          here. Don't have a submission (API) key?{" "}
+          <Link
+            sx={{ cursor: "pointer" }}
+            onClick={() => navigate("/contributes")}
+          >
+            Request one here.
+          </Link>
+        </>
+      }
+      path={[{ name: "Home", url: "/" }]}
     >
       <Stack>
         <AddKeyForm
@@ -226,15 +235,6 @@ export default function TrackSubmission() {
           )}
         />
       </Stack>
-      <Typography color="text.secondary">
-        Don't have a submission (API) key?{" "}
-        <Link
-          sx={{ cursor: "pointer" }}
-          onClick={() => navigate("/contributes")}
-        >
-          Request one here.
-        </Link>
-      </Typography>
       <FlatCard>
         <DataGrid
           clickable

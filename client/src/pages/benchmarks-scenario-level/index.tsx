@@ -13,10 +13,11 @@ export default function Page() {
   const state = useLocationState<ScenarioLevelLocationState>();
   const { mapName, scenType, scenTypeID, mapId, scenId } = state;
   const sm = useSm();
+  const title = `${scenType}-${scenTypeID}`;
   return (
     <Layout
-      width="none"
-      title={capitalize(`${scenType}-${scenTypeID}`)}
+      title={capitalize(title)}
+      description={`View all benchmarks and their results for ${title}`}
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       path={[
         { name: "Home", url: "/" },

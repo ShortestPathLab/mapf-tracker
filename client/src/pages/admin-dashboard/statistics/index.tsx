@@ -5,7 +5,6 @@ export default function index() {
   return (
     <Layout
       flat
-      width="none"
       title="Statistics"
       path={[
         { name: "Home", url: "/" },
