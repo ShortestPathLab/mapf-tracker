@@ -166,6 +166,7 @@ function BottomBar() {
       sx={{
         zIndex: (t) => t.zIndex.appBar + 1,
         position: "fixed",
+        height: "max-content",
         left: 0,
         right: 0,
         bottom: 0,
@@ -174,9 +175,10 @@ function BottomBar() {
       {paths.map(({ label, url, icon, iconSelected }) => (
         <BottomNavigationAction
           sx={{
-            height: 64,
+            pt: 1.5,
+            pb: 2,
             "> svg": { transform: "scale(0.9)", mb: 0.5 },
-            "> span": { fontWeight: 550, mb: 1 },
+            "> span": { fontWeight: 550 },
             "&.Mui-selected": {
               "> span": { fontSize: "0.75rem" },
             },
