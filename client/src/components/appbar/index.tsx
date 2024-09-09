@@ -339,7 +339,8 @@ export default function index() {
                     boxSizing: "border-box",
                     width: drawerWidth,
                     maxWidth: "90vw",
-                    bgcolor: "background.default",
+                    bgcolor: "background.paper",
+                    backgroundImage: "none",
                   },
                 }}
               >

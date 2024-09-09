@@ -1,13 +1,26 @@
-import { Box, Stack } from "@mui/material";
-import { SxProps, Theme, ThemeProvider } from "@mui/material/styles";
+import {
+  FileUploadOutlined,
+  Folder,
+  FolderOutlined,
+} from "@mui/icons-material";
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  Stack,
+} from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, Router } from "components/Router";
 import AppBar from "components/appbar";
+import { useLg } from "components/dialog/useSmallDisplay";
 import {
   ModalContext,
   useModalProviderValue,
 } from "hooks/useModalProviderValue";
+import { useNavigate } from "hooks/useNavigation";
+import { find } from "lodash";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
@@ -16,6 +29,7 @@ import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import SystemDemo from "pages/demo";
 import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
+import { matchPath, useLocation } from "react-router-dom";
 import "./App.css";
 import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
@@ -31,7 +45,6 @@ import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
-import { useLg, useMd } from "components/dialog/useSmallDisplay";
 
 export const queryClient = new QueryClient();
 
@@ -109,18 +122,71 @@ export function Content() {
     },
   ];
   return (
-    <Stack
-      direction={lg ? "column" : "row"}
+    <Stack>
+      <Stack
+        direction={lg ? "column" : "row"}
+        sx={{
+          height: "100%",
+          width: "100%",
+          bgcolor: "background.default",
+        }}
+      >
+        <AppBar />
+        <Box sx={{ flex: 1, overflowX: "hidden" }}>
+          <Router fallback={<NotFoundPage />} routes={routes} />
+        </Box>
+      </Stack>
+      {lg && <BottomBar />}
+    </Stack>
+  );
+}
+
+function BottomBar() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const paths = [
+    {
+      label: "Benchmarks",
+      url: "/benchmarks",
+      icon: <FolderOutlined />,
+      iconSelected: <Folder />,
+    },
+    {
+      label: "Submit",
+      url: "/contributes",
+      icon: <FileUploadOutlined />,
+      iconSelected: <FileUploadOutlined />,
+    },
+  ];
+  const selected = find(paths, (c) => !!matchPath(`${c.url}/*`, pathname))?.url;
+  return (
+    <BottomNavigation
+      showLabels
+      value={selected}
       sx={{
-        height: "100%",
-        width: "100%",
-        bgcolor: "background.default",
+        zIndex: (t) => t.zIndex.appBar + 1,
+        position: "fixed",
+        left: 0,
+        right: 0,
+        bottom: 0,
       }}
     >
-      <AppBar />
-      <Box sx={{ flex: 1 }}>
-        <Router fallback={<NotFoundPage />} routes={routes} />
-      </Box>
-    </Stack>
+      {paths.map(({ label, url, icon, iconSelected }) => (
+        <BottomNavigationAction
+          sx={{
+            height: 64,
+            "> svg": { transform: "scale(0.9)", mb: 0.5 },
+            "> span": { fontWeight: 550, mb: 1 },
+            "&.Mui-selected": {
+              "> span": { fontSize: "0.75rem" },
+            },
+          }}
+          value={url}
+          label={label}
+          icon={selected === url ? iconSelected : icon}
+          onClick={() => navigate(url)}
+        />
+      ))}
+    </BottomNavigation>
   );
 }

@@ -6,7 +6,7 @@ import {
 import { Box } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
-import { makeDataGridActions } from "components/data-grid";
+import { useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { useDialog } from "hooks/useDialog";
 import { Layout } from "layout";
@@ -33,9 +33,25 @@ export default function index() {
     { padded: true, title: "Respond to request" }
   );
 
+  const actions = useDataGridActions<RequestWithReviewOutcome>({
+    items: [
+      {
+        name: "Review request",
+        icon: <EditOutlined />,
+        action: (row) => showDetails({ data: row }),
+      },
+      {
+        name: "Respond to request",
+        icon: <SendOutlined />,
+        action: (row) => showConfirmation({ data: row }),
+      },
+    ],
+  });
+
   const columns: GridColDef<RequestWithReviewOutcome>[] = [
     {
       field: "Icon",
+      width: 48,
       renderCell: () => <IconCard icon={<CallReceivedOutlined />} />,
       flex: 0,
       fold: true,
@@ -80,20 +96,7 @@ export default function index() {
           <Box color="text.secondary">No comments</Box>
         ),
     },
-    makeDataGridActions({
-      items: [
-        {
-          name: "Review request",
-          icon: <EditOutlined />,
-          action: (row) => showDetails({ data: row }),
-        },
-        {
-          name: "Respond to request",
-          icon: <SendOutlined />,
-          action: (row) => showConfirmation({ data: row }),
-        },
-      ],
-    }),
+    actions,
   ];
 
   return (

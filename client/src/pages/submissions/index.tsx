@@ -10,7 +10,7 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "App";
-import { DataGrid, makeDataGridActions } from "components/data-grid";
+import { DataGrid, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { FlatCard } from "components/FlatCard";
@@ -160,10 +160,35 @@ export default function TrackSubmission() {
   };
 
   // ─────────────────────────────────────────────────────────────────────
+  const actions = useDataGridActions<Request & { id: string; key: string }>({
+    items: [
+      {
+        icon: <EditOutlined />,
+        name: "Edit request details",
+        action: (row) =>
+          showRequestDetails({
+            initialValues: row,
+            onSubmit: (values) =>
+              handleRequestDetailUpdated(merge(row, values)),
+          }),
+      },
+    ],
+    menuItems: [
+      {
+        icon: <DeleteOutlined />,
+        name: "Remove key",
+        action: (row) => {
+          filter((k) => k !== row.key);
+          notify("Removed key");
+        },
+      },
+    ],
+  });
 
   const columns: GridColDef<Request & { id: string; key: string }>[] = [
     {
       field: "Icon",
+      width: 48,
       renderCell: () => <IconCard icon={<EmailOutlined />} />,
       flex: 0,
       fold: true,
@@ -177,30 +202,7 @@ export default function TrackSubmission() {
     },
     { field: "requesterEmail", headerName: "Email", width: 180, fold: true },
     { field: "algorithmName", headerName: "Algorithm", width: 180, fold: true },
-    makeDataGridActions({
-      items: [
-        {
-          icon: <EditOutlined />,
-          name: "Edit request details",
-          action: (row) =>
-            showRequestDetails({
-              initialValues: row,
-              onSubmit: (values) =>
-                handleRequestDetailUpdated(merge(row, values)),
-            }),
-        },
-      ],
-      menuItems: [
-        {
-          icon: <DeleteOutlined />,
-          name: "Remove key",
-          action: (row) => {
-            filter((k) => k !== row.key);
-            notify("Removed key");
-          },
-        },
-      ],
-    }),
+    actions,
   ];
   return (
     <Layout

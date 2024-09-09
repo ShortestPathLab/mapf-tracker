@@ -55,21 +55,28 @@ export default function index() {
                 action: () => navigate("/dashboard/pipelines"),
                 actionLabel: "See pipelines",
               },
-            ].map(({ primary, secondary, action, actionLabel }) => (
-              <Card sx={{ p: sm ? 2 : 3 }}>
-                <Stack gap={sm ? 2 : 3}>
-                  <Stack gap={1}>
-                    <Typography variant="h2">{primary}</Typography>
-                    <Typography color="text.secondary" variant="body2">
-                      {secondary}
-                    </Typography>
-                  </Stack>
-                  <Button variant="contained" sx={{ py: 2 }} onClick={action}>
-                    {actionLabel}
-                  </Button>
-                </Stack>
-              </Card>
-            ))}
+            ].map(
+              ({ primary, secondary, action, actionLabel }) =>
+                !!primary && (
+                  <Card sx={{ p: sm ? 2 : 3 }}>
+                    <Stack gap={sm ? 2 : 3}>
+                      <Stack gap={1}>
+                        <Typography variant="h2">{primary}</Typography>
+                        <Typography color="text.secondary" variant="body2">
+                          {secondary}
+                        </Typography>
+                      </Stack>
+                      <Button
+                        variant="contained"
+                        sx={{ py: 2 }}
+                        onClick={action}
+                      >
+                        {actionLabel}
+                      </Button>
+                    </Stack>
+                  </Card>
+                )
+            )}
           </Grid>
         </Stack>
         <Stack sx={{ gap: 2 }}>

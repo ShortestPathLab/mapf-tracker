@@ -5,7 +5,7 @@ import {
   RouteOutlined,
 } from "@mui/icons-material";
 import { Box } from "@mui/material";
-import { makeDataGridActions } from "components/data-grid";
+import { DataGridTitle, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog, Title } from "components/dialog";
 import { IconCard } from "components/IconCard";
@@ -19,6 +19,7 @@ import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { formatDate } from "utils/format";
 import Details from "./Details";
 import { downloadRow } from "./download";
+import pluralize from "pluralize";
 
 export default function Table() {
   const state = useLocationState<ScenarioLevelLocationState>();
@@ -36,12 +37,45 @@ export default function Table() {
       num_agents: row.agents,
     });
 
+  const actions = useDataGridActions<Scenario>({
+    items: [
+      {
+        name: "Open visualisation",
+        icon: <BlurOnOutlined />,
+        action: openVisualisation,
+      },
+      {
+        name: "Details",
+        icon: <InfoOutlined />,
+        render: (row, trigger) => (
+          <Dialog
+            slotProps={{ modal: { width: 720 } }}
+            title="Benchmark details"
+            trigger={(onClick) => cloneElement(trigger, { onClick })}
+            padded
+          >
+            <Box sx={{ m: -2 }}>
+              <Details id={row.id} />
+            </Box>
+          </Dialog>
+        ),
+      },
+    ],
+    menuItems: [
+      {
+        name: "Download result (CSV)",
+        icon: <FileDownloadOutlined />,
+        action: notify(downloadRow, { end: "File downloaded" }),
+      },
+    ],
+  });
+
   const columns: GridColDef<Scenario>[] = [
     {
       field: "Icon",
+      width: 48,
       renderCell: () => <IconCard icon={<RouteOutlined />} />,
       flex: 0,
-      fold: true,
     },
     {
       field: "agents",
@@ -49,6 +83,12 @@ export default function Table() {
       type: "number",
       sortable: true,
       width: 160,
+      renderCell: ({ value, row }) => (
+        <DataGridTitle
+          primary={pluralize("agent", value, true)}
+          secondary={row.solution_algos ? "Solved" : "Unsolved"}
+        />
+      ),
     },
     {
       field: "lower_date",
@@ -108,38 +148,7 @@ export default function Table() {
       width: 150,
       fold: true,
     },
-    makeDataGridActions({
-      items: [
-        {
-          name: "Open visualisation",
-          icon: <BlurOnOutlined />,
-          action: openVisualisation,
-        },
-        {
-          name: "Details",
-          icon: <InfoOutlined />,
-          render: (row, trigger) => (
-            <Dialog
-              slotProps={{ modal: { width: 720 } }}
-              title="Benchmark details"
-              trigger={(onClick) => cloneElement(trigger, { onClick })}
-              padded
-            >
-              <Box sx={{ m: -2 }}>
-                <Details id={row.id} />
-              </Box>
-            </Dialog>
-          ),
-        },
-      ],
-      menuItems: [
-        {
-          name: "Download result (CSV)",
-          icon: <FileDownloadOutlined />,
-          action: notify(downloadRow, { end: "File downloaded" }),
-        },
-      ],
-    }),
+    actions,
   ];
 
   return (

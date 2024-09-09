@@ -7,7 +7,7 @@ import { setFromParam } from "utils/set";
 
 export function DataInspectorLayout({
   data: dataContent,
-  dataTabName = "Browse benchmarks",
+  dataTabName = "Browse",
   analysisTabName = "Analyse",
   analysis: analysisContent,
 }: {

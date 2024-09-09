@@ -1,20 +1,7 @@
 import { FolderOutlined } from "@mui/icons-material";
-import { Card } from "@mui/material";
+import { Box, Card } from "@mui/material";
 import { ReactNode } from "react";
 
 export function IconCard({ icon = <FolderOutlined /> }: { icon?: ReactNode }) {
-  return (
-    <Card
-      elevation={0}
-      sx={{
-        lineHeight: 0,
-        border: (t) => `1px solid ${t.palette.divider}`,
-        p: 2,
-        width: "fit-content",
-        height: "fit-content",
-      }}
-    >
-      {icon}
-    </Card>
-  );
+  return <Box sx={{ height: 72, color: "text.secondary" }}>{icon}</Box>;
 }

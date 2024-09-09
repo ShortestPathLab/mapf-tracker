@@ -11,9 +11,10 @@ import {
   Tooltip,
 } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { map } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
-import { ReactElement, ReactNode } from "react";
+import { Children, ReactElement, ReactNode } from "react";
 
 export type Item<T> = {
   name?: string;
@@ -22,21 +23,24 @@ export type Item<T> = {
   render?: (row: T, trigger: ReactElement) => ReactNode;
 };
 
-export function makeDataGridActions<T>({
+export function useDataGridActions<T>({
   items = [],
   menuItems = [],
 }: {
   items?: Item<T>[];
   menuItems?: Item<T>[];
 }): GridColDef<T> {
-  const len = items.length + (menuItems.length ? 1 : 0);
+  const sm = useSm();
+  const len = sm ? 0 : items.length + (menuItems.length ? 1 : 0);
+  const shownItems = sm ? [] : items;
+  const storedItems = sm ? [...items, ...menuItems] : menuItems;
   return {
     flex: 1,
     field: "Actions",
     headerName: "",
     align: "right",
     headerAlign: "right",
-    minWidth: 48 * len,
+    minWidth: 48 * (len + 1),
     renderCell: ({ row }) => (
       <Stack
         direction="row"
@@ -46,7 +50,7 @@ export function makeDataGridActions<T>({
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
-        {map(items, ({ name, action, icon, render = (_, c) => c }) => (
+        {map(shownItems, ({ name, action, icon, render = (_, c) => c }) => (
           <Box
             sx={{
               "@media (pointer: fine)": {
@@ -63,7 +67,7 @@ export function makeDataGridActions<T>({
             )}
           </Box>
         ))}
-        {!!menuItems?.length && (
+        {!!storedItems?.length && (
           <PopupState variant="popover">
             {(state) => (
               <>
@@ -83,7 +87,7 @@ export function makeDataGridActions<T>({
                 >
                   <MenuList>
                     {map(
-                      menuItems,
+                      storedItems,
                       ({ name, action, icon, render = (_, c) => c }) =>
                         render(
                           row,

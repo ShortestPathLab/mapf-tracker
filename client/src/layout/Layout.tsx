@@ -119,11 +119,7 @@ export default function Layout({
         ))}
       <Stack sx={{ flex: 1, height: "100%", overflow: "hidden" }}>
         {lg && <Box sx={{ height: appbarHeight(md) }} />}
-        <Scroll
-          y
-          style={{ flex: 1, transform: "translateZ(0)" }}
-          ref={(p) => setPanel(p)}
-        >
+        <Scroll y style={{ flex: 1 }} ref={(p) => setPanel(p)}>
           {!sm && <Crumbs path={path} current={title} />}
           {md ? (
             content
@@ -132,6 +128,7 @@ export default function Layout({
               {content}
             </Enter>
           )}
+          {md && <Box sx={{ height: 56 }} />}
         </Scroll>
       </Stack>
     </>

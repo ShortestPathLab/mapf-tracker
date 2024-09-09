@@ -11,6 +11,7 @@ export type CollectionWithProportions = {
 };
 
 export type Benchmark = {
+  map_size: string;
   map_type: string;
   map_name: string;
   scen_type: string;

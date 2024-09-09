@@ -4,7 +4,7 @@ import {
   RouteOutlined,
 } from "@mui/icons-material";
 import { Button, Chip, Typography } from "@mui/material";
-import { DataGrid, makeDataGridActions } from "components/data-grid";
+import { DataGrid, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
 import { ConfirmDialog } from "components/dialog/Modal";
@@ -41,6 +41,32 @@ export default function SubmissionSummaryPage() {
     padded: true,
   });
 
+  const actions = useDataGridActions<OngoingSubmission>({
+    items: [
+      {
+        name: "Details",
+        icon: <InfoOutlined />,
+        render: (row, trigger) => (
+          <Dialog
+            slotProps={{ modal: { width: 720 } }}
+            title="Submission details"
+            padded
+            trigger={(onClick) => cloneElement(trigger, { onClick })}
+          >
+            <GenericDetailsList data={row} sx={{ m: -2 }} />
+          </Dialog>
+        ),
+      },
+    ],
+    menuItems: [
+      {
+        name: "Delete entry",
+        icon: <DeleteOutlined />,
+        action: (row) => deleteEntry(row.id),
+      },
+    ],
+  });
+
   const keyStatus = apiKeyData
     ? apiKeyData?.status?.type === "submitted"
       ? "submitted"
@@ -53,6 +79,7 @@ export default function SubmissionSummaryPage() {
   const columns: GridColDef<OngoingSubmission>[] = [
     {
       field: "Icon",
+      width: 48,
       renderCell: () => <IconCard icon={<RouteOutlined />} />,
       flex: 0,
       fold: true,
@@ -91,31 +118,7 @@ export default function SubmissionSummaryPage() {
       ),
       width: 120,
     },
-    makeDataGridActions({
-      items: [
-        {
-          name: "Details",
-          icon: <InfoOutlined />,
-          render: (row, trigger) => (
-            <Dialog
-              slotProps={{ modal: { width: 720 } }}
-              title="Submission details"
-              padded
-              trigger={(onClick) => cloneElement(trigger, { onClick })}
-            >
-              <GenericDetailsList data={row} sx={{ m: -2 }} />
-            </Dialog>
-          ),
-        },
-      ],
-      menuItems: [
-        {
-          name: "Delete entry",
-          icon: <DeleteOutlined />,
-          action: (row) => deleteEntry(row.id),
-        },
-      ],
-    }),
+    actions,
   ];
 
   return (

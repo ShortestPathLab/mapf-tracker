@@ -1,5 +1,6 @@
 import { SearchOutlined } from "@mui/icons-material";
 import {
+  Box,
   ButtonBase,
   CircularProgress,
   InputAdornment,
@@ -59,28 +60,33 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
 
   return (
     <Stack>
-      <Stack
-        sx={{ p: 2, gap: 2 }}
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <TextField
-          variant="filled"
-          label="Search items"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          sx={{ width: "100%" }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchOutlined />
-              </InputAdornment>
-            ),
-          }}
-        />
-        {extras && <Stack>{extras}</Stack>}
-      </Stack>
+      {sm ? (
+        // Spacing for mobile mode
+        <Box sx={{ p: 1 }} />
+      ) : (
+        <Stack
+          sx={{ p: 2, gap: 2 }}
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <TextField
+            variant="filled"
+            label="Search items"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            sx={{ width: "100%" }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchOutlined />
+                </InputAdornment>
+              ),
+            }}
+          />
+          {extras && <Stack>{extras}</Stack>}
+        </Stack>
+      )}
       {isLoading ? (
         <CircularProgress sx={{ mx: "auto", mt: 2, mb: 4 }} />
       ) : (
@@ -93,6 +99,12 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
               pl: 2,
             },
             "& .MuiDataGrid-columnHeader:nth-child(2)": { pl: 2 },
+            ...(sm && {
+              "&, [class^=MuiDataGrid]": {
+                "--DataGrid-rowBorderColor": "transparent",
+                "--rowBorderColor": "transparent",
+              },
+            }),
           }}
           autoHeight
           rowHeight={88}

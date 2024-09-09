@@ -32,7 +32,7 @@ export default function PageHeader({
   return (
     <Stack
       sx={{
-        gap: 2,
+        gap: sm ? 1 : 2,
         mb: sm ? -1 : 0,
       }}
     >

@@ -4,41 +4,101 @@ import {
   ShowChartOutlined,
 } from "@mui/icons-material";
 import { Box, Tooltip } from "@mui/material";
-import { cellRendererBar, makeDataGridActions } from "components/data-grid";
+import { AnalysisButton } from "components/analysis/Analysis";
+import {
+  cellRendererBar,
+  DataGridTitle,
+  useDataGridActions,
+} from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog, Title } from "components/dialog";
+import { Dialog } from "components/dialog";
 import { IconCard } from "components/IconCard";
-import { capitalize } from "lodash";
-import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
-import { cloneElement } from "react";
 import { useSnackbarAction } from "components/Snackbar";
 import { Benchmark } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
+import { capitalize, startCase } from "lodash";
+import { analysisTemplate } from "pages/benchmarks-map-level/analysisTemplate";
+import { downloadMap } from "pages/benchmarks-map-level/download";
+import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
+import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { cloneElement } from "react";
 import BenchmarkDetails from "./BenchmarkDetails";
 import { downloadBenchmarks, downloadBenchmarksResultsCSV } from "./download";
-import { analysisTemplate } from "pages/benchmarks-map-level/analysisTemplate";
-import { AnalysisButton } from "components/analysis/Analysis";
-import { downloadMap } from "pages/benchmarks-map-level/download";
+import { formatPercentage } from "utils/format";
 
 export default function Table() {
   const { data, isLoading } = useBenchmarksData();
   const navigate = useNavigate();
   const notify = useSnackbarAction();
 
+  const actions = useDataGridActions<Benchmark>({
+    items: [
+      {
+        name: "Analyse this dataset",
+        icon: <ShowChartOutlined />,
+        render: (row, trigger) => (
+          <AnalysisButton
+            button={(onClick) => cloneElement(trigger, { onClick })}
+            template={analysisTemplate(row.map_name, row.id)}
+          />
+        ),
+      },
+      {
+        name: "Details",
+        icon: <InfoOutlined />,
+        render: (row, trigger) => (
+          <Dialog
+            slotProps={{ modal: { width: 720 } }}
+            title="Benchmark details"
+            padded
+            trigger={(onClick) => cloneElement(trigger, { onClick })}
+          >
+            <Box sx={{ m: -2 }}>
+              <BenchmarkDetails benchmark={row.map_name} />
+            </Box>
+          </Dialog>
+        ),
+      },
+    ],
+    menuItems: [
+      {
+        name: "Download all scenarios (ZIP)",
+        icon: <FileDownloadOutlined />,
+        action: notify(downloadBenchmarks, { end: "File downloaded" }),
+      },
+      {
+        name: "Download map",
+        action: (r) =>
+          notify(downloadMap(r.map_name), { end: "Map downloaded" })(),
+      },
+      {
+        name: "Download results (CSV)",
+        action: notify(downloadBenchmarksResultsCSV, {
+          end: "CSV downloaded",
+        }),
+      },
+    ],
+  });
+
   const columns: GridColDef<Benchmark>[] = [
     {
       field: "Icon",
+      width: 48,
       renderCell: () => <IconCard />,
       flex: 0,
-      fold: true,
     },
     {
       field: "map_name",
       headerName: "Map Name",
       sortable: true,
-      width: 160,
-      valueFormatter: capitalize,
+      minWidth: 220,
+      flex: 1,
+      renderCell: ({ value, row }) => (
+        <DataGridTitle
+          primary={startCase(value)}
+          secondary={`${row.scens} scenarios, ${row.instances} instances`}
+        />
+      ),
     },
     {
       field: "preview",
@@ -98,54 +158,7 @@ export default function Table() {
       fold: true,
       width: 300,
     },
-    makeDataGridActions({
-      items: [
-        {
-          name: "Analyse this dataset",
-          icon: <ShowChartOutlined />,
-          render: (row, trigger) => (
-            <AnalysisButton
-              button={(onClick) => cloneElement(trigger, { onClick })}
-              template={analysisTemplate(row.map_name, row.id)}
-            />
-          ),
-        },
-        {
-          name: "Details",
-          icon: <InfoOutlined />,
-          render: (row, trigger) => (
-            <Dialog
-              slotProps={{ modal: { width: 720 } }}
-              title="Benchmark details"
-              padded
-              trigger={(onClick) => cloneElement(trigger, { onClick })}
-            >
-              <Box sx={{ m: -2 }}>
-                <BenchmarkDetails benchmark={row.map_name} />
-              </Box>
-            </Dialog>
-          ),
-        },
-      ],
-      menuItems: [
-        {
-          name: "Download all scenarios (ZIP)",
-          icon: <FileDownloadOutlined />,
-          action: notify(downloadBenchmarks, { end: "File downloaded" }),
-        },
-        {
-          name: "Download map",
-          action: (r) =>
-            notify(downloadMap(r.map_name), { end: "Map downloaded" })(),
-        },
-        {
-          name: "Download results (CSV)",
-          action: notify(downloadBenchmarksResultsCSV, {
-            end: "CSV downloaded",
-          }),
-        },
-      ],
-    }),
+    actions,
   ];
 
   return (
