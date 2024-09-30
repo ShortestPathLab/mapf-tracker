@@ -37,9 +37,6 @@ export default function SubmissionSummary({
 }: Props) {
   return (
     <>
-      <Typography>
-        API Key: <code>{apiKey}</code>
-      </Typography>
       <Stack direction="row" sx={{ mt: 2, gap: 2, alignItems: "center" }}>
         {status}
         <Box sx={{ flex: 1 }} />

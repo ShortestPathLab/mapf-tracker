@@ -1,8 +1,11 @@
 import {
   AddOutlined,
   AnimationOutlined,
+  BookOutlined,
+  ChevronRightOutlined,
   CodeOutlined,
   DarkModeOutlined,
+  EmojiEventsOutlined,
   ExpandMoreOutlined,
   FileDownloadOutlined,
   FileUploadOutlined,
@@ -19,6 +22,7 @@ import {
 } from "@mui/icons-material";
 import {
   AppBar,
+  AppBarProps,
   Avatar,
   Box,
   Button,
@@ -36,7 +40,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { appName } from "core/config";
+import { appIconUrl, appName } from "core/config";
 import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
@@ -52,12 +56,7 @@ const drawerWidth = 320;
 
 export const appbarHeight = (md?: boolean) => (md ? 56 : 64);
 
-export default function index() {
-  const lg = useLg();
-  const md = useLg();
-
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
+export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
   const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
     title: "Log in",
@@ -73,6 +72,7 @@ export default function index() {
     label?: string;
     defaultOpen?: boolean;
     items: {
+      description?: string;
       primary?: boolean;
       iconButton?: boolean;
       label?: string;
@@ -90,29 +90,14 @@ export default function index() {
           label: "Benchmarks",
           url: "/benchmarks",
           icon: <StackedLineChartOutlined />,
+          description:
+            "View all benchmarks and their top-performing submissions",
         },
         {
           label: "Submissions",
           url: "/submissions",
-          icon: <SortOutlined />,
-        },
-      ],
-    },
-
-    {
-      label: "Make a submission",
-      items: [
-        {
-          primary: true,
-          label: "Request an API key",
-          url: "/contributes",
-          icon: <FileUploadOutlined />,
-        },
-        {
-          primary: true,
-          label: "Manage my submission",
-          url: "/trackSubmission",
-          icon: <LocationSearchingOutlined />,
+          icon: <EmojiEventsOutlined />,
+          description: "View and compare submitted algorithms",
         },
       ],
     },
@@ -124,19 +109,54 @@ export default function index() {
           label: "Demo",
           url: "/systemDemo",
           icon: <AnimationOutlined />,
+          description: "Watch out ICAPS 2023 system demonstration",
         },
-        { label: "Dataset", url: "/download", icon: <FileDownloadOutlined /> },
-        { label: "About", url: "/about", icon: <InfoOutlined /> },
+        {
+          label: "Dataset",
+          url: "/download",
+          icon: <FileDownloadOutlined />,
+          description: "Learn how to download the dataset",
+        },
+        {
+          label: "About",
+          url: "/about",
+          icon: <BookOutlined />,
+          description: "About this project",
+        },
+
         {
           label: "Github",
           url: "https://github.com/ShortestPathLab/winter-project-mapf-tracker/tree/main",
           icon: <GitHub />,
           iconButton: true,
+          description: "View the source code",
         },
       ],
     },
     {
-      label: "Maintenance",
+      label: "Make a submission",
+      items: [
+        {
+          primary: true,
+          label: "Request an API key",
+          url: "/contributes",
+          icon: <FileUploadOutlined />,
+          description:
+            "If you want to contribute, start by requesting an API key",
+        },
+        {
+          primary: true,
+          label: "Manage my submission",
+          url: "/trackSubmission",
+          icon: <LocationSearchingOutlined />,
+          description:
+            "If you have an API key, you can manage your submission here",
+        },
+      ],
+    },
+
+    {
+      label: "Manage",
       grow: true,
       items: credentials
         ? [
@@ -145,6 +165,8 @@ export default function index() {
               label: "Manage this platform",
               icon: <CodeOutlined />,
               url: "/dashboard",
+              description:
+                "Review submission requests, issue submission keys, and run jobs",
             },
             {
               iconButton: true,
@@ -164,10 +186,13 @@ export default function index() {
               label: "Log in",
               action: showLogIn,
               icon: <PersonOutlined />,
+              description: "Log in to manage this platform",
             },
           ],
     },
     {
+      label: "Appearance",
+      defaultOpen: false,
       items: [
         {
           iconButton: true,
@@ -179,6 +204,16 @@ export default function index() {
       ],
     },
   ];
+  return { groups, userDialog, logInDialog };
+}
+
+export default function index(props: AppBarProps) {
+  const lg = useLg();
+  const md = useLg();
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { groups, userDialog, logInDialog } = useNavigationContent();
   const clickHandler =
     (url?: string, action?: () => void, close?: () => void) => () => {
       if (url) {
@@ -236,11 +271,16 @@ export default function index() {
                               edge="end"
                               sx={{ color: "text.secondary" }}
                             >
-                              {isOpen ? (
-                                <RemoveOutlined fontSize="small" />
-                              ) : (
-                                <AddOutlined fontSize="small" />
-                              )}
+                              <ChevronRightOutlined
+                                fontSize="small"
+                                sx={{
+                                  transition: (t) =>
+                                    t.transitions.create("transform"),
+                                  transform: isOpen
+                                    ? "rotate(90deg)"
+                                    : "rotate(0deg)",
+                                }}
+                              />
                             </IconButton>
                           </Stack>
                         )}
@@ -289,27 +329,30 @@ export default function index() {
               {lg && (
                 <Box>
                   <AppBar
+                    {...props}
+                    position="absolute"
                     sx={{
+                      bgcolor: "background.default",
                       color: "text.primary",
                       boxShadow: "none",
+                      backgroundImage: "none",
+                      ...props.sx,
                     }}
-                    position="absolute"
                   >
                     <Toolbar
                       sx={{
-                        bgcolor: "background.paper",
+                        bgcolor: "transparent",
                         height: appbarHeight(md),
                       }}
                     >
-                      {lg && (
-                        <IconButton
-                          edge="start"
-                          sx={{ mr: 1, color: "action" }}
-                          {...bindTrigger(state)}
-                        >
-                          <MenuOutlined />
-                        </IconButton>
-                      )}
+                      <Box
+                        component="img"
+                        sx={{ height: 24, width: 24 }}
+                        src={appIconUrl}
+                      />
+                      <Typography variant="h6" sx={{ ml: 2 }}>
+                        {appName}
+                      </Typography>
                     </Toolbar>
                   </AppBar>
                 </Box>

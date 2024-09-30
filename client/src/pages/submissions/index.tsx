@@ -220,7 +220,7 @@ export default function TrackSubmission() {
           </Link>
         </>
       }
-      path={[{ name: "Home", url: "/" }]}
+      path={[{ name: "Submit", url: "/submit" }]}
     >
       <Stack>
         <AddKeyForm

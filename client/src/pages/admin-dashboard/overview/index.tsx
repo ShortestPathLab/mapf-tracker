@@ -30,9 +30,10 @@ export default function index() {
   const sm = useSm();
   return (
     <Layout
+      flat
       title="Dashboard"
       description="Review submission requests, issue submission keys, and run jobs"
-      path={[{ name: "Home", url: "/" }]}
+      path={[{ name: "Manage", url: "/manage" }]}
     >
       <Stack gap={6}>
         <Stack sx={{ gap: 3 }}>

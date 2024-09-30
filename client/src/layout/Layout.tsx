@@ -87,7 +87,7 @@ export default function Layout({
   return (
     <>
       {md &&
-        (path?.length > 1 ? (
+        (path?.length > 0 ? (
           <MuiAppBar
             position="fixed"
             sx={{ color: "text.primary", boxShadow: "none" }}
@@ -115,7 +115,13 @@ export default function Layout({
             </Toolbar>
           </MuiAppBar>
         ) : (
-          <Appbar />
+          <Appbar
+            sx={{
+              transition: (t) => t.transitions.create("background-color"),
+              bgcolor:
+                flat && isTop ? "background.default" : "background.paper",
+            }}
+          />
         ))}
       <Stack sx={{ flex: 1, height: "100%", overflow: "hidden" }}>
         {lg && <Box sx={{ height: appbarHeight(md) }} />}
@@ -128,7 +134,7 @@ export default function Layout({
               {content}
             </Enter>
           )}
-          {md && <Box sx={{ height: 56 }} />}
+          {md && <Box sx={{ height: 72 }} />}
         </Scroll>
       </Stack>
     </>

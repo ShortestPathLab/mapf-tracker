@@ -6,10 +6,7 @@ export default function index() {
       flat
       width={960}
       title="API keys"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Dashboard", url: "/dashboard" },
-      ]}
+      path={[{ name: "Manage", url: "/manage" }]}
     >
       Todo
     </Layout>

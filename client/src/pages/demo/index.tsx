@@ -4,7 +4,12 @@ import Content from "./content.mdx";
 
 export default function Page() {
   return (
-    <Layout width={720} title="System demo" path={[{ name: "Home", url: "/" }]}>
+    <Layout
+      flat
+      width={720}
+      title="System demo"
+      path={[{ name: "Home", url: "/" }]}
+    >
       <Prose
         sx={{
           "& h3": { mt: 0 },

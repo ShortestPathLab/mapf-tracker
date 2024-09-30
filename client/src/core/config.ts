@@ -4,6 +4,8 @@ const url = import.meta.env.DEV ? "http://localhost:3001/api" : "/api";
 
 export const appName = "MAPF Tracker";
 
+export const appIconUrl = "public/favicon.png";
+
 export const APIConfig = {
   apiUrl: url,
 };

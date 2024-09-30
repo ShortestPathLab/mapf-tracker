@@ -1,7 +1,9 @@
 import {
+  Build,
+  BuildOutlined,
   FileUploadOutlined,
-  Folder,
-  FolderOutlined,
+  Home,
+  HomeOutlined,
 } from "@mui/icons-material";
 import {
   BottomNavigation,
@@ -27,6 +29,7 @@ import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import SystemDemo from "pages/demo";
+import DirectoryPage from "pages/directory";
 import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
 import { matchPath, useLocation } from "react-router-dom";
@@ -81,8 +84,25 @@ export function Content() {
   const lg = useLg();
 
   const routes: Route[] = [
-    { path: "/", content: <BenchmarksRootLevelPage showHeader /> },
-    { path: "/benchmarks", content: <BenchmarksRootLevelPage /> },
+    {
+      path: "/",
+      content: <DirectoryPage labels={["Browse", "Docs"]} />,
+    },
+    {
+      path: "/submit",
+      content: <DirectoryPage labels={["Make a submission"]} title="Submit" />,
+    },
+    {
+      path: "/manage",
+      content: (
+        <DirectoryPage labels={["Appearance", "Manage"]} title="Manage" />
+      ),
+    },
+    {
+      path: "/benchmarks",
+      content: <BenchmarksRootLevelPage />,
+      parent: "/",
+    },
     {
       path: "/scenarios",
       content: <BenchmarksMapLevelPage />,
@@ -94,18 +114,19 @@ export function Content() {
       parent: "/scenarios",
     },
     { path: "/visualization", content: <Visualiser />, parent: "/instances" },
-    { path: "/summary", content: <Summary /> },
-    { path: "/about", content: <AboutPage /> },
-    { path: "/systemDemo", content: <SystemDemo /> },
-    { path: "/submissions", content: <Submissions /> },
+    { path: "/summary", content: <Summary />, parent: "/" },
+    { path: "/about", content: <AboutPage />, parent: "/" },
+    { path: "/systemDemo", content: <SystemDemo />, parent: "/" },
+    { path: "/submissions", content: <Submissions />, parent: "/" },
     {
       path: "/submissionSummary",
       content: <SubmissionSummaryPage />,
     },
-    { path: "/contributes", content: <ContributePage /> },
+    { path: "/contributes", content: <ContributePage />, parent: "submit" },
     {
       path: "/trackSubmission",
       content: <TrackSubmission />,
+      parent: "submit",
     },
     { path: "/download", content: <DownloadPage /> },
     {
@@ -146,24 +167,36 @@ function BottomBar() {
   const navigate = useNavigate();
   const paths = [
     {
-      label: "Benchmarks",
-      url: "/benchmarks",
-      icon: <FolderOutlined />,
-      iconSelected: <Folder />,
+      label: "Browse",
+      url: "/",
+      icon: <HomeOutlined />,
+      iconSelected: <Home />,
     },
     {
       label: "Submit",
-      url: "/contributes",
+      url: "/submit",
       icon: <FileUploadOutlined />,
       iconSelected: <FileUploadOutlined />,
     },
+    {
+      label: "Manage",
+      url: "/manage",
+      icon: <BuildOutlined />,
+      iconSelected: <Build />,
+    },
+    ,
   ];
-  const selected = find(paths, (c) => !!matchPath(`${c.url}/*`, pathname))?.url;
+  const selected = find(
+    paths,
+    (c) => !!matchPath(`${c?.url}/*`, pathname)
+  )?.url;
   return (
     <BottomNavigation
       showLabels
       value={selected}
       sx={{
+        transition: (t) => t.transitions.create("transform"),
+        transform: selected ? "translateY(0)" : "translateY(100%)",
         zIndex: (t) => t.zIndex.appBar + 1,
         position: "fixed",
         height: "max-content",

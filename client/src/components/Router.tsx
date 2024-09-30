@@ -27,7 +27,7 @@ export function Router({
     return false;
   };
   const createRoute = (a: Route, child: ReactNode) =>
-    md ? (
+    md && a.parent ? (
       <Enter backdrop mountOnEnter unmountOnExit in={recursiveMatch(a)}>
         {child}
       </Enter>

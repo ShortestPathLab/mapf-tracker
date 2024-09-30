@@ -26,7 +26,7 @@ export const requestSchema = object({
   comments: string(),
 });
 
-const requestQuery = (key: string) => ({
+const requestQuery = (key: string | number) => ({
   queryKey: ["submissionRequestDetails", key],
   queryFn: async () => ({
     ...(await json<Request>(`${APIConfig.apiUrl}/request/key/${key}`)),
@@ -35,7 +35,8 @@ const requestQuery = (key: string) => ({
   enabled: !!key,
 });
 
-export const useRequestData = (key: string) => useQuery(requestQuery(key));
+export const useRequestData = (key: string | number) =>
+  useQuery(requestQuery(key));
 
 export const useRequestsData = (keys: string[]) =>
   useQueries({ queries: map(keys, requestQuery) });

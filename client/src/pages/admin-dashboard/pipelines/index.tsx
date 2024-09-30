@@ -18,10 +18,7 @@ export default function index() {
       collapse={false}
       flat
       title="Pipelines"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Dashboard", url: "/dashboard" },
-      ]}
+      path={[{ name: "Manage", url: "/manage" }]}
       render={renderFixed(sm)}
     >
       <Stack

@@ -15,12 +15,12 @@ import { people } from "./people";
 
 export default function Page() {
   return (
-    <Layout width={720} title="About" path={[{ name: "Home", url: "/" }]}>
+    <Layout flat width={720} title="About" path={[{ name: "Home", url: "/" }]}>
       <Prose>
         <Content />
       </Prose>
       {["Advisors", "Developers"].map((group) => (
-        <Card sx={{ py: 2, px: 2 }}>
+        <Card sx={{ py: 1, px: 1 }}>
           <Typography variant="h4" sx={{ px: 2, pt: 2 }}>
             {group}
           </Typography>

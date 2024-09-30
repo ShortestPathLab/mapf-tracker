@@ -3,14 +3,7 @@ import Statistics from "./Statistics";
 
 export default function index() {
   return (
-    <Layout
-      flat
-      title="Statistics"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Dashboard", url: "/dashboard" },
-      ]}
-    >
+    <Layout flat title="Statistics" path={[{ name: "Manage", url: "/manage" }]}>
       <Statistics />
     </Layout>
   );

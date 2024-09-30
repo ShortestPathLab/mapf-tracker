@@ -8,6 +8,7 @@ export default function Page() {
       width={960}
       title="Get the dataset"
       path={[{ name: "Home", url: "/" }]}
+      flat
     >
       <Prose
         sx={{

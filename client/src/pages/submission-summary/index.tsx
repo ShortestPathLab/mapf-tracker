@@ -1,9 +1,27 @@
 import {
+  ApiOutlined,
+  CodeOutlined,
+  ContentPasteOutlined,
+  DataObjectOutlined,
   DeleteOutlined,
   InfoOutlined,
   RouteOutlined,
+  TableChartOutlined,
 } from "@mui/icons-material";
-import { Button, Chip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardActionArea,
+  Chip,
+  Divider,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { DataGrid, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
@@ -13,7 +31,7 @@ import { IconCard } from "components/IconCard";
 import { format, isBefore, parseISO } from "date-fns";
 import { useDialog } from "hooks/useDialog";
 import { useLocationState } from "hooks/useNavigation";
-import { Layout } from "layout";
+import { Grid, Layout } from "layout";
 import { capitalize, filter, now, startCase } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
@@ -27,6 +45,7 @@ import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
 import { cloneElement } from "react";
 import GenericDetailsList from "./GenericDetailsList";
 import SubmissionSummary from "./SubmissionSummary";
+import { useRequestData } from "queries/useRequestQuery";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key.";
@@ -35,6 +54,7 @@ export default function SubmissionSummaryPage() {
   const { data } = useOngoingSubmissionQuery(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
   const { mutate: deleteEntry } = useDeleteOngoingSubmissionMutation(apiKey);
+  const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finalise submission",
@@ -124,13 +144,26 @@ export default function SubmissionSummaryPage() {
   return (
     <Layout
       flat
-      title="Submission progress"
+      title="Submit data"
       path={[
-        { name: "Home", url: "/" },
+        { name: "Submit", url: "/submit" },
         { name: "Submit an algorithm", url: "/contributes" },
         { name: "Manage submissions", url: "/trackSubmission" },
       ]}
     >
+      <List>
+        {[
+          { primary: requestData?.algorithmName, secondary: "Algorithm" },
+          { primary: apiKeyData?.api_key, secondary: "API key" },
+        ].map((content) => (
+          <ListItem sx={{ mx: -2 }}>
+            <ListItemText {...content} />
+          </ListItem>
+        ))}
+      </List>
+      <SubmissionActions />
+      <Divider />
+      <Typography variant="h2">Submission Progress</Typography>
       <SubmissionSummary
         status={
           <>
@@ -154,7 +187,6 @@ export default function SubmissionSummaryPage() {
             </Typography>
           </>
         }
-        apiKey={apiKey}
         summaryStats={[
           { name: "Submitted", count: data?.length },
           {
@@ -211,3 +243,46 @@ export default function SubmissionSummaryPage() {
     </Layout>
   );
 }
+
+export const SubmissionActions = ({}: {}) => {
+  return (
+    <Grid gap={2}>
+      {[
+        {
+          label: "REST API",
+          icon: <DataObjectOutlined />,
+          description: "Programmatically submit results via the REST API",
+        },
+        {
+          label: "Spreadsheet",
+          icon: <TableChartOutlined />,
+          description: "Submit results as one or more CSV files",
+        },
+        {
+          label: "Copy and paste",
+          icon: <ContentPasteOutlined />,
+          description: "Submit results as JSON from the clipboard",
+        },
+      ].map((c, i) => (
+        <Card key={i}>
+          <CardActionArea
+            sx={{
+              p: 2,
+              height: "100%",
+              justifyContent: "flex-start",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <Box sx={{ color: "text.secondary", pb: 2 }}>{c.icon}</Box>
+            <Typography variant="h6">{c.label}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {c.description}
+            </Typography>
+          </CardActionArea>
+        </Card>
+      ))}
+    </Grid>
+  );
+};

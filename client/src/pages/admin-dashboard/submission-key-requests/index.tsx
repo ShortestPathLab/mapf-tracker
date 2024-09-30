@@ -103,10 +103,7 @@ export default function index() {
     <Layout
       flat
       title="Submission key requests"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Dashboard", url: "/dashboard" },
-      ]}
+      path={[{ name: "Manage", url: "/manage" }]}
     >
       <FlatCard>
         <DataGrid
