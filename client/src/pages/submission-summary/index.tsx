@@ -151,7 +151,7 @@ export default function SubmissionSummaryPage() {
         { name: "Manage submissions", url: "/trackSubmission" },
       ]}
     >
-      <List>
+      <List sx={{ my: -2 }}>
         {[
           { primary: requestData?.algorithmName, secondary: "Algorithm" },
           { primary: apiKeyData?.api_key, secondary: "API key" },

@@ -118,15 +118,16 @@ export function Content() {
     { path: "/about", content: <AboutPage />, parent: "/" },
     { path: "/systemDemo", content: <SystemDemo />, parent: "/" },
     { path: "/submissions", content: <Submissions />, parent: "/" },
-    {
-      path: "/submissionSummary",
-      content: <SubmissionSummaryPage />,
-    },
     { path: "/contributes", content: <ContributePage />, parent: "submit" },
     {
       path: "/trackSubmission",
       content: <TrackSubmission />,
-      parent: "submit",
+      parent: "/submit",
+    },
+    {
+      path: "/submissionSummary",
+      content: <SubmissionSummaryPage />,
+      parent: "/trackSubmission",
     },
     { path: "/download", content: <DownloadPage /> },
     {

@@ -9,10 +9,12 @@ const getForegroundColor = (bg: string) =>
 
 export function useTitleBar(color: string) {
   useEffect(() => {
-    defer(() =>
+    defer(() => {
       document
         .querySelector('meta[name="theme-color"]')!
-        .setAttribute("content", color)
-    );
+        .setAttribute("content", color);
+      document.documentElement.style.backgroundColor = color;
+      document.body.style.backgroundColor = color;
+    });
   }, [color]);
 }
