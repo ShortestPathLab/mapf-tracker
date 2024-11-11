@@ -14,6 +14,12 @@ export default function Prose({ children, ...props }: BoxProps) {
           "& h3": t.typography.h4,
           "& h4": t.typography.h5,
           "& h5": t.typography.h6,
+          "& h6": {
+            ...t.typography.body1,
+            my: "1em",
+            color: t.palette.text.secondary,
+            fontWeight: 550,
+          },
           "& th": {
             ...t.typography.body1,
             color: t.palette.text.secondary,

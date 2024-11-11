@@ -17,6 +17,7 @@ import {
   defaultDetails,
 } from "./defaults";
 import { paper } from "theme";
+import { Grid } from "layout";
 
 export type Props = {
   extras?: ReactNode;
@@ -37,20 +38,17 @@ export default function SubmissionSummary({
 }: Props) {
   return (
     <>
-      <Stack direction="row" sx={{ mt: 2, gap: 2, alignItems: "center" }}>
+      <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
         {status}
         <Box sx={{ flex: 1 }} />
         {extras}
       </Stack>
-      <Stack
-        direction="row"
+      <Grid
+        width={120}
         sx={{
           gap: 4,
-          p: 8,
           mt: 2,
-          border: (t) => `1px solid ${t.palette.divider}`,
           borderRadius: 1,
-          justifyContent: "space-around",
         }}
       >
         {summaryStats.map(({ name, count }) => (
@@ -61,7 +59,7 @@ export default function SubmissionSummary({
             <Typography color="text.secondary">{name}</Typography>
           </Stack>
         ))}
-      </Stack>
+      </Grid>
       <Stack
         sx={{
           my: 4,

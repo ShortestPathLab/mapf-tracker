@@ -1,0 +1,37 @@
+{/** @typedef {{apiKey?: string | number}} Props **/}
+
+import { url } from "../../core/config";
+import { CodeBlock } from "./CodeBlock";
+import JSONSchema from "./JSONSchema.mdx";
+
+#### Submit via REST API
+
+If you want to programmatically submit results to MAPF Tracker, you can do so via our REST API. Make a `POST` request to this URL:
+
+<CodeBlock language="plaintext">
+    {`${url}/ongoing_submission/create`}
+</CodeBlock>
+
+The body is a JSON object:
+
+<JSONSchema />
+
+#### Response data
+
+The response will let you know whether you've submitted successfully.
+
+###### Error response
+
+<CodeBlock language="json">
+    {JSON.stringify({
+        result:'error', errors: ["Error A", "Error B"]
+    }, null, 2)}
+</CodeBlock>
+
+###### Success response
+
+<CodeBlock language="json">
+    {JSON.stringify({
+        result:'success'
+    }, null, 2)}
+</CodeBlock>

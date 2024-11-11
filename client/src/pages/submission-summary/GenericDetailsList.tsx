@@ -1,5 +1,4 @@
 import {
-  Box,
   List,
   ListItem,
   ListItemText,
@@ -7,11 +6,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { entries, startCase } from "lodash";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  oneLight,
-  oneDark,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+import { CodeBlock } from "./CodeBlock";
 
 export default function GenericDetailsList({
   data,
@@ -26,19 +21,9 @@ export default function GenericDetailsList({
           <ListItemText
             secondary={startCase(k)}
             primary={
-              <Box
-                component="code"
-                sx={{
-                  whiteSpace: "pre-wrap",
-                }}
-              >
-                <SyntaxHighlighter
-                  language="json"
-                  style={isDark ? oneDark : oneLight}
-                >
-                  {JSON.stringify(v, null, 2)}
-                </SyntaxHighlighter>
-              </Box>
+              <CodeBlock language="json">
+                {JSON.stringify(v, null, 2)}
+              </CodeBlock>
             }
           />
         </ListItem>
