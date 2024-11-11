@@ -10,10 +10,16 @@ import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
+import { csvParser, yamlParser } from "./parsers";
+// import { treaty } from "treaty";
+
+// treaty.listen({ port: 3000 });
 
 export const app = express();
+app.use(yamlParser);
+app.use(csvParser);
 
-app.use(bodyParser.json({ limit: "500mb" }));
+app.use(bodyParser.text({ limit: "500mb" }));
 app.use(
   bodyParser.urlencoded({
     limit: "500mb",

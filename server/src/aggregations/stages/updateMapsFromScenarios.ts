@@ -20,6 +20,7 @@ export const updateMapsFromScenarios = () =>
     },
     {
       $addFields: {
+        scens: { $size: "$scenarios" },
         instances: { $sum: "$scenarios.instances" },
         instances_closed: { $sum: "$scenarios.instances_closed" },
         instances_solved: { $sum: "$scenarios.instances_solved" },
@@ -28,10 +29,18 @@ export const updateMapsFromScenarios = () =>
     {
       $addFields: {
         proportion_instances_closed: {
-          $divide: ["$instances_closed", "$instances"],
+          $cond: {
+            if: { $eq: ["$instances", 0] },
+            then: 0,
+            else: { $divide: ["$instances_closed", "$instances"] },
+          },
         },
         proportion_instances_solved: {
-          $divide: ["$instances_solved", "$instances"],
+          $cond: {
+            if: { $eq: ["$instances", 0] },
+            then: 0,
+            else: { $divide: ["$instances_solved", "$instances"] },
+          },
         },
       },
     },

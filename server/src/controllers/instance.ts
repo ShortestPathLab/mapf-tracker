@@ -21,7 +21,6 @@ export const findNonEmptyByScenId: RequestHandler = (req, res) => {
     {
       $match: {
         scen_id: id,
-        empty: false,
       },
     },
     {
@@ -37,6 +36,7 @@ export const findNonEmptyByScenId: RequestHandler = (req, res) => {
         solution_path_id: 1,
       },
     },
+    { $sort: { agents: 1 } },
   ])
     .then((data) => {
       res.send(data);

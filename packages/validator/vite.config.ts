@@ -13,6 +13,7 @@ export default defineConfig({
     }),
   ],
   build: {
+    target: "esnext",
     outDir: "lib",
     lib: { entry: "src/index.ts", name: "validator", fileName: "index" },
   },

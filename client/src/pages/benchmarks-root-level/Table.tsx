@@ -96,7 +96,9 @@ export default function Table() {
       renderCell: ({ value, row }) => (
         <DataGridTitle
           primary={startCase(value)}
-          secondary={`${row.scens} scenarios, ${row.instances} instances`}
+          secondary={`${row.scens ?? "?"} scenarios, ${
+            row.instances ?? "?"
+          } instances`}
         />
       ),
     },

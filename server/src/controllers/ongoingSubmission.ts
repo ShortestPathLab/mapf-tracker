@@ -1,41 +1,60 @@
 import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
-import { RequestHandler } from "express";
 import { getPort } from "getPort";
+import { isNull, isUndefined } from "lodash";
 import { log } from "logging";
 import { Infer, Map, OngoingSubmission, Scenario, SubmissionKey } from "models";
 import { set } from "models/PipelineStatus";
 import { Types } from "mongoose";
-import { queryClient, text } from "query";
+import { queryClient, route, text } from "query";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import { fatal } from "validation/zod";
 import z, { RefinementCtx } from "zod";
 
-const handler = queryClient(OngoingSubmission);
+const { add } = await createSubmissionValidator({ workerCount: 8 });
+
+type Data = {
+  map: Infer<typeof Map>;
+  scenario: Infer<typeof Scenario>;
+};
+
+const getScenario = async ({ scenario, map }: Data) =>
+  await text(
+    `http://localhost:${getPort()}/res/scens/${map.map_name}-${
+      scenario.scen_type
+    }-${scenario.type_id}.scen`
+  );
+
+const getMap = async ({ map }: Data) =>
+  await text(`http://localhost:${getPort()}/res/maps/${map.map_name}.map`);
+
+// ─── Query Handlers ──────────────────────────────────────────────────────────
+
+const query = queryClient(OngoingSubmission);
 
 /**
  * Get all submissions
  */
-export const findAll = handler();
+export const findAll = query();
 
 /**
  * Find a submission using id
  */
-export const findById = handler(z.object({ id: z.string() }), ({ id }) => ({
+export const findById = query(z.object({ id: z.string() }), ({ id }) => ({
   _id: new Types.ObjectId(id),
 }));
 
 /**
  * Find all OngoingSubmission entries with a given api_key
  */
-export const findByApiKey = handler(
+export const findByApiKey = query(
   z.object({ apiKey: z.string() }),
   ({ apiKey }) => ({ apiKey })
 );
 /**
  * Delete by id
  */
-export const deleteById = handler(
+export const deleteById = query(
   z.object({ id: z.string() }),
   ({ id }) => new Types.ObjectId(id),
   async (docs) => {
@@ -44,6 +63,8 @@ export const deleteById = handler(
   }
 );
 
+// ─── Submission Handlers ─────────────────────────────────────────────────────
+
 const getKey = async (api_key: string | undefined, ctx: RefinementCtx) => {
   const key = await SubmissionKey.findOne({ api_key });
   if (!key) return fatal(ctx, "API key invalid");
@@ -51,24 +72,42 @@ const getKey = async (api_key: string | undefined, ctx: RefinementCtx) => {
   return key;
 };
 
-// create a new ongoing submission
-const createSubmissionSchema = z
+const apiKeySchema = {
+  api_key: z.string().length(32, "Should be 32 characters"),
+};
+
+const instanceSchema = {
+  lower_cost: z.number().nonnegative(),
+  solution_cost: z.number().nonnegative(),
+  map_name: z.string(),
+  scen_type: z.string(),
+  type_id: z.number().int().nonnegative(),
+};
+
+const pathSchema = z
+  .string()
+  .regex(/^([lrudw]|[0-9])*$/, "Should only contain `l`, `r`, `u`, `d`, `w`");
+
+const submissionSchema = z
   .object({
-    api_key: z.string().length(32, "Should be 32 characters"),
-    index: z.number().int().nonnegative(),
-    lower_cost: z.number().nonnegative(),
-    solution_cost: z.number().nonnegative(),
-    map_name: z.string(),
-    scen_type: z.string(),
-    type_id: z.number().int().nonnegative(),
+    ...apiKeySchema,
+    ...instanceSchema,
     agent_count_intent: z.number().int().positive(),
-    solution_path: z
-      .string()
-      .regex(
-        /^([lrudw]|[0-9])*$/,
-        "Should only contain `l`, `r`, `u`, `d`, `w`"
-      ),
+    index: z.number().int().nonnegative(),
+    solution_path: pathSchema.optional(),
+    solution_plan: pathSchema.optional(),
   })
+  .transform(
+    /**
+     * Legacy CSV format compat. In the legacy CSV format, `solution_path` is named `solution_plan`.
+     */
+    async ({ solution_path, solution_plan, ...v }, ctx) => {
+      const plan = solution_path ?? solution_plan;
+      if (isUndefined(plan) || isNull(plan))
+        fatal(ctx, "Solution plan not defined");
+      return { ...v, solution_path: plan };
+    }
+  )
   .transform(async ({ api_key, ...v }, ctx) => ({
     ...v,
     key: await getKey(api_key, ctx),
@@ -88,74 +127,69 @@ const createSubmissionSchema = z
     return { ...v, scenario };
   });
 
-type Data = {
-  map: Infer<typeof Map>;
-  scenario: Infer<typeof Scenario>;
-};
-
-const getScenario = async ({ scenario, map }: Data) =>
-  await text(
-    `http://localhost:${getPort()}/res/scens/${map.map_name}-${
-      scenario.scen_type
-    }-${scenario.type_id}.scen`
+const batchSubmissionSchema = z
+  .object({
+    ...apiKeySchema,
+    ...instanceSchema,
+    solutions: z.array(pathSchema),
+  })
+  .transform(async ({ solutions, ...rest }) =>
+    solutions.map((s) =>
+      submissionSchema.parse({
+        ...rest,
+        agent_count_intent: solutions.length,
+        solution_path: s,
+      })
+    )
   );
 
-const getMap = async ({ map }: Data) =>
-  await text(`http://localhost:${getPort()}/res/maps/${map.map_name}.map`);
-
-const { add } = await createSubmissionValidator({ workerCount: 8 });
-
-export const finalise: RequestHandler<{ key: string }, {}, unknown> = async (
-  req,
-  res
-) => {
-  const schema = z
+export const finalise = route(
+  z
     .object({
-      key: z.string().length(32, "Should be 32 characters"),
+      key: apiKeySchema.api_key,
     })
-    .transform(({ key }, ctx) => getKey(key, ctx));
-  const { data, success, error } = await schema.safeParseAsync(req.params);
-  if (!success) return res.status(400).json(error.format());
-  await data.updateOne({ status: { type: "submitted" } });
-  run(updateSubmissionsWithOngoingSubmissions, undefined, {
-    onProgress: async (args) => {
-      await set(args.stage, args);
-    },
+    .transform(({ key }, ctx) => getKey(key, ctx)),
+  async (data) => {
+    await data.updateOne({ status: { type: "submitted" } });
+    run(updateSubmissionsWithOngoingSubmissions, undefined, {
+      onProgress: (args) => set(args.stage, args),
+    });
+  }
+);
+
+const createOne = async (data: z.infer<typeof submissionSchema>) => {
+  const id = {
+    apiKey: data.key.api_key,
+    mapId: data.map.id,
+    scenarioId: data.scenario.id,
+    agentCountIntent: data.agent_count_intent,
+  };
+  const doc = await new OngoingSubmission({
+    ...id,
+    index: data.index,
+    lowerCost: data.lower_cost,
+    solutionCost: data.solution_cost,
+    solutionPath: data.solution_path,
+  }).save();
+  log.info("Submission received", doc);
+  add({
+    ...id,
+    map: await getMap(data),
+    scenario: await getScenario(data),
   });
-  res.status(200).json({});
+  return doc.id;
 };
 
-export const create: RequestHandler<{}, {}, unknown> = async (
-  { body },
-  res
-) => {
-  const { success, data, error } = await createSubmissionSchema.safeParseAsync(
-    body
-  );
-  if (!success) return res.status(400).json(error.format());
-  try {
-    const id = {
-      apiKey: data.key.api_key,
-      mapId: data.map.id,
-      scenarioId: data.scenario.id,
-      agentCountIntent: data.agent_count_intent,
-    };
-    const doc = await new OngoingSubmission({
-      ...id,
-      index: data.index,
-      lowerCost: data.lower_cost,
-      solutionCost: data.solution_cost,
-      solutionPath: data.solution_path,
-    }).save();
-    log.info("Submission received", doc);
-    add({
-      ...id,
-      map: await getMap(data),
-      scenario: await getScenario(data),
-    });
-    res.json(doc.id);
-  } catch (e) {
-    log.error(e);
-    res.status(500).json({ error: e });
-  }
-};
+/**
+ * Create a new submission
+ */
+export const create = route(submissionSchema, async (data) => ({
+  id: await createOne(data),
+}));
+
+/**
+ * Create multiple submissions
+ */
+export const createBatch = route(batchSubmissionSchema, async (data) => ({
+  ids: await Promise.all(data.map(createOne)),
+}));

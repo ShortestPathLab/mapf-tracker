@@ -1,4 +1,4 @@
-import { Schema, model as createModel } from "mongoose";
+import { model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 
 const schema = createSchema({

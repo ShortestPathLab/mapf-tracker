@@ -11,6 +11,7 @@ export type PipelineStage<
   R extends Record<string, any> | void = void
 > = {
   key: string;
+  destructive?: boolean;
   run: (a?: T) => Promise<{ result: any; variables?: R }>;
   dependents: PipelineStage<R>[];
   description?: string;

@@ -8,6 +8,7 @@ import {
   maxBy,
   pick,
   range,
+  times,
   values,
   zip,
 } from "lodash";
@@ -53,7 +54,7 @@ type OngoingSubmissionDocument = Document<
   OngoingSubmission;
 
 function createSolutionCostChecker(expected: number[]) {
-  const costs: number[] = [];
+  const costs: number[] = times(expected.length, () => 0);
   return [
     ({ done }: CheckParameters): CheckResult => {
       each(done, (c, i) => {
@@ -73,6 +74,7 @@ function createSolutionCostChecker(expected: number[]) {
         };
       }
     },
+    costs,
   ] as const;
 }
 
@@ -138,8 +140,7 @@ async function validateGroup({
   const errors: string[] = [];
   const errorAgents: number[][] = [];
 
-  const [updateSolutionCost, checkSolutionCost] =
-    createSolutionCostChecker(costs);
+  const [updateSolutionCost, , realCosts] = createSolutionCostChecker(costs);
 
   validate({
     domain: { cells, width, height },
@@ -152,7 +153,7 @@ async function validateGroup({
       checkEdgeCollision,
       updateSolutionCost,
     ],
-    onFinish: [checkGoalReached, checkSolutionCost],
+    onFinish: [checkGoalReached],
     goals: goals.slice(0, b),
     onError: (c) => {
       errors.push(...c.errors);
@@ -160,6 +161,12 @@ async function validateGroup({
       return true;
     },
   });
+
+  // Update solution cost based on validation results
+  // TODO: Refactor for immutability
+  for (const [c, cost] of zip(group, realCosts)) {
+    c.set("solutionCost", cost);
+  }
 
   logOutcome(errors, errorAgents, mode);
 

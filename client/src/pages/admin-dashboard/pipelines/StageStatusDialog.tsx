@@ -17,7 +17,7 @@ export function StageStatusDialog({
   stage,
 }: DialogContentProps & { stage?: string }) {
   const { data } = usePipelineStatus();
-  const { status, description } = find(data, { key: stage }) ?? {};
+  const { status, description, destructive } = find(data, { key: stage }) ?? {};
   const { mutateAsync, isPending } = usePipelineRunMutation(stage);
   const notify = useSnackbar();
   return (
@@ -25,6 +25,7 @@ export function StageStatusDialog({
       <StageStatus stage={stage} sx={{ ml: -2 }} />
       <Stack sx={{ gap: 2 }}>
         <Button
+          color={destructive ? "error" : "primary"}
           variant="contained"
           disabled={isPending || status?.type === "running"}
           onClick={async () => {
@@ -37,6 +38,7 @@ export function StageStatusDialog({
           Run pipeline from this stage
         </Button>
         <Button
+          color={destructive ? "error" : "primary"}
           variant="outlined"
           disabled={isPending || status?.type === "running"}
           onClick={async () => {

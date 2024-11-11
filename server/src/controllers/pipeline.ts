@@ -10,9 +10,10 @@ export const getStatus: RequestHandler = async (req, res) => {
   return res.json(
     await chain(stages)
       .values()
-      .map(async ({ key, dependents, description }) => ({
+      .map(async ({ key, dependents, description, destructive }) => ({
         key,
         description,
+        destructive,
         dependents: map(dependents, "key"),
         status: await get(key),
       }))

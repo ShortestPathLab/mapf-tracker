@@ -30,3 +30,21 @@ export const queryClient =
       });
     }
   };
+
+export const route = <T extends z.ZodTypeAny, R>(
+  validate: T,
+  f: (data: z.infer<T>) => Promise<R>
+): RequestHandler<z.infer<T>, {}, R> => {
+  return async (req, res) => {
+    const { success, data, error } = await validate.safeParseAsync(req.params);
+    if (!success) return res.status(400).json(error.format());
+    try {
+      const out = await f(data);
+      res.json(out);
+    } catch (e) {
+      res.status(500).json({
+        error: e,
+      });
+    }
+  };
+};

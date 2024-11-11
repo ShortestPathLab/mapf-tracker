@@ -30,6 +30,7 @@ type Status = {
   timestamp: number;
 };
 type PipelineStatusResult = {
+  destructive?: boolean;
   key: string;
   dependents: string[];
   status: Status;

@@ -17,7 +17,7 @@ export const findAll: RequestHandler = (req, res) => {
 export const findByMap_id: RequestHandler = (req, res) => {
   const { id } = req.params;
   Scenario.find({ map_id: id })
-    .sort({ scen_type: 1 })
+    .sort({ scen_type: 1, type_id: 1 })
     .then((data) => {
       res.send(data);
     })

@@ -22,7 +22,7 @@ const schema = createSchema(
     solutionCost: Number,
     solutionPath: String,
     validation: {
-      isValidationRun: Boolean,
+      isValidationRun: Schema.Types.Boolean,
       errors: [String],
       outcome: String,
     },

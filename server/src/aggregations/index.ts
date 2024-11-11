@@ -1,3 +1,4 @@
+import { stage as reset } from "./stages/reset";
 import { stage as updateAlgorithmsFromSubmissions } from "./stages/updateAlgorithmsFromSubmissions";
 import { stage as updateMapsFromScenarios } from "./stages/updateMapsFromScenarios";
 import { stage as updateScenariosFromInstances } from "./stages/updateScenariosFromInstances";
@@ -13,6 +14,7 @@ import {
 } from "./stages/mockStages";
 
 export const stages = {
+  reset,
   updateMapsFromScenarios,
   updateScenariosFromInstances,
   updateInstancesFromSubmissions,
