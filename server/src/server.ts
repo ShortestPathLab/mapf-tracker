@@ -16,6 +16,7 @@ import { csvParser, yamlParser } from "./parsers";
 // treaty.listen({ port: 3000 });
 
 export const app = express();
+app.use(cors());
 app.use(yamlParser);
 app.use(csvParser);
 
@@ -27,7 +28,6 @@ app.use(
     parameterLimit: 500_000,
   })
 );
-app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(

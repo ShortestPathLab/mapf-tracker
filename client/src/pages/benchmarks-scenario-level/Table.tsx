@@ -11,10 +11,10 @@ import { Dialog, Title } from "components/dialog";
 import { IconCard } from "components/IconCard";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
-import { useScenarioCollectionData } from "queries/useBenchmarksQuery";
+import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import { useSnackbarAction } from "components/Snackbar";
-import { Scenario } from "core/types";
+import { Instance } from "core/types";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { formatDate } from "utils/format";
 import Details from "./Details";
@@ -24,11 +24,11 @@ import pluralize from "pluralize";
 export default function Table() {
   const state = useLocationState<ScenarioLevelLocationState>();
   const { scenId, mapName, scenType, scenTypeID } = state;
-  const { data, isLoading } = useScenarioCollectionData(scenId);
+  const { data, isLoading } = useInstanceCollectionData(scenId);
   const navigate = useNavigate();
   const notify = useSnackbarAction();
 
-  const openVisualisation = (row: Scenario) =>
+  const openVisualisation = (row: Instance) =>
     navigate<VisualiserLocationState>("/visualization", {
       ...state,
       path_id: row.solution_path_id,
@@ -37,7 +37,7 @@ export default function Table() {
       num_agents: row.agents,
     });
 
-  const actions = useDataGridActions<Scenario>({
+  const actions = useDataGridActions<Instance>({
     items: [
       {
         name: "Open visualisation",
@@ -70,7 +70,7 @@ export default function Table() {
     ],
   });
 
-  const columns: GridColDef<Scenario>[] = [
+  const columns: GridColDef<Instance>[] = [
     {
       field: "Icon",
       width: 48,

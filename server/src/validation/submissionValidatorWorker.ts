@@ -1,37 +1,25 @@
-import {
-  chain,
-  each,
-  every,
-  filter,
-  isInteger,
-  max,
-  maxBy,
-  pick,
-  range,
-  times,
-  values,
-  zip,
-} from "lodash";
+import { chain, each, isInteger, max, once, pick } from "lodash";
 import { context } from "logging";
-import { Infer, OngoingSubmission } from "models";
-import { Document } from "mongoose";
+import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
+import { Document, Types } from "mongoose";
 import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
+import { getMap, getScenario } from "resources";
 import {
   checkDomainCollision,
   checkDomainOutOfBounds,
   checkEdgeCollision,
   checkGoalReached,
   checkImmediateCollision,
+  CheckParameters,
   CheckResult,
   FinalCheckParameters,
   Point,
   validate,
 } from "validator";
 import { connectToDatabase } from "../connection";
-import { SubmissionValidatorData } from "./SubmissionValidatorData";
 import { usingMessageHandler } from "../queue/usingWorker";
-import { CheckParameters } from "validator";
+import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -53,53 +41,60 @@ type OngoingSubmissionDocument = Document<
 > &
   OngoingSubmission;
 
-function createSolutionCostChecker(expected: number[]) {
-  const costs: number[] = times(expected.length, () => 0);
+function createSolutionCostChecker(expected: number = 0) {
+  let actual: number = 0;
   return [
     ({ done }: CheckParameters): CheckResult => {
       each(done, (c, i) => {
-        costs[i] += +!c[i];
+        actual += +!c[i];
       });
       return {};
     },
     ({}: FinalCheckParameters): CheckResult => {
-      const error = zip(expected, costs)
-        .map(([a, b], i) => [a, b, i])
-        .find(([a, b]) => a !== b);
-      if (error) {
-        const [a, b, i] = error;
+      if (actual !== expected) {
         return {
-          errors: [`agent cost incorrect, expected ${a}, got ${b}`],
-          errorAgents: [i],
+          errors: [`agent cost incorrect, expected ${actual}, got ${expected}`],
         };
       }
     },
-    costs,
+    actual,
   ] as const;
 }
 
+async function getMeta(instanceId: Types.ObjectId) {
+  const instance = await Instance.findById(instanceId);
+  const map = await Map.findById(instance.map_id);
+  const scenario = await Scenario.findById(instance.scen_id);
+  const mapContent = await getMap({ map, scenario });
+  const scenarioContent = await getScenario({ map, scenario });
+  return { map, scenario, mapContent, scenarioContent };
+}
+
 async function saveResults(
-  submission: OngoingSubmissionDocument[],
-  outdated: OngoingSubmissionDocument[],
+  submission: OngoingSubmissionDocument,
   errors: string[]
 ) {
   log.info("Saving results");
-  for (const s of submission) {
-    s.set(validationResultsKey, {
+  for (const outdated of await OngoingSubmission.find({
+    apiKey: submission.apiKey,
+    instance: submission.instance,
+    createdAt: { $lt: submission.createdAt },
+  })) {
+    await outdated
+      .set(validationResultsKey, {
+        errors: [],
+        isValidationRun: true,
+        outcome: "outdated" satisfies Outcome,
+      } satisfies OngoingSubmission[typeof validationResultsKey])
+      .save();
+  }
+  await submission
+    .set(validationResultsKey, {
       errors,
       isValidationRun: true,
       outcome: (errors.length ? "invalid" : "valid") satisfies Outcome,
-    } satisfies OngoingSubmission[typeof validationResultsKey]);
-    await s.save();
-  }
-  for (const s of outdated) {
-    s.set(validationResultsKey, {
-      errors: [],
-      isValidationRun: true,
-      outcome: "outdated" satisfies Outcome,
-    } satisfies OngoingSubmission[typeof validationResultsKey]);
-    await s.save();
-  }
+    } satisfies OngoingSubmission[typeof validationResultsKey])
+    .save();
   log.info("Results saved");
 }
 
@@ -110,7 +105,6 @@ async function validateGroup({
   sources,
   goals,
   submission,
-  agentCount,
   mode,
 }: {
   cells: boolean[][];
@@ -118,34 +112,20 @@ async function validateGroup({
   height: number;
   sources: Point[];
   goals: Point[];
-  agentCount: number;
-  submission: OngoingSubmissionDocument[];
+  submission: OngoingSubmissionDocument;
   mode?: SubmissionValidatorData["mode"];
 }) {
-  log.info(`Validating for agent count ${agentCount}`);
-  const cache = chain(submission)
-    .groupBy("index")
-    .mapValues((c) => maxBy(c, (c) => c.createdAt))
-    .value();
-  const group = values(cache);
-
-  const b = chain(cache)
-    .map("index")
-    .max()
-    .thru((c) => c + 1)
-    .value();
-
-  const costs = range(0, b).map((_, i) => cache[i]?.solutionCost ?? 0);
+  const count = submission.solutions.length;
 
   const errors: string[] = [];
   const errorAgents: number[][] = [];
 
-  const [updateSolutionCost, , realCosts] = createSolutionCostChecker(costs);
+  const [updateSolutionCost, , realCost] = createSolutionCostChecker();
 
   validate({
     domain: { cells, width, height },
-    paths: range(b).map((i) => cache[`${i}`]?.solutionPath ?? "w"),
-    sources: sources.slice(0, b),
+    paths: submission.solutions.map((s) => s || "w"),
+    sources: sources.slice(0, count),
     onTimestep: [
       checkImmediateCollision,
       checkDomainOutOfBounds,
@@ -154,7 +134,7 @@ async function validateGroup({
       updateSolutionCost,
     ],
     onFinish: [checkGoalReached],
-    goals: goals.slice(0, b),
+    goals: goals.slice(0, count),
     onError: (c) => {
       errors.push(...c.errors);
       errorAgents.push(c.errorAgents);
@@ -164,17 +144,11 @@ async function validateGroup({
 
   // Update solution cost based on validation results
   // TODO: Refactor for immutability
-  for (const [c, cost] of zip(group, realCosts)) {
-    c.set("solutionCost", cost);
-  }
+  submission.set("solutionCost", realCost);
 
   logOutcome(errors, errorAgents, mode);
 
-  await saveResults(
-    group,
-    filter(submission, (c) => !group.includes(c)),
-    errors
-  );
+  await saveResults(submission, errors);
   return { errors };
 }
 
@@ -200,6 +174,8 @@ function logOutcome(
   log.info("Passed validation");
 }
 
+const connect = once(() => connectToDatabase());
+
 export async function run(data: SubmissionValidatorData): Promise<{
   result: {
     errors?: string[];
@@ -210,28 +186,27 @@ export async function run(data: SubmissionValidatorData): Promise<{
     "Received job",
     pick(data, "apiKey", "mapId", "scenarioId", "agentCountIntent")
   );
-  await connectToDatabase();
+  await connect();
   try {
-    const { apiKey, mapId, scenarioId, map, scenario, agentCountIntent, mode } =
-      data;
+    const { submissionId, mode } = data;
 
-    const submission = await OngoingSubmission.find({
-      apiKey,
-      mapId,
-      scenarioId,
-      agentCountIntent,
-    });
+    const submission = await OngoingSubmission.findById(submissionId);
 
-    if (every(submission, (c) => c.validation?.isValidationRun)) {
-      log.info("Validation already run on submission set");
-      return { result: { outcome: "skipped" } };
-    }
+    const {
+      mapContent: map,
+      map: mapMeta,
+      scenarioContent: scenario,
+      scenario: scenarioMeta,
+    } = await getMeta(submission.instance);
 
     const cells = parseMap(map);
     const { sources, goals, width, height } = parseScenarioMeta(scenario);
 
+    log.info(
+      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${scenarioMeta.type_id}, agent count ${submission.solutions.length}.`
+    );
+
     const { errors } = await validateGroup({
-      agentCount: agentCountIntent,
       sources,
       goals,
       width,

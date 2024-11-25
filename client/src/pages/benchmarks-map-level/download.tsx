@@ -2,10 +2,10 @@ import { APIConfig } from "core/config";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
 import { text } from "queries/query";
-import { Benchmark, ScenarioCollection } from "core/types";
+import { Benchmark, InstanceCollection } from "core/types";
 
 export const downloadScenario =
-  (map: string) => async (item?: ScenarioCollection) => {
+  (map: string) => async (item?: InstanceCollection) => {
     if (item)
       return download(
         await text(

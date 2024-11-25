@@ -1,21 +1,20 @@
 import { times } from "lodash";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
-import { usingWorkerTask } from "../queue/usingWorker";
+import {
+  usingWorkerReusable,
+  usingWorkerTask,
+  usingWorkerTaskReusable,
+} from "../queue/usingWorker";
 import { path } from "./submissionValidatorWorker";
 import stringHash from "string-hash";
 import { createPair } from "../queue/createPair";
 
-const run = usingWorkerTask<SubmissionValidatorData, any>(
+const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(
   () => new Worker(path)
 );
 
-const id = ({
-  apiKey,
-  mapId,
-  scenarioId,
-  agentCountIntent,
-}: SubmissionValidatorData) =>
-  stringHash(JSON.stringify({ apiKey, mapId, scenarioId, agentCountIntent }));
+const id = ({ apiKey, submissionId }: SubmissionValidatorData) =>
+  stringHash(JSON.stringify({ apiKey, submissionId }));
 
 export const createSubmissionValidator = async ({
   workerCount = 1,

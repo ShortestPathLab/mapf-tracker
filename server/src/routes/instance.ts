@@ -7,6 +7,7 @@ export default (app: Application) => {
   // router.use(cache("1 day"));
   router.get("/", instance.findAll);
   router.get("/:id", instance.findNonEmptyByScenId);
+  router.get("/id/:id", instance.findById);
   router.get("/getAlgo/:id", instance.findAlgosRecord);
   router.get("/getPath/:id", instance.findPathById);
   router.get("/DownloadRow/:id", instance.downloadRowById);

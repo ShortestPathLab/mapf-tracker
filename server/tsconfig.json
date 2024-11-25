@@ -8,7 +8,8 @@
     "baseUrl": "src",
     "target": "esnext",
     "module": "preserve",
-    "skipLibCheck": true
+    "skipLibCheck": true /* Specify multiple folders that act like './node_modules/@types'. */,
+    "types": ["bun-types"]
   },
   "exclude": ["node_modules"]
 }

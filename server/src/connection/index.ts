@@ -4,6 +4,7 @@ import { url } from "models";
 import { connect } from "mongoose";
 
 export const connectToDatabase = once(async () => {
+  log.info(`Connecting to database at ${new URL(url).hostname}`);
   try {
     const connection = await connect(url, {});
     log.info(`Connected to database at ${new URL(url).hostname}`);

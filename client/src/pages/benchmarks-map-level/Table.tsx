@@ -8,24 +8,24 @@ import {
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { IconCard } from "components/IconCard";
 import { useSnackbarAction } from "components/Snackbar";
-import { ScenarioCollection } from "core/types";
+import { InstanceCollection } from "core/types";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { capitalize } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
-import { useScenarioCollectionsData } from "queries/useBenchmarksQuery";
+import { useInstanceCollectionsData } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import { downloadInstance, downloadMap, downloadScenario } from "./download";
 
 export default function Table() {
   const state = useLocationState<MapLevelLocationState>();
   const { mapId, mapName } = state;
-  const { data, isLoading } = useScenarioCollectionsData(mapId);
+  const { data, isLoading } = useInstanceCollectionsData(mapId);
   const navigate = useNavigate();
   const notify = useSnackbarAction();
 
-  const actions = useDataGridActions<ScenarioCollection>({
+  const actions = useDataGridActions<InstanceCollection>({
     items: [
       {
         name: "Analyse this dataset",
@@ -65,7 +65,7 @@ export default function Table() {
     ],
   });
 
-  const columns: GridColDef<ScenarioCollection>[] = [
+  const columns: GridColDef<InstanceCollection>[] = [
     {
       field: "Icon",
       width: 48,

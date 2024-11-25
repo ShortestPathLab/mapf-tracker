@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { find, map } from "lodash";
 import {
   Benchmark,
-  CollectionWithInstances,
-  Scenario,
-  ScenarioCollection,
+  CollectionWithInstanceCount,
+  Instance as Instance,
+  InstanceCollection,
 } from "core/types";
 import { APIConfig } from "core/config";
 import { json } from "./query";
 
-const incorporateProportions = <T extends CollectionWithInstances>(
+const incorporateProportions = <T extends CollectionWithInstanceCount>(
   item: T
 ) => ({
   ...item,
@@ -27,22 +27,31 @@ export const useBenchmarksData = () =>
       ),
   });
 
-export const useScenarioCollectionsData = (id: number | string) =>
+export const useInstanceCollectionsData = (id: number | string) =>
   useQuery({
-    queryKey: ["scenarioCollections", id],
+    queryKey: ["instanceCollections", id],
     queryFn: async () =>
       map(
-        await json<ScenarioCollection[]>(
+        await json<InstanceCollection[]>(
           `${APIConfig.apiUrl}/scenario/map/${id}`
         ),
         incorporateProportions
       ),
     enabled: !!id,
   });
-export const useScenarioCollectionData = (id: number | string) =>
+
+export const useScenarioData = (id: number | string) =>
   useQuery({
-    queryKey: ["scenarioCollection", id],
-    queryFn: () => json<Scenario[]>(`${APIConfig.apiUrl}/instance/${id}`),
+    queryKey: ["scenario", id],
+    queryFn: () =>
+      json<InstanceCollection>(`${APIConfig.apiUrl}/scenario/id/${id}`),
+    enabled: !!id,
+  });
+
+export const useInstanceCollectionData = (id: number | string) =>
+  useQuery({
+    queryKey: ["instanceCollection", id],
+    queryFn: () => json<Instance[]>(`${APIConfig.apiUrl}/instance/${id}`),
     enabled: !!id,
   });
 
@@ -51,6 +60,15 @@ export const useBenchmarkData = (id: string = "") => {
   return useQuery({
     queryKey: ["benchmarks", id],
     queryFn: () => find(data, { map_name: id }) || null,
+    enabled: !!data,
+  });
+};
+
+export const useMapData = (id: string = "") => {
+  const { data } = useBenchmarksData();
+  return useQuery({
+    queryKey: ["benchmarks", id],
+    queryFn: () => find(data, { id }) || null,
     enabled: !!data,
   });
 };

@@ -1,7 +1,7 @@
 import { mapValues, round, sumBy } from "lodash";
-import { CollectionWithInstances } from "core/types";
+import { CollectionWithInstanceCount } from "core/types";
 
-export const aggregateInstances = <T extends CollectionWithInstances>(
+export const aggregateInstances = <T extends CollectionWithInstanceCount>(
   c: T[]
 ) => ({
   collection: c,
@@ -11,7 +11,7 @@ export const aggregateInstances = <T extends CollectionWithInstances>(
 });
 
 export const getInstanceAggregateProportions = <
-  T extends CollectionWithInstances
+  T extends CollectionWithInstanceCount
 >(
   c: ReturnType<typeof aggregateInstances> & { collection: T[] }
 ) => ({

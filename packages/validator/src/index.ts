@@ -12,3 +12,4 @@ export * from "./core/Point";
 export * from "./core/Check";
 export * from "./core/Chunk";
 export * from "./validate";
+export * from "./encode";

@@ -15,7 +15,7 @@ export const queryClient =
   <V extends z.ZodType>(
     validate: V = z.any() as any,
     query: (b: z.infer<V>) => FilterQuery<T> = () => ({}),
-    handler: (q: Document<T>[]) => Promise<any> = async (q) => q
+    handler: (q: (Document<T> & T)[]) => Promise<any> = async (q) => q
   ): RequestHandler<z.infer<V>> =>
   async (req, res) => {
     const { success, data, error } = await validate.safeParseAsync(req.params);
@@ -31,12 +31,12 @@ export const queryClient =
     }
   };
 
-export const route = <T extends z.ZodTypeAny, R>(
-  validate: T,
-  f: (data: z.infer<T>) => Promise<R>
+export const route = <T extends z.ZodType, R>(
+  validate: T = z.any() as any,
+  f: (data: z.infer<T>) => Promise<R | undefined> = async () => undefined
 ): RequestHandler<z.infer<T>, {}, R> => {
   return async (req, res) => {
-    const { success, data, error } = await validate.safeParseAsync(req.params);
+    const { success, data, error } = await validate.safeParseAsync(req.body);
     if (!success) return res.status(400).json(error.format());
     try {
       const out = await f(data);

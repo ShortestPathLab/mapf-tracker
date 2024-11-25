@@ -6,6 +6,7 @@ import {
   findById,
   deleteById,
   finalise,
+  status,
 } from "../controllers/ongoingSubmission";
 
 export default (app: Application) => {
@@ -16,6 +17,6 @@ export default (app: Application) => {
   router.get("/:apiKey", findByApiKey);
   router.get("/finalise/:key", finalise);
   router.post("/create", create);
-
+  router.post("/status", status);
   app.use("/api/ongoing_submission", router);
 };

@@ -1,6 +1,21 @@
+import { once } from "lodash";
+
 type WorkerConstructor = () => Worker;
 
 type WorkerResult = { result: any } | { error: any };
+
+export const usingWorkerReusable = <R>(w: WorkerConstructor) => {
+  const getWorker = once(w);
+  return async (task: (w: Worker) => Promise<R>) => {
+    const worker = getWorker();
+    const out = (await task(worker)) as WorkerResult;
+    if ("error" in out) {
+      console.error(out.error);
+      throw new Error(out.error);
+    }
+    return out.result as R;
+  };
+};
 
 export const usingWorker =
   <R>(w: WorkerConstructor) =>
@@ -15,10 +30,11 @@ export const usingWorker =
     return out.result as R;
   };
 
-export const usingWorkerTask =
+const a =
+  (u = usingWorker) =>
   <T, R>(w: WorkerConstructor) =>
   (inp: T) =>
-    usingWorker<R>(w)((worker) => {
+    u<R>(w)((worker) => {
       worker.postMessage(inp);
       return new Promise<R>((res, rej) => {
         worker.onmessage = (out) => {
@@ -30,6 +46,10 @@ export const usingWorkerTask =
         };
       });
     });
+
+export const usingWorkerTask = a(usingWorker);
+
+export const usingWorkerTaskReusable = a(usingWorkerReusable);
 
 export const usingMessageHandler =
   <T, U>(f: (a: MessageEvent<T>) => Promise<U>) =>

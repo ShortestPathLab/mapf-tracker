@@ -7,35 +7,23 @@ const schema = createSchema(
       type: String,
       required: true,
     },
-    mapId: {
+    instance: {
       type: Schema.Types.ObjectId,
-      ref: "maps",
+      ref: "instances",
       required: true,
     },
-    scenarioId: {
-      type: Schema.Types.ObjectId,
-      ref: "scenarios",
-      required: true,
-    },
-    index: Number,
-    lowerCost: Number,
-    solutionCost: Number,
-    solutionPath: String,
+    lowerBound: Number,
+    cost: Number,
+    solutions: [String],
     validation: {
       isValidationRun: Schema.Types.Boolean,
       errors: [String],
       outcome: String,
     },
-    agentCountIntent: Number,
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
-schema.index({
-  apiKey: "text",
-  mapId: "text",
-  scenarioId: "text",
-  agentCountIntent: 1,
-});
+schema.index({});
 
 export const model = createModel("ongoing_submission", schema);

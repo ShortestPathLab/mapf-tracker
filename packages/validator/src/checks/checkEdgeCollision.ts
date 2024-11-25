@@ -14,14 +14,18 @@ export function checkEdgeCollision({
     .value();
   const collision = find(
     next.map((c, i) => [c, i] as const),
-    ([p, agent]) => {
-      // Check if next was previously occupied by a tile.
-      // No need to check if current agent is moving, the logic is the same.
-      if ($(p) in hashes) {
+    ([nextPosition, agent]) => {
+      // Check if the tile was previously occupied
+      if (
+        // Tile was previously occupied
+        $(nextPosition) in hashes &&
+        // Tile wasn't itself
+        hashes[$(nextPosition)].agent !== agent
+      ) {
         // If the tile was previously occupied,
-        // the agent in that tile MUST have moved in the same
-        // direction as the current agent.
-        return actions[agent] !== hashes[$(p)].action;
+        // the agent must not have moved backwards into the same tile.
+        const previousOccupant = hashes[$(nextPosition)];
+        return $(next[previousOccupant.agent]) === $(prev[agent]);
       } else {
         return false;
       }
@@ -30,12 +34,15 @@ export function checkEdgeCollision({
 
   if (collision) {
     const [p, i] = collision;
+    const conflict = hashes[$(p)];
     return {
       errorAgents: [i],
       errors: [
-        `agent-to-agent edge collision, agent ${i}, at timestep ${timestep}, ${$(
-          p
-        )}`,
+        `agent-to-agent edge collision, agent ${i}, at timestep ${timestep}, from ${$(
+          prev[i]
+        )} to ${$(p)}, with agent ${conflict.agent}, from ${$(
+          conflict.point
+        )} to ${$(next[conflict.agent])}`,
       ],
     };
   } else {

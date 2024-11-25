@@ -1,6 +1,20 @@
+import { addBusinessDays } from "date-fns";
 import { RequestHandler } from "express";
+import { first } from "lodash";
 import { Infer, Instance, Scenario } from "models";
 import { Types } from "mongoose";
+import { queryClient } from "query";
+import { z } from "zod";
+
+const query = queryClient(Instance);
+
+export const findById = query(
+  z.object({ id: z.string() }),
+  ({ id }) => ({
+    _id: new Types.ObjectId(id),
+  }),
+  first
+);
 
 export const findAll: RequestHandler = (req, res) => {
   Instance.find({})

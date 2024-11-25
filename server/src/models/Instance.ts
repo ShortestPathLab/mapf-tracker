@@ -4,7 +4,6 @@ const schema = createSchema({
   map_id: { type: Schema.Types.ObjectId, ref: "map" },
   scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
   agents: Number,
-
   lower_cost: Number,
   lower_algos: [
     {
@@ -14,7 +13,6 @@ const schema = createSchema({
     },
   ],
   lower_date: String,
-
   solution_cost: Number,
   solution_algos: [
     {

@@ -1,6 +1,7 @@
-import csvToJson from "convert-csv-to-json";
-import { load } from "js-yaml";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import { loadAll } from "js-yaml";
+import { head, mapValues } from "lodash";
+import csv from "neat-csv";
 
 export const yamlParser = (
   req: Request,
@@ -15,7 +16,8 @@ export const yamlParser = (
     });
     req.on("end", () => {
       try {
-        req.body = load(data);
+        const a = loadAll(data);
+        req.body = a.length > 1 ? a : head(a);
         next();
       } catch (e) {
         res.status(400).send("Invalid YAML format");
@@ -37,12 +39,24 @@ export const csvParser = (
     req.on("data", (chunk) => {
       data += chunk;
     });
-    req.on("end", () => {
+    req.on("end", async () => {
       try {
-        req.body = csvToJson.getJsonFromCsv(data);
+        req.body = (await csv(data)).map((x) =>
+          mapValues(x, (v: any) =>
+            // Coerce boolean
+            v === "TRUE"
+              ? true
+              : v === "FALSE"
+              ? false
+              : // Coerce number
+              isNaN(+v)
+              ? v
+              : +v
+          )
+        );
         next();
       } catch (e) {
-        res.status(400).send("CSV");
+        res.status(400).send("Invalid CSV format");
       }
     });
     return;

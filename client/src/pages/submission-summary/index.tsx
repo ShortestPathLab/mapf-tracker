@@ -3,8 +3,12 @@ import {
   InfoOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
-import { Button, Chip, Divider, Typography } from "@mui/material";
-import { DataGrid, useDataGridActions } from "components/data-grid";
+import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
+import {
+  DataGrid,
+  DataGridTitle,
+  useDataGridActions,
+} from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
 import { ConfirmDialog } from "components/dialog/Modal";
@@ -30,7 +34,14 @@ import { Actions } from "./Actions";
 import GenericDetailsList from "./GenericDetailsList";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
-
+import {
+  useBenchmarkData,
+  useInstanceCollectionData,
+  useScenarioData,
+  useMapData,
+} from "queries/useBenchmarksQuery";
+import { useInstanceData } from "queries/useInstanceQuery";
+import pluralize, { plural } from "pluralize";
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key.";
 
@@ -39,7 +50,6 @@ export default function SubmissionSummaryPage() {
   const { data } = useOngoingSubmissionQuery(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
   const { mutate: deleteEntry } = useDeleteOngoingSubmissionMutation(apiKey);
-  const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finalise submission",
@@ -90,12 +100,12 @@ export default function SubmissionSummaryPage() {
       fold: true,
     },
     {
-      field: "agentCountIntent",
-      headerName: "Agent count",
-      width: 140,
+      field: "instance",
+      headerName: "Instance",
+      width: 280,
       sortable: true,
+      renderCell: ({ row }) => <InstanceLabel instanceId={row.instance} />,
     },
-    { field: "index", headerName: "Agent index", width: 140, sortable: true },
     {
       field: "createdAt",
       headerName: "Submitted",
@@ -217,5 +227,26 @@ export default function SubmissionSummaryPage() {
       </Button>
       {dialog}
     </Layout>
+  );
+}
+
+export function InstanceLabel({ instanceId }: { instanceId: string }) {
+  const { data: instance } = useInstanceData(instanceId);
+  const { data: map } = useMapData(instance?.map_id);
+  const { data: scenario } = useScenarioData(instance?.scen_id);
+  return (
+    <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+      <Box
+        component="img"
+        sx={{ borderRadius: 1, height: 48 }}
+        src={`/mapf-svg/${map?.map_name}.svg`}
+      />
+      <DataGridTitle
+        primary={startCase(map?.map_name ?? "-")}
+        secondary={`${startCase(scenario?.scen_type ?? "-")}-${
+          scenario?.type_id ?? "-"
+        }, ${pluralize("agent", instance?.agents ?? 0, true)}`}
+      />
+    </Stack>
   );
 }

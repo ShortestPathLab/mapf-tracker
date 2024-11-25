@@ -11,13 +11,13 @@ import {
 } from "components/analysis/useAlgorithmSelector";
 import { capitalize, chain, keyBy, map, slice } from "lodash";
 import { scenarioMetrics } from "core/metrics";
-import { useScenarioCollectionData } from "queries/useBenchmarksQuery";
+import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
 import { Bar, BarChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
 
 export function LowerBoundChart({ scenario }: { scenario: string | number }) {
   const { palette } = useTheme();
-  const { data, isLoading } = useScenarioCollectionData(scenario);
+  const { data, isLoading } = useInstanceCollectionData(scenario);
   return (
     <Chart
       isLoading={isLoading}

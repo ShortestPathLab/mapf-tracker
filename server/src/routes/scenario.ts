@@ -8,5 +8,6 @@ export default (app: Application) => {
   router.get("/map/:id", scen.findByMap_id);
   router.get("/map/:id/:scen_type", scen.findByMap_id_Map_type);
   router.get("/:id", scen.findById);
+  router.get("/id/:id", scen.findById);
   app.use("/api/scenario", router);
 };

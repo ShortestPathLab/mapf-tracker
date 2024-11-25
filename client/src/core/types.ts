@@ -1,4 +1,4 @@
-export type CollectionWithInstances = {
+export type CollectionWithInstanceCount = {
   instances: number;
   instances_closed: number;
   instances_solved: number;
@@ -19,18 +19,20 @@ export type Benchmark = {
   scens: number;
   original_link?: string;
   papers?: string;
-} & CollectionWithInstances &
+} & CollectionWithInstanceCount &
   CollectionWithProportions;
 
-export type ScenarioCollection = {
+export type InstanceCollection = {
   type_id: number;
   scen_type: string;
   map_id: string;
-} & CollectionWithInstances;
+} & CollectionWithInstanceCount;
 
-export type Scenario = {
+export type Instance = {
   agents: number;
   id: string;
+  map_id: string;
+  scen_id: string;
   lower_algos: number;
   lower_cost: number;
   lower_date: string;

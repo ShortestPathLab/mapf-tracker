@@ -15,10 +15,15 @@ export type ValidationOutcome = {
 
 export type OngoingSubmission = {
   id: string;
-  index: number;
   createdAt: string;
+  lowerBound: string;
+  cost: string;
+  instance: string;
+  apiKey: string;
+  updatedAt: string;
   validation: ValidationOutcome;
 };
+
 const QUERY_KEY = "ongoingSubmission";
 
 export function useFinaliseOngoingSubmissionMutation(key: string | number) {
