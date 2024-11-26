@@ -1,4 +1,4 @@
-import { usingMessageHandler } from "queue/usingWorker";
+import { usingTaskMessageHandler } from "queue/usingWorker";
 import {
   Instance,
   Map,
@@ -28,7 +28,7 @@ export const pathSchema = (newline: boolean = false) =>
   z
     .string()
     .regex(
-      newline ? /^([lrudw\n]|[0-9])*$/ : /^([lrudw]|[0-9])*$/,
+      newline ? /^[lruwd0-9\r\n]*$/ : /^[lruwd0-9]*$/,
       "Should only contain `l`, `r`, `u`, `d`, `w`"
     );
 
@@ -63,7 +63,7 @@ export const submissionSchema = submissionBaseSchema
     ...v,
     solution_plan:
       typeof solution_plan === "string"
-        ? solution_plan.split("\n")
+        ? solution_plan.split(/\r\n|\r|\n/)
         : solution_plan,
   }))
   .transform(({ agent_count, ...v }, ctx) => {
@@ -189,8 +189,8 @@ export type SubmissionRequestValidatorWorkerResult =
     };
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingMessageHandler<
+  self.onmessage = usingTaskMessageHandler<
     unknown,
     SubmissionRequestValidatorWorkerResult
-  >(({ data }) => run(data));
+  >(run);
 }

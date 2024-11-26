@@ -5,8 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "bun test",
-    "build": "bun build index.ts --outdir lib",
-    "postinstall": "bun run build"
+    "build": "bun build index.ts --outdir lib"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +18,7 @@
   "exports": {
     ".": {
       "types": "./index.ts",
-      "import": "./lib/index.js"
+      "import": "./index.ts"
     }
   }
 }

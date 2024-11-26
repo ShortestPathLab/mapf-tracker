@@ -1,8 +1,11 @@
 import { now, omitBy } from "lodash";
 
-export type ResultTicketStatus =
+export type ResultTicketStatus = (
   | { status: "error"; error: any }
-  | { status: "done"; result: any };
+  | { status: "done"; result: any }
+) & {
+  message?: any;
+};
 
 export type TicketStatus = (ResultTicketStatus | { status: "pending" }) & {
   dateReceived: number;
@@ -30,3 +33,11 @@ export const withTicket =
   };
 
 export type TicketPool = { tickets: { [K in string]: TicketStatus } };
+
+export function createPool() {
+  const pool = { tickets: {} };
+  return {
+    pool,
+    withTicket: withTicket(pool),
+  };
+}

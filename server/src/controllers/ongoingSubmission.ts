@@ -1,14 +1,14 @@
 import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
-import { map, now, omitBy, pick } from "lodash";
+import { map, pick } from "lodash";
 import { context } from "logging";
 import { OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
 import { Types } from "mongoose";
 import { queryClient, route } from "query";
 import { usingWorkerTask } from "queue/usingWorker";
-import { TicketPool, withTicket, ResultTicketStatus } from "utils/ticket";
+import { createPool, ResultTicketStatus } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import {
   apiKeySchema,
@@ -18,13 +18,9 @@ import {
 } from "validation/submissionRequestValidatorWorker";
 import { z } from "zod";
 
-const ongoingSubmissionTickets: TicketPool = { tickets: {} };
-
-const withOngoingSubmissionTicket = withTicket(ongoingSubmissionTickets);
-
 const log = context("Submission Controller");
 
-const { add } = await createSubmissionValidator({ workerCount: 32 });
+const { add } = await createSubmissionValidator({ workerCount: 16 });
 
 // ─── Query Handlers ──────────────────────────────────────────────────────────
 
@@ -104,21 +100,27 @@ const processSubmission = async (d: unknown): Promise<ResultTicketStatus> => {
     for (const { apiKey, submissionId } of result.ids) {
       add({ apiKey, submissionId });
     }
-    return { status: "done", result: { count: result.ids.length } };
+    return {
+      status: "done",
+      message: "Submission received, we will begin automated validation soon.",
+      result: { count: result.ids.length },
+    };
   } else {
     log.info("Submission did not parse schema validation", result.error);
     return { status: "error", error: result.error };
   }
 };
 
+const submissionTickets = createPool();
+
 export const status = route(
   z.object({ ticket: z.string() }),
   async ({ ticket }) =>
-    ongoingSubmissionTickets[ticket] || { status: "unknown" }
+    submissionTickets.pool.tickets[ticket] || { status: "unknown" }
 );
 
 export const create = route(z.any(), async (d) => {
   const key = randomUUIDv7();
-  withOngoingSubmissionTicket(key, () => processSubmission(d));
+  submissionTickets.withTicket(key, () => processSubmission(d));
   return { message: "submission received", ticket: key };
 });

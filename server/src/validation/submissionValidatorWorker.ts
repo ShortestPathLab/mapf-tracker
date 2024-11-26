@@ -18,7 +18,7 @@ import {
   validate,
 } from "validator";
 import { connectToDatabase } from "../connection";
-import { usingMessageHandler } from "../queue/usingWorker";
+import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
@@ -182,10 +182,7 @@ export async function run(data: SubmissionValidatorData): Promise<{
     outcome: Outcome;
   };
 }> {
-  log.info(
-    "Received job",
-    pick(data, "apiKey", "mapId", "scenarioId", "agentCountIntent")
-  );
+  log.info("Received job");
   await connect();
   try {
     const { submissionId, mode } = data;
@@ -228,7 +225,5 @@ export async function run(data: SubmissionValidatorData): Promise<{
 export const path = import.meta.path;
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingMessageHandler<SubmissionValidatorData, any>(
-    ({ data }) => run(data)
-  );
+  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>(run);
 }

@@ -1,6 +1,6 @@
 import { connectToDatabase } from "connection";
 import { stages } from "../aggregations";
-import { usingMessageHandler } from "../queue/usingWorker";
+import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { PipelineTaskData, PipelineTaskResult } from "./PipelineTaskData";
 import { set } from "models/PipelineStatus";
 import { now } from "lodash";
@@ -24,7 +24,5 @@ async function run({
 export const path = import.meta.path;
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingMessageHandler<PipelineTaskData, any>(({ data }) =>
-    run(data)
-  );
+  self.onmessage = usingTaskMessageHandler<PipelineTaskData, any>(run);
 }

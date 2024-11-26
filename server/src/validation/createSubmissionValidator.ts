@@ -1,13 +1,9 @@
 import { times } from "lodash";
-import { SubmissionValidatorData } from "./SubmissionValidatorData";
-import {
-  usingWorkerReusable,
-  usingWorkerTask,
-  usingWorkerTaskReusable,
-} from "../queue/usingWorker";
-import { path } from "./submissionValidatorWorker";
 import stringHash from "string-hash";
 import { createPair } from "../queue/createPair";
+import { usingWorkerTaskReusable } from "../queue/usingWorker";
+import { SubmissionValidatorData } from "./SubmissionValidatorData";
+import { path } from "./submissionValidatorWorker";
 
 const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(
   () => new Worker(path)
@@ -31,9 +27,7 @@ export const createSubmissionValidator = async ({
   );
   return {
     add: (data: SubmissionValidatorData) => {
-      instances[id(data) % workerCount].server.queue.add("validate", data, {
-        lifo: true,
-      });
+      instances[id(data) % workerCount].server.queue.add("validate", data);
     },
     instances,
     close: async () => {
