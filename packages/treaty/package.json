@@ -1,0 +1,22 @@
+{
+  "name": "treaty",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "bun test",
+    "build": "bun build index.ts --outdir lib"
+  },
+  "dependencies": {
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    }
+  }
+}
