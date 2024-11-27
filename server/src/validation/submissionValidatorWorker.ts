@@ -20,6 +20,14 @@ import {
 import { connectToDatabase } from "../connection";
 import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
+import _memoize, { Options } from "p-memoize";
+
+import memoize from "memoizee";
+
+const memoizeAsync = _memoize as <T extends (...arg0: any[]) => Promise<any>>(
+  t: T,
+  opts?: Options<T, string>
+) => T;
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -67,12 +75,25 @@ function createSolutionCostChecker(expected: number = 0) {
   ] as const;
 }
 
+const contentCacheKey = ([{ map, scenario }]: [
+  { map: Infer<typeof Map>; scenario: Infer<typeof Scenario> }
+]): string => `${map}::${scenario}`;
+
+const findInstance = memoizeAsync((id: string) => Instance.findById(id));
+const findMap = memoizeAsync((id: string) => Map.findById(id));
+const findScenario = memoizeAsync((id: string) => Scenario.findById(id));
+
+const getMapMemo = memoizeAsync(getMap, { cacheKey: contentCacheKey });
+const getScenarioMemo = memoizeAsync(getScenario, {
+  cacheKey: contentCacheKey,
+});
+
 async function getMeta(instanceId: Types.ObjectId) {
-  const instance = await Instance.findById(instanceId);
-  const map = await Map.findById(instance.map_id);
-  const scenario = await Scenario.findById(instance.scen_id);
-  const mapContent = await getMap({ map, scenario });
-  const scenarioContent = await getScenario({ map, scenario });
+  const instance = await findInstance(instanceId.toString());
+  const map = await findMap(instance.map_id.toString());
+  const scenario = await findScenario(instance.scen_id.toString());
+  const mapContent = await getMapMemo({ map, scenario });
+  const scenarioContent = await getScenarioMemo({ map, scenario });
   return { map, scenario, mapContent, scenarioContent };
 }
 
@@ -191,6 +212,9 @@ function logOutcome(
 
 const connect = once(() => connectToDatabase());
 
+const parseMapMemo = memoize(parseMap);
+const parseScenarioMemo = memoize(parseScenarioMeta);
+
 export async function run(data: SubmissionValidatorData): Promise<{
   result: {
     errors?: string[];
@@ -211,8 +235,8 @@ export async function run(data: SubmissionValidatorData): Promise<{
       scenario: scenarioMeta,
     } = await getMeta(submission.instance);
 
-    const cells = parseMap(map);
-    const { sources, goals, width, height } = parseScenarioMeta(scenario);
+    const cells = parseMapMemo(map);
+    const { sources, goals, width, height } = parseScenarioMemo(scenario);
 
     log.info(
       `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${scenarioMeta.type_id}, agent count ${submission.solutions.length}.`
