@@ -1,5 +1,6 @@
 import { LinearProgress, Stack, Tooltip, Typography } from "@mui/material";
 import { round, floor, find, map, sumBy, head } from "lodash";
+import { ReactNode } from "react";
 
 const formatValue = (v: number) =>
   v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%";
@@ -41,9 +42,11 @@ const easeCircle = "cubic-bezier(0.16, 1, 0.3, 1)";
 export const Bar = ({
   values,
   buffer,
+  label,
 }: {
   values?: { color: string; value: number; label: string; primary?: boolean }[];
   buffer?: boolean;
+  label?: ReactNode;
 }) => {
   const primary = find(values, "primary") ?? head(values);
   const slack = 1 - sumBy(values, "value");
@@ -61,7 +64,8 @@ export const Bar = ({
           <Tooltip title={`${label}: ${round(value * 100, 4)}%`}>
             <LinearProgress
               sx={{
-                transition: `flex 0.3s ${easeCircle}`,
+                bgcolor: "transparent",
+                transition: `flex 2s ${easeCircle}`,
                 flex: value,
                 "> .MuiLinearProgress-bar": { bgcolor: color },
               }}
@@ -72,14 +76,23 @@ export const Bar = ({
         ))}
         {slack > 0 && (
           <LinearProgress
-            sx={{ flex: slack, transition: `flex 0.3s ${easeCircle}` }}
+            sx={{ flex: slack, transition: `flex 2s ${easeCircle}` }}
             value={0}
+            valueBuffer={0}
             variant={buffer ? "buffer" : "determinate"}
           />
         )}
       </Stack>
-      <Typography variant="overline" sx={{ width: 32, textAlign: "right" }}>
-        {formatValue(primary?.value)}
+      <Typography
+        variant="overline"
+        sx={{
+          width: 32,
+          textAlign: "right",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        {label ?? formatValue(primary?.value)}
       </Typography>
     </Stack>
   );

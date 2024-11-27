@@ -108,7 +108,7 @@ export function SubmissionKeyRequestForm({
               disabled={disabled}
               as={Autocomplete}
               autoCompleteProps={{
-                defaultValue: state.initialValues.requesterAffilation,
+                defaultValue: state.initialValues?.requesterAffilation,
                 freeSolo: true,
                 options,
                 getOptionDisabled: (o) => o === DISABLED_OPTION,

@@ -26,6 +26,7 @@ export function TreeDataGrid<T extends GridValidRowModel>({
   expanded = defaultExpanded,
   onExpandedChange = defaultExpandedChange,
   shouldIncludeItem = defaultShouldIncludeItem,
+  onRowClick,
   ...props
 }: DataGridProps<T> & {
   onExpandedChange?: (u: BooleanMap) => void;
@@ -48,9 +49,11 @@ export function TreeDataGrid<T extends GridValidRowModel>({
       clickable
       rows={allRows}
       shouldIncludeItem={defaultShouldIncludeItem}
-      onRowClick={({ id, row }) =>
-        getChildren?.(row)?.length && onExpandedChange?.(toggle(expanded, id))
-      }
+      onRowClick={(props, e, d) => {
+        const { row, id } = props;
+        getChildren?.(row)?.length && onExpandedChange?.(toggle(expanded, id));
+        onRowClick?.(props, e, d);
+      }}
     />
   );
 }

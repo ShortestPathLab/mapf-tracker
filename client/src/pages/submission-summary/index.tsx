@@ -1,50 +1,20 @@
-import {
-  DeleteOutlined,
-  FileDownloadOutlined,
-  InfoOutlined,
-  RouteOutlined,
-} from "@mui/icons-material";
-import { Box, Button, Chip, Divider, Stack, Typography } from "@mui/material";
-import {
-  DataGrid,
-  DataGridTitle,
-  useDataGridActions,
-} from "components/data-grid";
-import { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog } from "components/dialog";
+import { Button, Chip, Divider, Typography } from "@mui/material";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { FlatCard } from "components/FlatCard";
-import { IconCard } from "components/IconCard";
 import { format, isBefore, parseISO } from "date-fns";
 import { useDialog } from "hooks/useDialog";
 import { useLocationState } from "hooks/useNavigation";
 import { Layout } from "layout";
-import { capitalize, filter, now, startCase, sumBy } from "lodash";
+import { now, startCase, sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
-  deleteAll,
-  OngoingSubmission,
-  useDeleteOngoingSubmissionMutation,
   useFinaliseOngoingSubmissionMutation,
-  useOngoingSubmissionQuery,
   useOngoingSubmissionSummaryQuery,
-  ValidationOutcome,
 } from "queries/useOngoingSubmissionQuery";
-import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
-import { cloneElement } from "react";
 import { Actions } from "./Actions";
-import GenericDetailsList from "./GenericDetailsList";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
-import {
-  useBenchmarkData,
-  useInstanceCollectionData,
-  useScenarioData,
-  useMapData,
-} from "queries/useBenchmarksQuery";
-import { useInstanceData } from "queries/useInstanceQuery";
-import pluralize, { plural } from "pluralize";
 import SummaryTable from "./SummaryTable";
 
 const hintText =
@@ -58,25 +28,6 @@ export default function SubmissionSummaryPage() {
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finalise submission",
     padded: true,
-  });
-
-  const actions = useDataGridActions<OngoingSubmission>({
-    items: [
-      {
-        name: "Details",
-        icon: <InfoOutlined />,
-        render: (row, trigger) => (
-          <Dialog
-            slotProps={{ modal: { width: 720 } }}
-            title="Submission details"
-            padded
-            trigger={(onClick) => cloneElement(trigger, { onClick })}
-          >
-            <GenericDetailsList data={row} sx={{ m: -2 }} />
-          </Dialog>
-        ),
-      },
-    ],
   });
 
   const keyStatus = apiKeyData
@@ -128,10 +79,14 @@ export default function SubmissionSummaryPage() {
         summaryStats={[
           { name: "Submitted", count: sumBy(data?.maps, "count.total") },
           {
-            name: "Validation run",
+            name: "Running",
+            count: sumBy(data?.maps, "count.queued"),
+          },
+          {
+            name: "Run",
             count:
               sumBy(data?.maps, "count.valid") +
-              sumBy(data?.maps, "count.error"),
+              sumBy(data?.maps, "count.invalid"),
           },
           {
             name: "Valid",
@@ -139,7 +94,11 @@ export default function SubmissionSummaryPage() {
           },
           {
             name: "Failed",
-            count: sumBy(data?.maps, "count.error"),
+            count: sumBy(data?.maps, "count.invalid"),
+          },
+          {
+            name: "Duplicate",
+            count: sumBy(data?.maps, "count.outdated"),
           },
         ]}
         detailStats={[]}

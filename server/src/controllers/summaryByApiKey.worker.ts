@@ -1,5 +1,5 @@
 import { connectToDatabase } from "connection";
-import { chain, head, memoize, once } from "lodash";
+import { chain, countBy, head, memoize, once } from "lodash";
 import { Instance, Map, OngoingSubmission, Scenario } from "models";
 import { Types } from "mongoose";
 import { usingTaskMessageHandler } from "queue/usingWorker";
@@ -24,11 +24,11 @@ const run = async (params: unknown) => {
     return { submission: d, scenario, map };
   });
   const count = (c: typeof submissions) => ({
-    outdated: c.filter((d) => d.submission.validation.outcome === "outdated")
-      .length,
-    valid: c.filter((d) => d.submission.validation.outcome === "valid").length,
-    error: c.filter((d) => d.submission.validation.outcome === "invalid")
-      .length,
+    valid: 0,
+    invalid: 0,
+    queued: 0,
+    outdated: 0,
+    ...countBy(c, (d) => d.submission.validation.outcome),
     total: c.length,
   });
   const maps = chain(submissions)

@@ -12,6 +12,7 @@ import {
   Popover,
   PopoverProps,
   Stack,
+  SwipeableDrawer,
   Toolbar,
   Typography,
   useTheme,
@@ -53,7 +54,7 @@ export type Props = {
   actions?: ReactNode;
   width?: string | number;
   height?: string | number;
-  variant?: "default" | "submodal";
+  variant?: "default" | "submodal" | "drawer";
   scrollable?: boolean;
 };
 
@@ -220,7 +221,7 @@ export default function Modal({
   actions,
   width = 480,
   height,
-  variant = "default",
+  variant = "drawer",
   scrollable = true,
   ...props
 }: Props & ComponentProps<typeof Dialog>) {
@@ -269,7 +270,7 @@ export default function Modal({
 
   const useVariant = variant === "submodal" && sm;
 
-  return (
+  return sm || variant !== "drawer" ? (
     <Dialog
       fullScreen={sm}
       {...props}
@@ -338,6 +339,26 @@ export default function Modal({
       </Scroll>
       {actions}
     </Dialog>
+  ) : (
+    <SwipeableDrawer
+      anchor="right"
+      open={props.open}
+      onClose={() => props.onClose?.({}, "backdropClick")}
+      onOpen={() => {}}
+    >
+      <Scroll
+        y
+        style={{
+          backgroundColor: theme.palette.background.default,
+          height: "100%",
+          minWidth: 320,
+          maxWidth: `min(90vw, ${width}px)`,
+          overflow: scrollable ? undefined : "hidden",
+        }}
+      >
+        {content}
+      </Scroll>
+    </SwipeableDrawer>
   );
 }
 

@@ -32,7 +32,13 @@ const id = customAlphabet("1234567890");
 
 const log = context(`Validation Worker ${id(6)}`);
 
-type Outcome = "valid" | "skipped" | "invalid" | "error" | "outdated";
+type Outcome =
+  | "valid"
+  | "skipped"
+  | "invalid"
+  | "error"
+  | "outdated"
+  | "queued";
 
 type OngoingSubmissionDocument = Document<
   unknown,
@@ -115,6 +121,14 @@ async function validateGroup({
   submission: OngoingSubmissionDocument;
   mode?: SubmissionValidatorData["mode"];
 }) {
+  await submission
+    .set(validationResultsKey, {
+      isValidationRun: false,
+      errors: [],
+      outcome: "queued" satisfies Outcome,
+    } satisfies OngoingSubmission[typeof validationResultsKey])
+    .save();
+
   const count = submission.solutions.length;
 
   const errors: string[] = [];

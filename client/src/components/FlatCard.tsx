@@ -5,7 +5,7 @@ import { useSm } from "./dialog/useSmallDisplay";
 export function FlatCard({ children, ...props }: BoxProps & CardProps) {
   const sm = useSm() || true;
   return sm ? (
-    <Box {...props} sx={{ m: -2, bgcolor: "background.default", ...props.sx }}>
+    <Box {...props} sx={{ m: -2, ...props.sx }}>
       {children}
     </Box>
   ) : (

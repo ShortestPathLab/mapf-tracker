@@ -64,7 +64,8 @@ export type SummaryByApiKeyResult = {
     count: {
       outdated: number;
       valid: number;
-      error: number;
+      invalid: number;
+      queued: number;
       total: number;
     };
     scenarios: {
@@ -74,7 +75,8 @@ export type SummaryByApiKeyResult = {
       count: {
         outdated: number;
         valid: number;
-        error: number;
+        invalid: number;
+        queued: number;
         total: number;
       };
     }[];

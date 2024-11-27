@@ -1,20 +1,33 @@
-import { ChevronRight, DeleteOutlined } from "@mui/icons-material";
-import { Box, Skeleton, Stack, useTheme } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
 import {
-  Bar,
-  cellRendererBar,
-  DataGridTitle,
-  useDataGridActions,
-} from "components/data-grid";
+  ChevronRight,
+  CloseOutlined,
+  DeleteOutlined,
+  DoneOutlined,
+  DoNotDisturbOutlined,
+  PendingOutlined,
+} from "@mui/icons-material";
+import {
+  alpha,
+  Box,
+  capitalize,
+  CircularProgress,
+  Skeleton,
+  Stack,
+  useTheme,
+} from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { Bar, DataGridTitle, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import Enter from "components/dialog/Enter";
+import { FlatCard } from "components/FlatCard";
 import {
   TreeDataGrid,
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { SummaryByApiKeyResult } from "core/types";
-import { map, startCase, times } from "lodash";
+import { format, parseISO } from "date-fns";
+import { DialogContentProps, useDialog } from "hooks/useDialog";
+import { isNumber, isUndefined, join, map, startCase, times } from "lodash";
 import pluralize from "pluralize";
 import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
@@ -25,6 +38,8 @@ import {
   useOngoingSubmissionScenarioQuery,
   useOngoingSubmissionSummaryQuery,
 } from "queries/useOngoingSubmissionQuery";
+import { ReactNode } from "react";
+import GenericDetailsList from "./GenericDetailsList";
 
 type Models = {
   map: SummaryByApiKeyResult["maps"][0];
@@ -76,8 +91,45 @@ const useDeleteOngoingSubmissionMutation1 = (apiKey?: string | number) => {
   });
 };
 
+function DetailsDialog({
+  index,
+  scenarioId,
+  apiKey,
+}: SubmissionInstanceProps & DialogContentProps) {
+  const { data: scenario } = useScenarioData(scenarioId);
+  return (
+    <SubmissionInstanceContext
+      {...{ index, scenarioId, apiKey }}
+      render={({ instance, submission, isLoading }) =>
+        isLoading ? (
+          <CircularProgress />
+        ) : (
+          <Stack sx={{ gap: 2 }}>
+            <MapLabel mapId={scenario?.map_id} />
+            <ScenarioLabel scenarioId={scenarioId} />
+            <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+              <Box sx={{ width: 48 }} />
+              <DataGridTitle
+                primary={pluralize("agent", instance?.agents, true)}
+                secondary="Instance"
+              />
+            </Stack>
+            <FlatCard>
+              <GenericDetailsList data={submission} />
+            </FlatCard>
+          </Stack>
+        )
+      }
+    />
+  );
+}
+
 export default function Table({ apiKey }: { apiKey?: string | number }) {
   const theme = useTheme();
+  const { dialog, open } = useDialog(DetailsDialog, {
+    title: "Submission details",
+    padded: true,
+  });
   const { data, isLoading } = useOngoingSubmissionSummaryQuery(apiKey);
   const { mutateAsync: deleteEntry } =
     useDeleteOngoingSubmissionMutation1(apiKey);
@@ -106,23 +158,28 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     ],
   });
 
+  const total = (row: Models["map"] | Models["scenario"]) =>
+    row.count.total - row.count.outdated;
+
   const bar = (row: Models["map"] | Models["scenario"]) => (
     <Bar
+      buffer
       values={[
         {
-          color: "success.main",
-          value: row.count.valid / row.count.total,
-          label: "Invalid",
-        },
-        {
-          color: "error.main",
-          value: row.count.error / row.count.total,
+          color:
+            row.count.valid === total(row) ? "success.main" : "primary.main",
+          value: row.count.valid / total(row),
           label: "Valid",
         },
         {
-          color: theme.palette.divider,
-          value: row.count.outdated / row.count.total,
-          label: "Ignored",
+          color: "error.main",
+          value: row.count.invalid / total(row),
+          label: "Invalid",
+        },
+        {
+          color: alpha(theme.palette.primary.main, 0.4),
+          value: row.count.queued / total(row),
+          label: "Running",
         },
       ]}
     />
@@ -163,59 +220,204 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     },
     {
       field: "count.valid",
-      headerName: "Progress",
+      headerName: "Validity",
       type: "number",
-      align: "center",
-      headerAlign: "center",
       renderCell: ({ row }) =>
         disambiguate(row, {
           map: bar,
           scenario: bar,
+          instance: (row) => (
+            // (
+            //   <SubmissionInstanceContext
+            //     apiKey={apiKey}
+            //     scenarioId={row.scenario}
+            //     index={row.index}
+            //     render={({ submission, isLoading }) => (
+            //       <Typography variant="body2">
+            //         {isLoading ? (
+            //           "-"
+            //         ) : (
+            //           <Chip
+            //             label={capitalize(submission?.validation?.outcome)}
+            //             color={
+            //               {
+            //                 outdated: "default",
+            //                 valid: "success",
+            //                 invalid: "error",
+            //               }[submission?.validation?.outcome] ?? ("warning" as any)
+            //             }
+            //           />
+            //         )}
+            //       </Typography>
+            //     )}
+            //   />
+            // )
+            <SubmissionInstanceContext
+              apiKey={apiKey}
+              scenarioId={row.scenario}
+              index={row.index}
+              render={({ submission, isLoading }) => (
+                <Bar
+                  label={
+                    {
+                      valid: <DoneOutlined color="success" fontSize="small" />,
+                      invalid: <CloseOutlined color="error" fontSize="small" />,
+                      outdated: (
+                        <DoNotDisturbOutlined
+                          color="disabled"
+                          fontSize="small"
+                        />
+                      ),
+                      queued: (
+                        <PendingOutlined color="primary" fontSize="small" />
+                      ),
+                    }[submission?.validation?.outcome] ?? (
+                      <PendingOutlined color="action" fontSize="small" />
+                    )
+                  }
+                  buffer
+                  values={[
+                    {
+                      valid: {
+                        color: "success.main",
+                        value: 1,
+                        label: "Valid",
+                      },
+                      invalid: {
+                        color: "error.main",
+                        value: 1,
+                        label: "Invalid",
+                      },
+                      queued: {
+                        color: alpha(theme.palette.primary.main, 0.4),
+                        value: 1,
+                        label: "Running",
+                      },
+                      outdated: {
+                        color: "action.disabled",
+                        value: 1,
+                        label: "Unused - duplicate",
+                      },
+                      loading: {
+                        value: 1,
+                        color: "text.secondary",
+                        label: "Pending",
+                      },
+                    }[
+                      isLoading ? "loading" : submission?.validation?.outcome
+                    ] ?? {
+                      color: "success.main",
+                      value: 0,
+                      label: "Pending",
+                    },
+                  ]}
+                />
+              )}
+            />
+          ),
+        }),
+      fold: false,
+      width: 300,
+    },
+    {
+      field: "info",
+      headerName: "Info",
+      type: "number",
+      renderCell: ({ row }) =>
+        disambiguate(row, {
+          instance: (row) => (
+            <SubmissionInstanceContext
+              apiKey={apiKey}
+              scenarioId={row.scenario}
+              index={row.index}
+              render={({ isLoading, submission, instance }) =>
+                isLoading ? (
+                  ""
+                ) : (
+                  <Box
+                    sx={{
+                      overflow: "hidden",
+                      width: " 100%",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {submission?.validation?.isValidationRun &&
+                    submission?.validation?.outcome !== "outdated"
+                      ? submission?.validation?.errors?.length
+                        ? capitalize(join(submission?.validation?.errors, ", "))
+                        : isNumber(instance?.solution_cost)
+                        ? instance.solution_cost > submission.cost
+                          ? `New record (${submission.cost} to ${instance.solution_cost})`
+                          : `Dominated (${submission.cost} to ${instance.solution_cost})`
+                        : `New record (${submission.cost}, no previous claims)`
+                      : ""}
+                  </Box>
+                )
+              }
+            />
+          ),
         }),
       fold: true,
-      width: 300,
+      width: 380,
     },
     actions,
   ];
 
   return (
-    <TreeDataGrid
-      getChildren={(row) =>
-        disambiguate(row, {
-          map: (row) => row.scenarios,
-          scenario: (row) =>
-            times(row.count.total, (i) => ({
-              id: `${row.id}-${i}`,
-              scenario: row.id,
-              index: i,
-            })),
-          instance: () => [],
-        })
-      }
-      clickable
-      expanded={expanded}
-      onExpandedChange={setExpanded}
-      isLoading={isLoading}
-      columns={columns}
-      rows={data?.maps}
-    />
+    <>
+      <TreeDataGrid
+        getChildren={(row) =>
+          disambiguate(row, {
+            map: (row) => row.scenarios,
+            scenario: (row) =>
+              times(row.count.total, (i) => ({
+                id: `${row.id}-${i}`,
+                scenario: row.id,
+                index: i,
+              })),
+            instance: () => [],
+          })
+        }
+        clickable
+        onRowClick={({ row }) =>
+          disambiguate(row, {
+            instance: (row) =>
+              open({
+                apiKey,
+                index: row.index,
+                scenarioId: row.scenario,
+              }),
+          })
+        }
+        expanded={expanded}
+        onExpandedChange={setExpanded}
+        isLoading={isLoading}
+        columns={columns}
+        rows={data?.maps}
+      />
+      {dialog}
+    </>
   );
 }
 
-export function MapLabel({ mapId, count }: { mapId: string; count: number }) {
+export function MapLabel({ mapId, count }: { mapId: string; count?: number }) {
   const { data: map } = useMapData(mapId);
   return (
-    <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-      <Box
-        component="img"
-        sx={{ borderRadius: 1, height: 48 }}
-        src={`/mapf-svg/${map?.map_name}.svg`}
-      />
-      <DataGridTitle
-        primary={startCase(map?.map_name ?? "-")}
-        secondary={pluralize("item", count, true)}
-      />
-    </Stack>
+    <Enter in axis="x">
+      <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+        <Box
+          component="img"
+          sx={{ borderRadius: 1, height: 48 }}
+          src={`/mapf-svg/${map?.map_name}.svg`}
+        />
+        <DataGridTitle
+          primary={startCase(map?.map_name ?? "-")}
+          secondary={
+            isUndefined(count) ? "Map" : pluralize("item", count, true)
+          }
+        />
+      </Stack>
+    </Enter>
   );
 }
 
@@ -224,7 +426,7 @@ export function ScenarioLabel({
   count,
 }: {
   scenarioId: string;
-  count: number;
+  count?: number;
 }) {
   const { data } = useScenarioData(scenarioId);
   return (
@@ -235,21 +437,26 @@ export function ScenarioLabel({
           primary={`${startCase(data?.scen_type ?? "-")}-${
             data?.type_id ?? "-"
           }`}
-          secondary={pluralize("item", count, true)}
+          secondary={
+            isUndefined(count) ? "Scenario" : pluralize("item", count, true)
+          }
         />
       </Stack>
     </Enter>
   );
 }
-export function SubmissionInstanceLabel({
-  apiKey,
-  scenarioId,
-  index,
-}: {
+
+type SubmissionInstanceProps = {
   apiKey?: string | number;
   scenarioId: string;
   index: number;
-}) {
+};
+
+function useSubmissionInstance({
+  apiKey,
+  scenarioId,
+  index,
+}: SubmissionInstanceProps) {
   const { data: submissions, isLoading: isSubmissionLoading } =
     useOngoingSubmissionScenarioQuery(apiKey, scenarioId);
   const submission = submissions?.[index];
@@ -257,27 +464,77 @@ export function SubmissionInstanceLabel({
     submission?.instance
   );
   const isLoading = isSubmissionLoading || isInstanceLoading;
+  return {
+    isLoading,
+    isSubmissionLoading,
+    isInstanceLoading,
+    submissions,
+    instance,
+    submission,
+  };
+}
+
+function SubmissionInstanceContext({
+  apiKey,
+  scenarioId,
+  index,
+  render,
+}: SubmissionInstanceProps & {
+  render: (r: ReturnType<typeof useSubmissionInstance>) => ReactNode;
+}) {
+  const r = useSubmissionInstance({ apiKey, scenarioId, index });
+  return render(r);
+}
+
+export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
   return (
-    <Enter in axis="x">
-      <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-        <Box sx={{ width: 48 }} />
-        <DataGridTitle
-          primary={
-            isLoading ? (
-              <Skeleton sx={{ width: 120 }} />
-            ) : (
-              `Submission ${submission?.id?.slice(-8)}`
-            )
-          }
-          secondary={
-            isLoading ? (
-              <Skeleton sx={{ width: 80 }} />
-            ) : (
-              pluralize("agent", instance?.agents ?? 0, true)
-            )
-          }
-        />
-      </Stack>
-    </Enter>
+    <SubmissionInstanceContext
+      {...props}
+      render={({ isLoading, submission, instance }) => (
+        <Enter in axis="x">
+          <Stack
+            direction="row"
+            sx={{
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ width: 48 }} />
+            <DataGridTitle
+              primary={
+                isLoading ? (
+                  <Skeleton sx={{ width: 120 }} />
+                ) : (
+                  <Box
+                    component="span"
+                    sx={{
+                      textDecoration:
+                        submission?.validation?.outcome === "outdated"
+                          ? "line-through"
+                          : undefined,
+                    }}
+                  >
+                    {pluralize("agent", instance?.agents ?? 0, true)}
+                  </Box>
+                )
+              }
+              secondary={
+                !isLoading && submission?.createdAt ? (
+                  <>
+                    {format(
+                      parseISO(submission?.createdAt),
+                      "yyyy MMM dd HH:mm:ss aaa"
+                    )}
+                    , <code>{submission?.id?.slice(-8)}</code>
+                  </>
+                ) : (
+                  <Skeleton sx={{ width: 80 }} />
+                )
+              }
+            />
+          </Stack>
+        </Enter>
+      )}
+    />
   );
 }

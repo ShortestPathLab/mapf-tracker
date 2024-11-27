@@ -60,10 +60,12 @@ export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
   const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
     title: "Log in",
+    slotProps: { modal: { variant: "default" } },
     padded: true,
   });
   const { open: showUserDialog, dialog: userDialog } = useDialog(UserDialog, {
     title: "Account info",
+    slotProps: { modal: { variant: "default" } },
     padded: true,
   });
   const { data: credentials } = useCredentials();

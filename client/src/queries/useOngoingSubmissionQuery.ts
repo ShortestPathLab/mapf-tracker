@@ -18,8 +18,8 @@ export type ValidationOutcome = {
 export type OngoingSubmission = {
   id: string;
   createdAt: string;
-  lowerBound: string;
-  cost: string;
+  lowerBound: number;
+  cost: number;
   instance: string;
   apiKey: string;
   updatedAt: string;
