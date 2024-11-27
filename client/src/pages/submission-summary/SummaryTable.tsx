@@ -4,12 +4,15 @@ import {
   DeleteOutlined,
   DoneOutlined,
   DoNotDisturbOutlined,
+  HourglassEmptyOutlined,
   PendingOutlined,
+  RouteOutlined,
 } from "@mui/icons-material";
 import {
   alpha,
   Box,
   capitalize,
+  Chip,
   CircularProgress,
   Skeleton,
   Stack,
@@ -40,6 +43,7 @@ import {
 } from "queries/useOngoingSubmissionQuery";
 import { ReactNode } from "react";
 import GenericDetailsList from "./GenericDetailsList";
+import { IconCard } from "components/IconCard";
 
 type Models = {
   map: SummaryByApiKeyResult["maps"][0];
@@ -269,10 +273,16 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                         />
                       ),
                       queued: (
-                        <PendingOutlined color="primary" fontSize="small" />
+                        <HourglassEmptyOutlined
+                          color="primary"
+                          fontSize="small"
+                        />
                       ),
                     }[submission?.validation?.outcome] ?? (
-                      <PendingOutlined color="action" fontSize="small" />
+                      <HourglassEmptyOutlined
+                        color="disabled"
+                        fontSize="small"
+                      />
                     )
                   }
                   buffer
@@ -316,7 +326,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             />
           ),
         }),
-      fold: false,
+      fold: true,
       width: 300,
     },
     {
@@ -365,6 +375,11 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
 
   return (
     <>
+      <Stack sx={{ p: 2, gap: 1 }} direction="row">
+        {["Valid", "Invalid", "Duplicate", "All"].map((c) => (
+          <Chip label={c} variant="outlined" onClick={() => {}} />
+        ))}
+      </Stack>
       <TreeDataGrid
         getChildren={(row) =>
           disambiguate(row, {
@@ -432,7 +447,9 @@ export function ScenarioLabel({
   return (
     <Enter in axis="x">
       <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-        <Box sx={{ width: 48 }} />
+        <Stack sx={{ width: 48, alignItems: "center" }}>
+          <IconCard icon={<RouteOutlined />} />
+        </Stack>
         <DataGridTitle
           primary={`${startCase(data?.scen_type ?? "-")}-${
             data?.type_id ?? "-"
@@ -520,13 +537,7 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
               }
               secondary={
                 !isLoading && submission?.createdAt ? (
-                  <>
-                    {format(
-                      parseISO(submission?.createdAt),
-                      "yyyy MMM dd HH:mm:ss aaa"
-                    )}
-                    , <code>{submission?.id?.slice(-8)}</code>
-                  </>
+                  format(parseISO(submission?.createdAt), "MMM dd HH:mm aaa")
                 ) : (
                   <Skeleton sx={{ width: 80 }} />
                 )

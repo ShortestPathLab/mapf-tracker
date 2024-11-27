@@ -40,7 +40,11 @@ export function ReviewRequestDialog({
   const notify = useSnackbar();
   const { open: showConfirmation, dialog: confirmationDialog } = useDialog(
     ConfirmNotifyDialog,
-    { padded: true, title: "Respond to request" }
+    {
+      padded: true,
+      slotProps: { modal: { variant: "default" } },
+      title: "Respond to request",
+    }
   );
   const { mutateAsync: updateRequest } = useRequestsUpdateMutation();
   return (

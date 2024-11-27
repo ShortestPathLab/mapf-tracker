@@ -123,6 +123,7 @@ export default function Table() {
   return (
     <DataGrid
       clickable
+      search
       isLoading={isLoading}
       columns={columns}
       rows={data}

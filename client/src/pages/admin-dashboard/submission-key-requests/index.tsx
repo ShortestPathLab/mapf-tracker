@@ -24,13 +24,17 @@ export default function index() {
     ReviewRequestDialog,
     {
       title: "Review submission key request",
-      slotProps: { modal: { width: 1200 } },
+      slotProps: { modal: { width: 1200, variant: "default" } },
       padded: true,
     }
   );
   const { open: showConfirmation, dialog: confirmationDialog } = useDialog(
     ConfirmNotifyDialog,
-    { padded: true, title: "Respond to request" }
+    {
+      padded: true,
+      slotProps: { modal: { variant: "default" } },
+      title: "Respond to request",
+    }
   );
 
   const actions = useDataGridActions<RequestWithReviewOutcome>({

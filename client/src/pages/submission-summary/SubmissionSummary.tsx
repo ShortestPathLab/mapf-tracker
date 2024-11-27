@@ -18,6 +18,8 @@ import {
 } from "./defaults";
 import { paper } from "theme";
 import { Grid } from "layout";
+import { AnimateInteger } from "components/AnimateInteger";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 export type Props = {
   extras?: ReactNode;
@@ -36,6 +38,7 @@ export default function SubmissionSummary({
   detailStats = defaultDetails,
   children,
 }: Props) {
+  const sm = useSm();
   return (
     <>
       <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
@@ -49,12 +52,14 @@ export default function SubmissionSummary({
           gap: 4,
           mt: 2,
           borderRadius: 1,
+          p: sm ? 2 : 3,
+          ...paper(1),
         }}
       >
         {summaryStats.map(({ name, count }) => (
-          <Stack sx={{ gap: 1 }}>
+          <Stack sx={{ gap: 0.5 }}>
             <Typography variant="h4" component="h2">
-              {count}
+              <AnimateInteger value={count} />
             </Typography>
             <Typography color="text.secondary">{name}</Typography>
           </Stack>

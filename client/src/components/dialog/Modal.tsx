@@ -341,6 +341,9 @@ export default function Modal({
     </Dialog>
   ) : (
     <SwipeableDrawer
+      disableSwipeToOpen
+      SlideProps={{ mountOnEnter: true, unmountOnExit: true }}
+      keepMounted={false}
       anchor="right"
       open={props.open}
       onClose={() => props.onClose?.({}, "backdropClick")}
@@ -356,7 +359,15 @@ export default function Modal({
           overflow: scrollable ? undefined : "hidden",
         }}
       >
-        {content}
+        <div
+          ref={(e) => setContentRef(e)}
+          style={{
+            width: "100%",
+            height: sm ? "100%" : undefined,
+          }}
+        >
+          {content}
+        </div>
       </Scroll>
     </SwipeableDrawer>
   );

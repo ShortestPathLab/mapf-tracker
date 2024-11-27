@@ -7,7 +7,7 @@ import { isString, isUndefined } from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
 
-const REFETCH_MS = 2000;
+const REFETCH_MS = 500;
 
 export type ValidationOutcome = {
   isValidationRun: boolean;

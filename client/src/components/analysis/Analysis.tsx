@@ -64,7 +64,7 @@ export function AnalysisButton({
   const single = template.length == 1;
   return single ? (
     <Dialog
-      slotProps={{ modal: { width: 1600 } }}
+      slotProps={{ modal: { width: 1600, variant: "default" } }}
       appBar={{ children: <Title>{head(template).name}</Title> }}
       trigger={(onClick) => button(onClick)}
     >
@@ -90,7 +90,7 @@ export function AnalysisButton({
             <MenuList>
               {map(template, ({ icon, name, variants }, index) => (
                 <Dialog
-                  slotProps={{ modal: { width: 1600 } }}
+                  slotProps={{ modal: { width: 1600, variant: "default" } }}
                   appBar={{ children: <Title>{name}</Title> }}
                   trigger={(onClick) => (
                     <MenuItem

@@ -93,7 +93,7 @@ export default function SubmissionSummaryPage() {
             count: sumBy(data?.maps, "count.valid"),
           },
           {
-            name: "Failed",
+            name: "Invalid",
             count: sumBy(data?.maps, "count.invalid"),
           },
           {

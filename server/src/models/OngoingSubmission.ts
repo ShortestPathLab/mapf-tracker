@@ -6,6 +6,7 @@ const schema = createSchema(
     apiKey: {
       type: String,
       required: true,
+      index: true,
     },
     instance: {
       type: Schema.Types.ObjectId,

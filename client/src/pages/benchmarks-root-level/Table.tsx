@@ -11,10 +11,10 @@ import {
   useDataGridActions,
 } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog } from "components/dialog";
 import { IconCard } from "components/IconCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { Benchmark } from "core/types";
+import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import { capitalize, startCase } from "lodash";
 import { analysisTemplate } from "pages/benchmarks-map-level/analysisTemplate";
@@ -24,12 +24,24 @@ import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import BenchmarkDetails from "./BenchmarkDetails";
 import { downloadBenchmarks, downloadBenchmarksResultsCSV } from "./download";
-import { formatPercentage } from "utils/format";
+
+function Details({ mapName }: { mapName: string }) {
+  return (
+    <Box sx={{ m: -2 }}>
+      <BenchmarkDetails benchmark={mapName} />
+    </Box>
+  );
+}
 
 export default function Table() {
   const { data, isLoading } = useBenchmarksData();
   const navigate = useNavigate();
   const notify = useSnackbarAction();
+  const { dialog, open } = useDialog(Details, {
+    slotProps: { modal: { width: 720 } },
+    padded: true,
+    title: "Benchmark details",
+  });
 
   const actions = useDataGridActions<Benchmark>({
     items: [
@@ -46,18 +58,7 @@ export default function Table() {
       {
         name: "Details",
         icon: <InfoOutlined />,
-        render: (row, trigger) => (
-          <Dialog
-            slotProps={{ modal: { width: 720 } }}
-            title="Benchmark details"
-            padded
-            trigger={(onClick) => cloneElement(trigger, { onClick })}
-          >
-            <Box sx={{ m: -2 }}>
-              <BenchmarkDetails benchmark={row.map_name} />
-            </Box>
-          </Dialog>
-        ),
+        action: (row) => open({ mapName: row.map_name }),
       },
     ],
     menuItems: [
@@ -164,17 +165,21 @@ export default function Table() {
   ];
 
   return (
-    <DataGrid
-      clickable
-      isLoading={isLoading}
-      columns={columns}
-      rows={data}
-      onRowClick={({ row }) => {
-        navigate<MapLevelLocationState>("/scenarios", {
-          mapId: row.id,
-          mapName: row.map_name,
-        });
-      }}
-    />
+    <>
+      <DataGrid
+        search
+        clickable
+        isLoading={isLoading}
+        columns={columns}
+        rows={data}
+        onRowClick={({ row }) => {
+          navigate<MapLevelLocationState>("/scenarios", {
+            mapId: row.id,
+            mapName: row.map_name,
+          });
+        }}
+      />
+      {dialog}
+    </>
   );
 }

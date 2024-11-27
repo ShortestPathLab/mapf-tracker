@@ -1,14 +1,16 @@
 import { connectToDatabase } from "connection";
-import { chain, countBy, head, memoize, once } from "lodash";
-import { Instance, Map, OngoingSubmission, Scenario } from "models";
-import { Types } from "mongoose";
+import { chain, countBy, head, once } from "lodash";
+import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
+import _memoize from "p-memoize";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { asyncMap } from "utils/waitMap";
 import { z } from "zod";
 
-const findInstance = memoize((id: Types.ObjectId) => Instance.findById(id));
-const findMap = memoize((id: Types.ObjectId) => Map.findById(id));
-const findScenario = memoize((id: Types.ObjectId) => Scenario.findById(id));
+const memoize = _memoize as <T>(t: T) => T;
+
+const findInstance = memoize((id: string) => Instance.findById(id));
+const findMap = memoize((id: string) => Map.findById(id));
+const findScenario = memoize((id: string) => Scenario.findById(id));
 
 export const path = import.meta.path;
 
@@ -16,11 +18,22 @@ const connect = once(connectToDatabase);
 
 const run = async (params: unknown) => {
   const data = z.object({ apiKey: z.string() }).parse(params);
-  const docs = await OngoingSubmission.find({ apiKey: data.apiKey });
+  const docs: Pick<
+    Infer<typeof OngoingSubmission>,
+    "validation" | "instance"
+  >[] = await OngoingSubmission.aggregate([
+    { $match: { apiKey: data.apiKey } },
+    {
+      $project: {
+        validation: 1,
+        instance: 1,
+      },
+    },
+  ]);
   const submissions = await asyncMap(docs, async (d) => {
-    const instance = await findInstance(d.instance);
-    const scenario = await findScenario(instance.scen_id);
-    const map = await findMap(scenario.map_id);
+    const instance = await findInstance(d.instance.toString());
+    const scenario = await findScenario(instance.scen_id.toString());
+    const map = await findMap(scenario.map_id.toString());
     return { submission: d, scenario, map };
   });
   const count = (c: typeof submissions) => ({

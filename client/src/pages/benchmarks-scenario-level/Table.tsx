@@ -153,6 +153,7 @@ export default function Table() {
 
   return (
     <DataGrid
+      search
       clickable
       isLoading={isLoading}
       columnGroupingModel={[

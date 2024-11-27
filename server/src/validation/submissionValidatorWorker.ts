@@ -162,7 +162,8 @@ async function validateGroup({
 
   logOutcome(errors, errorAgents, mode);
 
-  await saveResults(submission, errors);
+  // Don't have to wait to save results
+  saveResults(submission, errors);
   return { errors };
 }
 

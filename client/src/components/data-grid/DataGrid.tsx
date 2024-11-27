@@ -45,6 +45,7 @@ export type DataGridProps<T extends GridValidRowModel> = MuiDataGridProps<T> & {
   isLoading?: ReactNode;
   shouldIncludeItem?: (p: T, s: string) => boolean;
   clickable?: boolean;
+  search?: boolean;
 } & {
   columns: GridColDef<T>[];
 };
@@ -55,6 +56,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
   rows,
   extras,
   shouldIncludeItem = includeItemByFuzzyJSONString,
+  search,
   isLoading,
   ...rest
 }: DataGridProps<T>) {
@@ -64,33 +66,34 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
 
   return (
     <Stack>
-      {sm ? (
-        // Spacing for mobile mode
-        <Box sx={{ p: 1 }} />
-      ) : (
-        <Stack
-          sx={{ p: 2, gap: 2 }}
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <TextField
-            variant="filled"
-            label="Search items"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            sx={{ width: "100%" }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchOutlined />
-                </InputAdornment>
-              ),
-            }}
-          />
-          {extras && <Stack>{extras}</Stack>}
-        </Stack>
-      )}
+      {search &&
+        (sm ? (
+          // Spacing for mobile mode
+          <Box sx={{ p: 1 }} />
+        ) : (
+          <Stack
+            sx={{ p: 2, gap: 2 }}
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <TextField
+              variant="filled"
+              label="Search items"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              sx={{ width: "100%" }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchOutlined />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            {extras && <Stack>{extras}</Stack>}
+          </Stack>
+        ))}
       {isLoading ? (
         <CircularProgress sx={{ mx: "auto", mt: 2, mb: 4 }} />
       ) : (
