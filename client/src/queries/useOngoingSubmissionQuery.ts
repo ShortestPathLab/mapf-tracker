@@ -2,7 +2,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
-import { del } from "queries/mutation";
+import { SummaryByApiKeyResult } from "core/types";
+import { isString, isUndefined } from "lodash";
+import { del, post } from "queries/mutation";
 import { json } from "queries/query";
 
 const REFETCH_MS = 2000;
@@ -56,20 +58,55 @@ export function useOngoingSubmissionQuery(key?: string | number) {
   });
 }
 
+export const ongoingSubmissionScenarioQueryFn = (
+  key: string | number,
+  scenario: string | number
+) =>
+  json<OngoingSubmission[]>(
+    `${APIConfig.apiUrl}/ongoing_submission/scenario/${key}/${scenario}`
+  );
+
+export function useOngoingSubmissionScenarioQuery(
+  key?: string | number,
+  scenario?: string | number
+) {
+  return useQuery({
+    queryKey: [QUERY_KEY, key, scenario],
+    queryFn: () => ongoingSubmissionScenarioQueryFn(key, scenario),
+    enabled: !!key && !!scenario,
+    refetchInterval: REFETCH_MS,
+  });
+}
+export function useOngoingSubmissionSummaryQuery(key?: string | number) {
+  return useQuery({
+    queryKey: [QUERY_KEY, "summary", key],
+    queryFn: () =>
+      json<SummaryByApiKeyResult>(
+        `${APIConfig.apiUrl}/ongoing_submission/summary/${key}`
+      ),
+    enabled: !!key,
+    refetchInterval: REFETCH_MS,
+  });
+}
+
+export const deleteAll = Symbol("Delete all entries");
+
 export function useDeleteOngoingSubmissionMutation(key: string | number) {
   const notify = useSnackbar();
   return useMutation({
     mutationKey: ["deleteOngoingSubmission"],
-    mutationFn: (k: string) =>
-      del(`${APIConfig.apiUrl}/ongoing_submission/id/${k}`),
+    mutationFn: (k: string | string[] | typeof deleteAll) =>
+      k === deleteAll
+        ? del(`${APIConfig.apiUrl}/ongoing_submission/`)
+        : post(`${APIConfig.apiUrl}/ongoing_submission/delete`, { id: k }),
     onMutate: (k) => {
       client.cancelQueries({ queryKey: [QUERY_KEY, key] });
       client.setQueryData<OngoingSubmission[]>([QUERY_KEY, key], (old) =>
-        old.filter((x) => x.id !== k)
+        old?.filter?.((x) => x.id !== k)
       );
     },
     onSettled: async () => {
-      notify("Entry deleted");
+      notify("Selection deleted");
       return await client.invalidateQueries({
         queryKey: [QUERY_KEY, key],
       });

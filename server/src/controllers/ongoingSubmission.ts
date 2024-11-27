@@ -1,22 +1,27 @@
 import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
+import { RequestHandler } from "express";
 import { map, pick } from "lodash";
 import { context } from "logging";
-import { OngoingSubmission } from "models";
+import { Instance, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
 import { Types } from "mongoose";
 import { queryClient, route } from "query";
-import { usingWorkerTask } from "queue/usingWorker";
+import { usingWorkerTask, usingWorkerTaskReusable } from "queue/usingWorker";
 import { createPool, ResultTicketStatus } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import {
   apiKeySchema,
   getKey,
-  path,
   SubmissionRequestValidatorWorkerResult,
+  path as validateSubmissionRequestWorkerPath,
 } from "validation/submissionRequestValidatorWorker";
 import { z } from "zod";
+import {
+  SummaryByApiKeyResult,
+  path as summaryByApiKeyWorkerPath,
+} from "./summaryByApiKey.worker";
 
 const log = context("Submission Controller");
 
@@ -24,7 +29,7 @@ const { add } = await createSubmissionValidator({ workerCount: 16 });
 
 // ─── Query Handlers ──────────────────────────────────────────────────────────
 
-const query = queryClient(OngoingSubmission);
+const { query, aggregate } = queryClient(OngoingSubmission);
 
 /**
  * Get all submissions
@@ -59,15 +64,87 @@ export const findByApiKey = query(
     )
 );
 
+const summaryByApiKeyWorker = usingWorkerTaskReusable<
+  unknown,
+  SummaryByApiKeyResult
+>(() => new Worker(summaryByApiKeyWorkerPath));
+
+export const summaryByApiKey: RequestHandler<
+  {},
+  unknown,
+  { apiKey: string }
+> = async (req, res) => {
+  res.json(await summaryByApiKeyWorker(req.params));
+};
+
+const joinedData = "joinedData";
+
+export const findByScenario = aggregate(
+  z.object({ apiKey: z.string(), scenario: z.string() }),
+  ({ apiKey, scenario }) => [
+    { $match: { apiKey: { $eq: apiKey } } },
+    {
+      $lookup: {
+        from: Instance.collection.collectionName,
+        localField: "instance",
+        foreignField: "_id",
+        as: joinedData,
+      },
+    },
+    {
+      $match: {
+        [`${joinedData}.scen_id`]: new Types.ObjectId(scenario),
+      },
+    },
+    { $addFields: { id: { $toString: "$_id" } } },
+    { $project: { [joinedData]: 0 } },
+  ],
+  async (docs) => {
+    return map(docs, (d) =>
+      pick(d, [
+        "id",
+        "createdAt",
+        "lowerBound",
+        "cost",
+        "instance",
+        "apiKey",
+        "updatedAt",
+        "validation",
+      ])
+    );
+  }
+);
+
+export const instanceByApiKey = undefined;
+
 /**
  * Delete by id
+ * TODO: FIX BEFORE LAUNCH Require auth or api key
  */
-export const deleteById = query(
-  z.object({ id: z.string() }),
-  ({ id }) => new Types.ObjectId(id),
-  async (docs) => {
-    for (const d of docs) await d.deleteOne();
-    return { count: 1 };
+export const deleteById = route(
+  z.object({
+    id: z
+      .string()
+      .or(z.string().array())
+      .transform((c) => (typeof c === "string" ? [c] : c)),
+  }),
+  async ({ id }) => {
+    const out = await OngoingSubmission.deleteMany({
+      _id: { $in: id },
+    });
+
+    return { count: out.deletedCount };
+  }
+);
+
+/**
+ * Delete by api key
+ */
+export const deleteByApiKey = route(
+  z.object({ apiKey: z.string() }),
+  async ({ apiKey }) => {
+    const out = await OngoingSubmission.deleteMany({ apiKey });
+    return { count: out.deletedCount };
   }
 );
 
@@ -90,7 +167,7 @@ export const finalise = route(
 const validateSubmissionRequestAsync = usingWorkerTask<
   unknown,
   SubmissionRequestValidatorWorkerResult
->(() => new Worker(path));
+>(() => new Worker(validateSubmissionRequestWorkerPath));
 
 const processSubmission = async (d: unknown): Promise<ResultTicketStatus> => {
   log.info("Validating submission with schema...");

@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 import { queryClient } from "query";
 import { z } from "zod";
 
-const query = queryClient(Scenario);
+const { query } = queryClient(Scenario);
 
 export const findById = query(
   z.object({ id: z.string() }),

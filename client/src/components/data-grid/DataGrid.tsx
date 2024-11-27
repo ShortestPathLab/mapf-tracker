@@ -40,6 +40,15 @@ function ButtonRow(props: GridRowProps) {
   );
 }
 
+export type DataGridProps<T extends GridValidRowModel> = MuiDataGridProps<T> & {
+  extras?: ReactNode;
+  isLoading?: ReactNode;
+  shouldIncludeItem?: (p: T, s: string) => boolean;
+  clickable?: boolean;
+} & {
+  columns: GridColDef<T>[];
+};
+
 export default function DataGrid<T extends GridValidRowModel = {}>({
   clickable,
   columns,
@@ -48,12 +57,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
   shouldIncludeItem = includeItemByFuzzyJSONString,
   isLoading,
   ...rest
-}: MuiDataGridProps<T> & {
-  extras?: ReactNode;
-  isLoading?: ReactNode;
-  shouldIncludeItem?: (p: T, s: string) => boolean;
-  clickable?: boolean;
-} & { columns: GridColDef<T>[] }) {
+}: DataGridProps<T>) {
   const sm = useSm();
   const center = useCss({ display: "flex", alignItems: "center" });
   const [input, setInput] = useState("");

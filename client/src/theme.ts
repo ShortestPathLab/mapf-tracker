@@ -20,7 +20,7 @@ export const theme = (t: "light" | "dark") =>
       mode: t,
       background:
         t === "light"
-          ? { default: "#f6f6f6", paper: "#ffffff" }
+          ? { default: "#ffffff", paper: "#ffffff" }
           : { default: "#111317", paper: "#17191d" },
     },
     shape: { borderRadius: 8 },

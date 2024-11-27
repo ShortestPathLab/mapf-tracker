@@ -11,6 +11,7 @@ import { encode } from "validator";
 import { RefinementCtx, z } from "zod";
 import { flatten } from "lodash";
 import { connectToDatabase } from "connection";
+import { waitMap } from "../utils/waitMap";
 
 export const getKey = async (
   api_key: string | undefined,
@@ -106,19 +107,6 @@ export const submissionSchema = submissionBaseSchema
     }
     return { ...v, solution_plan };
   });
-
-export async function waitMap<T, U>(
-  t: Iterable<T>,
-  f: (t: T, i: number) => Promise<U>
-) {
-  const out: U[] = [];
-  let i = 0;
-  for (const item of t) {
-    out.push(await f(item, i));
-    i++;
-  }
-  return out;
-}
 
 const submitOne = async (data: z.infer<typeof submissionSchema>) => {
   const id = { apiKey: data.key.api_key };

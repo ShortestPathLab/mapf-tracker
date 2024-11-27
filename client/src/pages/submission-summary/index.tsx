@@ -1,5 +1,6 @@
 import {
   DeleteOutlined,
+  FileDownloadOutlined,
   InfoOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
@@ -18,13 +19,15 @@ import { format, isBefore, parseISO } from "date-fns";
 import { useDialog } from "hooks/useDialog";
 import { useLocationState } from "hooks/useNavigation";
 import { Layout } from "layout";
-import { capitalize, filter, now, startCase } from "lodash";
+import { capitalize, filter, now, startCase, sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
+  deleteAll,
   OngoingSubmission,
   useDeleteOngoingSubmissionMutation,
   useFinaliseOngoingSubmissionMutation,
   useOngoingSubmissionQuery,
+  useOngoingSubmissionSummaryQuery,
   ValidationOutcome,
 } from "queries/useOngoingSubmissionQuery";
 import { useRequestData } from "queries/useRequestQuery";
@@ -42,14 +45,15 @@ import {
 } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import pluralize, { plural } from "pluralize";
+import SummaryTable from "./SummaryTable";
+
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key.";
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useLocationState<SubmissionLocationState>();
-  const { data } = useOngoingSubmissionQuery(apiKey);
+  const { data } = useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
-  const { mutate: deleteEntry } = useDeleteOngoingSubmissionMutation(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finalise submission",
@@ -73,13 +77,6 @@ export default function SubmissionSummaryPage() {
         ),
       },
     ],
-    menuItems: [
-      {
-        name: "Delete entry",
-        icon: <DeleteOutlined />,
-        action: (row) => deleteEntry(row.id),
-      },
-    ],
   });
 
   const keyStatus = apiKeyData
@@ -90,51 +87,6 @@ export default function SubmissionSummaryPage() {
       ? "in-progress"
       : "expired"
     : "unknown";
-
-  const columns: GridColDef<OngoingSubmission>[] = [
-    {
-      field: "Icon",
-      width: 48,
-      renderCell: () => <IconCard icon={<RouteOutlined />} />,
-      flex: 0,
-      fold: true,
-    },
-    {
-      field: "instance",
-      headerName: "Instance",
-      width: 280,
-      sortable: true,
-      renderCell: ({ row }) => <InstanceLabel instanceId={row.instance} />,
-    },
-    {
-      field: "createdAt",
-      headerName: "Submitted",
-      sortable: true,
-      width: 220,
-      valueFormatter: (c: string) =>
-        format(parseISO(c), "hh:mm aaa, dd MMM yyyy"),
-    },
-    {
-      field: "validation",
-      sortable: true,
-      headerName: "Status",
-      valueGetter: (c: ValidationOutcome) => c.outcome ?? "pending",
-      renderCell: ({ value }) => (
-        <Chip
-          label={capitalize(value)}
-          color={
-            {
-              outdated: "default",
-              valid: "success",
-              invalid: "error",
-            }[value] ?? "warning"
-          }
-        />
-      ),
-      width: 120,
-    },
-    actions,
-  ];
 
   return (
     <Layout
@@ -174,33 +126,27 @@ export default function SubmissionSummaryPage() {
           </>
         }
         summaryStats={[
-          { name: "Submitted", count: data?.length },
+          { name: "Submitted", count: sumBy(data?.maps, "count.total") },
           {
-            name: "Validated",
-            count: filter(data, (c) => c.validation?.isValidationRun)?.length,
+            name: "Validation run",
+            count:
+              sumBy(data?.maps, "count.valid") +
+              sumBy(data?.maps, "count.error"),
+          },
+          {
+            name: "Valid",
+            count: sumBy(data?.maps, "count.valid"),
           },
           {
             name: "Failed",
-            count: filter(data, (c) => c.validation?.errors?.length)?.length,
-          },
-          {
-            name: "Placeholder",
-            count: -1,
+            count: sumBy(data?.maps, "count.error"),
           },
         ]}
-        detailStats={[
-          {
-            name: "Placeholder",
-            stats: [
-              { name: "Placeholder", count: -1 },
-              { name: "Placeholder", count: -1 },
-              { name: "Placeholder", count: -1 },
-            ],
-          },
-        ]}
+        detailStats={[]}
       >
+        {/* <DataGrid clickable columns={columns} rows={data} /> */}
         <FlatCard>
-          <DataGrid columns={columns} rows={data} />
+          <SummaryTable apiKey={apiKey} />
         </FlatCard>
       </SubmissionSummary>
       <Button
@@ -227,26 +173,5 @@ export default function SubmissionSummaryPage() {
       </Button>
       {dialog}
     </Layout>
-  );
-}
-
-export function InstanceLabel({ instanceId }: { instanceId: string }) {
-  const { data: instance } = useInstanceData(instanceId);
-  const { data: map } = useMapData(instance?.map_id);
-  const { data: scenario } = useScenarioData(instance?.scen_id);
-  return (
-    <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-      <Box
-        component="img"
-        sx={{ borderRadius: 1, height: 48 }}
-        src={`/mapf-svg/${map?.map_name}.svg`}
-      />
-      <DataGridTitle
-        primary={startCase(map?.map_name ?? "-")}
-        secondary={`${startCase(scenario?.scen_type ?? "-")}-${
-          scenario?.type_id ?? "-"
-        }, ${pluralize("agent", instance?.agents ?? 0, true)}`}
-      />
-    </Stack>
   );
 }

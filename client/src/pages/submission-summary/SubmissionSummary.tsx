@@ -60,57 +60,59 @@ export default function SubmissionSummary({
           </Stack>
         ))}
       </Grid>
-      <Stack
-        sx={{
-          my: 4,
-          ...paper(),
-          border: "none",
-          boxShadow: "none",
-          "> *:not(:last-child)": {
-            borderBottom: (t) => `1px solid ${t.palette.divider}`,
-          },
-        }}
-      >
-        {detailStats.map(({ name, stats }) => (
-          <Accordion
-            disableGutters
-            sx={{
-              backdropFilter: "none",
-              boxShadow: "none",
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreOutlined />}
-              sx={{ py: 2 }}
-            >
-              <Typography sx={{ fontWeight: 500 }}>{name}</Typography>
-            </AccordionSummary>
-            <AccordionDetails
+      {!!detailStats?.length && (
+        <Stack
+          sx={{
+            my: 4,
+            ...paper(),
+            border: "none",
+            boxShadow: "none",
+            "> *:not(:last-child)": {
+              borderBottom: (t) => `1px solid ${t.palette.divider}`,
+            },
+          }}
+        >
+          {detailStats.map(({ name, stats }) => (
+            <Accordion
+              disableGutters
               sx={{
-                px: 0,
-                pb: 4,
+                backdropFilter: "none",
+                boxShadow: "none",
               }}
             >
-              <Stack
-                direction="row"
+              <AccordionSummary
+                expandIcon={<ExpandMoreOutlined />}
+                sx={{ py: 2 }}
+              >
+                <Typography sx={{ fontWeight: 500 }}>{name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails
                 sx={{
-                  justifyContent: "space-evenly",
-                  alignItems: "flex-start",
+                  px: 0,
+                  pb: 4,
                 }}
               >
-                {stats.map(({ name, count }) => (
-                  <Stack sx={{ gap: 1 }}>
-                    <Typography variant="h4" component="h2">
-                      {count}
-                    </Typography>
-                    <Typography color="text.secondary">{name}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </Stack>
+                <Stack
+                  direction="row"
+                  sx={{
+                    justifyContent: "space-evenly",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  {stats.map(({ name, count }) => (
+                    <Stack sx={{ gap: 1 }}>
+                      <Typography variant="h4" component="h2">
+                        {count}
+                      </Typography>
+                      <Typography color="text.secondary">{name}</Typography>
+                    </Stack>
+                  ))}
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Stack>
+      )}
       {children}
     </>
   );

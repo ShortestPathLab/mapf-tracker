@@ -7,14 +7,20 @@ import {
   deleteById,
   finalise,
   status,
+  deleteByApiKey,
+  summaryByApiKey,
+  findByScenario,
 } from "../controllers/ongoingSubmission";
 
 export default (app: Application) => {
   const router = Router();
   router.get("/", findAll);
   router.get("/id/:id", findById);
-  router.delete("/id/:id", deleteById);
+  router.post("/delete", deleteById);
+  router.delete("/:apiKey", deleteByApiKey);
+  router.get("/summary/:apiKey", summaryByApiKey);
   router.get("/:apiKey", findByApiKey);
+  router.get("/scenario/:apiKey/:scenario", findByScenario);
   router.get("/finalise/:key", finalise);
   router.post("/create", create);
   router.post("/status", status);

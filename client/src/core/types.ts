@@ -56,3 +56,27 @@ export type AlgorithmCollectionAggregate = AlgorithmCollection & {
   sum_value: number;
   total_ins: number;
 };
+
+export type SummaryByApiKeyResult = {
+  maps: {
+    name: string;
+    id: string;
+    count: {
+      outdated: number;
+      valid: number;
+      error: number;
+      total: number;
+    };
+    scenarios: {
+      type: string;
+      typeId: number;
+      id: string;
+      count: {
+        outdated: number;
+        valid: number;
+        error: number;
+        total: number;
+      };
+    }[];
+  }[];
+};

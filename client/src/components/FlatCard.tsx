@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { useSm } from "./dialog/useSmallDisplay";
 
 export function FlatCard({ children, ...props }: BoxProps & CardProps) {
-  const sm = useSm();
+  const sm = useSm() || true;
   return sm ? (
     <Box {...props} sx={{ m: -2, bgcolor: "background.default", ...props.sx }}>
       {children}
