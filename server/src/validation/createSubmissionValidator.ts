@@ -50,17 +50,20 @@ export const createSubmissionValidator = async ({
     })
   );
   return {
-    add: collect<SubmissionValidatorData[number], void>(
-      (jobs) => {
-        instances[id(head(jobs)) % workerCount].server.queue.add(
-          "validate",
-          jobs
-        );
-      },
-      +process.env.VALIDATOR_BATCH_TIMEOUT || 1000,
-      +process.env.VALIDATOR_BATCH_COUNT || 64,
-      { trailing: true }
-    ),
+    add: (job) => {
+      instances[id(job) % workerCount].server.queue.add("validate", [job]);
+    },
+    // add: collect<SubmissionValidatorData[number], void>(
+    //   (jobs) => {
+    //     instances[id(head(jobs)) % workerCount].server.queue.add(
+    //       "validate",
+    //       jobs
+    //     );
+    //   },
+    //   +process.env.VALIDATOR_BATCH_TIMEOUT || 1000,
+    //   +process.env.VALIDATOR_BATCH_COUNT || 64,
+    //   { trailing: true }
+    // ),
     instances,
     close: async () => {
       for (const { server: queue, worker } of instances) {

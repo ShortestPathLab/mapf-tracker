@@ -59,7 +59,7 @@ function getSubmissionInfoText(
       const isImprovement = instance.solution_cost > submission.cost;
       return [
         isImprovement ? "New record" : "Dominated",
-        `(${submission.cost} to ${instance.solution_cost}`,
+        `(yours: ${submission.cost}, best: ${instance.solution_cost})`,
       ].join(" ");
     }
 
@@ -317,12 +317,22 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           const selected = key === slice;
           return (
             <Chip
+              sx={{
+                pl: 0.25,
+                border: selected
+                  ? (t) => `1px ${alpha(t.palette.primary.main, 0.2)}`
+                  : (t) => `1px solid ${t.palette.divider}`,
+                bgcolor: selected
+                  ? (t) => alpha(t.palette.primary.main, 0.2)
+                  : undefined,
+              }}
               icon={
-                <Box sx={{ ml: 0.75 }}>
-                  <Collapse in={selected} orientation="horizontal">
-                    <DoneOutlined fontSize="small" />
-                  </Collapse>
-                </Box>
+                <Collapse in={selected} orientation="horizontal">
+                  <DoneOutlined
+                    fontSize="small"
+                    color={selected ? "primary" : undefined}
+                  />
+                </Collapse>
               }
               label={label}
               variant="outlined"
