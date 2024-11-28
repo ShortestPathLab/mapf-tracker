@@ -23,6 +23,7 @@ import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 import memoize from "memoizee";
 import { memoizeAsync } from "utils/memoizeAsync";
+import { asyncMap, waitMap } from "utils/waitMap";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -135,7 +136,7 @@ async function validateGroup({
   sources: Point[];
   goals: Point[];
   submission: OngoingSubmissionDocument;
-  mode?: SubmissionValidatorData["mode"];
+  mode?: SubmissionValidatorData[number]["mode"];
 }) {
   await submission
     .set(validationResultsKey, {
@@ -186,7 +187,7 @@ async function validateGroup({
 function logOutcome(
   errors: string[],
   errorAgents: number[][],
-  mode?: SubmissionValidatorData["mode"]
+  mode?: SubmissionValidatorData[number]["mode"]
 ) {
   if (errors.length) {
     log.warn("Did not pass validation", errors);
@@ -210,7 +211,7 @@ const connect = once(() => connectToDatabase());
 const parseMapMemo = memoize(parseMap);
 const parseScenarioMemo = memoize(parseScenarioMeta);
 
-export async function run(data: SubmissionValidatorData): Promise<{
+export async function run(data: SubmissionValidatorData[number]): Promise<{
   result: {
     errors?: string[];
     outcome: Outcome;
@@ -259,5 +260,7 @@ export async function run(data: SubmissionValidatorData): Promise<{
 export const path = import.meta.path;
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>(run);
+  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>((d) =>
+    waitMap(d, run)
+  );
 }
