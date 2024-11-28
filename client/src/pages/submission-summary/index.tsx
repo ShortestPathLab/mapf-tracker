@@ -127,7 +127,8 @@ export default function SubmissionSummaryPage() {
             name: "Run",
             count:
               sumBy(data?.maps, "count.valid") +
-              sumBy(data?.maps, "count.invalid"),
+              sumBy(data?.maps, "count.invalid") +
+              sumBy(data?.maps, "count.outdated"),
           },
           {
             name: "Valid",

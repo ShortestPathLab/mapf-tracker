@@ -27,7 +27,7 @@ import {
 const log = context("Submission Controller");
 
 const { add } = await createSubmissionValidator({
-  workerCount: +process.env.VALIDATOR_WORKER_COUNT || 16,
+  workerCount: +process.env.VALIDATOR_QUEUE_COUNT || 8,
 });
 
 // ─── Query Handlers ──────────────────────────────────────────────────────────

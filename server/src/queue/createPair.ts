@@ -22,8 +22,7 @@ export async function createPair<D, N extends string, O>(
       return out;
     },
     {
-      // Do not change this value to anything more than 1, as it'll introduce race conditions.
-      concurrency: 1,
+      concurrency: +process.env.WORKER_CONCURRENCY_COUNT || 16,
       connection: {
         host: server.host,
         port: server.port,
