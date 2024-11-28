@@ -24,9 +24,8 @@ function collect<U, V>(
     collection.push(arg);
     if (collection.length >= collect) {
       execute();
-    } else {
-      g();
     }
+    g();
   };
 }
 
@@ -50,20 +49,17 @@ export const createSubmissionValidator = async ({
     })
   );
   return {
-    add: (job: SubmissionValidatorData[number]) => {
-      instances[id(job) % workerCount].server.queue.add("validate", [job]);
-    },
-    // add: collect<SubmissionValidatorData[number], void>(
-    //   (jobs) => {
-    //     instances[id(head(jobs)) % workerCount].server.queue.add(
-    //       "validate",
-    //       jobs
-    //     );
-    //   },
-    //   +process.env.VALIDATOR_BATCH_TIMEOUT || 1000,
-    //   +process.env.VALIDATOR_BATCH_COUNT || 64,
-    //   { trailing: true }
-    // ),
+    add: collect<SubmissionValidatorData[number], void>(
+      (jobs) => {
+        instances[id(head(jobs)) % workerCount].server.queue.add(
+          "validate",
+          jobs
+        );
+      },
+      +process.env.VALIDATOR_BATCH_TIMEOUT || 1000,
+      +process.env.VALIDATOR_BATCH_COUNT || 64,
+      { trailing: true }
+    ),
     instances,
     close: async () => {
       for (const { server: queue, worker } of instances) {

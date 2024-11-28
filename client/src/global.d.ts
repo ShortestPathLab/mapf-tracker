@@ -1,8 +1,12 @@
 declare module "*.md" {
-  let MDXComponent: (props: JSX.IntrinsicElements["div"]) => JSX.Element;
+  let MDXComponent: <T extends {} = {}>(
+    props: JSX.IntrinsicElements["div"] & T
+  ) => JSX.Element;
   export default MDXComponent;
 }
 declare module "*.mdx" {
-  let MDXComponent: (props: JSX.IntrinsicElements["div"]) => JSX.Element;
+  let MDXComponent: <T extends {} = {}>(
+    props: JSX.IntrinsicElements["div"] & T
+  ) => JSX.Element;
   export default MDXComponent;
 }

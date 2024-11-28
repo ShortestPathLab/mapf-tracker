@@ -25,6 +25,6 @@ const schema = createSchema(
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
-schema.index({});
+schema.index({ apiKey: 1, instance: 1, createdAt: 1 });
 
 export const model = createModel("ongoing_submission", schema);

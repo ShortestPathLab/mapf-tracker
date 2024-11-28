@@ -13,16 +13,31 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { DetailsList } from "components/DetailsList";
 import { useDialog } from "hooks/useDialog";
 import { Grid, Prose } from "layout";
-import { useRequestData } from "queries/useRequestQuery";
-import SubmitWithApiContent from "./submitWithApi.mdx";
-import SubmitAsCsvContent from "./submitAsCsv.mdx";
-import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
-import { FileUploader } from "react-drag-drop-files";
 import { useState } from "react";
+import { FileUploader } from "react-drag-drop-files";
 import { paper } from "theme";
+import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
+import SubmitAsCsvContent from "./submitAsCsv.mdx";
+import SubmitWithApiContent from "./submitWithApi.mdx";
+import { post } from "queries/mutation";
+import { useMutation } from "@tanstack/react-query";
+import { APIConfig } from "core/config";
+import { useSnackbar } from "components/Snackbar";
+import Accordion from "components/Accordion";
+
+function useSubmissionMutation({ apiKey }: { apiKey?: string | number }) {
+  return useMutation({
+    mutationFn: ({ content, type }: { content: string; type: string }) =>
+      fetch(`${APIConfig.apiUrl}/ongoing_submission/create/${apiKey}`, {
+        method: "post",
+        body: content,
+        headers: { "Content-Type": type },
+      }),
+    mutationKey: ["submission"],
+  });
+}
 
 export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
   return (
@@ -37,45 +52,74 @@ export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
 }
 export function SpreadsheetDialog({ apiKey }: { apiKey?: string | number }) {
   const [dragging, setDragging] = useState(false);
+  const { mutateAsync } = useSubmissionMutation({ apiKey });
+  const notify = useSnackbar();
   return (
     <>
       <SubmissionRequestGlance apiKey={apiKey} />
       <Divider sx={{ my: 2 }} />
-      <Prose>
-        <SubmitAsCsvContent />
-      </Prose>
-      <FileUploader
-        multiple
-        name="csv"
-        types={["text/csv"]}
-        onDraggingStateChange={setDragging}
-        dropMessageStyle={{ display: "none" }}
-      >
-        <ButtonBase
-          sx={{
-            display: "flex",
-            width: "100%",
-            flexDirection: "column",
-            borderRadius: 1,
-            height: 240,
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
-            border: (t) =>
-              `1px solid ${
-                dragging ? t.palette.primary.main : t.palette.divider
-              }`,
-            transition: (t) => t.transitions.create("border-color"),
+      <Stack sx={{ gap: 2 }}>
+        <Accordion
+          label="Show instructions"
+          slotProps={{
+            summary: {
+              sx: {
+                py: 0,
+              },
+            },
           }}
         >
-          <FileUploadOutlined color={dragging ? "primary" : "disabled"} />
-          <Typography color="text.secondary">
-            {dragging
-              ? "Drop files here"
-              : "Tap to choose files or drop them here"}
-          </Typography>
-        </ButtonBase>
-      </FileUploader>
+          <Prose>
+            <SubmitAsCsvContent />
+          </Prose>
+        </Accordion>
+        <FileUploader
+          multiple
+          name="csv"
+          types={["csv", "json", "yaml", "yml"]}
+          onDraggingStateChange={setDragging}
+          handleChange={(files: FileList) => {
+            for (const file of Array.from(files)) {
+              const reader = new FileReader();
+              reader.onload = async () => {
+                notify(`Uploading ${file.name}`);
+                await mutateAsync({
+                  content: reader.result as string,
+                  type: file.type,
+                });
+                notify("Upload done");
+              };
+              reader.readAsText(file);
+            }
+          }}
+          dropMessageStyle={{ display: "none" }}
+        >
+          <ButtonBase
+            sx={{
+              display: "flex",
+              width: "100%",
+              flexDirection: "column",
+              borderRadius: 1,
+              height: 240,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              border: (t) =>
+                `1px solid ${
+                  dragging ? t.palette.primary.main : t.palette.divider
+                }`,
+              transition: (t) => t.transitions.create("border-color"),
+            }}
+          >
+            <FileUploadOutlined color={dragging ? "primary" : "disabled"} />
+            <Typography color="text.secondary">
+              {dragging
+                ? "Drop files here"
+                : "Tap to choose files or drop them here"}
+            </Typography>
+          </ButtonBase>
+        </FileUploader>
+      </Stack>
     </>
   );
 }

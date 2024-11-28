@@ -23,7 +23,7 @@ import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 import memoize from "memoizee";
 import { memoizeAsync } from "utils/memoizeAsync";
-import { waitMap } from "utils/waitMap";
+import { asyncMap } from "utils/waitMap";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -261,6 +261,6 @@ export const path = import.meta.path;
 
 if (!Bun.isMainThread) {
   self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>((d) =>
-    waitMap(d, run)
+    asyncMap(d, run)
   );
 }
