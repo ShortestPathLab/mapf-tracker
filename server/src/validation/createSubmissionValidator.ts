@@ -58,7 +58,8 @@ export const createSubmissionValidator = async ({
         );
       },
       +process.env.VALIDATOR_BATCH_TIMEOUT || 1000,
-      +process.env.VALIDATOR_BATCH_COUNT || 64
+      +process.env.VALIDATOR_BATCH_COUNT || 64,
+      { trailing: true }
     ),
     instances,
     close: async () => {

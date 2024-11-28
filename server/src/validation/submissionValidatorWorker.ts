@@ -1,4 +1,4 @@
-import { chain, each, isInteger, max, once, pick } from "lodash";
+import { chain, each, isInteger, max, once } from "lodash";
 import { context } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { Document, Types } from "mongoose";
@@ -6,15 +6,15 @@ import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
 import { getMap, getScenario } from "resources";
 import {
+  CheckParameters,
+  CheckResult,
+  FinalCheckParameters,
+  Point,
   checkDomainCollision,
   checkDomainOutOfBounds,
   checkEdgeCollision,
   checkGoalReached,
   checkImmediateCollision,
-  CheckParameters,
-  CheckResult,
-  FinalCheckParameters,
-  Point,
   validate,
 } from "validator";
 import { connectToDatabase } from "../connection";
@@ -23,7 +23,7 @@ import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 import memoize from "memoizee";
 import { memoizeAsync } from "utils/memoizeAsync";
-import { asyncMap, waitMap } from "utils/waitMap";
+import { waitMap } from "utils/waitMap";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;

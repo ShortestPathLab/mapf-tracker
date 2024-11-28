@@ -44,6 +44,7 @@ export default function SubmissionSummaryPage() {
     useDeleteOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finalise submission",
+    slotProps: { modal: { variant: "default" } },
     padded: true,
   });
 

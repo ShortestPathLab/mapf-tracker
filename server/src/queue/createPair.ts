@@ -18,7 +18,7 @@ export async function createPair<D, N extends string, O>(
       const log = context(`${workerName} ${id}`);
       log.info(`Dispatching job ${job.id}`);
       const out = await r(job.data);
-      log.info(`Job ${job.id} returned`, out);
+      log.info(`Job ${job.id} returned`);
       return out;
     },
     {

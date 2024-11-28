@@ -10,6 +10,6 @@ const schema = createSchema({
   instances_solved: Number,
 });
 
-schema.index({ map_id: 1, scen_id: 1, scen_type: 1 }, { unique: true });
+schema.index({ map_id: 1, type_id: 1, scen_type: 1 }, { unique: true });
 
 export const model = createModel("scenario", schema);

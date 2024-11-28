@@ -165,7 +165,8 @@ export const finalise = route(
     run(updateSubmissionsWithOngoingSubmissions, undefined, {
       onProgress: (args) => set(args.stage, args),
     });
-  }
+  },
+  { source: "params" }
 );
 
 const validateSubmissionRequestAsync = usingWorkerTask<

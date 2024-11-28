@@ -41,77 +41,47 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
           "apiKeyLookup.status.type": "submitted",
         },
       },
-      { $project: { apiKeyLookup: 0 } },
       {
         $addFields: {
-          lower_cost: {
-            $sum: "$lowerCost",
-          },
-          solution_cost: {
-            $sum: "$solutionCost",
-          },
+          lower_cost: "$lowerBound",
+          solution_cost: "$cost",
           last_updated: {
             $max: "$updatedAt",
           },
         },
       },
-      // Stage 4: Add algo_id
-      {
-        $lookup: {
-          from: "submission_keys",
-          localField: "_id.apiKey",
-          foreignField: "api_key",
-          // Create algo id from submission key id (not submission key value)
-          as: "algo_id",
-        },
-      },
-      {
-        $addFields: {
-          algo_id: { $arrayElemAt: ["$algo_id._id", 0] },
-        },
-      },
-      // Stage 5: Add instance id
       {
         $lookup: {
           from: "instances",
-          localField: "_id.scenarioId",
-          foreignField: "scen_id",
-          let: {
-            mapId: "$_id.mapId",
-            agents: "$_id.agentCount",
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$map_id", "$$mapId"] },
-                    { $eq: ["$agents", "$$agents"] },
-                  ],
-                },
-              },
-            },
-          ],
-          as: "instance_id",
+          localField: "instance",
+          foreignField: "_id",
+          as: "instanceData",
         },
       },
       {
         $addFields: {
-          instance_id: { $arrayElemAt: ["$instance_id._id", 0] },
+          algo_id: {
+            $arrayElemAt: ["$algo_id._id", 0],
+          },
+          agents: "$instanceData.agents",
         },
       },
-      // Stage 6: Merge into submission model
+      {
+        $addFields: {
+          instance_id: "$instance",
+        },
+      },
       {
         $project: {
-          _id: 0,
-          algo_id: 1,
-          map_id: "$_id.mapId",
-          lower_cost: 1,
-          solution_cost: 1,
+          lower_cost: "$lowerBound",
+          solution_cost: "$cost",
+          map_id: { $first: "$instanceData.map_id" },
+          scen_id: { $first: "$instanceData.scen_id" },
+          agents: { $first: "$instanceData.agents" },
+          instance_id: "$instance",
+          algo_id: { $first: "$apiKeyLookup._id" },
           date: "$last_updated",
-          agents: "$_id.agentCount",
-          scen_id: "$_id.scenarioId",
-          instance_id: 1,
+          _id: 0,
         },
       },
       {
