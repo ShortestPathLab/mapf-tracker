@@ -50,7 +50,7 @@ export const createSubmissionValidator = async ({
     })
   );
   return {
-    add: (job) => {
+    add: (job: SubmissionValidatorData[number]) => {
       instances[id(job) % workerCount].server.queue.add("validate", [job]);
     },
     // add: collect<SubmissionValidatorData[number], void>(
