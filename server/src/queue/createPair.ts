@@ -22,7 +22,7 @@ export async function createPair<D, N extends string, O>(
       return out;
     },
     {
-      concurrency: +process.env.WORKER_CONCURRENCY_COUNT || 16,
+      concurrency: +process.env.WORKER_CONCURRENCY_COUNT || 1,
       connection: {
         host: server.host,
         port: server.port,

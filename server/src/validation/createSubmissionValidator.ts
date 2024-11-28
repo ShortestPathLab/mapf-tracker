@@ -30,10 +30,6 @@ function collect<U, V>(
   };
 }
 
-const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(
-  () => new Worker(path)
-);
-
 const id = ({ apiKey, submissionId }: SubmissionValidatorData[number]) =>
   stringHash(JSON.stringify({ apiKey, submissionId }));
 
@@ -41,14 +37,17 @@ export const createSubmissionValidator = async ({
   workerCount = 1,
 }: { workerCount?: number } = {}) => {
   const instances = await Promise.all(
-    times(workerCount, (i) =>
-      createPair<SubmissionValidatorData, "validate", void>(
+    times(workerCount, (i) => {
+      const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(
+        () => new Worker(path)
+      );
+      return createPair<SubmissionValidatorData, "validate", void>(
         `${i}`,
         run,
         "validation",
         "Validation Dispatcher"
-      )
-    )
+      );
+    })
   );
   return {
     add: collect<SubmissionValidatorData[number], void>(

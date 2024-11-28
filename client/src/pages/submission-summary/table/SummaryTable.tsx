@@ -318,7 +318,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           return (
             <Chip
               icon={
-                <Box sx={{ ml: 0.25 }}>
+                <Box sx={{ ml: 0.75 }}>
                   <Collapse in={selected} orientation="horizontal">
                     <DoneOutlined fontSize="small" />
                   </Collapse>
