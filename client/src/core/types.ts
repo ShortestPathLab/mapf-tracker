@@ -57,28 +57,25 @@ export type AlgorithmCollectionAggregate = AlgorithmCollection & {
   total_ins: number;
 };
 
+export type SummarySlice = {
+  outdated: number;
+  valid: number;
+  invalid: number;
+  queued: number;
+  best: number;
+  total: number;
+};
+
 export type SummaryByApiKeyResult = {
   maps: {
     name: string;
     id: string;
-    count: {
-      outdated: number;
-      valid: number;
-      invalid: number;
-      queued: number;
-      total: number;
-    };
+    count: SummarySlice;
     scenarios: {
       type: string;
       typeId: number;
       id: string;
-      count: {
-        outdated: number;
-        valid: number;
-        invalid: number;
-        queued: number;
-        total: number;
-      };
+      count: SummarySlice;
     }[];
   }[];
 };

@@ -88,6 +88,20 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
     refetchInterval: REFETCH_MS,
   });
 }
+export function useOngoingSubmissionTicketQuery(key?: string | number) {
+  return useQuery({
+    queryKey: [QUERY_KEY, "ticket", key],
+    queryFn: () =>
+      json<
+        {
+          status: "unknown" | "done" | "pending" | "error";
+          dateReceived: number;
+        }[]
+      >(`${APIConfig.apiUrl}/ongoing_submission/status/${key}`),
+    enabled: !!key,
+    refetchInterval: REFETCH_MS,
+  });
+}
 
 export const deleteAll = Symbol("Delete all entries");
 
@@ -97,7 +111,7 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
     mutationKey: ["deleteOngoingSubmission"],
     mutationFn: (k: string | string[] | typeof deleteAll) =>
       k === deleteAll
-        ? del(`${APIConfig.apiUrl}/ongoing_submission/`)
+        ? del(`${APIConfig.apiUrl}/ongoing_submission/${key}`)
         : post(`${APIConfig.apiUrl}/ongoing_submission/delete`, { id: k }),
     onMutate: (k) => {
       client.cancelQueries({ queryKey: [QUERY_KEY, key] });

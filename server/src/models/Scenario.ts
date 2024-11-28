@@ -1,9 +1,4 @@
-import {
-  InferSchemaType,
-  Mongoose,
-  Schema,
-  model as createModel,
-} from "mongoose";
+import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 
 const schema = createSchema({
@@ -14,5 +9,7 @@ const schema = createSchema({
   instances_closed: Number,
   instances_solved: Number,
 });
+
+schema.index({ map_id: 1, scen_id: 1, scen_type: 1 }, { unique: true });
 
 export const model = createModel("scenario", schema);

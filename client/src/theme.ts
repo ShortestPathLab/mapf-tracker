@@ -93,7 +93,9 @@ export const paper = (elevation: number = 1) => ({
     transitions.create(["background-color", "box-shadow"]),
   boxShadow: ({ shadows, palette }) =>
     palette.mode === "dark"
-      ? shadows[1]
+      ? elevation
+        ? shadows[1]
+        : "none"
       : shadows[Math.max(floor(elevation) - 1, 0)],
   backgroundImage: ({ palette }) =>
     `${solid(
@@ -107,8 +109,8 @@ export const paper = (elevation: number = 1) => ({
     )}`,
   border: ({ palette }) =>
     palette.mode === "dark"
-      ? `1px solid ${alpha(palette.text.primary, elevation * 0.08)}`
-      : `1px solid ${alpha(palette.text.primary, elevation * 0.16)}`,
+      ? `1px solid ${alpha(palette.text.primary, 0.08 + elevation * 0.04)}`
+      : `1px solid ${alpha(palette.text.primary, 0.08 + elevation * 0.08)}`,
 });
 export function usePaper(): (e?: number) => SxProps<Theme> {
   return paper;

@@ -23,9 +23,6 @@ export function ScrollPanel({
       return () => target.removeEventListener("scroll", onScroll as any);
     }
   }, [target, onScroll]);
-
-  console.log(target);
-
   return (
     <div
       {...props}

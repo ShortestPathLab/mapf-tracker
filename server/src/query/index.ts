@@ -1,4 +1,4 @@
-import { RequestHandler, Response as Res } from "express";
+import { Request, RequestHandler, Response as Res } from "express";
 import { Document, FilterQuery, Model, PipelineStage } from "mongoose";
 import z from "zod";
 
@@ -56,14 +56,15 @@ export const queryClient = <T>(model: Model<T>) => {
 
 export const route = <T extends z.ZodType, R>(
   validate: T = z.any() as any,
-  f: (data: z.infer<T>) => Promise<R | undefined> = async () => undefined,
+  f: (data: z.infer<T>, req: Request) => Promise<R | undefined> = async () =>
+    undefined,
   { source = "body" }: { source?: "body" | "params" } = {}
 ): RequestHandler<z.infer<T>, {}, R> => {
   return async (req, res) => {
     const { success, data, error } = await validate.safeParseAsync(req[source]);
     if (!success) return res.status(400).json(error.format());
     try {
-      const out = await f(data);
+      const out = await f(data, req);
       res.json(out);
     } catch (e) {
       res.status(500).json({

@@ -16,10 +16,12 @@ import {
   GridRow,
   GridRowProps,
 } from "@mui/x-data-grid";
+import { usePanel } from "components/dialog/ScrollPanel";
+import { useScroll } from "components/dialog/Scrollbars";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map, snakeCase } from "lodash";
-import { ReactNode, useState } from "react";
-import { useCss } from "react-use";
+import { ReactNode, useRef, useState } from "react";
+import { useCss, useIntersection } from "react-use";
 import { paper } from "theme";
 
 function includeItemByFuzzyJSONString<T>(item: T, input: string): boolean {
@@ -33,10 +35,23 @@ export type GridColDef<T extends GridValidRowModel> = MuiGridColDef<T> & {
 };
 
 function ButtonRow(props: GridRowProps) {
+  const root = useScroll();
+  const ref = useRef();
+  const observer = useIntersection(ref, {
+    root,
+    rootMargin: "512px 0px",
+    threshold: 0,
+  });
   return (
-    <ButtonBase sx={{ "& .MuiDataGrid-cell": { outline: "none !important" } }}>
-      <GridRow {...props} />
-    </ButtonBase>
+    <Box ref={ref} sx={{ height: props.rowHeight }}>
+      {observer?.isIntersecting && (
+        <ButtonBase
+          sx={{ "& .MuiDataGrid-cell": { outline: "none !important" } }}
+        >
+          <GridRow {...props} />
+        </ButtonBase>
+      )}
+    </Box>
   );
 }
 

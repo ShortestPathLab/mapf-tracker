@@ -11,19 +11,10 @@ import {
   ListItemProps,
   ListItemText,
 } from "@mui/material";
-import { format, formatDuration, intervalToDuration } from "date-fns";
-import { capitalize, find, now, startCase } from "lodash";
+import { format } from "date-fns";
+import { capitalize, find, startCase } from "lodash";
 import { usePipelineStatus } from "queries/usePipelineQuery";
-import { useReducer } from "react";
-import { useHarmonicIntervalFn } from "react-use";
-
-function Counter({ start }: { start: number }) {
-  const [time, tick] = useReducer(() => now(), now());
-  useHarmonicIntervalFn(tick, 1000);
-  return `Running: ${
-    formatDuration(intervalToDuration({ start, end: time })) || "0 seconds"
-  }`;
-}
+import { Counter } from "../../../components/Counter";
 
 const sentenceCase = (id: string): any => capitalize(startCase(id));
 export function StageStatus({
@@ -56,7 +47,10 @@ export function StageStatus({
         secondary={
           timestamp ? (
             type === "running" ? (
-              <Counter start={timestamp} />
+              <>
+                {"Running: "}
+                <Counter start={timestamp} />
+              </>
             ) : (
               `Last run: ${format(timestamp, "yyyy MMM dd HH:mm aaa")}`
             )

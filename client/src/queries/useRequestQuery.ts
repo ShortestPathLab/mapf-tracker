@@ -4,7 +4,7 @@ import { map } from "lodash";
 import { InferType, object, string } from "yup";
 import { json } from "./query";
 
-export type Request = InferType<typeof requestSchema>;
+export type Request = InferType<typeof requestSchema> & { id?: string };
 
 export const requestSchema = object({
   requesterName: string().required("Requester name is required."),

@@ -20,14 +20,9 @@ import {
 import { connectToDatabase } from "../connection";
 import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
-import _memoize, { Options } from "p-memoize";
 
 import memoize from "memoizee";
-
-const memoizeAsync = _memoize as <T extends (...arg0: any[]) => Promise<any>>(
-  t: T,
-  opts?: Options<T, string>
-) => T;
+import { memoizeAsync } from "utils/memoizeAsync";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;

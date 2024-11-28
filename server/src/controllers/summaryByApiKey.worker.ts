@@ -20,13 +20,14 @@ const run = async (params: unknown) => {
   const data = z.object({ apiKey: z.string() }).parse(params);
   const docs: Pick<
     Infer<typeof OngoingSubmission>,
-    "validation" | "instance"
+    "validation" | "instance" | "cost"
   >[] = await OngoingSubmission.aggregate([
     { $match: { apiKey: data.apiKey } },
     {
       $project: {
         validation: 1,
         instance: 1,
+        cost: 1,
       },
     },
   ]);
@@ -34,7 +35,7 @@ const run = async (params: unknown) => {
     const instance = await findInstance(d.instance.toString());
     const scenario = await findScenario(instance.scen_id.toString());
     const map = await findMap(scenario.map_id.toString());
-    return { submission: d, scenario, map };
+    return { submission: d, scenario, map, instance };
   });
   const count = (c: typeof submissions) => ({
     valid: 0,
@@ -42,6 +43,12 @@ const run = async (params: unknown) => {
     queued: 0,
     outdated: 0,
     ...countBy(c, (d) => d.submission.validation.outcome),
+    best: c.filter(
+      (d) =>
+        d.submission.validation.outcome === "valid" &&
+        d.submission.cost <
+          (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+    ).length,
     total: c.length,
   });
   const maps = chain(submissions)

@@ -22,6 +22,7 @@ import SubmitAsCsvContent from "./submitAsCsv.mdx";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import { FileUploader } from "react-drag-drop-files";
 import { useState } from "react";
+import { paper } from "theme";
 
 export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
   return (
@@ -135,7 +136,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
           action: () => openJsonApiDialog({ apiKey }),
         },
       ].map((c, i) => (
-        <Card key={i} onClick={() => c.action()}>
+        <Card key={i} onClick={() => c.action()} sx={paper(1)}>
           <CardActionArea
             sx={{
               p: 2,

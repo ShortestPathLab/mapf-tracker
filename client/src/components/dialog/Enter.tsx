@@ -191,7 +191,7 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
             ...styles[state],
             ...style,
             transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-            ...children.props.style,
+            ...children.props?.style,
           },
           ref: handleRef,
           ...childProps,

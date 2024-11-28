@@ -2,7 +2,7 @@ import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
 import { RequestHandler } from "express";
-import { map, pick } from "lodash";
+import { filter, find, map, pick, values } from "lodash";
 import { context } from "logging";
 import { Instance, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
@@ -13,6 +13,7 @@ import { createPool, ResultTicketStatus } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import {
   apiKeySchema,
+  apiKeyValidationSchema,
   getKey,
   SubmissionRequestValidatorWorkerResult,
   path as validateSubmissionRequestWorkerPath,
@@ -25,7 +26,9 @@ import {
 
 const log = context("Submission Controller");
 
-const { add } = await createSubmissionValidator({ workerCount: 16 });
+const { add } = await createSubmissionValidator({
+  workerCount: +process.env.VALIDATOR_WORKER_COUNT || 16,
+});
 
 // ─── Query Handlers ──────────────────────────────────────────────────────────
 
@@ -145,7 +148,8 @@ export const deleteByApiKey = route(
   async ({ apiKey }) => {
     const out = await OngoingSubmission.deleteMany({ apiKey });
     return { count: out.deletedCount };
-  }
+  },
+  { source: "params" }
 );
 
 // ─── Submission Handlers ─────────────────────────────────────────────────────
@@ -169,12 +173,15 @@ const validateSubmissionRequestAsync = usingWorkerTask<
   SubmissionRequestValidatorWorkerResult
 >(() => new Worker(validateSubmissionRequestWorkerPath));
 
-const processSubmission = async (d: unknown): Promise<ResultTicketStatus> => {
+const processSubmission = async (
+  d: unknown,
+  apiKey: string
+): Promise<ResultTicketStatus> => {
   log.info("Validating submission with schema...");
-  const result = await validateSubmissionRequestAsync(d);
+  const result = await validateSubmissionRequestAsync({ apiKey, data: d });
   if ("ids" in result) {
     log.info(`Received ${result.ids.length} submissions`);
-    for (const { apiKey, submissionId } of result.ids) {
+    for (const { submissionId } of result.ids) {
       add({ apiKey, submissionId });
     }
     return {
@@ -188,16 +195,31 @@ const processSubmission = async (d: unknown): Promise<ResultTicketStatus> => {
   }
 };
 
-const submissionTickets = createPool();
+const submissionTickets = createPool<{ apiKey: string }>();
 
 export const status = route(
   z.object({ ticket: z.string() }),
   async ({ ticket }) =>
     submissionTickets.pool.tickets[ticket] || { status: "unknown" }
 );
+export const statusByApiKey = route(
+  z.object({ apiKey: z.string() }),
+  async ({ apiKey }) =>
+    filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === apiKey),
+  { source: "params" }
+);
 
-export const create = route(z.any(), async (d) => {
+export const create = route(z.any(), async (d, req) => {
+  const { apiKey } = await z
+    .object({ apiKey: apiKeyValidationSchema })
+    .parseAsync(req.params);
   const key = randomUUIDv7();
-  submissionTickets.withTicket(key, () => processSubmission(d));
+  submissionTickets.withTicket(
+    key,
+    () => processSubmission(d, apiKey.api_key),
+    {
+      apiKey: apiKey.api_key,
+    }
+  );
   return { message: "submission received", ticket: key };
 });

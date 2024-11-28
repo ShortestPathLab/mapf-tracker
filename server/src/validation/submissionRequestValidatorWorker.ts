@@ -12,6 +12,7 @@ import { RefinementCtx, z } from "zod";
 import { flatten } from "lodash";
 import { connectToDatabase } from "connection";
 import { waitMap } from "../utils/waitMap";
+import { memoizeAsync } from "../utils/memoizeAsync";
 
 export const getKey = async (
   api_key: string | undefined,
@@ -25,6 +26,11 @@ export const getKey = async (
 
 export const apiKeySchema = z.string().length(32, "Should be 32 characters");
 
+export const apiKeyValidationSchema = z
+  .string()
+  .length(32, "Should be 32 characters")
+  .transform(getKey);
+
 export const pathSchema = (newline: boolean = false) =>
   z
     .string()
@@ -34,7 +40,6 @@ export const pathSchema = (newline: boolean = false) =>
     );
 
 export const submissionBaseSchema = z.object({
-  api_key: apiKeySchema,
   // Instance identification
   map_name: z.string(),
   scen_type: z.string(),
@@ -55,11 +60,17 @@ export const submissionBaseSchema = z.object({
     .optional(),
 });
 
+const findInstance = memoizeAsync((a) => Instance.findOne(a), {
+  cacheKey: JSON.stringify,
+});
+const findMap = memoizeAsync((a) => Map.findOne(a), {
+  cacheKey: JSON.stringify,
+});
+const findScenario = memoizeAsync((a) => Scenario.findOne(a), {
+  cacheKey: JSON.stringify,
+});
+
 export const submissionSchema = submissionBaseSchema
-  .transform(async ({ api_key, ...v }, ctx) => ({
-    ...v,
-    key: await getKey(api_key, ctx),
-  }))
   .transform(({ solution_plan, ...v }) => ({
     ...v,
     solution_plan:
@@ -77,14 +88,14 @@ export const submissionSchema = submissionBaseSchema
     return { ...v, agent_count: inferredAgentCount };
   })
   .transform(async ({ map_name, ...v }, ctx) => {
-    const map = await Map.findOne({ map_name });
+    const map = await findMap({ map_name });
     if (!map) return fatal(ctx, "Map name invalid");
-    const scenario = await Scenario.findOne({
+    const scenario = await findScenario({
       map_id: map.id,
       scen_type: v.scen_type,
       type_id: v.type_id,
     });
-    const instance = await Instance.findOne({
+    const instance = await findInstance({
       agents: v.agent_count,
       scen_id: scenario.id,
       map_id: map.id,
@@ -108,8 +119,11 @@ export const submissionSchema = submissionBaseSchema
     return { ...v, solution_plan };
   });
 
-const submitOne = async (data: z.infer<typeof submissionSchema>) => {
-  const id = { apiKey: data.key.api_key };
+const submitOne = async (
+  apiKey: string,
+  data: z.infer<typeof submissionSchema>
+) => {
+  const id = { apiKey };
   const doc = await new OngoingSubmission({
     ...id,
     instance: data.instance.id,
@@ -121,8 +135,10 @@ const submitOne = async (data: z.infer<typeof submissionSchema>) => {
   return [{ ...id, submissionId: doc.id }];
 };
 
-const submitBatch = async (data: z.infer<typeof submissionSchema>[]) =>
-  flatten(await waitMap(data, submitOne));
+const submitBatch = async (
+  apiKey: string,
+  data: z.infer<typeof submissionSchema>[]
+) => flatten(await waitMap(data, (d) => submitOne(apiKey, d)));
 
 const handlers = [
   {
@@ -137,14 +153,17 @@ const handlers = [
   },
 ] as const;
 
-export async function run(d: unknown) {
+export async function run({
+  data: d,
+  apiKey,
+}: SubmissionRequestValidatorWorkerParams) {
   await connectToDatabase();
   try {
     for (const { schema, handler, transformer } of handlers) {
       const { success, data } = schema.safeParse(d);
       if (success) {
         const transformed = await transformer.parseAsync(data);
-        const output = await handler(transformed as any);
+        const output = await handler(apiKey, transformed as any);
         return { ids: output };
       }
     }
@@ -165,6 +184,11 @@ export async function run(d: unknown) {
 
 export const path = import.meta.path;
 
+export type SubmissionRequestValidatorWorkerParams = {
+  apiKey: string;
+  data: unknown;
+};
+
 export type SubmissionRequestValidatorWorkerResult =
   | {
       ids: {
@@ -178,7 +202,7 @@ export type SubmissionRequestValidatorWorkerResult =
 
 if (!Bun.isMainThread) {
   self.onmessage = usingTaskMessageHandler<
-    unknown,
+    SubmissionRequestValidatorWorkerParams,
     SubmissionRequestValidatorWorkerResult
   >(run);
 }

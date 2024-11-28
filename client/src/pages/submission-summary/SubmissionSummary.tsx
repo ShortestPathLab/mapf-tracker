@@ -53,7 +53,7 @@ export default function SubmissionSummary({
           mt: 2,
           borderRadius: 1,
           p: sm ? 2 : 3,
-          ...paper(1),
+          ...paper(0),
         }}
       >
         {summaryStats.map(({ name, count }) => (

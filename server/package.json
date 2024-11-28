@@ -60,7 +60,7 @@
     "sharp": "^0.33.5",
     "string-hash": "^1.1.3",
     "treaty": "workspace:*",
-    "typescript": "^5.4.5",
+    "typescript": "5.4.5",
     "validator": "workspace:*",
     "vite": "^5.4.11",
     "vite-node": "^2.0.4",

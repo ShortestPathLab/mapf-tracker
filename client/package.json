@@ -58,7 +58,7 @@
     "react-virtualized-auto-sizer": "^1.0.24",
     "recharts": "^2.1.15",
     "remark-gfm": "^4.0.0",
-    "typescript": "^5.4.5",
+    "typescript": "5.4.5",
     "validator": "workspace:*",
     "vite": "^5.3.3",
     "vite-tsconfig-paths": "^5.1.3",

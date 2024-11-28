@@ -7,22 +7,25 @@ export type ResultTicketStatus = (
   message?: any;
 };
 
-export type TicketStatus = (ResultTicketStatus | { status: "pending" }) & {
+export type TicketStatus<Meta> = (
+  | ResultTicketStatus
+  | { status: "pending" }
+) & {
   dateReceived: number;
-};
+} & Meta;
 
 export const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
 export const withTicket =
-  (pool: TicketPool) =>
-  async (ticket: string, f: () => Promise<ResultTicketStatus>) => {
+  <Meta>(pool: TicketPool<Meta>) =>
+  async (ticket: string, f: () => Promise<ResultTicketStatus>, meta?: Meta) => {
     const dateReceived = now();
-    pool.tickets[ticket] = { status: "pending", dateReceived };
+    pool.tickets[ticket] = { status: "pending", dateReceived, ...meta };
     try {
       const result = await f();
-      pool.tickets[ticket] = { dateReceived, ...result };
+      pool.tickets[ticket] = { dateReceived, ...result, ...meta };
     } catch (error) {
-      pool.tickets[ticket] = { status: "error", dateReceived, error };
+      pool.tickets[ticket] = { status: "error", dateReceived, error, ...meta };
     } finally {
       pool.tickets = omitBy(
         pool.tickets,
@@ -32,12 +35,14 @@ export const withTicket =
     }
   };
 
-export type TicketPool = { tickets: { [K in string]: TicketStatus } };
+export type TicketPool<Meta> = {
+  tickets: { [K in string]: TicketStatus<Meta> };
+};
 
-export function createPool() {
-  const pool = { tickets: {} };
+export function createPool<Meta>() {
+  const pool: TicketPool<Meta> = { tickets: {} };
   return {
     pool,
-    withTicket: withTicket(pool),
+    withTicket: withTicket<Meta>(pool),
   };
 }
