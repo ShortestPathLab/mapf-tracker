@@ -42,16 +42,8 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
         },
       },
       { $project: { apiKeyLookup: 0 } },
-      // Stage 3: Group by unique combination of api key, map id, scenario id, and agent count
       {
-        $group: {
-          _id: {
-            apiKey: "$apiKey",
-            mapId: "$mapId",
-            scenarioId: "$scenarioId",
-            agentCount: "$agentCountIntent",
-          },
-
+        $addFields: {
           lower_cost: {
             $sum: "$lowerCost",
           },
