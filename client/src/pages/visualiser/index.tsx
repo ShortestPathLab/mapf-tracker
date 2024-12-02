@@ -16,39 +16,39 @@ export default function index() {
   const scenarioString = capitalize(`${state.scenType}-${state.scenTypeID}`);
 
   return (
-    <Layout
-      flat
-      collapse={false}
-      title="View solution"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Benchmarks", url: "/benchmarks" },
-        {
-          name: capitalize(state.map_name),
-          url: "/scenarios",
-          state,
-        },
-        {
-          name: scenarioString,
-          url: "/instances",
-          state,
-        },
-      ]}
-      render={renderFixed(sm)}
-    >
-      <Box
-        sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: `calc(100dvh - ${topbarHeight(sm) - 6}px)`,
-          width: "100%",
-        }}
+    <>
+      <Layout
+        flat
+        collapse={false}
+        title="View solution"
+        path={[
+          { name: "Home", url: "/" },
+          { name: "Benchmarks", url: "/benchmarks" },
+          {
+            name: capitalize(state.mapName),
+            url: "/scenarios",
+            state,
+          },
+          {
+            name: scenarioString,
+            url: "/instances",
+            state,
+          },
+        ]}
+        render={renderFixed(sm)}
       >
-        <Visualiser />
-      </Box>
-    </Layout>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: `calc(100dvh - ${topbarHeight(sm) + 8}px)`,
+          }}
+        >
+          <Visualiser />
+        </Box>
+      </Layout>
+    </>
   );
 }

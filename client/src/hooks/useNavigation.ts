@@ -1,4 +1,13 @@
-import { entries, isInteger, isNaN, map, mapValues, startsWith } from "lodash";
+import {
+  entries,
+  filter,
+  isInteger,
+  isNaN,
+  isUndefined,
+  map,
+  mapValues,
+  startsWith,
+} from "lodash";
 import { useCallback, useMemo } from "react";
 import {
   Location,
@@ -32,7 +41,10 @@ export function useNavigate() {
       const items = entries(state);
       navigate(
         items.length
-          ? `${url}?${map(items, ([k, v]) => `${k}=${v}`).join("&")}`
+          ? `${url}?${map(
+              filter(items, ([, v]) => !isUndefined(v)),
+              ([k, v]) => `${k}=${v}`
+            ).join("&")}`
           : url,
         { state: { saved: state, session } }
       );

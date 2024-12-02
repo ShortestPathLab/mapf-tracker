@@ -81,6 +81,7 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
           instance_id: "$instance",
           algo_id: { $first: "$apiKeyLookup._id" },
           date: "$last_updated",
+          solutions: "$solutions",
           _id: 0,
         },
       },

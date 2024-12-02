@@ -1,16 +1,17 @@
 import { RequestHandler } from "express";
-import { SolutionPath } from "models";
+import { OngoingSubmission, SolutionPath, Submission } from "models";
+import { z } from "zod";
 
-export const find_path: RequestHandler = (req, res) => {
-  const { id } = req.params;
-  SolutionPath.findById(id)
-    .then((data) => {
-      res.send(data);
+export const findPath: RequestHandler = async (req, res) => {
+  const { id, source } = z
+    .object({
+      id: z.string(),
+      source: z.enum(["ongoing", "submitted"]).default("submitted"),
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    .parse(req.params);
+  const data =
+    source === "submitted"
+      ? await Submission.findOne({ _id: id })
+      : await OngoingSubmission.findOne({ _id: id });
+  return res.send(data?.solutions);
 };

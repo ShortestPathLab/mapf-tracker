@@ -2,6 +2,7 @@ import { PixiComponent, useApp } from "@pixi/react";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import * as PIXI from "pixi.js";
 import React, { ForwardedRef, forwardRef } from "react";
+import { EventSystem } from "@pixi/events";
 
 export interface ViewportProps {
   width: number;
@@ -15,6 +16,8 @@ export interface PixiComponentViewportProps extends ViewportProps {
 
 const PixiComponentViewport = PixiComponent("Viewport", {
   create: (props: PixiComponentViewportProps) => {
+    const events = new EventSystem(props.app.renderer);
+    events.domElement = props.app.renderer.view as unknown as HTMLElement;
     const viewport = new PixiViewport({
       stopPropagation: true,
       screenWidth: props.width,
@@ -22,7 +25,7 @@ const PixiComponentViewport = PixiComponent("Viewport", {
       worldWidth: props.width * 2,
       worldHeight: props.height * 2,
       ticker: props.app.ticker,
-      events: props.app.renderer.plugins.interaction,
+      events: events,
     });
     viewport.drag().pinch().wheel().clampZoom({});
 

@@ -31,10 +31,9 @@ export default function Table() {
   const openVisualisation = (row: Instance) =>
     navigate<VisualiserLocationState>("/visualization", {
       ...state,
-      path_id: row.solution_path_id,
-      map_name: mapName,
-      scen_string: `${mapName}-${scenType}-${scenTypeID}`,
-      num_agents: row.agents,
+      instanceId: row.id,
+      solutionId: undefined,
+      source: "submitted",
     });
 
   const actions = useDataGridActions<Instance>({

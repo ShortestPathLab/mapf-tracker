@@ -249,7 +249,7 @@ export default function Modal({
     };
   }, [globalDepth, setDepth, props.open]);
 
-  const mt = 95 - 5 * depth;
+  const mt = props.fullScreen ? 100 : 95 - 5 * depth;
 
   useLayoutEffect(() => {
     if (!(target && contentRef && !sm && !height)) {
@@ -321,7 +321,7 @@ export default function Modal({
       }}
     >
       <Scroll
-        y
+        y={scrollable ? true : false}
         px={sm ? 7 : 8}
         style={{
           height: "100%",

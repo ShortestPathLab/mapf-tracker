@@ -29,6 +29,7 @@ const reduceHistory = (field: string): Expression.Reduce => ({
                   algo_name: `$$this.algo_name`,
                   algo_id: `$$this.algo_id`,
                   date: "$$this.date",
+                  submission_id: `$$this._id`,
                   value: `$$this.${field}`,
                 },
               ],

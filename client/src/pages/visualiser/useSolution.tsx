@@ -8,10 +8,14 @@ import {
   createOffsetMap,
   sumPositions,
 } from "validator";
-import { memoize } from "lodash";
+import { head, last, memoize } from "lodash";
 import { parseMap } from "./parseMap";
 import { parseScenario } from "./parseScenario";
 import { useQuery } from "@tanstack/react-query";
+import { useInstanceData } from "queries/useInstanceQuery";
+import { useSolutionData } from "queries/useSolutionQuery";
+import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
+import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);
@@ -50,8 +54,8 @@ function createAgentPositionGetter(
     } else {
       // TODO: still using math origin! data in solution_paths has not been swapped over yet.
       const offsets = createOffsetMap(createActionMap(n - 1, as), {
-        u: { x: 0, y: 1 },
-        d: { x: 0, y: -1 },
+        u: { x: 0, y: -1 },
+        d: { x: 0, y: 1 },
         l: { x: -1, y: 0 },
         r: { x: 1, y: 0 },
       });
@@ -62,44 +66,52 @@ function createAgentPositionGetter(
 }
 
 type SolutionParameters = {
-  solutionKey?: string;
-  mapKey?: string;
-  scenarioKey?: string;
-  agentCount?: number;
+  instanceId?: string;
+  solutionId?: string;
+  source?: "ongoing" | "submitted";
 };
 
 export function useSolution({
-  solutionKey,
-  mapKey,
-  scenarioKey,
-  agentCount = 0,
+  instanceId,
+  solutionId,
+  source,
 }: SolutionParameters) {
-  const { data: solutionData, isLoading: isSolutionDataLoading } = useQuery({
-    queryKey: ["solution", solutionKey],
-    queryFn: async () =>
-      (
-        await (
-          await fetch(`${APIConfig.apiUrl}/solution_path/${solutionKey}`, {
-            method: "get",
-          })
-        ).json()
-      ).solution_path as string,
-  });
+  const { data: instance, isLoading: isInstanceLoading } =
+    useInstanceData(instanceId);
+  const { data: history, isLoading: isHistoryLoading } =
+    useAlgorithmForInstanceData(instanceId);
+  const { data: solution, isLoading: isSolutionLoading } = useSolutionData(
+    solutionId ?? last(head(history)?.solution_algos)?.submission_id,
+    source
+  );
+  const { data: scenario, isLoading: isScenarioLoading } = useScenarioData(
+    instance?.scen_id
+  );
+  const { data: mapData1, isLoading: isMapDataLoading } = useMapData(
+    instance?.map_id
+  );
 
   const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
-    queryKey: ["solutionContextData", solutionData, mapKey, scenarioKey],
+    queryKey: ["solutionContextData", solutionId, source, instanceId],
     queryFn: async () => {
-      if (solutionData?.length) {
-        const [mapData, scenarioData] = await Promise.all([
-          (await fetch(`./assets/maps/${mapKey}.map`)).text(),
-          (await fetch(`./assets/scens/${scenarioKey}.scen`)).text(),
-        ]);
-        return {
-          map: parseMap(mapData),
-          result: parseScenario(scenarioData, agentCount, solutionData),
-        };
-      }
+      const [mapData, scenarioData] = await Promise.all([
+        (await fetch(`./assets/maps/${mapData1.map_name}.map`)).text(),
+        (
+          await fetch(
+            `./assets/scens/${mapData1.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
+          )
+        ).text(),
+      ]);
+      return {
+        map: parseMap(mapData),
+        result: parseScenario(
+          scenarioData,
+          instance.agents,
+          solution.join("\n")
+        ),
+      };
     },
+    enabled: !!solution && !!instance && !!mapData1 && !!scenario,
   });
 
   const { map, result } = generalData ?? {};
@@ -111,7 +123,13 @@ export function useSolution({
   );
 
   return {
-    isLoading: isSolutionDataLoading || isGeneralDataLoading,
+    isLoading:
+      isGeneralDataLoading ||
+      isInstanceLoading ||
+      isHistoryLoading ||
+      isSolutionLoading ||
+      isScenarioLoading ||
+      isMapDataLoading,
     map: map ?? [],
     result,
     getAgentPosition,

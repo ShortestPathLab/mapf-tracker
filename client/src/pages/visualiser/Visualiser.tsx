@@ -31,6 +31,7 @@ import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
+import { navbarHeight } from "components/Navbar";
 
 const SCALE_SHOW_GRID_THRESHOLD = 30;
 
@@ -77,8 +78,26 @@ const $bg = memoizee(
       g.beginFill(hexToInt(color)).drawRect(0, 0, width, height).endFill()
 );
 
-export default function Visualiser() {
+export default function () {
   const state = useLocationState<VisualiserLocationState>();
+  return (
+    <Visualiser1
+      instanceId={state.instanceId}
+      solutionId={state.solutionId}
+      source={state.source}
+    />
+  );
+}
+
+export function Visualiser1({
+  instanceId,
+  solutionId,
+  source,
+}: {
+  instanceId?: string;
+  solutionId?: string;
+  source?: "ongoing" | "submitted";
+}) {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const sm = useSm();
@@ -86,10 +105,9 @@ export default function Visualiser() {
   // ─────────────────────────────────────────────────────────────────────
 
   const { map, result, getAgentPosition, isLoading } = useSolution({
-    solutionKey: state.path_id,
-    agentCount: state.num_agents,
-    mapKey: state.map_name,
-    scenarioKey: state.scen_string,
+    instanceId,
+    solutionId,
+    source,
   });
 
   const { timespan = 0, x = 0, y = 0 } = result ?? {};
@@ -147,8 +165,9 @@ export default function Visualiser() {
   return (
     <Box
       sx={{
-        width: "100dvw",
+        width: "100%",
         height: "100%",
+        position: "absolute",
       }}
     >
       <AutoSize>
@@ -192,17 +211,16 @@ export default function Visualiser() {
                   </Container>
                 </Viewport>
               </Stage>
-            )}{" "}
+            )}
             <Stack
               sx={{
-                position: "fixed",
+                position: "absolute",
                 right: 0,
-                top: size.height,
-                transform: "translateY(-100%)",
-                p: 4,
+                bottom: 0,
+                // p: 4,
               }}
             >
-              <Card sx={{ py: 1, px: 2, ...paper() }}>
+              <Card sx={{ py: 1, m: sm ? 2 : 3, px: 2, ...paper() }}>
                 <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
                   {!sm && (
                     <>
