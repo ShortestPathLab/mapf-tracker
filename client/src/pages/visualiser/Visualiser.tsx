@@ -55,6 +55,17 @@ const $grid =
       g.moveTo(0, y).lineTo(width, y);
     }
   };
+const $box =
+  ({ x: width, y: height }: { x: number; y: number }, color: string) =>
+  (g: PixiGraphics) => {
+    g.clear();
+    g.lineStyle(LINE_WIDTH, hexToInt(color));
+    g.moveTo(0, 0)
+      .lineTo(0, height)
+      .lineTo(width, height)
+      .lineTo(width, 0)
+      .lineTo(0, 0);
+  };
 
 const $agents =
   (agents: { color: string; x: number; y: number }[]) => (g: PixiGraphics) => {
@@ -119,6 +130,11 @@ export function Visualiser1({
 
   const drawGrid = useMemo(
     () => $grid({ x, y }, dark ? WHITE : BLACK),
+    [x, y, dark]
+  );
+
+  const drawBox = useMemo(
+    () => $box({ x, y }, dark ? WHITE : BLACK),
     [x, y, dark]
   );
 
@@ -208,6 +224,7 @@ export function Visualiser1({
                     <Graphics draw={drawAgents} />
                     <Graphics draw={drawMap} />
                     {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
+                    <Graphics draw={drawBox} alpha={0.1} />
                   </Container>
                 </Viewport>
               </Stage>
