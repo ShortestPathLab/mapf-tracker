@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Divider,
   Stack,
+  Tab,
   Typography,
 } from "@mui/material";
 import { Counter } from "components/Counter";
@@ -31,9 +32,11 @@ import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import SummaryTable from "./table/SummaryTable";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { useState } from "react";
 
 const hintText =
-  "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key.";
+  "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useLocationState<SubmissionLocationState>();
@@ -42,7 +45,7 @@ export default function SubmissionSummaryPage() {
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
-    title: "Finalise submission",
+    title: "Finish submission",
     slotProps: { modal: { variant: "default" } },
     padded: true,
   });
@@ -112,7 +115,7 @@ export default function SubmissionSummaryPage() {
           ],
         },
         {
-          label: "Outcome",
+          label: "Validity",
           values: [
             {
               name: "Valid",
@@ -136,10 +139,12 @@ export default function SubmissionSummaryPage() {
               count: sumBy(data?.maps, "count.best"),
             },
             {
+              name: "Tie",
+              count: sumBy(data?.maps, "count.tie"),
+            },
+            {
               name: "Dominated",
-              count:
-                sumBy(data?.maps, "count.valid") -
-                sumBy(data?.maps, "count.best"),
+              count: sumBy(data?.maps, "count.dominated"),
             },
           ],
         },
@@ -179,9 +184,11 @@ export default function SubmissionSummaryPage() {
         })
       }
     >
-      Finish Submission
+      Finish submission
     </Button>,
   ];
+
+  const [tab, setTab] = useState("upload");
 
   return (
     <>
@@ -196,8 +203,35 @@ export default function SubmissionSummaryPage() {
       >
         {sm ? (
           <>
-            {contentLeft}
-            {contentRight}
+            <TabContext value={tab}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabList
+                  onChange={(e, v) => setTab(v)}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab label="Upload" value="upload" />
+                  <Tab label="Validation" value="validate" />
+                </TabList>
+              </Box>
+              <TabPanel
+                value="upload"
+                sx={{ display: "flex", gap: 4, flexDirection: "column", p: 0 }}
+              >
+                {contentLeft}
+              </TabPanel>
+              <TabPanel
+                value="validate"
+                sx={{
+                  display: "flex",
+                  gap: 4,
+                  flexDirection: "column",
+                  p: 0,
+                  mt: -6,
+                }}
+              >
+                {contentRight}
+              </TabPanel>
+            </TabContext>
             {/* Gap for sticky footer */}
             <Box sx={{ height: 72 }} />
           </>
@@ -218,17 +252,19 @@ export default function SubmissionSummaryPage() {
                 height: "100%",
               }}
             >
-              <Scroll y style={{ flex: 0.5, minWidth: 480 }}>
+              <Scroll y style={{ flex: 0.3, minWidth: 460 }}>
                 <Stack sx={{ gap: 4, p: 3, flex: 1 }}>
                   <Typography variant="h2">Upload data</Typography>
                   {contentLeft}
+                  {/* Gap for sticky footer */}
+                  <Box sx={{ height: 72 }} />
                 </Stack>
               </Scroll>
               <Divider flexItem orientation="vertical" />
               <Scroll y style={{ flex: 1 }}>
                 <Stack sx={{ gap: 4, p: 3, flex: 1 }}>
                   <Typography variant="h2" sx={{ mb: -2 }}>
-                    Validation
+                    Validation results
                   </Typography>
                   {contentRight}
                   {/* Gap for sticky footer */}

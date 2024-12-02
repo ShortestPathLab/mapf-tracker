@@ -1,5 +1,6 @@
 import JSONSchema from "./JSONSchema.mdx";
+import Accordion from "../../components/Accordion";
 
-You can submit data as JSON or CSV files.
-
-<JSONSchema />
+<Accordion label="Show schema" slotProps={{summary: {sx: {py: 0, mb:-2}}}}>
+    <JSONSchema />
+</Accordion>

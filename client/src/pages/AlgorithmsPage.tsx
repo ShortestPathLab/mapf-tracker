@@ -38,6 +38,7 @@ import {
 import { APIConfig } from "../core/config";
 import PageHeader from "../layout/PageHeader";
 import { Layout } from "layout";
+import { paper } from "theme";
 
 const angle = {
   Warehouse: -40,
@@ -474,6 +475,9 @@ export default function Submissions() {
   return (
     <Layout title="Submissions" path={[{ name: "Home", url: "/" }]}>
       <Stack sx={{ gap: 4 }}>
+        <Typography sx={{ p: 2, ...paper(0) }}>
+          We're currently refactoring this page.
+        </Typography>
         <Card>
           <Stack direction="row" sx={{ p: 2, gap: 4 }}>
             <TextField

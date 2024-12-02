@@ -1,22 +1,61 @@
 import { CodeBlock } from "./CodeBlock";
+import { paper } from "../../theme";
+import { Box } from "@mui/material";
+
+MAPF Tracker accepts submissions in JSON, YAML, and CSV, as long as they include the following properties.
+
+##### Properties
+
+<Box sx={{...paper(0), p: 2}}>
+| Property  | Type | Description |
+|-|-|-|
+| `map_name` | `string` (Required) | The name of the map |
+| `scen_type` | `string` (Required) | Scenario type e.g.`even`, `random` |
+| `type_id` | `number` (Required) | The scenario variant number |
+| `agents` | `number` (Required) | The total number of agents |
+| `solutions` | `string` (Required) | Your solution. This can be a list of path strings, or a single string with the path of each agent delimited by newlines. Paths can be run length encoded. |
+| `lower_cost` | `number` | Theoretical lower-bound cost reported by your solver. If unknown, leave empty. |
+</Box>
+##### Examples
+
+###### JSON
 
 <CodeBlock language="json">
   {
   `
 {
-  // Your API key
-  "api_key": "${props.apiKey ?? "<YOUR API KEY HERE>"}",
-  // Information about the problem instance 
-  "map_name": "", // e.g. "Empty-8-8"
-  "scen_type": "even", // "even", "random" etc.
-  "type_id": 0, // The instance variant number
-  "agent_count_intent": 0, // The total number of agents
-  // Information about your solution
-  "index": 0, // Agent (0-index)
-  "solution_cost": 0, // Cost of this agent's path
-  "solution_path": "" // Run-length encoded path
-  "lower_cost": 0 // Theoretical lower-bound cost reported by your solver. If unknown, leave empty
+  "map_name": "empty-8-8", 
+  "scen_type": "even",
+  "type_id": 0, 
+  "agents": 1, 
+  "solutions": "5r2d3w4d",  
 }
+`.trim()
+  }
+</CodeBlock>
+
+###### YAML
+
+<CodeBlock language="yaml">
+  {
+  `
+map_name: "empty-8-8"
+scen_type: even
+type_id: 0
+agents: 1
+solutions: 
+  - 5r2d3w4d
+`.trim()
+  }
+</CodeBlock>
+
+###### CSV
+
+<CodeBlock language="yaml">
+  {
+  `
+map_name,scen_type,type_id,agents,solutions
+empty-8-8,even,0,1,5r2d3w4d
 `.trim()
   }
 </CodeBlock>

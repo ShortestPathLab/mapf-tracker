@@ -88,19 +88,26 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
     refetchInterval: REFETCH_MS,
   });
 }
+
+export type SubmissionTicket = {
+  label?: string;
+  size?: number;
+  status: "uploading" | "unknown" | "done" | "pending" | "error";
+  result?: { count: number };
+  dateReceived: number;
+};
+
+export const optimisticQueue: Set<SubmissionTicket> = new Set();
+
 export function useOngoingSubmissionTicketQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
-    queryFn: () =>
-      json<
-        {
-          label?: string;
-          size?: number;
-          status: "unknown" | "done" | "pending" | "error";
-          result?: { count: number };
-          dateReceived: number;
-        }[]
-      >(`${APIConfig.apiUrl}/ongoing_submission/status/${key}`),
+    queryFn: async () => [
+      ...(await json<SubmissionTicket[]>(
+        `${APIConfig.apiUrl}/ongoing_submission/status/${key}`
+      )),
+      ...Array.from(optimisticQueue),
+    ],
     enabled: !!key,
     refetchInterval: REFETCH_MS,
   });

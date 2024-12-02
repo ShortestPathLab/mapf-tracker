@@ -29,55 +29,59 @@ export const findAll: RequestHandler = (req, res) => {
     });
 };
 
-export const findNonEmptyByScenId: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
-  Instance.aggregate([
-    {
-      $match: {
-        scen_id: id,
+export const findNonEmptyByScenId: RequestHandler = async (req, res) => {
+  try {
+    const data = await Instance.aggregate([
+      {
+        $match: { scen_id: new Types.ObjectId(req.params.id) },
       },
-    },
-    {
-      $project: {
-        id: "$_id",
-        agents: 1,
-        lower_cost: 1,
-        lower_algos: { $size: "$lower_algos" },
-        lower_date: 1,
-        solution_cost: 1,
-        solution_algos: { $size: "$solution_algos" },
-        solution_date: 1,
-        solution_path_id: 1,
+      {
+        $project: {
+          id: "$_id",
+          agents: 1,
+          lower_algos: { $size: "$lower_algos" },
+          lower_date: { $last: "$lower_algos.date" },
+          lower_cost: { $last: "$lower_algos.value" },
+          solution_algos: { $size: "$solution_algos" },
+          solution_date: { $last: "$solution_algos.date" },
+          solution_cost: { $last: "$solution_algos.value" },
+        },
       },
-    },
-    { $sort: { agents: 1 } },
-  ])
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
+      {
+        $addFields: {
+          closed: {
+            $and: [
+              { $ne: ["$lower_cost", null] },
+              { $eq: ["$lower_cost", "$solution_cost"] },
+            ],
+          },
+          empty: { $eq: ["$solution_algos", 0] },
+        },
+      },
+      { $sort: { agents: 1 } },
+    ]);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving instances.",
     });
+  }
 };
 
-export const findAlgosRecord: RequestHandler = (req, res) => {
+export const findAlgosRecord: RequestHandler = async (req, res) => {
   const { id } = req.params;
-  Instance.find(
-    { _id: id, empty: false },
-    { lower_algos: 1, solution_algos: 1 }
-  )
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
+
+  try {
+    const data = await Instance.find(
+      { _id: id },
+      { lower_algos: 1, solution_algos: 1 }
+    );
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving instances.",
     });
+  }
 };
 
 function rankingSorter(firstKey, secondKey, thirdKey) {

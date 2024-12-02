@@ -62,6 +62,8 @@ export type SummarySlice = {
   valid: number;
   invalid: number;
   queued: number;
+  tie: number;
+  dominated: number;
   best: number;
   total: number;
 };

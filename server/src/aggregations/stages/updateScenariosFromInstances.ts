@@ -26,7 +26,14 @@ export const updateScenariosFromInstances = () =>
             $filter: {
               input: "$instances",
               as: "instance",
-              cond: { $eq: ["$$instance.closed", true] },
+              cond: {
+                $and: [
+                  { $ne: ["$$instance.solution_cost", null] },
+                  {
+                    $eq: ["$$instance.solution_cost", "$$instance.lower_cost"],
+                  },
+                ],
+              },
             },
           },
         },

@@ -11,6 +11,7 @@ import { handleRequestDetailUpdated } from "pages/submissions/handleRequestDetai
 import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
+import { DATE_TIME_FORMAT } from "utils/format";
 
 export const SubmissionRequestGlance = ({
   apiKey,
@@ -46,18 +47,19 @@ export const SubmissionRequestGlance = ({
     <>
       <Stack direction="row" sx={{ gap: 2, justifyContent: "space-between" }}>
         <DetailsList
-          sx={{ m: -2 }}
+          sx={{ m: -2, overflow: "hidden", lineBreak: "anywhere" }}
           items={[
-            { label: "Algorithm", value: request?.algorithmName },
-            { label: "API key", value: `${apiKey}` },
+            { label: "Algorithm", value: request?.algorithmName ?? "-" },
+            { label: "API key", value: `${apiKey}` ?? "-" },
             {
               label: "Expiry",
               value:
-                apiKeyData?.expirationDate &&
-                format(
-                  parseISO(apiKeyData?.expirationDate),
-                  "yyyy MMM dd hh:mm aaa"
-                ),
+                (apiKeyData?.expirationDate &&
+                  format(
+                    parseISO(apiKeyData?.expirationDate),
+                    DATE_TIME_FORMAT
+                  )) ??
+                "-",
             },
             {
               label: "Status",
@@ -74,7 +76,7 @@ export const SubmissionRequestGlance = ({
                           "in-progress": "success.main",
                           expired: "error.main",
                           receiving: "warning.main",
-                        }[keyStatus] ?? "default",
+                        }[keyStatus] ?? "text.secondary",
                     }}
                   />
                   {{

@@ -2,7 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "App";
 import { APIConfig } from "core/config";
 import { now } from "lodash";
-import { ONGOING_SUBMISSION_QUERY_KEY } from "queries/useOngoingSubmissionQuery";
+import {
+  ONGOING_SUBMISSION_QUERY_KEY,
+  SubmissionTicket,
+  optimisticQueue,
+} from "queries/useOngoingSubmissionQuery";
 
 export function useSubmissionMutation({
   apiKey,
@@ -31,35 +35,17 @@ export function useSubmissionMutation({
         }
       ),
     onMutate: async ({ label, size = 0 }) => {
-      await queryClient.cancelQueries({
-        queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", apiKey],
-      });
-
-      const previousTickets = queryClient.getQueryData([
-        ONGOING_SUBMISSION_QUERY_KEY,
-        "ticket",
-        apiKey,
-      ]);
-
-      queryClient.setQueryData(
-        [ONGOING_SUBMISSION_QUERY_KEY, "ticket", apiKey],
-        (old: any) => [
-          ...(old || []),
-          { label, status: "pending", dateReceived: now(), size },
-        ]
-      );
-      return { previousTickets };
+      const optimistic = {
+        label,
+        status: "uploading",
+        dateReceived: now(),
+        size,
+      } satisfies SubmissionTicket;
+      optimisticQueue.add(optimistic);
+      return { optimistic };
     },
-    onError: (err, variables, context) => {
-      queryClient.setQueryData(
-        [ONGOING_SUBMISSION_QUERY_KEY, "ticket", apiKey],
-        context?.previousTickets
-      );
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", apiKey],
-      });
+    onSettled: (_0, _1, _2, { optimistic }) => {
+      optimisticQueue.delete(optimistic);
     },
     mutationKey: ["submission", apiKey],
   });

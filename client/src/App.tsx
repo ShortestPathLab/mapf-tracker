@@ -48,6 +48,7 @@ import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
+import { LostConnectionWarning } from "components/LostConnectionWarning";
 
 export const queryClient = new QueryClient();
 
@@ -144,22 +145,25 @@ export function Content() {
     },
   ];
   return (
-    <Stack>
-      <Stack
-        direction={lg ? "column" : "row"}
-        sx={{
-          height: "100%",
-          width: "100%",
-          bgcolor: "background.default",
-        }}
-      >
-        <AppBar />
-        <Box sx={{ flex: 1, overflowX: "hidden" }}>
-          <Router fallback={<NotFoundPage />} routes={routes} />
-        </Box>
+    <>
+      <Stack>
+        <Stack
+          direction={lg ? "column" : "row"}
+          sx={{
+            height: "100%",
+            width: "100%",
+            bgcolor: "background.default",
+          }}
+        >
+          <AppBar />
+          <Box sx={{ flex: 1, overflowX: "hidden" }}>
+            <Router fallback={<NotFoundPage />} routes={routes} />
+          </Box>
+        </Stack>
+        {lg && <BottomBar />}
       </Stack>
-      {lg && <BottomBar />}
-    </Stack>
+      <LostConnectionWarning />
+    </>
   );
 }
 

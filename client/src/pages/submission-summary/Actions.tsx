@@ -81,6 +81,7 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
             flexDirection: "column",
             borderRadius: 1,
             height: 240,
+            p: 4,
             alignItems: "center",
             justifyContent: "center",
             gap: 2,
@@ -100,6 +101,9 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
         </ButtonBase>
       </FileUploader>
       <Tickets apiKey={apiKey} />
+      <Prose>
+        <SubmitAsCsvContent />
+      </Prose>
     </Stack>
   );
 }
@@ -109,6 +113,7 @@ export function JsonApiDialog({ apiKey }: { apiKey?: string | number }) {
     <>
       <SubmissionRequestGlance apiKey={apiKey} />
       <Divider sx={{ my: 2 }} />
+      Not implemented.
     </>
   );
 }
@@ -126,7 +131,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
     JsonApiDialog,
     {
       padded: true,
-      title: "Submit via JSON",
+      title: "Submit via copy and paste",
       slotProps: { modal: { width: 720 } },
     }
   );
@@ -134,7 +139,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
     FileUploadDialog,
     {
       padded: true,
-      title: "Submit via Upload",
+      title: "Submit via upload",
       slotProps: { modal: { width: 720 } },
     }
   );
@@ -143,16 +148,16 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
       <Grid gap={2} width={240}>
         {[
           {
+            label: "Upload files",
+            icon: <TableChartOutlined />,
+            description: "Submit results as one or more CSV or JSON files",
+            action: () => openSpreadSheetDialog({ apiKey }),
+          },
+          {
             label: "REST API",
             icon: <DataObjectOutlined />,
             description: "Programmatically submit results via the REST API",
             action: () => openRestApiDialog({ apiKey }),
-          },
-          {
-            label: "Upload",
-            icon: <TableChartOutlined />,
-            description: "Submit results as one or more CSV or JSON files",
-            action: () => openSpreadSheetDialog({ apiKey }),
           },
           {
             label: "Copy and paste",
@@ -185,7 +190,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
         {jsonApiDialog}
       </Grid>
       <Button sx={{ alignSelf: "flex-start" }} startIcon={<HelpOutlined />}>
-        How to submit
+        I need help submitting data
       </Button>
     </>
   );

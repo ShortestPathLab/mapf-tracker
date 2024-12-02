@@ -13,7 +13,11 @@ export const DetailsList = ({
     <List {...rest}>
       {items.map((item, index) => (
         <ListItem key={index}>
-          <ListItemText primary={item.value} secondary={item.label} />
+          <ListItemText
+            sx={{ display: "flex", flexDirection: "column-reverse" }}
+            primary={item.value}
+            secondary={item.label}
+          />
         </ListItem>
       ))}
     </List>

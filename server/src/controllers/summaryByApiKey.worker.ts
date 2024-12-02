@@ -1,5 +1,5 @@
 import { connectToDatabase } from "connection";
-import { chain, countBy, head, once } from "lodash";
+import { chain, countBy, groupBy, head, mapValues, once } from "lodash";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import _memoize from "p-memoize";
 import { usingTaskMessageHandler } from "queue/usingWorker";
@@ -37,20 +37,32 @@ const run = async (params: unknown) => {
     const map = await findMap(scenario.map_id.toString());
     return { submission: d, scenario, map, instance };
   });
+  const novelty = (c: typeof submissions) =>
+    mapValues(
+      groupBy(
+        c.filter((d) => d.submission.validation.outcome === "valid"),
+        (d) =>
+          d.submission.cost <
+          (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+            ? "best"
+            : d.submission.cost ===
+              (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+            ? "tie"
+            : "dominated"
+      ),
+      "length"
+    );
+
   const count = (c: typeof submissions) => ({
     valid: 0,
     invalid: 0,
     queued: 0,
     outdated: 0,
     ...countBy(c, (d) => d.submission.validation.outcome),
-    best: c.filter(
-      (d) =>
-        d.submission.validation.outcome === "valid" &&
-        d.submission.cost <
-          (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
-    ).length,
+    ...novelty(c),
     total: c.length,
   });
+
   const maps = chain(submissions)
     .groupBy("map._id")
     .mapValues((v) => ({

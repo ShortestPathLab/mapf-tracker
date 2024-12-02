@@ -1,4 +1,8 @@
-import { CancelOutlined, CheckCircleOutlined } from "@mui/icons-material";
+import {
+  CancelOutlined,
+  CheckCircleOutlined,
+  PendingOutlined,
+} from "@mui/icons-material";
 import {
   CircularProgress,
   ListItem,
@@ -8,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { format } from "date-fns";
-import { identity, map, orderBy } from "lodash";
+import { identity, map, orderBy, startCase } from "lodash";
 import prettyBytes from "pretty-bytes";
 import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
 import { paper } from "theme";
@@ -30,16 +34,25 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                   {{
                     done: <CheckCircleOutlined color="success" />,
                     error: <CancelOutlined color="error" />,
+                    pending: <PendingOutlined color="warning" />,
                   }[status] ?? <CircularProgress size={24} />}
                 </ListItemIcon>
                 <ListItemText
                   sx={{ minWidth: "max-content", whiteSpace: "pre-line" }}
                   primary={label ?? "Submission"}
                   secondary={[
-                    prettyBytes(size),
-                    format(dateReceived, "MMM dd HH:mm aaa"),
-                    status === "done" &&
-                      pluralize("entry", result?.count, true),
+                    `${prettyBytes(size)}, ${format(
+                      dateReceived,
+                      "MMM dd HH:mm aaa"
+                    )}`,
+                    status === "done"
+                      ? pluralize("entry", result?.count, true)
+                      : {
+                          done: "Done",
+                          error: "Error",
+                          pending: "Processing",
+                          uploading: "Uploading",
+                        }[status] ?? "-",
                   ]
                     .filter(identity)
                     .join("\n")}
@@ -50,7 +63,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
         )
       ) : (
         <Typography color="text.secondary">
-          Previous uploads will appear here
+          Previous uploads will appear here.
         </Typography>
       )}
     </Stack>

@@ -229,3 +229,27 @@ export const create = route(z.any(), async (d, req) => {
   );
   return { message: "submission received", ticket: key };
 });
+
+export async function restore() {
+  // Remove unfinished jobs
+  await OngoingSubmission.aggregate([
+    { $match: { "validation.outcome": "queued" } },
+    { $addFields: { "validation.outcome": null } },
+    {
+      $merge: {
+        into: OngoingSubmission.collection.name,
+        whenMatched: "replace",
+      },
+    },
+  ]);
+  // Re-queue unfinished jobs
+  const docs = await OngoingSubmission.find({
+    "validation.isValidationRun": { $ne: true },
+  });
+  add(
+    docs.map((b) => ({
+      apiKey: b.apiKey,
+      submissionId: b._id.toString(),
+    }))
+  );
+}

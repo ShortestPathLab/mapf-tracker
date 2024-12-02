@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Card,
+  ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
@@ -48,7 +49,7 @@ export default function SubmissionSummary({
         {extras}
       </Stack> */}
       <Grid
-        width={280}
+        width={230}
         sx={{
           gap: 2,
           mt: 2,
@@ -59,18 +60,16 @@ export default function SubmissionSummary({
             <Typography
               variant="overline"
               color="text.secondary"
-              sx={{ my: -1 }}
+              sx={{ mt: -1, mb: 1 }}
             >
               {label}
             </Typography>
-            <Grid width={120}>
+            <Grid width={100} sx={{ gap: 1 }}>
               {values.map(({ name, count }) => (
-                <Stack sx={{ gap: 0.5, mt: 2 }}>
-                  <Typography variant="h4" component="h2">
-                    <AnimateInteger value={count} />
-                  </Typography>
-                  <Typography color="text.secondary">{name}</Typography>
-                </Stack>
+                <ListItemText
+                  primary={<AnimateInteger value={count} />}
+                  secondary={name}
+                />
               ))}
             </Grid>
           </Stack>

@@ -5,6 +5,8 @@ import {
   DoNotDisturbOutlined,
   HourglassEmptyOutlined,
   PendingOutlined,
+  PlayArrowOutlined,
+  StopOutlined,
 } from "@mui/icons-material";
 import {
   alpha,
@@ -13,6 +15,7 @@ import {
   capitalize,
   Chip,
   Collapse,
+  Divider,
   Grow,
   Stack,
   Typography,
@@ -25,7 +28,7 @@ import {
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { useDialog } from "hooks/useDialog";
-import { identity, isNumber, join, times } from "lodash";
+import { identity, isNumber, join, sumBy, times } from "lodash";
 import {
   deleteAll,
   OngoingSubmission,
@@ -43,6 +46,8 @@ import { SubmissionInstanceLabel } from "./SubmissionInstanceLabel";
 import { Instance, SummarySlice } from "core/types";
 import { useState } from "react";
 import Enter from "components/dialog/Enter";
+import { Dialog } from "components/dialog";
+import { ConfirmDialog } from "components/dialog/Modal";
 
 function getSubmissionInfoText(
   submission: OngoingSubmission,
@@ -59,8 +64,9 @@ function getSubmissionInfoText(
     const improvement = (() => {
       if (isNumber(instance?.solution_cost)) {
         const isImprovement = instance.solution_cost > submission.cost;
+        const isTie = instance.solution_cost === submission.cost;
         return [
-          isImprovement ? "New record" : "Dominated",
+          isTie ? "Tie" : isImprovement ? "New record" : "Dominated",
           `(yours: ${submission.cost}, best: ${instance.solution_cost})`,
         ].join(" ");
       }
@@ -322,7 +328,10 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
 
   return (
     <>
-      <Stack sx={{ p: 2, gap: 1, alignItems: "center" }} direction="row">
+      <Stack
+        sx={{ p: 2, gap: 1, alignItems: "center", flexWrap: "wrap" }}
+        direction="row"
+      >
         {[
           { label: "Valid", key: "valid" },
           { label: "Invalid", key: "invalid" },
@@ -357,13 +366,50 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         })}
         <Box sx={{ flex: 1 }} />
         <Button
-          sx={{ mr: -2 }}
-          startIcon={<DeleteOutlined />}
+          color="inherit"
+          disabled
+          startIcon={<PlayArrowOutlined />}
           onClick={() => deleteSubmissions(deleteAll)}
         >
-          Delete all
+          Run validation
         </Button>
-        ,
+        <Button
+          color="inherit"
+          disabled
+          startIcon={<StopOutlined />}
+          onClick={() => deleteSubmissions(deleteAll)}
+        >
+          Pause validation
+        </Button>
+        <Divider orientation="vertical" flexItem />
+        <Dialog
+          title="Delete all submissions"
+          slotProps={{ modal: { variant: "default" } }}
+          padded
+          trigger={(onClick) => (
+            <Button
+              disabled={!sumBy(data?.maps, "count.total")}
+              color="error"
+              startIcon={<DeleteOutlined />}
+              onClick={onClick}
+            >
+              Delete all
+            </Button>
+          )}
+        >
+          {({ close }) => (
+            <ConfirmDialog
+              hintText="Are you sure you want to delete all submissions? This action cannot be undone."
+              acceptLabel="Delete all"
+              closeLabel="Cancel"
+              onClose={close}
+              onAccept={() => {
+                deleteSubmissions(deleteAll);
+                close();
+              }}
+            />
+          )}
+        </Dialog>
       </Stack>
       <TreeDataGrid
         initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}

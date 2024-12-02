@@ -24,6 +24,8 @@ const filters: {
   outdated: (s) => s.validation.outcome === "outdated",
   queued: () => false,
   best: (s) => s.validation.outcome === "valid",
+  tie: () => false,
+  dominated: () => false,
 };
 
 function useSubmissionInstance({

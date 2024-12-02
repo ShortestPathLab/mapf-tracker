@@ -195,7 +195,10 @@ export function ConfirmDialog({
 }) {
   return (
     <Stack gap={4}>
-      <Typography color="text.secondary" sx={{ mt: -1 }}>
+      <Typography
+        color="text.secondary"
+        sx={{ mt: -1, whiteSpace: "pre-line" }}
+      >
         {hintText}
       </Typography>
       <Stack direction="row" sx={{ gap: 2, justifyContent: "flex-end" }}>

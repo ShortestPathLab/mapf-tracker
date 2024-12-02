@@ -11,6 +11,7 @@ import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
 import { csvParser, yamlParser } from "./body-parsers";
+import { restore } from "controllers/ongoingSubmission";
 
 export const app = express();
 app.use(cors());
@@ -56,6 +57,10 @@ app.use((request, response, next) => {
 
 createRouters(app);
 
+app.get("/api/heartbeat", (req, res) => {
+  res.send("OK");
+});
+
 createStaticRoutes(app);
 
 app.get("*", (req, res) =>
@@ -73,3 +78,9 @@ log.info(
     ? "Development mode"
     : "Production mode"
 );
+
+log.info("Restoring");
+
+for (const f of [restore]) {
+  f();
+}

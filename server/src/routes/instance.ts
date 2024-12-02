@@ -1,6 +1,5 @@
-import { Router, Application } from "express";
+import { Application, Router } from "express";
 import * as instance from "../controllers/instance";
-import { middleware as cache } from "apicache";
 
 export default (app: Application) => {
   const router = Router();

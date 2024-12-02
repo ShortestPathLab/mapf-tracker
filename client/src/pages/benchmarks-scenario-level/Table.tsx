@@ -49,14 +49,11 @@ export default function Table() {
         icon: <InfoOutlined />,
         render: (row, trigger) => (
           <Dialog
-            slotProps={{ modal: { width: 720 } }}
-            title="Benchmark details"
+            title="Instance details"
             trigger={(onClick) => cloneElement(trigger, { onClick })}
             padded
           >
-            <Box sx={{ m: -2 }}>
-              <Details id={row.id} />
-            </Box>
+            <Details id={row.id} />
           </Dialog>
         ),
       },
