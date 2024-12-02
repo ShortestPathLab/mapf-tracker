@@ -10,13 +10,11 @@ import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
-import { csvParser, yamlParser } from "./parsers";
-// import { treaty } from "treaty";
-
-// treaty.listen({ port: 3000 });
+import { csvParser, yamlParser } from "./body-parsers";
 
 export const app = express();
 app.use(cors());
+
 app.use(yamlParser);
 app.use(csvParser);
 
@@ -28,7 +26,6 @@ app.use(
     parameterLimit: 500_000,
   })
 );
-app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(
   logger({

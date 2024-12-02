@@ -40,6 +40,7 @@ export const pathSchema = (newline: boolean = false) =>
     );
 
 export const submissionBaseSchema = z.object({
+  skip_validation: z.boolean().default(false).optional(),
   // Instance identification
   map_name: z.string(),
   scen_type: z.string(),
@@ -130,6 +131,7 @@ const submitOne = async (
     lowerBound: data.lower_cost,
     cost: data.solution_cost,
     solutions: data.solution_plan,
+    options: { skipValidation: data.skip_validation },
   }).save();
 
   return [{ ...id, submissionId: doc.id }];
@@ -172,7 +174,6 @@ export async function run({
         description: "Does not match any schema.",
         attempts: handlers.map(({ schema }) => {
           const { error } = schema.safeParse(d);
-          console.log(error.format());
           return error.format();
         }),
       },

@@ -1,7 +1,8 @@
 import { List, ListItem, ListItemText, ListProps } from "@mui/material";
+import { ReactNode } from "react";
 
 export interface DetailsListProps {
-  items?: { label: string; value: string }[];
+  items?: { label: string; value: ReactNode }[];
 }
 
 export const DetailsList = ({

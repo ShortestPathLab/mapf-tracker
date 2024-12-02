@@ -16,6 +16,7 @@ const schema = createSchema(
     lowerBound: Number,
     cost: Number,
     solutions: [String],
+    options: { skipValidation: Schema.Types.Boolean },
     validation: {
       isValidationRun: Schema.Types.Boolean,
       errors: [String],

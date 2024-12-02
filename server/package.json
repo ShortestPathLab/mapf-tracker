@@ -48,6 +48,7 @@
     "mockingoose": "^2.16.2",
     "mongoose": "7",
     "neat-csv": "^7.0.0",
+    "object-sizeof": "^2.6.5",
     "p-memoize": "^7.1.1",
     "parser": "workspace:*",
     "pino": "^9.3.2",

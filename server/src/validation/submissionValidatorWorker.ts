@@ -211,6 +211,20 @@ const connect = once(() => connectToDatabase());
 const parseMapMemo = memoize(parseMap);
 const parseScenarioMemo = memoize(parseScenarioMeta);
 
+export async function skip(submission: OngoingSubmissionDocument) {
+  const errors = ["Skipped validation because skip_validation is set"];
+  await submission
+    .set(validationResultsKey, {
+      isValidationRun: true,
+      errors,
+      // Set document to valid
+      outcome: "valid" satisfies Outcome,
+    } satisfies OngoingSubmission[typeof validationResultsKey])
+    .save();
+  // Set output to skipped
+  return { result: { outcome: "skipped" as const satisfies Outcome, errors } };
+}
+
 export async function run(data: SubmissionValidatorData[number]): Promise<{
   result: {
     errors?: string[];
@@ -222,7 +236,10 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
   try {
     const { submissionId, mode } = data;
 
+    // Can error if submission doesn't exist, this is allowed.
     const submission = await OngoingSubmission.findById(submissionId);
+
+    if (submission.options?.skipValidation) return await skip(submission);
 
     const {
       mapContent: map,

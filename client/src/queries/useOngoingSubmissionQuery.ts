@@ -26,7 +26,7 @@ export type OngoingSubmission = {
   validation: ValidationOutcome;
 };
 
-const QUERY_KEY = "ongoingSubmission";
+export const ONGOING_SUBMISSION_QUERY_KEY = "ongoingSubmission";
 
 export function useFinaliseOngoingSubmissionMutation(key: string | number) {
   const notify = useSnackbar();
@@ -35,12 +35,12 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
     mutationFn: () =>
       json(`${APIConfig.apiUrl}/ongoing_submission/finalise/${key}`),
     onMutate: (k) => {
-      client.cancelQueries({ queryKey: [QUERY_KEY, key] });
+      client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
     },
     onSettled: async () => {
       notify("Submitted successfully");
       return await client.invalidateQueries({
-        queryKey: [QUERY_KEY, key],
+        queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key],
       });
     },
   });
@@ -48,7 +48,7 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
 
 export function useOngoingSubmissionQuery(key?: string | number) {
   return useQuery({
-    queryKey: [QUERY_KEY, key],
+    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key],
     queryFn: () =>
       json<OngoingSubmission[]>(
         `${APIConfig.apiUrl}/ongoing_submission/${key}`
@@ -71,7 +71,7 @@ export function useOngoingSubmissionScenarioQuery(
   scenario?: string | number
 ) {
   return useQuery({
-    queryKey: [QUERY_KEY, key, scenario],
+    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key, scenario],
     queryFn: () => ongoingSubmissionScenarioQueryFn(key, scenario),
     enabled: !!key && !!scenario,
     refetchInterval: REFETCH_MS,
@@ -79,7 +79,7 @@ export function useOngoingSubmissionScenarioQuery(
 }
 export function useOngoingSubmissionSummaryQuery(key?: string | number) {
   return useQuery({
-    queryKey: [QUERY_KEY, "summary", key],
+    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary", key],
     queryFn: () =>
       json<SummaryByApiKeyResult>(
         `${APIConfig.apiUrl}/ongoing_submission/summary/${key}`
@@ -90,11 +90,14 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
 }
 export function useOngoingSubmissionTicketQuery(key?: string | number) {
   return useQuery({
-    queryKey: [QUERY_KEY, "ticket", key],
+    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
     queryFn: () =>
       json<
         {
+          label?: string;
+          size?: number;
           status: "unknown" | "done" | "pending" | "error";
+          result?: { count: number };
           dateReceived: number;
         }[]
       >(`${APIConfig.apiUrl}/ongoing_submission/status/${key}`),
@@ -114,15 +117,16 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
         ? del(`${APIConfig.apiUrl}/ongoing_submission/${key}`)
         : post(`${APIConfig.apiUrl}/ongoing_submission/delete`, { id: k }),
     onMutate: (k) => {
-      client.cancelQueries({ queryKey: [QUERY_KEY, key] });
-      client.setQueryData<OngoingSubmission[]>([QUERY_KEY, key], (old) =>
-        old?.filter?.((x) => x.id !== k)
+      client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
+      client.setQueryData<OngoingSubmission[]>(
+        [ONGOING_SUBMISSION_QUERY_KEY, key],
+        (old) => old?.filter?.((x) => x.id !== k)
       );
     },
     onSettled: async () => {
       notify("Selection deleted");
       return await client.invalidateQueries({
-        queryKey: [QUERY_KEY, key],
+        queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key],
       });
     },
   });

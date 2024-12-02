@@ -9,6 +9,7 @@ import {
 import {
   alpha,
   Box,
+  Button,
   capitalize,
   Chip,
   Collapse,
@@ -24,10 +25,11 @@ import {
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { useDialog } from "hooks/useDialog";
-import { isNumber, join, times } from "lodash";
+import { identity, isNumber, join, times } from "lodash";
 import {
   deleteAll,
   OngoingSubmission,
+  useDeleteOngoingSubmissionMutation,
   useOngoingSubmissionSummaryQuery,
 } from "queries/useOngoingSubmissionQuery";
 import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
@@ -51,19 +53,26 @@ function getSubmissionInfoText(
     submission?.validation?.outcome !== "outdated"
   ) {
     const errors = submission?.validation?.errors;
-    if (errors?.length) {
-      return capitalize(join(errors, ", "));
-    }
+    const showErrors = errors?.length;
+    const showImprovement = submission?.validation?.outcome === "valid";
 
-    if (isNumber(instance?.solution_cost)) {
-      const isImprovement = instance.solution_cost > submission.cost;
-      return [
-        isImprovement ? "New record" : "Dominated",
-        `(yours: ${submission.cost}, best: ${instance.solution_cost})`,
-      ].join(" ");
-    }
+    const improvement = (() => {
+      if (isNumber(instance?.solution_cost)) {
+        const isImprovement = instance.solution_cost > submission.cost;
+        return [
+          isImprovement ? "New record" : "Dominated",
+          `(yours: ${submission.cost}, best: ${instance.solution_cost})`,
+        ].join(" ");
+      }
 
-    return `New record (${submission.cost}, no previous claims)`;
+      return `New record (${submission.cost}, no previous claims)`;
+    })();
+
+    return capitalize(
+      [showErrors && join(errors, ", "), showImprovement && improvement]
+        .filter(identity)
+        .join("\n")
+    );
   }
 
   return "";
@@ -95,8 +104,10 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     padded: true,
   });
   const { data, isLoading } = useOngoingSubmissionSummaryQuery(apiKey);
-  const { mutateAsync: deleteEntry } =
+  const { mutateAsync: deleteByScenarioIndex } =
     useDeleteOngoingSubmissionByScenarioIndexMutation(apiKey);
+  const { mutate: deleteSubmissions } =
+    useDeleteOngoingSubmissionMutation(apiKey);
 
   const [expanded, setExpanded] = useBooleanMap();
   const [slice, setSlice] = useState<keyof SummarySlice>("total");
@@ -116,9 +127,12 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         action: (row) =>
           disambiguate(row, {
             scenario: (row) =>
-              deleteEntry({ scenario: row.id, index: deleteAll }),
+              deleteByScenarioIndex({ scenario: row.id, index: deleteAll }),
             instance: (row) =>
-              deleteEntry({ scenario: row.scenario, index: row.index }),
+              deleteByScenarioIndex({
+                scenario: row.scenario,
+                index: row.index,
+              }),
           }),
       },
     ],
@@ -290,6 +304,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                       overflow: "hidden",
                       width: " 100%",
                       textOverflow: "ellipsis",
+                      whiteSpace: "pre-line",
                     }}
                   >
                     {getSubmissionInfoText(submission, instance)}
@@ -307,7 +322,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
 
   return (
     <>
-      <Stack sx={{ p: 2, gap: 1 }} direction="row">
+      <Stack sx={{ p: 2, gap: 1, alignItems: "center" }} direction="row">
         {[
           { label: "Valid", key: "valid" },
           { label: "Invalid", key: "invalid" },
@@ -340,6 +355,15 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             />
           );
         })}
+        <Box sx={{ flex: 1 }} />
+        <Button
+          sx={{ mr: -2 }}
+          startIcon={<DeleteOutlined />}
+          onClick={() => deleteSubmissions(deleteAll)}
+        >
+          Delete all
+        </Button>
+        ,
       </Stack>
       <TreeDataGrid
         initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}

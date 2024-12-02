@@ -23,6 +23,7 @@ import {
   SummaryByApiKeyResult,
   path as summaryByApiKeyWorkerPath,
 } from "./summaryByApiKey.worker";
+import { estimateSizeAsync } from "./estimateSize.worker";
 
 const log = context("Submission Controller");
 
@@ -182,9 +183,7 @@ const processSubmission = async (
   const result = await validateSubmissionRequestAsync({ apiKey, data: d });
   if ("ids" in result) {
     log.info(`Received ${result.ids.length} submissions`);
-    for (const { submissionId } of result.ids) {
-      add({ apiKey, submissionId });
-    }
+    add(result.ids);
     return {
       status: "done",
       message: "Submission received, we will begin automated validation soon.",
@@ -196,7 +195,11 @@ const processSubmission = async (
   }
 };
 
-const submissionTickets = createPool<{ apiKey: string }>();
+const submissionTickets = createPool<{
+  apiKey: string;
+  label?: string;
+  size?: number;
+}>();
 
 export const status = route(
   z.object({ ticket: z.string() }),
@@ -211,8 +214,8 @@ export const statusByApiKey = route(
 );
 
 export const create = route(z.any(), async (d, req) => {
-  const { apiKey } = await z
-    .object({ apiKey: apiKeyValidationSchema })
+  const { apiKey, label } = await z
+    .object({ apiKey: apiKeyValidationSchema, label: z.string().optional() })
     .parseAsync(req.params);
   const key = randomUUIDv7();
   submissionTickets.withTicket(
@@ -220,6 +223,8 @@ export const create = route(z.any(), async (d, req) => {
     () => processSubmission(d, apiKey.api_key),
     {
       apiKey: apiKey.api_key,
+      size: await estimateSizeAsync(d),
+      label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
     }
   );
   return { message: "submission received", ticket: key };

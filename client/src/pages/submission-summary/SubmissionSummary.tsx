@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   Box,
   Button,
+  Card,
   Stack,
   Typography,
 } from "@mui/material";
@@ -25,7 +26,7 @@ export type Props = {
   extras?: ReactNode;
   status?: ReactNode;
   apiKey?: ReactNode;
-  summaryStats?: { name: string; count: number }[];
+  summaryStats?: { label: string; values: { name: string; count: number }[] }[];
   detailStats?: { name: string; stats: { name: string; count: number }[] }[];
   children?: ReactNode;
 };
@@ -34,34 +35,44 @@ export default function SubmissionSummary({
   extras = defaultExtras,
   status = defaultStatus,
   apiKey = "sample_api_key",
-  summaryStats = defaultSummary,
+  summaryStats = [],
   detailStats = defaultDetails,
   children,
 }: Props) {
   const sm = useSm();
   return (
     <>
-      <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+      {/* <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
         {status}
         <Box sx={{ flex: 1 }} />
         {extras}
-      </Stack>
+      </Stack> */}
       <Grid
-        width={120}
+        width={280}
         sx={{
-          gap: 4,
+          gap: 2,
           mt: 2,
-          borderRadius: 1,
-          p: sm ? 2 : 3,
-          ...paper(0),
         }}
       >
-        {summaryStats.map(({ name, count }) => (
-          <Stack sx={{ gap: 0.5 }}>
-            <Typography variant="h4" component="h2">
-              <AnimateInteger value={count} />
+        {summaryStats?.map?.(({ label, values }) => (
+          <Stack sx={{ p: 2, ...paper(0) }}>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={{ my: -1 }}
+            >
+              {label}
             </Typography>
-            <Typography color="text.secondary">{name}</Typography>
+            <Grid width={120}>
+              {values.map(({ name, count }) => (
+                <Stack sx={{ gap: 0.5, mt: 2 }}>
+                  <Typography variant="h4" component="h2">
+                    <AnimateInteger value={count} />
+                  </Typography>
+                  <Typography color="text.secondary">{name}</Typography>
+                </Stack>
+              ))}
+            </Grid>
           </Stack>
         ))}
       </Grid>
