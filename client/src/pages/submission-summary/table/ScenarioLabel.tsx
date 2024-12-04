@@ -16,20 +16,16 @@ export function ScenarioLabel({
 }) {
   const { data } = useScenarioData(scenarioId);
   return (
-    <Enter in axis="x">
-      <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-        <Stack sx={{ width: 48, alignItems: "center" }}>
-          <IconCard icon={<RouteOutlined />} />
-        </Stack>
-        <DataGridTitle
-          primary={`${startCase(data?.scen_type ?? "-")}-${
-            data?.type_id ?? "-"
-          }`}
-          secondary={
-            isUndefined(count) ? "Scenario" : pluralize("item", count, true)
-          }
-        />
+    <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+      <Stack sx={{ width: 48, alignItems: "center" }}>
+        <IconCard icon={<RouteOutlined />} />
       </Stack>
-    </Enter>
+      <DataGridTitle
+        primary={`${startCase(data?.scen_type ?? "-")}-${data?.type_id ?? "-"}`}
+        secondary={
+          isUndefined(count) ? "Scenario" : pluralize("item", count, true)
+        }
+      />
+    </Stack>
   );
 }

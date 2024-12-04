@@ -55,6 +55,7 @@ const $grid =
       g.moveTo(0, y).lineTo(width, y);
     }
   };
+
 const $box =
   ({ x: width, y: height }: { x: number; y: number }, color: string) =>
   (g: PixiGraphics) => {

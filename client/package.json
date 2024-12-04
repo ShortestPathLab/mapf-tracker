@@ -85,5 +85,12 @@
   "trustedDependencies": [
     "es5-ext",
     "validator"
-  ]
+  ],
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "eslint": "^9.16.0",
+    "eslint-plugin-react": "^7.37.2",
+    "globals": "^15.13.0",
+    "typescript-eslint": "^8.17.0"
+  }
 }
