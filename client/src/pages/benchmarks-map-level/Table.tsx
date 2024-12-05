@@ -1,19 +1,20 @@
 import { FileDownloadOutlined, ShowChartOutlined } from "@mui/icons-material";
+import { IconCard } from "components/IconCard";
+import { Item } from "components/Item";
+import { useSnackbarAction } from "components/Snackbar";
 import { AnalysisButton } from "components/analysis/Analysis";
 import {
   cellRendererBar,
-  DataGridTitle,
+  cellRendererText,
   useDataGridActions,
 } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { IconCard } from "components/IconCard";
-import { useSnackbarAction } from "components/Snackbar";
 import { InstanceCollection } from "core/types";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { capitalize } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
-import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
+import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
 import { useInstanceCollectionsData } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import { downloadInstance, downloadMap, downloadScenario } from "./download";
@@ -79,7 +80,7 @@ export default function Table() {
       sortable: true,
       width: 160,
       renderCell: ({ value, row }) => (
-        <DataGridTitle
+        <Item
           primary={`Scenario ${value}`}
           secondary={`${row.instances ?? "?"} instances`}
         />
@@ -94,6 +95,7 @@ export default function Table() {
       width: 150,
       valueFormatter: capitalize,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "solved_percentage",

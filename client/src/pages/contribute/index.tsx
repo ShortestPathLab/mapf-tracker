@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { Layout } from "layout";
 import { Info } from "./Info";
@@ -13,18 +13,10 @@ export default function Page() {
       title="Submit an algorithm"
       path={[{ name: "Submit", url: "/submit" }]}
     >
-      <Stack
-        sx={{
-          flexDirection: { md: "column", lg: "row" },
-          alignItems: { md: "stretch", lg: "flex-start" },
-          gap: sm ? 2 : 3,
-        }}
-      >
-        <Info />
-        <Stack sx={{ gap: sm ? 2 : 3, flex: 1 }}>
-          <TrackSubmissionHero />
-          <SubmitRequestForm />
-        </Stack>
+      <Stack direction="row">
+        <SubmitRequestForm />
+        <Divider flexItem />
+        <TrackSubmissionHero />
       </Stack>
     </Layout>
   );

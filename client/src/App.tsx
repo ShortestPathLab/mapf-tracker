@@ -14,6 +14,7 @@ import {
 import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { LostConnectionWarning } from "components/LostConnectionWarning";
 import { Route, Router } from "components/Router";
 import AppBar from "components/appbar";
 import { useLg } from "components/dialog/useSmallDisplay";
@@ -28,8 +29,8 @@ import { NotFoundPage } from "pages/NotFound";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
-import SystemDemo from "pages/demo";
 import DirectoryPage from "pages/directory";
+import SystemDemo from "pages/docs/demo";
 import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
 import { matchPath, useLocation } from "react-router-dom";
@@ -38,17 +39,17 @@ import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
 import Submissions from "./pages/AlgorithmsPage";
 import UserMapPage from "./pages/UserMapPage";
-import AboutPage from "./pages/about";
 import AdminDashboard from "./pages/admin-dashboard";
 import AdminDashboardOld from "./pages/admin-dashboard/index.old";
 import ContributePage from "./pages/contribute";
-import DownloadPage from "./pages/get-dataset";
+import DocsPage from "./pages/docs";
+import AboutPage from "./pages/docs/about";
+import DownloadPage from "./pages/docs/get-dataset";
 import TrackSubmission from "./pages/submissions";
 import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
-import { LostConnectionWarning } from "components/LostConnectionWarning";
 
 export const queryClient = new QueryClient();
 
@@ -57,7 +58,7 @@ export default function App() {
     const next = prev === "light" ? "dark" : "light";
     localStorage.setItem("theme", next);
     return next;
-  }, (localStorage.getItem("theme") || "dark") as any);
+  }, (localStorage.getItem("theme") || "dark") as "light" | "dark");
   const [mode] = themeState;
   const modalProviderValue = useModalProviderValue();
 
@@ -94,6 +95,11 @@ export function Content() {
       content: <DirectoryPage labels={["Make a submission"]} title="Submit" />,
     },
     {
+      path: "/docs",
+      content: <DocsPage />,
+      parent: "/",
+    },
+    {
       path: "/manage",
       content: (
         <DirectoryPage labels={["Appearance", "Manage"]} title="Manage" />
@@ -116,8 +122,8 @@ export function Content() {
     },
     { path: "/visualization", content: <Visualiser />, parent: "/instances" },
     { path: "/summary", content: <Summary />, parent: "/" },
-    { path: "/about", content: <AboutPage />, parent: "/" },
-    { path: "/systemDemo", content: <SystemDemo />, parent: "/" },
+    { path: "/about", content: <AboutPage />, parent: "/docs" },
+    { path: "/systemDemo", content: <SystemDemo />, parent: "/docs" },
     { path: "/submissions", content: <Submissions />, parent: "/" },
     { path: "/contributes", content: <ContributePage />, parent: "submit" },
     {
@@ -130,7 +136,7 @@ export function Content() {
       content: <SubmissionSummaryPage />,
       parent: "/trackSubmission",
     },
-    { path: "/download", content: <DownloadPage /> },
+    { path: "/download", content: <DownloadPage />, parent: "/docs" },
     {
       path: "/dashboard/:section?",
       content: <AdminDashboard />,
@@ -189,7 +195,6 @@ function BottomBar() {
       icon: <BuildOutlined />,
       iconSelected: <Build />,
     },
-    ,
   ];
   const selected = find(
     paths,
@@ -212,6 +217,7 @@ function BottomBar() {
     >
       {paths.map(({ label, url, icon, iconSelected }) => (
         <BottomNavigationAction
+          key={label}
           sx={{
             pt: 1.5,
             pb: 2,

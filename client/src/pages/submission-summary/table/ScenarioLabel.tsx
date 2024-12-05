@@ -1,6 +1,6 @@
 import { RouteOutlined } from "@mui/icons-material";
 import { Stack } from "@mui/material";
-import { DataGridTitle } from "components/data-grid";
+import { Item } from "components/Item";
 import Enter from "components/dialog/Enter";
 import { isUndefined, startCase } from "lodash";
 import pluralize from "pluralize";
@@ -20,7 +20,7 @@ export function ScenarioLabel({
       <Stack sx={{ width: 48, alignItems: "center" }}>
         <IconCard icon={<RouteOutlined />} />
       </Stack>
-      <DataGridTitle
+      <Item
         primary={`${startCase(data?.scen_type ?? "-")}-${data?.type_id ?? "-"}`}
         secondary={
           isUndefined(count) ? "Scenario" : pluralize("item", count, true)

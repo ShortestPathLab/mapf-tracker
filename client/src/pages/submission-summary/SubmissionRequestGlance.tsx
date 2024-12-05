@@ -1,17 +1,15 @@
 import { EditOutlined } from "@mui/icons-material";
-import { Box, Button, Chip, Stack } from "@mui/material";
-import { Counter } from "components/Counter";
+import { Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
-import { format, isBefore, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useDialog } from "hooks/useDialog";
-import { filter, minBy, now, some, startCase } from "lodash";
 import { SubmissionKeyRequestFormDialog } from "pages/submissions/SubmissionKeyRequestFormDialog";
 import { handleRequestDetailUpdated } from "pages/submissions/handleRequestDetailUpdated";
-import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
 import { DATE_TIME_FORMAT } from "utils/format";
+import { Status } from "./Status";
 
 export const SubmissionRequestGlance = ({
   apiKey,
@@ -29,19 +27,6 @@ export const SubmissionRequestGlance = ({
   );
   const { data: request } = useRequestData(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
-  const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
-  const someIsPending = filter(isPending, (p) => p.status === "pending");
-
-  const keyStatus = someIsPending.length
-    ? "receiving"
-    : apiKeyData
-    ? apiKeyData?.status?.type === "submitted"
-      ? "submitted"
-      : apiKeyData?.expirationDate &&
-        isBefore(now(), parseISO(apiKeyData.expirationDate))
-      ? "in-progress"
-      : "expired"
-    : "unknown";
 
   return (
     <>
@@ -50,7 +35,7 @@ export const SubmissionRequestGlance = ({
           sx={{ m: -2, overflow: "hidden", lineBreak: "anywhere" }}
           items={[
             { label: "Algorithm", value: request?.algorithmName ?? "-" },
-            { label: "API key", value: `${apiKey}` ?? "-" },
+            { label: "API key", value: `${apiKey ?? "-"}` },
             {
               label: "Expiry",
               value:
@@ -63,40 +48,7 @@ export const SubmissionRequestGlance = ({
             },
             {
               label: "Status",
-              value: (
-                <Stack direction="row" sx={{ alignItems: "center", gap: 1 }}>
-                  <Box
-                    sx={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: 1,
-                      bgcolor:
-                        {
-                          submitted: "text.secondary",
-                          "in-progress": "success.main",
-                          expired: "error.main",
-                          receiving: "warning.main",
-                        }[keyStatus] ?? "text.secondary",
-                    }}
-                  />
-                  {{
-                    submitted: "Submitted",
-                    "in-progress": "Open",
-                    expired: "Expired",
-                    receiving: (
-                      <>
-                        {"Processing: "}
-                        <Counter
-                          start={
-                            minBy(someIsPending, "dateReceived")
-                              ?.dateReceived ?? now()
-                          }
-                        />
-                      </>
-                    ),
-                  }[keyStatus] ?? "Unknown"}
-                </Stack>
-              ),
+              value: <Status apiKey={apiKey} />,
             },
           ]}
         />

@@ -1,11 +1,10 @@
 import { Card } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import { Prose } from "layout";
 import Accordion from "components/Accordion";
-import CallForSubmissionContent from "./callForSubmission.md";
-import Faq from "./faq.md";
-import Format from "./format.mdx";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { Prose } from "layout";
+import CallForSubmissionContent from "./callForSubmission.md";
+import Faq from "docs/faq.md";
+import Format from "docs/format.mdx";
 
 export function Info() {
   const sm = useSm();

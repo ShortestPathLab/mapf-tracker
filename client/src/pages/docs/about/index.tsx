@@ -1,6 +1,3 @@
-import Layout from "layout/Layout";
-import Prose from "layout/Prose";
-import Content from "./about.md";
 import {
   Avatar,
   Card,
@@ -10,23 +7,33 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { Prose } from "layout";
 import { filter } from "lodash";
+import { ArticleLayout } from "pages/docs/demo/ArticleLayout";
+import Content from "./about.md";
 import { people } from "./people";
 
 export default function Page() {
   return (
-    <Layout flat width={720} title="About" path={[{ name: "Home", url: "/" }]}>
+    <ArticleLayout
+      title="About"
+      subtitle="About the MAPF Tracker"
+      path={[
+        { name: "Home", url: "/" },
+        { name: "Docs", url: "/docs" },
+      ]}
+    >
       <Prose>
         <Content />
       </Prose>
       {["Advisors", "Developers"].map((group) => (
-        <Card sx={{ py: 1, px: 1 }}>
+        <Card sx={{ py: 1, px: 1 }} key={group}>
           <Typography variant="h4" sx={{ px: 2, pt: 2 }}>
             {group}
           </Typography>
           <List>
             {filter(people, { group }).map(({ name, avatar, affiliation }) => (
-              <ListItem>
+              <ListItem key={name}>
                 <ListItemAvatar>
                   <Avatar alt={name} src={avatar} />
                 </ListItemAvatar>
@@ -36,6 +43,6 @@ export default function Page() {
           </List>
         </Card>
       ))}
-    </Layout>
+    </ArticleLayout>
   );
 }

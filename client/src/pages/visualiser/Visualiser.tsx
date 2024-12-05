@@ -269,12 +269,12 @@ export function Visualiser1({
                       action: paused ? play : pause,
                     },
                     {
-                      name: "Step forwards",
+                      name: "Step forward",
                       icon: <ChevronRightOutlined />,
                       action: forwards,
                     },
                   ].map(({ name, icon, action }) => (
-                    <Tooltip title={name}>
+                    <Tooltip title={name} key={name}>
                       <IconButton onClick={action}>{icon}</IconButton>
                     </Tooltip>
                   ))}

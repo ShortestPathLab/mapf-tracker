@@ -1,9 +1,9 @@
 import {
-  createTheme,
-  alpha,
   SxProps,
   TextFieldProps,
   Theme,
+  alpha,
+  createTheme,
 } from "@mui/material";
 import { constant, floor, times } from "lodash";
 
@@ -109,8 +109,8 @@ export const paper = (elevation: number = 1) => ({
     )}`,
   border: ({ palette }) =>
     palette.mode === "dark"
-      ? `1px solid ${alpha(palette.text.primary, 0.08 + elevation * 0.04)}`
-      : `1px solid ${alpha(palette.text.primary, 0.08 + elevation * 0.08)}`,
+      ? `1px solid ${alpha(palette.text.primary, 0.06 + elevation * 0.04)}`
+      : `1px solid ${alpha(palette.text.primary, 0.18 + elevation * 0.08)}`,
 });
 export function usePaper(): (e?: number) => SxProps<Theme> {
   return paper;

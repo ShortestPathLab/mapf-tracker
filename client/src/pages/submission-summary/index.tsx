@@ -1,39 +1,28 @@
 import { CheckOutlined } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  Stack,
-  Tab,
-  Typography,
-} from "@mui/material";
-import { Counter } from "components/Counter";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Box, Button, Divider, Stack, Tab, Typography } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useSm } from "components/dialog/useSmallDisplay";
-import { isBefore, parseISO } from "date-fns";
 import { useDialog } from "hooks/useDialog";
 import { useLocationState } from "hooks/useNavigation";
 import { Layout } from "layout";
 import { topbarHeight } from "layout/topbarHeight";
-import { filter, minBy, now, some, sumBy } from "lodash";
+import { sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   useFinaliseOngoingSubmissionMutation,
   useOngoingSubmissionSummaryQuery,
-  useOngoingSubmissionTicketQuery,
 } from "queries/useOngoingSubmissionQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
+import { useState } from "react";
 import { Actions } from "./Actions";
+import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import SummaryTable from "./table/SummaryTable";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { useState } from "react";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
@@ -43,59 +32,25 @@ export default function SubmissionSummaryPage() {
   const { data } = useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
-  const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finish submission",
     slotProps: { modal: { variant: "default" } },
     padded: true,
   });
 
-  const keyStatus = apiKeyData
-    ? apiKeyData?.status?.type === "submitted"
-      ? "submitted"
-      : apiKeyData?.expirationDate &&
-        isBefore(now(), parseISO(apiKeyData.expirationDate))
-      ? "in-progress"
-      : "expired"
-    : "unknown";
+  const keyStatus = parseApiKeyStatus(apiKeyData);
 
   const sm = useSm();
 
   const contentLeft = [
-    <SubmissionRequestGlance apiKey={apiKey} />,
-    <Actions apiKey={apiKey} />,
-    <Tickets apiKey={apiKey} />,
+    <SubmissionRequestGlance key="glance" apiKey={apiKey} />,
+    <Actions key="actions" apiKey={apiKey} />,
+    <Tickets key="tickets" apiKey={apiKey} />,
   ];
 
   const contentRight = [
     <SubmissionSummary
-      status={
-        <>
-          {some(isPending, (p) => p.status === "pending") ? (
-            <Chip
-              color="warning"
-              icon={
-                <Stack sx={{ pl: 0.5 }}>
-                  <CircularProgress size="1rem" color="inherit" />
-                </Stack>
-              }
-              label={
-                <>
-                  {"Preprocessing data: "}
-                  <Counter
-                    start={
-                      minBy(
-                        filter(isPending, (p) => p.status === "pending"),
-                        "dateReceived"
-                      )?.dateReceived ?? now()
-                    }
-                  />
-                </>
-              }
-            />
-          ) : null}
-        </>
-      }
+      key="summary"
       summaryStats={[
         {
           label: "Progress",
@@ -164,6 +119,7 @@ export default function SubmissionSummaryPage() {
 
   const contentBottom = [
     <Button
+      key="submit"
       startIcon={<CheckOutlined />}
       disabled={keyStatus === "submitted" || keyStatus === "expired"}
       variant="contained"

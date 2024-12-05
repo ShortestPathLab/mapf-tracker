@@ -3,11 +3,10 @@ import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { SummaryByApiKeyResult } from "core/types";
-import { isString, isUndefined } from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
 
-const REFETCH_MS = 500;
+const REFETCH_MS = 1000;
 
 export type ValidationOutcome = {
   isValidationRun: boolean;
@@ -34,7 +33,7 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
     mutationKey: ["finaliseOngoingSubmission"],
     mutationFn: () =>
       json(`${APIConfig.apiUrl}/ongoing_submission/finalise/${key}`),
-    onMutate: (k) => {
+    onMutate: () => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
     },
     onSettled: async () => {
@@ -92,6 +91,7 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
 export type SubmissionTicket = {
   label?: string;
   size?: number;
+  error?: object;
   status: "uploading" | "unknown" | "done" | "pending" | "error";
   result?: { count: number };
   dateReceived: number;

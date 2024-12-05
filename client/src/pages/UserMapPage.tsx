@@ -41,10 +41,10 @@ import PageHeader from "layout/PageHeader";
 
 function descendingComparator(a, b, orderBy) {
   if (orderBy === "map_size") {
-    var string_a = a[orderBy].split("x");
-    var string_b = b[orderBy].split("x");
-    var value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
-    var value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
+    const string_a = a[orderBy].split("x");
+    const string_b = b[orderBy].split("x");
+    const value_a = parseInt(string_a[0]) * parseInt(string_a[1]);
+    const value_b = parseInt(string_b[0]) * parseInt(string_b[1]);
     if (value_b < value_a) {
       return -1;
     }
@@ -300,15 +300,15 @@ function arraysEqual(a, b) {
   // Please note that calling sort on an array will modify that array.
   // you might want to clone your array first.
 
-  for (var i = 0; i < a.length; ++i) {
+  for (let i = 0; i < a.length; ++i) {
     if (a[i] !== b[i]) return false;
   }
   return true;
 }
 
 function parseScen(text, num_of_agents, solution_string) {
-  var lines = text.trim().split(/\r?\n/);
-  var agent_state = Array(num_of_agents)
+  const lines = text.trim().split(/\r?\n/);
+  const agent_state = Array(num_of_agents)
     .fill()
     .map(() =>
       new Array(1).fill().map(() => ({
@@ -318,16 +318,16 @@ function parseScen(text, num_of_agents, solution_string) {
     );
 
   for (var i = 1; i < num_of_agents + 1; i++) {
-    var entries = lines[i].split("\t");
+    const entries = lines[i].split("\t");
     agent_state[i - 1][0].x = parseInt(entries[4]);
     agent_state[i - 1][0].y = parseInt(entries[5]);
   }
-  var solution = solution_string.trim().split("\n");
+  const solution = solution_string.trim().split("\n");
   for (var i = 0; i < solution.length; i++) {
-    var agent_solution = solution[i];
-    var previous_location = agent_state[i][0];
-    for (var j = 0; j < agent_solution.length; j++) {
-      var next_location = { x: previous_location.x, y: previous_location.y };
+    const agent_solution = solution[i];
+    let previous_location = agent_state[i][0];
+    for (let j = 0; j < agent_solution.length; j++) {
+      const next_location = { x: previous_location.x, y: previous_location.y };
       if (agent_solution[j] === "u") {
         next_location.y = next_location.y + 1;
       }
@@ -382,10 +382,10 @@ export default function UserMapPage() {
   };
 
   function parseMap(text) {
-    var lines = text.trim().split(/\r?\n/);
-    var height = parseInt(lines[1].split(" ")[1]);
-    var width = parseInt(lines[2].split(" ")[1]);
-    var map = Array(height)
+    const lines = text.trim().split(/\r?\n/);
+    const height = parseInt(lines[1].split(" ")[1]);
+    const width = parseInt(lines[2].split(" ")[1]);
+    const map = Array(height)
       .fill()
       .map(() => new Array(width).fill().map(() => false));
     lines.slice(4).forEach((line, i) => {
@@ -400,28 +400,28 @@ export default function UserMapPage() {
   }
 
   const load_map = async function () {
-    var map_file = selectedRow.map_name + ".map";
-    var map_path = "./assets/maps/" + map_file;
+    const map_file = selectedRow.map_name + ".map";
+    const map_path = "./assets/maps/" + map_file;
     console.log(selectedRow.map_name);
-    var map_text = await fetch(map_path)
+    const map_text = await fetch(map_path)
       .then((r) => r.text())
       .catch((err) => console.error(err));
     return parseMap(map_text);
   };
 
   const load_scen = async function (scen_string, agent, solution_string) {
-    var scen = selectedRow.map_name + "-" + scen_string + ".scen";
-    var scen_path = "./assets/scens/" + scen;
-    var scen_text = await fetch(scen_path)
+    const scen = selectedRow.map_name + "-" + scen_string + ".scen";
+    const scen_path = "./assets/scens/" + scen;
+    const scen_text = await fetch(scen_path)
       .then((r) => r.text())
       .catch((err) => console.error(err));
     return parseScen(scen_text, agent, solution_string);
   };
 
   const validate_path = function (solution, map) {
-    var height = map.length;
-    var width = map[0].length;
-    for (var i = 0; i < solution.length; i++) {
+    const height = map.length;
+    const width = map[0].length;
+    for (let i = 0; i < solution.length; i++) {
       for (var t = 1; t < solution[i]; t++) {
         if (solution[i][t].x > width) {
           return false;
@@ -443,13 +443,13 @@ export default function UserMapPage() {
         }
       }
 
-      for (var j = 0; j < solution.length; j++) {
+      for (let j = 0; j < solution.length; j++) {
         if (arraysEqual(solution[i], solution[j])) {
           continue;
         }
-        var a1 =
+        const a1 =
           solution[i].length <= solution[j].length ? solution[i] : solution[j];
-        var a2 =
+        const a2 =
           solution[i].length <= solution[j].length ? solution[j] : solution[i];
         var t = 1;
         for (; t < a1.length; t++) {
@@ -461,7 +461,7 @@ export default function UserMapPage() {
             return false;
           }
         }
-        var target = a1[a1.length - 1];
+        const target = a1[a1.length - 1];
         for (; t < a2.length; t++) {
           if (a2[t] === target) {
             // target conflict
@@ -474,12 +474,12 @@ export default function UserMapPage() {
   };
   const validate_file = function () {
     return new Promise(async function (complete, error) {
-      var map = await load_map();
-      var current_display_string = "Start validation\n";
+      const map = await load_map();
+      let current_display_string = "Start validation\n";
       setValidationText(current_display_string);
-      var foundError = false;
-      var counter = 0;
-      var hearder = [
+      let foundError = false;
+      let counter = 0;
+      const hearder = [
         "map_name",
         "scen_type",
         "type_id",
@@ -637,7 +637,7 @@ export default function UserMapPage() {
                   setValidationText(current_display_string);
                   parser.abort();
                 }
-                var parsed_solution = await load_scen(
+                const parsed_solution = await load_scen(
                   results.data[1] + "-" + results.data[2],
                   parseInt(results.data[3]),
                   results.data[6]
@@ -695,9 +695,9 @@ export default function UserMapPage() {
       setShowProgress(true);
       setSubmissionText("Start submission\n");
 
-      var foundError = false;
-      var counter = 0;
-      var chunk_array = [];
+      let foundError = false;
+      let counter = 0;
+      let chunk_array = [];
 
       Papa.parse(files[0], {
         header: true,
@@ -767,7 +767,7 @@ export default function UserMapPage() {
     setSubmissionFeedbackText("");
     setFinalizingText("");
     setActiveButton(false);
-    var result = await validate_file();
+    const result = await validate_file();
     await new Promise((r) => setTimeout(r, 1000));
     if (result.pass) {
       await upload_file(result.row_number);
@@ -781,7 +781,7 @@ export default function UserMapPage() {
         },
         body: JSON.stringify({ map_name: selectedRow.map_name }),
       };
-      var displayText = "Finalizing submission ...";
+      let displayText = "Finalizing submission ...";
       setFinalizingText(displayText);
       // console.log(JSON.parse(localStorage.getItem('user')).id)
       await fetch(

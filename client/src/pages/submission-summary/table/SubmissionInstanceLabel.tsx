@@ -1,5 +1,5 @@
 import { Box, Skeleton, Stack } from "@mui/material";
-import { DataGridTitle } from "components/data-grid";
+import { Item } from "components/Item";
 import Enter from "components/dialog/Enter";
 import { format, parseISO } from "date-fns";
 import pluralize from "pluralize";
@@ -22,7 +22,7 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
             }}
           >
             <Box sx={{ width: 48 }} />
-            <DataGridTitle
+            <Item
               primary={
                 isLoading ? (
                   <Skeleton sx={{ width: 120 }} />

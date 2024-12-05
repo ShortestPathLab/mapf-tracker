@@ -1,7 +1,5 @@
-import { APIConfig } from "core/config";
-import { json, text } from "./query";
-import { ref } from "yup";
 import { useQuery } from "@tanstack/react-query";
+import { APIConfig } from "core/config";
 
 export function useHeartBeatQuery() {
   return useQuery({
@@ -12,7 +10,7 @@ export function useHeartBeatQuery() {
           signal: AbortSignal.timeout(3000),
         });
         return req.ok;
-      } catch (e) {
+      } catch (_) {
         return false;
       }
     },

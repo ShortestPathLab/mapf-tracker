@@ -1,16 +1,15 @@
-import { Button, Stack, useTheme } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { useSnackbar } from "components/Snackbar";
 import { DialogContentProps } from "hooks/useDialog";
+import { Prose } from "layout";
+import { find } from "lodash";
 import GenericDetailsList from "pages/submission-summary/GenericDetailsList";
 import {
-  PipelineStageNodeData,
   usePipelineRunMutation,
   usePipelineStatus,
 } from "queries/usePipelineQuery";
-import { StageStatus } from "./StageStatus";
-import { find } from "lodash";
-import { Prose } from "layout";
 import Markdown from "react-markdown";
+import { StageStatus } from "./StageStatus";
 
 export function StageStatusDialog({
   onClose,
@@ -56,7 +55,7 @@ export function StageStatusDialog({
           <Markdown>{description}</Markdown>
         </Prose>
       )}
-      <GenericDetailsList data={status} sx={{ m: -2 }} />
+      <GenericDetailsList data={status} />
     </Stack>
   );
 }

@@ -5,8 +5,20 @@ import { ReactNode } from "react";
 const formatValue = (v: number) =>
   v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%";
 
-export const cellRendererText = ({ value }: { value?: any }) => (
-  <Typography variant="body2">{value}</Typography>
+export const cellRendererText = ({
+  formattedValue,
+}: {
+  formattedValue?: ReactNode;
+}) => (
+  <Typography
+    variant="body2"
+    sx={{
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }}
+  >
+    {formattedValue}
+  </Typography>
 );
 
 export const cellRendererBar = ({

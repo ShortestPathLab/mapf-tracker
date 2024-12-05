@@ -228,11 +228,11 @@ export default function Summary() {
       const algorithm = new Set();
       for (var i = 0; i < mapQueryResult.length; i++) {
         // iterate map
-        var mapIndex = mapChartData.findIndex(
+        const mapIndex = mapChartData.findIndex(
           (x) => x.name === mapQueryResult[i].map_name
         );
-        for (var j = 0; j < mapQueryResult[i].solved_instances.length; j++) {
-          var algo = mapQueryResult[i].solved_instances[j];
+        for (let j = 0; j < mapQueryResult[i].solved_instances.length; j++) {
+          const algo = mapQueryResult[i].solved_instances[j];
           algorithm.add(algo.algo_name);
           mapChartData[mapIndex][algo.algo_name] = algo.count;
         }
@@ -262,12 +262,12 @@ export default function Summary() {
       const algorithm = new Set();
       for (var i = 0; i < domainQueryResult.length; i++) {
         // iterate map
-        var domainIndex = domainChartData.findIndex(
+        const domainIndex = domainChartData.findIndex(
           (x) => x.name === domainQueryResult[i].map_type
         );
 
-        for (var j = 0; j < domainQueryResult[i].results.length; j++) {
-          var algo = domainQueryResult[i].results[j];
+        for (let j = 0; j < domainQueryResult[i].results.length; j++) {
+          const algo = domainQueryResult[i].results[j];
           algorithm.add(algo.algo_name);
           domainChartData[domainIndex][algo.algo_name] = algo.count;
         }

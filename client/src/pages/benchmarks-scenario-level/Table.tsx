@@ -4,26 +4,26 @@ import {
   InfoOutlined,
   RouteOutlined,
 } from "@mui/icons-material";
-import { Box } from "@mui/material";
-import { DataGridTitle, useDataGridActions } from "components/data-grid";
-import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog, Title } from "components/dialog";
 import { IconCard } from "components/IconCard";
-import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
-import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
-import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
-import { cloneElement } from "react";
 import { useSnackbarAction } from "components/Snackbar";
+import { cellRendererText, useDataGridActions } from "components/data-grid";
+import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
+import { Dialog } from "components/dialog";
 import { Instance } from "core/types";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
+import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
+import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
+import pluralize from "pluralize";
+import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
+import { cloneElement } from "react";
 import { formatDate } from "utils/format";
 import Details from "./Details";
 import { downloadRow } from "./download";
-import pluralize from "pluralize";
+import { Item } from "components/Item";
 
 export default function Table() {
   const state = useLocationState<ScenarioLevelLocationState>();
-  const { scenId, mapName, scenType, scenTypeID } = state;
+  const { scenId } = state;
   const { data, isLoading } = useInstanceCollectionData(scenId);
   const navigate = useNavigate();
   const notify = useSnackbarAction();
@@ -80,7 +80,7 @@ export default function Table() {
       sortable: true,
       width: 160,
       renderCell: ({ value, row }) => (
-        <DataGridTitle
+        <Item
           primary={pluralize("agent", value, true)}
           secondary={row.solution_algos ? "Solved" : "Unsolved"}
         />
@@ -93,8 +93,9 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
-      width: 150,
+      width: 180,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "lower_cost",
@@ -104,6 +105,7 @@ export default function Table() {
       headerAlign: "left",
       width: 150,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "lower_algos",
@@ -113,6 +115,7 @@ export default function Table() {
       headerAlign: "left",
       width: 150,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "solution_date",
@@ -122,8 +125,9 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
-      width: 150,
+      width: 180,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "solution_cost",
@@ -133,6 +137,7 @@ export default function Table() {
       headerAlign: "left",
       width: 150,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "solution_algos",
@@ -143,6 +148,7 @@ export default function Table() {
       headerAlign: "left",
       width: 150,
       fold: true,
+      renderCell: cellRendererText,
     },
     actions,
   ];

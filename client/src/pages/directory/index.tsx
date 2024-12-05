@@ -1,12 +1,10 @@
 import { Box, Card, CardActionArea, Stack, Typography } from "@mui/material";
 import { useNavigationContent } from "components/appbar";
-import { useLg } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid, Layout } from "layout";
 import { PageHeaderProps } from "layout/PageHeader";
 import { startsWith } from "lodash";
-import BenchmarksPage from "pages/benchmarks-root-level";
-import { ReactNode } from "react";
+import { paper } from "theme";
 
 export default function Page({
   labels = [],
@@ -24,14 +22,14 @@ export default function Page({
       {groups
         .filter(({ label }) => labels.includes(label))
         .map(({ label, items }, _, { length }) => (
-          <Stack gap={2}>
+          <Stack gap={2} key={label}>
             {length > 1 && (
               <Typography color="text.secondary">{label}</Typography>
             )}
             <Grid gap={2}>
               {items.map(
                 ({ label, avatar, url, icon, action, description }) => (
-                  <Card>
+                  <Card key={label} sx={paper(0)}>
                     <CardActionArea
                       onClick={
                         action

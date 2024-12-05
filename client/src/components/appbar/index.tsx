@@ -1,23 +1,14 @@
 import {
-  AddOutlined,
-  AnimationOutlined,
   BookOutlined,
   ChevronRightOutlined,
   CodeOutlined,
   DarkModeOutlined,
   EmojiEventsOutlined,
-  ExpandMoreOutlined,
-  FileDownloadOutlined,
   FileUploadOutlined,
   GitHub,
-  InfoOutlined,
   LightModeOutlined,
   LocationSearchingOutlined,
-  MenuOutlined,
   PersonOutlined,
-  RemoveOutlined,
-  RouteOutlined,
-  SortOutlined,
   StackedLineChartOutlined,
 } from "@mui/icons-material";
 import {
@@ -25,8 +16,6 @@ import {
   AppBarProps,
   Avatar,
   Box,
-  Button,
-  ButtonBase,
   Collapse,
   Divider,
   IconButton,
@@ -37,20 +26,19 @@ import {
   Stack,
   SwipeableDrawer,
   Toolbar,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { appIconUrl, appName } from "core/config";
 import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
-import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
+import PopupState, { bindMenu } from "material-ui-popup-state";
 import { ReactNode } from "react";
+import { matchPath, useLocation } from "react-router-dom";
 import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
 import { useLg } from "../dialog/useSmallDisplay";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
-import { matchPath, useLocation } from "react-router-dom";
 
 const drawerWidth = 320;
 
@@ -108,24 +96,11 @@ export function useNavigationContent() {
       defaultOpen: false,
       items: [
         {
-          label: "Demo",
-          url: "/systemDemo",
-          icon: <AnimationOutlined />,
-          description: "Watch out ICAPS 2023 system demonstration",
-        },
-        {
-          label: "Dataset",
-          url: "/download",
-          icon: <FileDownloadOutlined />,
-          description: "Learn how to download the dataset",
-        },
-        {
-          label: "About",
-          url: "/about",
+          label: "Docs",
+          url: "/docs",
           icon: <BookOutlined />,
-          description: "About this project",
+          description: "View the documentation",
         },
-
         {
           label: "Github",
           url: "https://github.com/ShortestPathLab/winter-project-mapf-tracker/tree/main",
@@ -148,7 +123,7 @@ export function useNavigationContent() {
         },
         {
           primary: true,
-          label: "Manage my submission",
+          label: "Manage my submissions",
           url: "/trackSubmission",
           icon: <LocationSearchingOutlined />,
           description:
@@ -241,7 +216,7 @@ export default function index(props: AppBarProps) {
                 <Typography variant="h6">{appName}</Typography>
               </Stack>
               {groups.map(({ items, grow, label, defaultOpen = true }, i) => (
-                <PopupState variant="popover">
+                <PopupState variant="popover" key={label}>
                   {({ isOpen: _isOpen, toggle }) => {
                     const isOpen = defaultOpen ? !_isOpen : _isOpen;
                     return (
@@ -294,6 +269,7 @@ export default function index(props: AppBarProps) {
                                   url && !!matchPath(`${url}/*`, pathname);
                                 return (
                                   <ListItemButton
+                                    key={label}
                                     selected={selected}
                                     sx={{
                                       color: selected && "primary.main",

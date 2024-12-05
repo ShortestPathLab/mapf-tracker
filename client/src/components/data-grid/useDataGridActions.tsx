@@ -14,9 +14,9 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
-import { Children, ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 
-export type Item<T> = {
+export type DataGridActionsItem<T> = {
   name?: string;
   action?: (row: T) => void;
   icon?: ReactElement;
@@ -28,8 +28,8 @@ export function useDataGridActions<T>({
   items = [],
   menuItems = [],
 }: {
-  items?: Item<T>[];
-  menuItems?: Item<T>[];
+  items?: DataGridActionsItem<T>[];
+  menuItems?: DataGridActionsItem<T>[];
 }): GridColDef<T> {
   const sm = useSm();
   const len = sm ? 0 : items.length + (menuItems.length ? 1 : 0);

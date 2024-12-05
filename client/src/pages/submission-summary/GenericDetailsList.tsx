@@ -1,23 +1,15 @@
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListProps,
-  useTheme,
-} from "@mui/material";
+import { List, ListItem, ListItemText, ListProps } from "@mui/material";
 import { entries, startCase } from "lodash";
-import { CodeBlock } from "./CodeBlock";
+import { CodeBlock } from "components/CodeBlock";
 
 export default function GenericDetailsList({
   data,
   ...props
-}: { data?: {} } & ListProps) {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+}: { data?: object } & ListProps) {
   return (
     <List {...props}>
       {entries(data).map(([k, v]) => (
-        <ListItem>
+        <ListItem key={k} disableGutters>
           <ListItemText
             secondary={startCase(k)}
             primary={

@@ -1,5 +1,5 @@
 import { Box, Skeleton, Stack } from "@mui/material";
-import { DataGridTitle } from "components/data-grid";
+import { Item } from "components/Item";
 import { isUndefined, startCase } from "lodash";
 import pluralize from "pluralize";
 import { useMapData } from "queries/useBenchmarksQuery";
@@ -17,7 +17,7 @@ export function MapLabel({ mapId, count }: { mapId: string; count?: number }) {
       ) : (
         <Skeleton sx={{ width: 48, height: 48 }} variant="rounded" />
       )}
-      <DataGridTitle
+      <Item
         primary={startCase(map?.map_name ?? "-")}
         secondary={isUndefined(count) ? "Map" : pluralize("item", count, true)}
       />

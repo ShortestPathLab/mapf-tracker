@@ -493,7 +493,11 @@ export function ManagedModal({
                 {padded ? <Box sx={{ p: sm ? 2 : 3 }}>{chi2}</Box> : chi2}
               </Modal>
             )}
-            <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+            <Modal
+              variant="default"
+              open={confirmOpen}
+              onClose={() => setConfirmOpen(false)}
+            >
               <ModalAppBar onClose={() => setConfirmOpen(false)}>
                 <AppBarTitle>Close with unsaved changes?</AppBarTitle>
               </ModalAppBar>

@@ -4,7 +4,6 @@ import {
   DoneOutlined,
   DoNotDisturbOutlined,
   HourglassEmptyOutlined,
-  PendingOutlined,
   PlayArrowOutlined,
   StopOutlined,
 } from "@mui/icons-material";
@@ -16,17 +15,21 @@ import {
   Chip,
   Collapse,
   Divider,
-  Grow,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
-import { Bar, DataGridTitle, useDataGridActions } from "components/data-grid";
+import { Bar, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
+import { Dialog } from "components/dialog";
+import Enter from "components/dialog/Enter";
+import { ConfirmDialog } from "components/dialog/Modal";
+import { Item } from "components/Item";
 import {
   TreeDataGrid,
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
+import { Instance, SummarySlice } from "core/types";
 import { useDialog } from "hooks/useDialog";
 import { identity, isNumber, join, sumBy, times } from "lodash";
 import {
@@ -35,19 +38,15 @@ import {
   useDeleteOngoingSubmissionMutation,
   useOngoingSubmissionSummaryQuery,
 } from "queries/useOngoingSubmissionQuery";
-import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
-import { DetailsDialog } from "./DetailsDialog";
-import { Arrow } from "./Arrow";
-import { Model, disambiguate, Models } from "./Model";
-import { SubmissionInstanceContext } from "./SubmissionInstanceContext";
-import { MapLabel } from "./MapLabel";
-import { ScenarioLabel } from "./ScenarioLabel";
-import { SubmissionInstanceLabel } from "./SubmissionInstanceLabel";
-import { Instance, SummarySlice } from "core/types";
 import { useState } from "react";
-import Enter from "components/dialog/Enter";
-import { Dialog } from "components/dialog";
-import { ConfirmDialog } from "components/dialog/Modal";
+import { Arrow } from "./Arrow";
+import { DetailsDialog } from "./DetailsDialog";
+import { MapLabel } from "./MapLabel";
+import { disambiguate, Model, Models } from "./Model";
+import { ScenarioLabel } from "./ScenarioLabel";
+import { SubmissionInstanceContext } from "./SubmissionInstanceContext";
+import { SubmissionInstanceLabel } from "./SubmissionInstanceLabel";
+import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
 
 function getSubmissionInfoText(
   submission: OngoingSubmission,
@@ -97,7 +96,7 @@ function renderPlaceholder() {
     <Enter in axis="x">
       <Stack direction="row">
         <Box sx={{ width: 64 }} />
-        <DataGridTitle secondary="No items" />
+        <Item secondary="No items" />
       </Stack>
     </Enter>
   );
@@ -341,6 +340,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           const selected = key === slice;
           return (
             <Chip
+              key={key}
               sx={{
                 pl: 0.25,
                 border: selected

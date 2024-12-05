@@ -3,25 +3,15 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
-  Button,
-  Card,
   ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
-import PageHeader from "layout/PageHeader";
-import { ReactNode } from "react";
-import {
-  defaultExtras,
-  defaultStatus,
-  defaultSummary,
-  defaultDetails,
-} from "./defaults";
-import { paper } from "theme";
-import { Grid } from "layout";
 import { AnimateInteger } from "components/AnimateInteger";
-import { useSm } from "components/dialog/useSmallDisplay";
+import { Grid } from "layout";
+import { ReactNode } from "react";
+import { paper } from "theme";
+import { defaultDetails } from "./defaults";
 
 export type Props = {
   extras?: ReactNode;
@@ -33,14 +23,10 @@ export type Props = {
 };
 
 export default function SubmissionSummary({
-  extras = defaultExtras,
-  status = defaultStatus,
-  apiKey = "sample_api_key",
   summaryStats = [],
   detailStats = defaultDetails,
   children,
 }: Props) {
-  const sm = useSm();
   return (
     <>
       {/* <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
@@ -56,7 +42,7 @@ export default function SubmissionSummary({
         }}
       >
         {summaryStats?.map?.(({ label, values }) => (
-          <Stack sx={{ p: 2, ...paper(0) }}>
+          <Stack sx={{ p: 2, ...paper(0) }} key={label}>
             <Typography
               variant="overline"
               color="text.secondary"
@@ -67,6 +53,7 @@ export default function SubmissionSummary({
             <Grid width={100} sx={{ gap: 1 }}>
               {values.map(({ name, count }) => (
                 <ListItemText
+                  key={name}
                   primary={<AnimateInteger value={count} />}
                   secondary={name}
                 />
@@ -89,6 +76,7 @@ export default function SubmissionSummary({
         >
           {detailStats.map(({ name, stats }) => (
             <Accordion
+              key={name}
               disableGutters
               sx={{
                 backdropFilter: "none",
@@ -115,7 +103,7 @@ export default function SubmissionSummary({
                   }}
                 >
                   {stats.map(({ name, count }) => (
-                    <Stack sx={{ gap: 1 }}>
+                    <Stack sx={{ gap: 1 }} key={name}>
                       <Typography variant="h4" component="h2">
                         {count}
                       </Typography>

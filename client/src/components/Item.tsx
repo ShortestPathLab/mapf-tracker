@@ -2,7 +2,7 @@ import { ListItemText, Typography } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode } from "react";
 
-export function DataGridTitle({
+export function Item({
   primary,
   secondary,
 }: {

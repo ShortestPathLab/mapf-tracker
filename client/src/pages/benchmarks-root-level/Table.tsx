@@ -7,7 +7,7 @@ import { Box, Tooltip } from "@mui/material";
 import { AnalysisButton } from "components/analysis/Analysis";
 import {
   cellRendererBar,
-  DataGridTitle,
+  cellRendererText,
   useDataGridActions,
 } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
@@ -24,6 +24,7 @@ import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import BenchmarkDetails from "./BenchmarkDetails";
 import { downloadBenchmarks, downloadBenchmarksResultsCSV } from "./download";
+import { Item } from "components/Item";
 
 function Details({ mapName }: { mapName: string }) {
   return (
@@ -95,7 +96,7 @@ export default function Table() {
       minWidth: 220,
       flex: 1,
       renderCell: ({ value, row }) => (
-        <DataGridTitle
+        <Item
           primary={startCase(value)}
           secondary={`${row.scens ?? "?"} scenarios, ${
             row.instances ?? "?"
@@ -138,6 +139,7 @@ export default function Table() {
       sortable: true,
       valueFormatter: capitalize,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "solved_percentage",

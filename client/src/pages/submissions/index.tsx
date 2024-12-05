@@ -1,13 +1,16 @@
 import {
   DeleteOutlined,
   EditOutlined,
-  EmailOutlined,
+  FileUploadOutlined,
 } from "@mui/icons-material";
 import { Box, Stack, useTheme } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
 import { useMutation } from "@tanstack/react-query";
+import { FlatCard } from "components/FlatCard";
+import { IconCard } from "components/IconCard";
+import { Item } from "components/Item";
+import { useSnackbar } from "components/Snackbar";
 import {
   DataGrid,
   cellRendererText,
@@ -15,21 +18,19 @@ import {
 } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { useSm } from "components/dialog/useSmallDisplay";
-import { FlatCard } from "components/FlatCard";
-import { IconCard } from "components/IconCard";
-import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { AddKeyForm } from "forms/AddKeyForm";
 import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
-import { merge, slice, zipWith } from "lodash";
+import { merge, zipWith } from "lodash";
+import { Status } from "pages/submission-summary/Status";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
 import { ReactNode } from "react";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
-import { SubmissionLocationState } from "./SubmissionLocationState";
 import { SubmissionKeyRequestFormDialog } from "./SubmissionKeyRequestFormDialog";
+import { SubmissionLocationState } from "./SubmissionLocationState";
 import { handleRequestDetailUpdated } from "./handleRequestDetailUpdated";
 
 export function Floating({ children }: { children?: ReactNode }) {
@@ -128,19 +129,24 @@ export default function TrackSubmission() {
     {
       field: "Icon",
       width: 48,
-      renderCell: () => <IconCard icon={<EmailOutlined />} />,
+      renderCell: () => <IconCard icon={<FileUploadOutlined />} />,
       flex: 0,
       fold: true,
     },
     {
-      field: "key",
-      headerName: "Key",
+      field: "algorithmName",
+      headerName: "Algorithm",
       width: 180,
-      renderCell: ({ value }) => (
-        <Typography variant="body2">
-          <code>{value?.slice?.(-8)}</code>
-        </Typography>
+      renderCell: ({ row }) => (
+        <Item secondary={row.key?.slice?.(-8)} primary={row.algorithmName} />
       ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 220,
+      renderCell: ({ row }) =>
+        cellRendererText({ formattedValue: <Status apiKey={row.key} /> }),
     },
     {
       field: "requesterName",
@@ -152,13 +158,13 @@ export default function TrackSubmission() {
     {
       field: "requesterEmail",
       headerName: "Email",
-      width: 180,
+      width: 200,
       fold: true,
       renderCell: cellRendererText,
     },
     {
-      field: "algorithmName",
-      headerName: "Algorithm",
+      field: "requesterAffilation",
+      headerName: "Affiliation",
       width: 180,
       fold: true,
       renderCell: cellRendererText,
@@ -168,11 +174,11 @@ export default function TrackSubmission() {
   return (
     <Layout
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
-      title="Track Submissions"
+      title="Manage my submissions"
       description={
         <>
           Once you have an API key, you can upload and submit your solutions
-          here. Don't have a submission (API) key?{" "}
+          here. Don&apos;t have a submission (API) key?{" "}
           <Link
             sx={{ cursor: "pointer" }}
             onClick={() => navigate("/contributes")}

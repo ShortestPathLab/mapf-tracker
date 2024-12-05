@@ -10,7 +10,7 @@ import {
 import { ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import Grid from "layout/Grid";
-import { capitalize, head, orderBy } from "lodash";
+import { capitalize, head } from "lodash";
 import pluralize from "pluralize";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
@@ -52,7 +52,7 @@ export default function Details({ id }: { id?: string }) {
           ]}
         />
       </Stack>
-      <Grid sx={{ mx: -2 }}>
+      <Grid sx={{ gap: 4 }}>
         {[
           {
             name: "Lower-bound record claims",
@@ -63,37 +63,44 @@ export default function Details({ id }: { id?: string }) {
             collection: head(history)?.solution_algos,
           },
         ].map(({ name, collection }) => (
-          <Stack>
-            <Typography variant="h6" sx={{ px: 2 }}>
-              {name}
-            </Typography>
-            <Timeline
-              sx={{
-                [`& .${timelineItemClasses.root}::before`]: {
-                  flex: 0,
-                  p: 0,
-                },
-              }}
-            >
-              {orderBy(collection, "date", "desc").map(
-                ({ algo_name, date, value }, i, xs) => (
-                  <TimelineItem color="text.secondary">
+          <Stack key={name} sx={{ gap: 2 }}>
+            <Typography variant="h6">{name}</Typography>
+            {collection?.length ? (
+              <Timeline
+                sx={{
+                  m: -2,
+                  [`& .${timelineItemClasses.root}::before`]: {
+                    flex: 0,
+                    p: 0,
+                  },
+                }}
+              >
+                {collection.map(({ algo_name, date, value }, i, xs) => (
+                  <TimelineItem color="text.secondary" key={i}>
                     <TimelineSeparator>
                       <TimelineDot variant="outlined" />
-                      {!i && xs.length > 1 && <TimelineConnector />}
+                      {i !== xs.length - 1 && <TimelineConnector />}
                     </TimelineSeparator>
                     <TimelineContent>
                       <ListItem sx={{ m: -2 }}>
                         <ListItemText
-                          secondary={`${algo_name} on ${formatDate(date)}`}
+                          secondary={
+                            <>
+                              {algo_name}
+                              {" at "}
+                              {formatDate(date)}
+                            </>
+                          }
                           primary={value}
                         />
                       </ListItem>
                     </TimelineContent>
                   </TimelineItem>
-                )
-              )}
-            </Timeline>
+                ))}
+              </Timeline>
+            ) : (
+              <Typography color="text.secondary">No record claims</Typography>
+            )}
           </Stack>
         ))}
       </Grid>

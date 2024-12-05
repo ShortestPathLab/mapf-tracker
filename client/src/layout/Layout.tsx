@@ -1,7 +1,6 @@
 import { ArrowBackOutlined } from "@mui/icons-material";
 import {
   Box,
-  Card,
   Fade,
   IconButton,
   AppBar as MuiAppBar,
@@ -9,21 +8,19 @@ import {
   StackProps,
   Toolbar,
   Typography,
-  useScrollTrigger,
 } from "@mui/material";
-import AppBar, { appbarHeight } from "components/appbar";
+import Appbar, { appbarHeight } from "components/appbar";
 import Enter from "components/dialog/Enter";
-import { Scroll, useScroll } from "components/dialog/Scrollbars";
-import { useLg, useMd, useSm } from "components/dialog/useSmallDisplay";
+import { Scroll } from "components/dialog/Scrollbars";
+import { useScrollState } from "components/dialog/useScrollState";
+import { useLg, useXs } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { last, merge, startCase } from "lodash";
-import { ReactNode, useEffect } from "react";
-import PageHeader, { PageHeaderProps } from "./PageHeader";
-import { useScrollState } from "components/dialog/useScrollState";
-import Appbar from "components/appbar";
+import { ReactNode } from "react";
 import { Crumbs } from "./Crumbs";
+import PageHeader, { PageHeaderProps } from "./PageHeader";
 
-type LayoutProps = {
+export type LayoutProps = {
   flat?: boolean;
   collapse?: boolean;
   width?: string | number;
@@ -57,9 +54,8 @@ export default function Layout({
   flat,
 }: LayoutProps) {
   const lg = useLg();
-  const md = useMd();
-  const sm = useSm();
-  const [, isTop, , , setPanel] = useScrollState(appbarHeight(md));
+  const xs = useXs();
+  const [, isTop, , , setPanel] = useScrollState(appbarHeight(lg));
   const navigate = useNavigate();
   const header = <PageHeader {...{ current: title, path, description }} />;
   const content = (
@@ -69,8 +65,8 @@ export default function Layout({
           sx: {
             bgcolor: "background.default",
             gap: 4,
-            px: sm ? 2 : 3,
-            py: sm ? 2 : 3,
+            px: xs ? 2 : 3,
+            py: xs ? 2 : 3,
             maxWidth: width,
             mx: "auto",
           },
@@ -79,14 +75,14 @@ export default function Layout({
       )}
     >
       {render({
-        header: !md || collapse ? header : undefined,
+        header: !lg || collapse ? header : undefined,
         children,
       })}
     </Stack>
   );
   return (
     <>
-      {md &&
+      {lg &&
         (path?.length > 0 ? (
           <MuiAppBar
             position="fixed"
@@ -124,17 +120,17 @@ export default function Layout({
           />
         ))}
       <Stack sx={{ flex: 1, height: "100%", overflow: "hidden" }}>
-        {lg && <Box sx={{ height: appbarHeight(md) }} />}
+        {lg && <Box sx={{ height: appbarHeight(lg) }} />}
         <Scroll y style={{ flex: 1 }} ref={(p) => setPanel(p)}>
-          {!sm && <Crumbs path={path} current={title} />}
-          {md ? (
+          {!lg && <Crumbs path={path} current={title} />}
+          {lg ? (
             content
           ) : (
             <Enter in distance={4}>
               {content}
             </Enter>
           )}
-          {md && <Box sx={{ height: 72 }} />}
+          {lg && <Box sx={{ height: 72 }} />}
         </Scroll>
       </Stack>
     </>

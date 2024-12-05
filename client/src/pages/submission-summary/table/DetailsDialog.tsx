@@ -1,6 +1,5 @@
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
-import { FlatCard } from "components/FlatCard";
-import { DataGridTitle } from "components/data-grid";
+import { Item } from "components/Item";
 import { DialogContentProps, useDialog } from "hooks/useDialog";
 import { Visualiser1 } from "pages/visualiser/Visualiser";
 import pluralize from "pluralize";
@@ -12,8 +11,6 @@ import {
   SubmissionInstanceContext,
   SubmissionInstanceProps,
 } from "./SubmissionInstanceContext";
-import { navbarHeight } from "components/Navbar";
-import { useSm } from "components/dialog/useSmallDisplay";
 
 function VisualisationDialog({
   instanceId,
@@ -75,7 +72,7 @@ export function DetailsDialog({
               <ScenarioLabel scenarioId={scenarioId} />
               <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
                 <Box sx={{ width: 48 }} />
-                <DataGridTitle
+                <Item
                   primary={pluralize("agent", instance?.agents, true)}
                   secondary="Instance"
                 />
@@ -93,9 +90,7 @@ export function DetailsDialog({
               >
                 Visualise this solution
               </Button>
-              <FlatCard>
-                <GenericDetailsList data={submission} />
-              </FlatCard>
+              <GenericDetailsList data={submission} />
             </Stack>
           )
         }

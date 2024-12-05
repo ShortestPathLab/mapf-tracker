@@ -1,12 +1,8 @@
 import {
-  CheckOutlined,
   ContentPasteOutlined,
   DataObjectOutlined,
-  DoneOutlineOutlined,
-  ErrorOutlineOutlined,
   FileUploadOutlined,
   HelpOutlined,
-  InsertDriveFileOutlined,
   TableChartOutlined,
 } from "@mui/icons-material";
 import {
@@ -19,19 +15,15 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import Accordion from "components/Accordion";
-import { Bar } from "components/data-grid";
 import { useSnackbar } from "components/Snackbar";
 import { useDialog } from "hooks/useDialog";
 import { Grid, Prose } from "layout";
-import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
 import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { paper } from "theme";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
-import SubmitAsCsvContent from "./submitAsCsv.mdx";
-import SubmitWithApiContent from "./submitWithApi.mdx";
 import { Tickets } from "./Tickets";
+import SubmitWithApiContent from "docs/submitWithApi.mdx";
 import { useSubmissionMutation } from "./useSubmissionMutation";
 
 export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
@@ -101,9 +93,6 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
         </ButtonBase>
       </FileUploader>
       <Tickets apiKey={apiKey} />
-      <Prose>
-        <SubmitAsCsvContent />
-      </Prose>
     </Stack>
   );
 }
@@ -140,7 +129,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
     {
       padded: true,
       title: "Submit via upload",
-      slotProps: { modal: { width: 720 } },
+      slotProps: { modal: { width: 720, variant: "default" } },
     }
   );
   return (

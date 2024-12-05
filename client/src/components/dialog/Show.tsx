@@ -82,7 +82,7 @@ const Show = React.forwardRef<any, any>((props, ref) => {
     onExiting,
     style,
     timeout = defaultTimeout,
-    // eslint-disable-next-line react/prop-types
+     
     TransitionComponent = Transition,
     ...other
   } = props;

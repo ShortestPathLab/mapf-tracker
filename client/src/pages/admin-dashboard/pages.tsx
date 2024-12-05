@@ -2,16 +2,15 @@ import {
   AccountTreeOutlined,
   BarChartOutlined,
   CallReceivedOutlined,
-  DashboardOutlined,
   SpaceDashboardOutlined,
   VpnKeyOutlined,
 } from "@mui/icons-material";
+import { once } from "lodash";
 import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";
-import SubmissionKeyRequestsPage from "./submission-key-requests";
 import PipelinesPage from "./pipelines";
 import StatisticsPage from "./statistics";
-import { once } from "lodash";
+import SubmissionKeyRequestsPage from "./submission-key-requests";
 
 export const pages = once(() => [
   {

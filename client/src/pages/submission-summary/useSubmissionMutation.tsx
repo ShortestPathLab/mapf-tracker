@@ -1,9 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "App";
 import { APIConfig } from "core/config";
 import { now } from "lodash";
 import {
-  ONGOING_SUBMISSION_QUERY_KEY,
   SubmissionTicket,
   optimisticQueue,
 } from "queries/useOngoingSubmissionQuery";

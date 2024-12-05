@@ -1,7 +1,7 @@
 import { Box, BoxProps, useTheme } from "@mui/material";
 import { merge } from "lodash";
 
-export default function Prose({ children, ...props }: BoxProps) {
+export function Prose({ children, ...props }: BoxProps) {
   const t = useTheme();
   return (
     <Box
