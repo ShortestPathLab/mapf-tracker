@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import { Prose } from "layout";
 import { filter } from "lodash";
-import { ArticleLayout } from "pages/docs/demo/ArticleLayout";
 import Content from "./about.md";
 import { people } from "./people";
+import { ArticleLayout } from "layout/ArticleLayout";
 
 export default function Page() {
   return (

@@ -1,29 +1,26 @@
-import { Card } from "@mui/material";
+import { Card, Box } from "@mui/material";
 import { Scroll } from "./Scrollbars";
 
-##### File header
+##### Solution string format
 
-map_name, scen_type, type_id, agents, lower_cost, solution_cost, solution_plan
-
-##### Solution Plan Format
-
-For each agent, we use a motion string to represent the path, where the symbol `u`, `d`, `l` and `r` represents moving up, down, left and right respectively, and 'w' represents waiting at its current location (eg., a path [(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)] is converted to a motion string "drruwl"). We use "\n" to separate the paths between different agents.
+For each agent, we use a motion string to represent the path, where the symbol `u`, `d`, `l` and `r` represents moving up, down, left and right respectively, and `w` represents waiting at its current location (eg., a path [(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)] is converted to a motion string `drruwl`). We use `\n` to separate the paths between different agents.
 
 Note that coordinates should be using pixel origin, i.e. (0, 0) is in the top left corner of the map. This means that an agent with an increasing y-coordinate is going down.
 
-Solution plans should be run-length encoded before submission to keep file size low. Please encode single actions as "a" rather than as "1a".
+Solution plans should be run-length encoded before submission to keep file size low. Please encode single actions as `w` rather than as `1w`.
 
 ##### Example File
 
-<Card sx={{ p:2, overflowX:'auto' }}>
-    <Scroll x>
+<Box>
 
-    | map_name    | scen_type | type_id | agents | lower_cost | solution_cost | solution_plan                                       |
-    | ----------- | --------- | ------- | ------ | ---------- | ------------- | --------------------------------------------------- |
-    | empty-32-32 | even      | 1       | 1      | 14         | 14            | u2ru3r3u4r                                          |
-    | empty-32-32 | even      | 1       | 2      | 38         | 38            | u2ru3r3u4r <br /> 2dr2d3r2dr2drd2rdr5d              |
-    | empty-32-32 | even      | 1       | 3      | 50         | 50            | u2ru3r3u4r <br /> 2dr2d3r2dr2drd2rdr5d <br /> 12d   |
+<Scroll x>
 
-    </Scroll>
+| map_name    | scen_type | type_id | agents | lower_cost | solution_cost | solution_plan                                       |
+| ----------- | --------- | ------- | ------ | ---------- | ------------- | --------------------------------------------------- |
+| empty-32-32 | even      | 1       | 1      | 14         | 14            | u2ru3r3u4r                                          |
+| empty-32-32 | even      | 1       | 2      | 38         | 38            | u2ru3r3u4r <br /> 2dr2d3r2dr2drd2rdr5d              |
+| empty-32-32 | even      | 1       | 3      | 50         | 50            | u2ru3r3u4r <br /> 2dr2d3r2dr2drd2rdr5d <br /> 12d   |
 
-</Card>
+</Scroll>
+
+</Box>

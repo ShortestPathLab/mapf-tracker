@@ -17,6 +17,7 @@ import { filter } from "lodash";
 import { useRequestsQuery } from "queries/useRequestsQuery";
 import { pages } from "../pages";
 import { usePipelineStatus } from "queries/usePipelineQuery";
+import { paper } from "theme";
 
 const sections = () => {
   const [, ...rest] = pages();
@@ -59,7 +60,7 @@ export default function index() {
             ].map(
               ({ primary, secondary, action, actionLabel }) =>
                 !!primary && (
-                  <Card sx={{ p: sm ? 2 : 3 }}>
+                  <Card sx={{ p: sm ? 2 : 3, ...paper(0) }} key={secondary}>
                     <Stack gap={sm ? 2 : 3}>
                       <Stack gap={1}>
                         <Typography variant="h2">{primary}</Typography>

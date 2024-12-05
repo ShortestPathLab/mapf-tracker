@@ -8,8 +8,8 @@ import {
   GitHub,
   LightModeOutlined,
   LocationSearchingOutlined,
+  MultilineChartOutlined,
   PersonOutlined,
-  StackedLineChartOutlined,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -17,7 +17,6 @@ import {
   Avatar,
   Box,
   Collapse,
-  Divider,
   IconButton,
   List,
   ListItemButton,
@@ -79,7 +78,7 @@ export function useNavigationContent() {
         {
           label: "Benchmarks",
           url: "/benchmarks",
-          icon: <StackedLineChartOutlined />,
+          icon: <MultilineChartOutlined />,
           description:
             "View all benchmarks and their top-performing submissions",
         },
@@ -88,25 +87,6 @@ export function useNavigationContent() {
           url: "/submissions",
           icon: <EmojiEventsOutlined />,
           description: "View and compare submitted algorithms",
-        },
-      ],
-    },
-    {
-      label: "Docs",
-      defaultOpen: false,
-      items: [
-        {
-          label: "Docs",
-          url: "/docs",
-          icon: <BookOutlined />,
-          description: "View the documentation",
-        },
-        {
-          label: "Github",
-          url: "https://github.com/ShortestPathLab/winter-project-mapf-tracker/tree/main",
-          icon: <GitHub />,
-          iconButton: true,
-          description: "View the source code",
         },
       ],
     },
@@ -131,7 +111,25 @@ export function useNavigationContent() {
         },
       ],
     },
-
+    {
+      label: "Docs",
+      defaultOpen: true,
+      items: [
+        {
+          label: "Docs",
+          url: "/docs",
+          icon: <BookOutlined />,
+          description: "View the documentation",
+        },
+        {
+          label: "Github",
+          url: "https://github.com/ShortestPathLab/winter-project-mapf-tracker/tree/main",
+          icon: <GitHub />,
+          iconButton: true,
+          description: "View the source code",
+        },
+      ],
+    },
     {
       label: "Manage",
       grow: true,
@@ -221,12 +219,9 @@ export default function index(props: AppBarProps) {
                     const isOpen = defaultOpen ? !_isOpen : _isOpen;
                     return (
                       <>
-                        {!!i &&
-                          (grow ? (
-                            <Box sx={{ flexGrow: 1, minHeight: "10dvh" }} />
-                          ) : (
-                            <Divider flexItem />
-                          ))}
+                        {!!i && grow && (
+                          <Box sx={{ flexGrow: 1, minHeight: "10dvh" }} />
+                        )}
                         {label && (
                           <Stack
                             onClick={toggle}
@@ -272,10 +267,12 @@ export default function index(props: AppBarProps) {
                                     key={label}
                                     selected={selected}
                                     sx={{
+                                      borderRadius: 2,
+                                      mx: md ? 1 : 1.5,
                                       color: selected && "primary.main",
-                                      px: md ? 2 : 3,
+                                      px: md ? 1 : 1.5,
                                       // Looks more comfortable when there's space on the right
-                                      pr: 4,
+                                      pr: 3,
                                     }}
                                     onClick={clickHandler(
                                       url,
@@ -288,7 +285,10 @@ export default function index(props: AppBarProps) {
                                     >
                                       {avatar ?? icon}
                                     </ListItemIcon>
-                                    <ListItemText primary={label} />
+                                    <ListItemText
+                                      primary={label}
+                                      sx={{ color: "text.primary" }}
+                                    />
                                   </ListItemButton>
                                 );
                               }
@@ -338,7 +338,7 @@ export default function index(props: AppBarProps) {
               {!lg && (
                 <Box
                   sx={{
-                    bgcolor: "background.paper",
+                    bgcolor: "background.default",
                     minWidth: "fit-content",
                     borderRight: (t) => `1px solid ${t.palette.divider}`,
                   }}

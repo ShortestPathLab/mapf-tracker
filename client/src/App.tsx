@@ -30,7 +30,6 @@ import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import DirectoryPage from "pages/directory";
-import SystemDemo from "pages/docs/demo";
 import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
 import { matchPath, useLocation } from "react-router-dom";
@@ -43,8 +42,6 @@ import AdminDashboard from "./pages/admin-dashboard";
 import AdminDashboardOld from "./pages/admin-dashboard/index.old";
 import ContributePage from "./pages/contribute";
 import DocsPage from "./pages/docs";
-import AboutPage from "./pages/docs/about";
-import DownloadPage from "./pages/docs/get-dataset";
 import TrackSubmission from "./pages/submissions";
 import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
@@ -95,11 +92,6 @@ export function Content() {
       content: <DirectoryPage labels={["Make a submission"]} title="Submit" />,
     },
     {
-      path: "/docs",
-      content: <DocsPage />,
-      parent: "/",
-    },
-    {
       path: "/manage",
       content: (
         <DirectoryPage labels={["Appearance", "Manage"]} title="Manage" />
@@ -122,8 +114,6 @@ export function Content() {
     },
     { path: "/visualization", content: <Visualiser />, parent: "/instances" },
     { path: "/summary", content: <Summary />, parent: "/" },
-    { path: "/about", content: <AboutPage />, parent: "/docs" },
-    { path: "/systemDemo", content: <SystemDemo />, parent: "/docs" },
     { path: "/submissions", content: <Submissions />, parent: "/" },
     { path: "/contributes", content: <ContributePage />, parent: "submit" },
     {
@@ -136,10 +126,14 @@ export function Content() {
       content: <SubmissionSummaryPage />,
       parent: "/trackSubmission",
     },
-    { path: "/download", content: <DownloadPage />, parent: "/docs" },
     {
       path: "/dashboard/:section?",
       content: <AdminDashboard />,
+    },
+    {
+      path: "/docs/:article?",
+      content: <DocsPage />,
+      parent: "/",
     },
     {
       path: "/dashboard-old",

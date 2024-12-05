@@ -1,4 +1,5 @@
 import {
+  Shadows,
   SxProps,
   TextFieldProps,
   Theme,
@@ -24,7 +25,7 @@ export const theme = (t: "light" | "dark") =>
           : { default: "#111317", paper: "#17191d" },
     },
     shape: { borderRadius: 8 },
-    shadows: ["", ...times(24, constant(shadow))] as any,
+    shadows: ["", ...times(24, constant(shadow))] as unknown as Shadows,
     typography: {
       fontFamily,
       allVariants: {

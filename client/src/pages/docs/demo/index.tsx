@@ -1,6 +1,6 @@
 import { Prose } from "layout";
 import { paper } from "theme";
-import { ArticleLayout } from "./ArticleLayout";
+import { ArticleLayout } from "../../../layout/ArticleLayout";
 import Content from "./content.mdx";
 
 export default function Page() {

@@ -1,14 +1,13 @@
 import { TabContext } from "@mui/lab";
 import { Box, Stack } from "@mui/material";
 import { Router } from "components/Router";
+import Enter from "components/dialog/Enter";
 import { head } from "lodash";
-import { NotFoundPage } from "pages/NotFound";
+import { BlankPage } from "pages/Blank";
 import { useCredentials } from "queries/useLogInQuery";
 import { matchPath, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { pages } from "./pages";
-import Enter from "components/dialog/Enter";
-import { BlankPage } from "pages/Blank";
 
 export default function index() {
   const { data: credentials } = useCredentials();

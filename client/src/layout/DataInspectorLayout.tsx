@@ -25,10 +25,8 @@ export function DataInspectorLayout({
           variant={sm ? "fullWidth" : "standard"}
           sx={{
             pb: 0,
-            position: "sticky",
-            top: 0,
             zIndex: 2,
-            bgcolor: sm ? "background.paper" : "background.default",
+            bgcolor: "background.default",
             mx: sm ? -2 : 0,
             borderBottom: (t) => `1px solid ${t.palette.divider}`,
           }}
@@ -49,7 +47,7 @@ export function DataInspectorLayout({
           { value: "data", content: dataContent },
           { value: "analysis", content: analysisContent },
         ].map(({ value, content }) => (
-          <TabPanel sx={{ p: 0, pt: 2 }} value={value}>
+          <TabPanel sx={{ p: 0, pt: 2 }} value={value} key={value}>
             <FlatCard>{content}</FlatCard>
           </TabPanel>
         ))}

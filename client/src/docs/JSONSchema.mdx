@@ -6,7 +6,6 @@ MAPF Tracker accepts submissions in JSON, YAML, and CSV, as long as they include
 
 ##### Properties
 
-<Box sx={{...paper(0), p: 2}}>
 | Property  | Type | Description |
 |-|-|-|
 | `map_name` | `string` (Required) | The name of the map |
@@ -15,7 +14,7 @@ MAPF Tracker accepts submissions in JSON, YAML, and CSV, as long as they include
 | `agents` | `number` (Required) | The total number of agents |
 | `solutions` | `string` (Required) | Your solution. This can be a list of path strings, or a single string with the path of each agent delimited by newlines. Paths can be run length encoded. |
 | `lower_cost` | `number` | Theoretical lower-bound cost reported by your solver. If unknown, leave empty. |
-</Box>
+
 ##### Examples
 
 ###### JSON

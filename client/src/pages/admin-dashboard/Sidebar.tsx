@@ -1,5 +1,5 @@
 import { Stack, StackProps, Tab, Tabs, Typography } from "@mui/material";
-import { useLg, useMd } from "components/dialog/useSmallDisplay";
+import { useLg } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { head } from "lodash";
 import { matchPath, useLocation } from "react-router-dom";
@@ -16,7 +16,7 @@ export function Sidebar(props: StackProps) {
       <Stack
         {...props}
         sx={{
-          bgcolor: "background.paper",
+          bgcolor: "background.default",
           borderRight: (t) => `1px solid ${t.palette.divider}`,
           ...props.sx,
         }}

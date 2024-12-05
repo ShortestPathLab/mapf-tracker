@@ -137,22 +137,20 @@ export function ArticleLayout({
             <Typography variant="overline" color="text.secondary">
               On this page
             </Typography>
-            <Stack sx={{ gap: 1 }}>
-              {headers.map((title) => (
-                <Typography
-                  key={title.textContent}
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => {
-                    title.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                >
-                  {title.textContent}
-                </Typography>
-              ))}
-            </Stack>
+            {headers.map((title) => (
+              <Typography
+                key={title.textContent}
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  title.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
+              >
+                {title.textContent}
+              </Typography>
+            ))}
           </Stack>
           <Stack direction="row" sx={{ flexWrap: "wrap", gap: 2 }}>
             <IconButton edge="start" onClick={() => {}}>

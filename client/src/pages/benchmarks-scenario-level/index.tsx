@@ -1,24 +1,22 @@
 import { Analysis } from "components/analysis/Analysis";
 import { useLocationState } from "hooks/useNavigation";
-import Layout from "layout/Layout";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
+import Layout from "layout/Layout";
 import { makePreviewImagePageRenderFunction } from "layout/render";
 import { capitalize } from "lodash";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
-import { useSm } from "components/dialog/useSmallDisplay";
 
 export default function Page() {
   const state = useLocationState<ScenarioLevelLocationState>();
   const { mapName, scenType, scenTypeID, mapId, scenId } = state;
-  const sm = useSm();
   const title = `${scenType}-${scenTypeID}`;
   return (
     <Layout
+      flat
       title={capitalize(title)}
       description={`View all benchmarks and their results for ${title}`}
-      slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    image: example/image-a:latest  # Replace with the actual image for container A
+    container_name: app
+    expose:
+      - 80
+    networks:
+      - proxy
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./data/certs:/etc/nginx/certs:ro
+      - ./data/vhost:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
+    environment:
+      - DEFAULT_HOST=fe2410d1.pathfinding.ai  # Replace with your domain
+    networks:
+      - proxy
+
+  letsencrypt:
+    image: nginxproxy/acme-companion
+    container_name: letsencrypt
+    depends_on:
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data/certs:/etc/nginx/certs
+      - ./data/vhost:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
+    environment:
+      - DEFAULT_EMAIL=kevin.zheng@monash.edu  # Replace with your email
+    networks:
+      - proxy
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true  # Only watch containers with specific labels
+    command: --interval 300  # Check for updates every 300 seconds (5 minutes)
+
+networks:
+  proxy:
+    driver: bridge
