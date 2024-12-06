@@ -1,6 +1,6 @@
 import { Box, Stack } from "@mui/material";
 import Enter from "components/dialog/Enter";
-import { useMd } from "components/dialog/useSmallDisplay";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map, some } from "lodash";
 import { ReactNode } from "react";
 import { matchPath, useLocation } from "react-router-dom";
@@ -18,7 +18,7 @@ export function Router({
   fallback?: ReactNode;
 }) {
   const { pathname } = useLocation();
-  const md = useMd();
+  const md = useSm();
   const recursiveMatch = (a?: Route) => {
     if (!a) return false;
     if (matchPath(a.path, pathname)) return true;

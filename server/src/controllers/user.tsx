@@ -6,7 +6,6 @@ import { render } from "@react-email/components";
 import { randomBytes } from "crypto";
 import { addMonths, format } from "date-fns";
 import ReviewOutcome from "emails/ReviewOutcome";
-import { startCase } from "lodash";
 import { log } from "logging";
 import {
   Algorithm,
@@ -27,7 +26,7 @@ const titles = {
   rejected: "Your submission request for MAPF Tracker was rejected",
 };
 
-async function sendMail1({
+async function queueMail({
   apiKey,
   requesterEmail,
   requesterName,
@@ -77,7 +76,7 @@ export const createKeyAndSendMail: RequestHandler<
     api_key: apiKey,
   }).save();
   log.info("Sending mail");
-  await sendMail1({
+  await queueMail({
     apiKey,
     requestId,
     requesterEmail,

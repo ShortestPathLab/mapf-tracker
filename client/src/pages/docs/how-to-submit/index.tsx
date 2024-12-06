@@ -6,8 +6,8 @@ import Content from "./content.mdx";
 export default function Page() {
   return (
     <ArticleLayout
-      title="Submitting data to the MAPF Tracker"
-      subtitle="How to submit MAPF instances"
+      title="Submitting data to MAPF Tracker"
+      subtitle="Quick-start guide on how to submit your results to the platform"
       path={[
         { name: "Home", url: "/" },
         { name: "Docs", url: "/docs" },

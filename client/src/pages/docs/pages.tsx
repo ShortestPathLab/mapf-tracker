@@ -9,6 +9,17 @@ import SubmissionInstructionsPage from "./how-to-submit";
 import DatasetPage from "./get-dataset";
 import AboutPage from "./about";
 
+export type Page = ReturnType<typeof pages>[number];
+
+export const submissionInstructions = () => ({
+  label: "Submitting data to MAPF Tracker",
+  value: "how-to-submit",
+  icon: <FileUploadOutlined />,
+  content: <SubmissionInstructionsPage />,
+  description:
+    "Quick-start guide on how to submit your results to the platform",
+});
+
 export const pages = () => [
   {
     label: "Watch our system demo",
@@ -17,14 +28,7 @@ export const pages = () => [
     content: <DemoPage />,
     description: "Take 5 minutes to watch our ICAPS 2023 system demonstration",
   },
-  {
-    label: "Submission instructions",
-    value: "how-to-submit",
-    icon: <FileUploadOutlined />,
-    content: <SubmissionInstructionsPage />,
-    description:
-      "Have MAPF instances to submit? Follow these instructions to submit them",
-  },
+  submissionInstructions(),
   {
     label: "Get the dataset",
     value: "dataset",

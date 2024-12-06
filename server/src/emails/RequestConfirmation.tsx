@@ -1,6 +1,5 @@
 import {
   Body,
-  CodeInline,
   Container,
   Font,
   Head,
@@ -9,34 +8,17 @@ import {
   Html,
   Tailwind,
 } from "@react-email/components";
-import { startCase } from "lodash";
+import { entries, startCase } from "lodash";
+import { Infer, Request } from "models";
 import React from "react";
 import { renderItem, renderText } from "./renderText";
 import { footerText } from "./footerText";
 
-export type Props = {
-  name?: string;
-  apiKey?: string;
-  status: string;
-  comments: string;
-};
+export type Props = Infer<typeof Request>;
 
-ReviewOutcome.PreviewProps = {
-  name: "John Doe",
-  apiKey: Array(32)
-    .fill("")
-    .map(() => String.fromCharCode(Math.floor(Math.random() * 26) + 97))
-    .join(""),
-  status: "approved",
-  comments: "No comment",
-} as Props;
+RequestConfirmation.PreviewProps = {} as Props;
 
-export default function ReviewOutcome({
-  name,
-  apiKey,
-  status,
-  comments,
-}: Props) {
+export default function RequestConfirmation(args: Props) {
   return (
     <Html>
       <Head>
@@ -55,22 +37,13 @@ export default function ReviewOutcome({
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Your submission key request has been reviewed
+              We have received your request
             </Heading>
-            {renderText(`Hello ${name || "user"},`)}
-            {renderText(
-              <>
-                Thank you for using MAPF Tracker. The following is the outcome
-                of your request review:
-              </>
-            )}
-            {renderItem("Outcome", startCase(status))}
-            {status === "approved" &&
-              renderItem(
-                "Your submission key",
-                <CodeInline>{apiKey}</CodeInline>
+            {entries(args)
+              .filter(([, v]) => typeof v === "string")
+              .map(([k, v]) =>
+                renderItem(startCase(k), (v as string) || "None")
               )}
-            {comments && renderItem("Comments", comments)}
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             {renderText(footerText, true)}
           </Container>

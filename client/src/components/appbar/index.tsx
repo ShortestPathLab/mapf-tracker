@@ -7,7 +7,7 @@ import {
   FileUploadOutlined,
   GitHub,
   LightModeOutlined,
-  LocationSearchingOutlined,
+  MailOutlined,
   MultilineChartOutlined,
   PersonOutlined,
 } from "@mui/icons-material";
@@ -35,7 +35,7 @@ import { ReactNode } from "react";
 import { matchPath, useLocation } from "react-router-dom";
 import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
-import { useLg } from "../dialog/useSmallDisplay";
+import { useSm } from "../dialog/useSmallDisplay";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
 
@@ -95,17 +95,17 @@ export function useNavigationContent() {
       items: [
         {
           primary: true,
-          label: "Request an API key",
+          label: "Request a key",
           url: "/contributes",
-          icon: <FileUploadOutlined />,
+          icon: <MailOutlined />,
           description:
             "If you want to contribute, start by requesting an API key",
         },
         {
           primary: true,
-          label: "Manage my submissions",
+          label: "Submit data",
           url: "/trackSubmission",
-          icon: <LocationSearchingOutlined />,
+          icon: <FileUploadOutlined />,
           description:
             "If you have an API key, you can manage your submission here",
         },
@@ -130,44 +130,10 @@ export function useNavigationContent() {
         },
       ],
     },
+
     {
-      label: "Manage",
+      label: "Settings",
       grow: true,
-      items: credentials
-        ? [
-            {
-              iconButton: true,
-              label: "Manage this platform",
-              icon: <CodeOutlined />,
-              url: "/dashboard",
-              description:
-                "Review submission requests, issue submission keys, and run jobs",
-            },
-            {
-              iconButton: true,
-              label: "Account info",
-              action: showUserDialog,
-              avatar: credentials ? (
-                <Avatar
-                  sx={{ width: 32, height: 32 }}
-                  src={getAvatar(credentials)}
-                />
-              ) : undefined,
-            },
-          ]
-        : [
-            {
-              iconButton: true,
-              label: "Log in",
-              action: showLogIn,
-              icon: <PersonOutlined />,
-              description: "Log in to manage this platform",
-            },
-          ],
-    },
-    {
-      label: "Appearance",
-      defaultOpen: false,
       items: [
         {
           iconButton: true,
@@ -176,6 +142,37 @@ export function useNavigationContent() {
           action: toggleMode,
           last: true,
         },
+        ...(credentials
+          ? [
+              {
+                iconButton: true,
+                label: "Manage this platform",
+                icon: <CodeOutlined />,
+                url: "/dashboard",
+                description:
+                  "Review submission requests, issue submission keys, and run jobs",
+              },
+              {
+                iconButton: true,
+                label: "Account info",
+                action: showUserDialog,
+                avatar: credentials ? (
+                  <Avatar
+                    sx={{ width: 32, height: 32 }}
+                    src={getAvatar(credentials)}
+                  />
+                ) : undefined,
+              },
+            ]
+          : [
+              {
+                iconButton: true,
+                label: "Log in",
+                action: showLogIn,
+                icon: <PersonOutlined />,
+                description: "Log in to manage this platform",
+              },
+            ]),
       ],
     },
   ];
@@ -183,8 +180,8 @@ export function useNavigationContent() {
 }
 
 export default function index(props: AppBarProps) {
-  const lg = useLg();
-  const md = useLg();
+  const lg = useSm();
+  const md = useSm();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();

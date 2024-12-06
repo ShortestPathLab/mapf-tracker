@@ -8,11 +8,3 @@ export function useXs() {
   const theme = useTheme();
   return useMediaQuery(theme.breakpoints.down("sm"));
 }
-export function useMd() {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.down("lg"));
-}
-export function useLg() {
-  const theme = useTheme();
-  return useMediaQuery(theme.breakpoints.down("lg"));
-}

@@ -1,7 +1,12 @@
 import { RequestHandler } from "express";
 import mongoose from "mongoose";
-import { Request, SubmissionKey } from "models";
+import { Infer, Request, SubmissionKey } from "models";
 import crypto from "crypto";
+import RequestConfirmation from "emails/RequestConfirmation";
+import { log } from "logging";
+import { render } from "@react-email/components";
+import React from "react";
+import { mail } from "mail";
 
 export const findAll: RequestHandler = (req, res) => {
   Request.find({})
@@ -37,13 +42,26 @@ export const findByInstance_id: RequestHandler = (req, res) => {
     });
 };
 
+async function queueMail(args: Infer<typeof Request>) {
+  log.info("Preparing mail", args);
+  const a = await render(<RequestConfirmation {...args} />);
+  log.info(a);
+  mail(
+    "noreply@pathfinding.ai",
+    args.requesterEmail,
+    "We have received your request",
+    a
+  );
+}
+
 export const create = async (req, res) => {
   if (!req.body.requesterName) {
     return res
       .status(400)
       .send({ message: "Requester name can not be empty!" });
   }
-  const request = new Request({
+
+  const obj = {
     requesterName: req.body.requesterName,
     requesterEmail: req.body.requesterEmail,
     requesterAffilation: req.body.requesterAffilation,
@@ -55,19 +73,19 @@ export const create = async (req, res) => {
     paperReference: req.body.paperReference,
     githubLink: req.body.githubLink,
     comments: req.body.comments,
-  });
+  };
 
-  request
-    .save()
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Requester.",
-      });
+  const request = new Request(obj);
+  try {
+    const data = await request.save();
+    await queueMail(obj as Infer<typeof Request>);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while creating the Requester.",
     });
+  }
 };
 
 export const updateRequest = async (req, res) => {

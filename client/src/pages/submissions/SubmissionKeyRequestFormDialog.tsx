@@ -7,7 +7,7 @@ import {
   SubmissionKeyRequestFormProps,
 } from "forms/SubmissionKeyRequestForm";
 import { DialogContentProps } from "hooks/useDialog";
-import { Floating } from ".";
+import { Floating } from "../../components/Floating";
 
 export function SubmissionKeyRequestFormDialog({
   onProps,

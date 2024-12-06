@@ -41,7 +41,7 @@ export function AddKeyForm({
             <Field
               fullWidth
               name="key"
-              label="Submission (API) key"
+              label="Your submission (API) key"
               variant="filled"
               required
             />

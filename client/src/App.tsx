@@ -17,7 +17,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { LostConnectionWarning } from "components/LostConnectionWarning";
 import { Route, Router } from "components/Router";
 import AppBar from "components/appbar";
-import { useLg } from "components/dialog/useSmallDisplay";
+import { useSm } from "components/dialog/useSmallDisplay";
 import {
   ModalContext,
   useModalProviderValue,
@@ -80,7 +80,7 @@ export default function App() {
   );
 }
 export function Content() {
-  const lg = useLg();
+  const lg = useSm();
 
   const routes: Route[] = [
     {

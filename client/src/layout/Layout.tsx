@@ -13,9 +13,9 @@ import Appbar, { appbarHeight } from "components/appbar";
 import Enter from "components/dialog/Enter";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useScrollState } from "components/dialog/useScrollState";
-import { useLg, useXs } from "components/dialog/useSmallDisplay";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
-import { last, merge, startCase } from "lodash";
+import { last, merge } from "lodash";
 import { ReactNode } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
@@ -53,7 +53,7 @@ export default function Layout({
   description,
   flat,
 }: LayoutProps) {
-  const lg = useLg();
+  const lg = useSm();
   const xs = useXs();
   const [, isTop, , , setPanel] = useScrollState(appbarHeight(lg));
   const navigate = useNavigate();
@@ -105,7 +105,7 @@ export default function Layout({
               </IconButton>
               <Fade in={!isTop || !collapse}>
                 <Typography variant="h6" sx={{ ml: 1 }}>
-                  {startCase(title)}
+                  {title}
                 </Typography>
               </Fade>
             </Toolbar>
