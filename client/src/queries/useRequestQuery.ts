@@ -11,18 +11,14 @@ export const requestSchema = object({
   requesterEmail: string()
     .email("Please enter a valid email address.")
     .required("Contact email is required."),
-  requesterAffilation: string().required("Affiliation is required."),
-  googleScholar: string()
-    .url("Please enter a valid URL.")
-    .required("Google Scholar profile URL is required."),
-  dblp: string().required("DBLP profile URL is required."),
+  requesterAffiliation: string().required("Affiliation is required."),
+  googleScholar: string().url("Please enter a valid URL."),
+  dblp: string().url("Please enter a valid URL."),
   justification: string().required("Justification is required."),
   algorithmName: string().required("Algorithm name is required."),
   authorName: string().required("Author name is required."),
   paperReference: string().required("Paper reference is required."),
-  githubLink: string()
-    .url("Please enter a valid URL.")
-    .required("GitHub link is required."),
+  githubLink: string().url("Please enter a valid URL."),
   comments: string(),
 });
 

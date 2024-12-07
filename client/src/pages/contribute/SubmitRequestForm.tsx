@@ -32,7 +32,7 @@ export function SubmitRequestForm({ onClose }: { onClose?: () => void }) {
   return (
     <>
       <SubmissionKeyRequestForm
-        submit={({ isSubmitting, submitForm, values, resetForm }) => (
+        submit={({ isSubmitting, submitForm, values }) => (
           <Floating>
             <Button
               fullWidth
@@ -51,7 +51,6 @@ export function SubmitRequestForm({ onClose }: { onClose?: () => void }) {
                   onAccept: async () => {
                     close();
                     submitForm();
-                    defer(resetForm);
                   },
                 })
               }
@@ -64,12 +63,16 @@ export function SubmitRequestForm({ onClose }: { onClose?: () => void }) {
             </Button>
           </Floating>
         )}
-        onSubmit={async (values) => {
+        onSubmit={async (values, { resetForm }) => {
+          onClose?.();
           await submit(values, {
-            onSuccess: () => notify("Request submitted"),
+            onSuccess: () => {
+              notify("Request submitted");
+
+              defer(resetForm);
+            },
             onError: () => notify("Something went wrong"),
           });
-          onClose();
         }}
       />
       {dialog}

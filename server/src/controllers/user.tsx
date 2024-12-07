@@ -47,7 +47,8 @@ async function queueMail({
       status={status}
       name={requesterName}
       comments={comments}
-    />
+    />,
+    { pretty: true }
   );
   log.info(a);
   mail("noreply@pathfinding.ai", requesterEmail, titles[status], a);
@@ -97,7 +98,7 @@ export const sendMail: RequestHandler<
     comments?: string;
   }
 > = (req, res) => {
-  // console.log("in sendding maillllllllllll");
+  // /**/;
   // const request_email = req.body.requesterEmail;
   // const request_name = req.body.requesterName;
   // const { status, comments } = req.body;
@@ -154,15 +155,12 @@ export const updateAlgoByID: RequestHandler = (req, res) => {
 };
 
 export const checkAlgoExist: RequestHandler = (req, res) => {
-  console.log("here");
-  console.log(req.params.id);
-  if (!req.body) {
+  /**/ /**/ if (!req.body) {
     return res.status(400).send({
       message: "Data to update can not be empty!",
     });
   }
-  console.log("here");
-  const { id } = req.params;
+  /**/ const { id } = req.params;
   if (id === "-1") {
     Algorithm.findOne({ algo_name: req.body.algo_name })
       .then((data) => {
@@ -177,8 +175,7 @@ export const checkAlgoExist: RequestHandler = (req, res) => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        res.status(500).send({
+        /**/ res.status(500).send({
           message: err,
         });
       });
@@ -196,8 +193,7 @@ export const checkAlgoExist: RequestHandler = (req, res) => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        res.status(500).send({
+        /**/ res.status(500).send({
           message: err,
         });
       });
@@ -427,7 +423,7 @@ export const submitData = async (req, res) => {
     if (curr_submission.lower_cost !== null) {
       if (curr_instance.lower_cost !== null) {
         if (curr_instance.lower_cost > curr_submission.lower_cost) {
-          console.log("erase preivous record");
+          /**/
         }
       }
       if (curr_instance.lower_cost === null) {

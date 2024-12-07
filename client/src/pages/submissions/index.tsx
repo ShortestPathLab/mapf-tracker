@@ -150,7 +150,7 @@ export default function TrackSubmission() {
       renderCell: cellRendererText,
     },
     {
-      field: "requesterAffilation",
+      field: "requesterAffiliation",
       headerName: "Affiliation",
       width: 180,
       fold: true,
@@ -175,7 +175,7 @@ export default function TrackSubmission() {
       )}
     />,
     <Typography variant="body2" color="text.secondary" key="no-key">
-      Don&apos;t have a submission (API) key?{" "}
+      Don&apos;t have a submission (API) key? You need one to submit data.{" "}
       <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/contributes")}>
         Request one here.
       </Link>

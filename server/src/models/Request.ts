@@ -4,7 +4,7 @@ import { createSchema } from "./createSchema";
 const schema = createSchema({
   requesterName: String,
   requesterEmail: String,
-  requesterAffilation: String,
+  requesterAffiliation: String,
   googleScholar: String,
   dblp: String,
   justification: String,

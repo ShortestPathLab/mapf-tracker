@@ -20,6 +20,8 @@ export const getKey = async (
 ) => {
   const key = await SubmissionKey.findOne({ api_key });
   if (!key) return fatal(ctx, "API key invalid");
+  if (key.status.type === "submitted")
+    return fatal(ctx, "API key already submitted");
   if (new Date() > key.expirationDate) return fatal(ctx, "API key expired");
   return key;
 };
@@ -159,8 +161,8 @@ export async function run({
   data: d,
   apiKey,
 }: SubmissionRequestValidatorWorkerParams) {
-  await connectToDatabase();
   try {
+    await connectToDatabase();
     for (const { schema, handler, transformer } of handlers) {
       const { success, data } = schema.safeParse(d);
       if (success) {

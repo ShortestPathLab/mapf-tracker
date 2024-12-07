@@ -11,7 +11,7 @@ import { paper } from "theme";
 const defaultRequest: Request = {
   requesterName: "",
   requesterEmail: "",
-  requesterAffilation: "",
+  requesterAffiliation: "",
   googleScholar: "",
   dblp: "",
   justification: "",
@@ -55,18 +55,21 @@ export function SubmissionKeyRequestForm({
         .uniq()
         .value(),
   });
-  const renderLabel = (label: ReactNode) => (
-    <Typography
-      variant="h6"
-      sx={{
-        fontSize: "1em",
-        pt: 2,
-        pb: 1,
-        color: disabled ? "text.secondary" : "text.primary",
-      }}
-    >
-      {label}
-    </Typography>
+  const renderLabel = (label: ReactNode, secondary?: ReactNode) => (
+    <Stack sx={{ pb: 1, pt: 2, gap: 1 }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontSize: "1em",
+          color: disabled ? "text.secondary" : "text.primary",
+        }}
+      >
+        {label}
+      </Typography>
+      {secondary && (
+        <Typography sx={{ color: "text.secondary" }}>{secondary}</Typography>
+      )}
+    </Stack>
   );
 
   const renderRow = (...row: ReactNode[]) => (
@@ -108,7 +111,7 @@ export function SubmissionKeyRequestForm({
               disabled={disabled}
               as={Autocomplete}
               autoCompleteProps={{
-                defaultValue: state.initialValues?.requesterAffilation,
+                defaultValue: state.initialValues?.requesterAffiliation,
                 freeSolo: true,
                 options,
                 getOptionDisabled: (o) => o === DISABLED_OPTION,
@@ -118,7 +121,7 @@ export function SubmissionKeyRequestForm({
                     : [DISABLED_OPTION],
                 ListboxProps: { sx: paper(2) },
               }}
-              name="requesterAffilation"
+              name="requesterAffiliation"
               getOptionDisabled={(o) => o === DISABLED_OPTION}
               filterOptions={(o: string[], s) =>
                 s.inputValue.length > 2
@@ -129,7 +132,10 @@ export function SubmissionKeyRequestForm({
               placeholder="Monash University"
               required
             />
-            {renderLabel("About your algorithm")}
+            {renderLabel(
+              "About your algorithm",
+              "Tell us about this algorithm you would like to submit results for."
+            )}
             {renderRow(
               <Field<Request>
                 name="algorithmName"
@@ -155,18 +161,20 @@ export function SubmissionKeyRequestForm({
               minRows={3}
               required
             />
+            {renderLabel(
+              "Where your algorithm is published",
+              "Make it easier for people to find your work once we list your results on our platform."
+            )}
             <Field<Request>
               name="googleScholar"
               disabled={disabled}
               type="url"
               label="Google Scholar link"
-              required
             />
             <Field<Request>
               name="dblp"
               type="url"
               label="DBLP link"
-              required
               disabled={disabled}
             />
             <Field<Request>
@@ -174,9 +182,11 @@ export function SubmissionKeyRequestForm({
               disabled={disabled}
               type="url"
               label="GitHub link"
-              required
             />
-            {renderLabel("Other info")}
+            {renderLabel(
+              "Other info",
+              "Let us know why you would like to submit your algorithm to our tracker, as well as any other helpful information."
+            )}
             <Field<Request>
               multiline
               disabled={disabled}

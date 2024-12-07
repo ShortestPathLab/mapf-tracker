@@ -68,7 +68,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                             >
                               Your file failed to pass schema validation. The
                               following is the error returned by the server.
-                              <GenericDetailsList data={error} />
+                              <GenericDetailsList data={{ error }} />
                             </Dialog>
                           ),
                           pending: "Processing",

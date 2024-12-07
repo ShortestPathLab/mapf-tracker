@@ -35,8 +35,7 @@ const domain = {
 };
 
 const onError = ({ errors }) => {
-  console.log(errors);
-  // Return true to keep running validation.
+  /**/ // Return true to keep running validation.
   // Return false to stop immediately.
   return true;
 };

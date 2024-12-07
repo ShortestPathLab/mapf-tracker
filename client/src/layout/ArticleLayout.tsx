@@ -19,6 +19,7 @@ import { useNavigate } from "hooks/useNavigation";
 import Layout, { LayoutProps } from "layout/Layout";
 import { last } from "lodash";
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { name } from "../../public/manifest.json";
 
 function useHeaders() {
   const ref = useRef<HTMLDivElement>(null);
@@ -78,7 +79,7 @@ export function ArticleLayout({
   ),
   path,
   ...props
-}: LayoutProps & { subtitle?: ReactNode; author?: ReactNode }) {
+}: LayoutProps & { subtitle?: string; author?: ReactNode }) {
   const { headers, ref } = useHeaders();
   const top = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -153,7 +154,14 @@ export function ArticleLayout({
             ))}
           </Stack>
           <Stack direction="row" sx={{ flexWrap: "wrap", gap: 2 }}>
-            <IconButton edge="start" onClick={() => {}}>
+            <IconButton
+              edge="start"
+              onClick={() => {
+                navigator.share?.({
+                  text: `${name} - ${title}\n${subtitle}\n\n${location.href}`,
+                });
+              }}
+            >
               <ShareOutlined sx={{ color: "text.secondary" }} />
             </IconButton>
           </Stack>

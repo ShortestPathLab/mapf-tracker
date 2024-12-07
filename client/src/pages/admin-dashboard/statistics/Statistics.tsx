@@ -134,17 +134,17 @@ export default function Summary() {
     if (event.target.value === "#Instances Closed") {
       getClosedInfo((data) => {
         setMapQueryResult(data);
-        // console.log("finished query")
+        // /**/
       });
     } else if (event.target.value === "#Best Lower-bounds") {
       getLowerBoundInfo((data) => {
         setMapQueryResult(data);
-        // console.log("finished query")
+        // /**/
       });
     } else {
       getSoultionInfo((data) => {
         setMapQueryResult(data);
-        // console.log("finished query")
+        // /**/
       });
     }
   };
@@ -162,7 +162,7 @@ export default function Summary() {
     fetch(domain_API, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        // console.log(data)
+        // /**/
         setDomainQueryResult(data);
       })
       .catch((err) => console.error(err));
@@ -355,7 +355,7 @@ export default function Summary() {
 
   React.useEffect(() => {
     const displayData = [];
-    // console.log(solvedChartOriData);
+    // /**/;
     mapBarChartOriData.forEach((element) => {
       const mapData = {};
       mapData.name = element.name;
@@ -366,7 +366,7 @@ export default function Summary() {
       });
       displayData.push(mapData);
     });
-    // console.log(displayData);
+    // /**/;
     const displayKey = [];
     mapBarChartAlgorithms.forEach((algo) => {
       if (mapFilterState[algo]) {
@@ -379,7 +379,7 @@ export default function Summary() {
 
   React.useEffect(() => {
     const displayData = [];
-    // console.log(solvedChartOriData);
+    // /**/;
     domainBarChartOriData.forEach((element) => {
       const domainData = {};
       domainData.name = element.name;
@@ -391,7 +391,7 @@ export default function Summary() {
       displayData.push(domainData);
     });
 
-    // console.log(displayData);
+    // /**/;
     const displayKey = [];
     domainBarChartAlgorithms.forEach((algo) => {
       if (domainFilterState[algo]) {

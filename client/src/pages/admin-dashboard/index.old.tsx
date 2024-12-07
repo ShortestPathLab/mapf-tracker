@@ -288,7 +288,7 @@ async function checkNameExist(id, name) {
   const response = await fetch(
     APIConfig.apiUrl + "/user/checkAlgo/" + id,
     requestOptions
-  ).catch((err) => console.log(err));
+  ).catch(console.log);
   return response.status === 200;
 }
 
@@ -300,7 +300,7 @@ const refreshAlgorithms = (callback) => {
     },
   };
 
-  // console.log(JSON.parse(localStorage.getItem('user')).id)
+  // /**/).id)
   fetch(
     APIConfig.apiUrl +
       "/userAlgo/" +
@@ -318,7 +318,7 @@ const refreshRequests = (callback) => {
   const requestOptions = {
     method: "GET",
   };
-  // console.log(JSON.parse(localStorage.getItem('user')).id)
+  // /**/).id)
   fetch(APIConfig.apiUrl + "/request/", requestOptions)
     .then((response) => response.json())
     .then((data) => {
@@ -380,7 +380,7 @@ export default function Dashboard() {
 
       const data = await response.json();
       if (response.ok) {
-        console.log("Request updated successfully:", data);
+        /**/
       } else {
         console.error("Error updating request:", data);
       }
@@ -422,9 +422,7 @@ export default function Dashboard() {
       );
       const data = await response.json();
       if (response.ok) {
-        console.log("API keys found successfully:", data);
-        console.log(data[0]);
-        setSubmissionKey(data[0]);
+        /**/ /**/ setSubmissionKey(data[0]);
       } else {
         console.error("Error updating request:", data);
       }
@@ -489,7 +487,7 @@ export default function Dashboard() {
             comments: data.get("algoComments"),
           }),
         };
-        // console.log(JSON.parse(localStorage.getItem('user')).id)
+        // /**/).id)
         fetch(
           APIConfig.apiUrl + "/user/updateAlgo/" + algodata.id,
           requestOptions
@@ -598,9 +596,9 @@ export default function Dashboard() {
 
   const navigateToMaps = (event, algo_id, algo_name) => {
     // 👇️ navigate to /contacts
-    // // console.log(id)
-    // console.log(event.target);
-    // console.log(event.target.getAttribute('type'));
+    // // /**/
+    // /**/;
+    // /**/);
     navigate("/user/maps", {
       state: { algo_id, algo_name },
       replace: false,
@@ -621,9 +619,7 @@ export default function Dashboard() {
           ? submissionKey.api_key
           : undefined,
     };
-    console.log(values);
-
-    // send email to the user
+    /**/ // send email to the user
     try {
       const response = await fetch(`${APIConfig.apiUrl}/user/sendMail`, {
         method: "PUT",
@@ -637,8 +633,7 @@ export default function Dashboard() {
 
       const data = await response.json();
       if (response.ok) {
-        console.log("Email was sent : ", data);
-        alert("Email was sent !");
+        /**/ alert("Email was sent !");
       } else {
         console.error("Error sending email: ", data);
       }
@@ -940,8 +935,8 @@ export default function Dashboard() {
                   <Box sx={{ display: "flex", gap: 5, marginBottom: 5 }}>
                     <Field
                       as={TextField}
-                      name="requesterAffilation"
-                      label="Affilation"
+                      name="requesterAffiliation"
+                      label="Affiliation"
                       fullWidth
                       variant="standard"
                       disabled={true}

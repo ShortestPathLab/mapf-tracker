@@ -6,7 +6,8 @@
     "module": "esnext",
     "jsx": "react-jsx",
     "types": ["vite/client"],
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules"]
 }

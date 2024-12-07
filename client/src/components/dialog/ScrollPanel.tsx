@@ -34,8 +34,7 @@ export function ScrollPanel({
       }}
       ref={(e) => {
         setTarget(e);
-        console.log("hi", e);
-        onTarget?.(e);
+        /**/ onTarget?.(e);
       }}
     >
       <PanelContext.Provider value={target}>

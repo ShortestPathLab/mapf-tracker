@@ -17,8 +17,7 @@ export const findAll: RequestHandler = (req, res) => {
 
 export const findByRequestId: RequestHandler = (req, res) => {
   const requestId = req.params.request_id; // or req.query.request_id if it's a query parameter
-  console.log(requestId);
-  SubmissionKey.find({ request_id: requestId })
+  /**/ SubmissionKey.find({ request_id: requestId })
     .then((data) => {
       if (!data) {
         res.status(404).send({
@@ -26,7 +25,7 @@ export const findByRequestId: RequestHandler = (req, res) => {
         });
       } else {
         res.send(data);
-        console.log(data);
+        /**/
       }
     })
     .catch((err) => {
@@ -39,8 +38,7 @@ export const findByRequestId: RequestHandler = (req, res) => {
 
 export const findByApiKey: RequestHandler = (req, res) => {
   const { apiKey } = req.params; // Assuming apiKey is passed in req.params
-  console.log("request api key : ", apiKey);
-  SubmissionKey.findOne({ api_key: apiKey })
+  /**/ SubmissionKey.findOne({ api_key: apiKey })
     .then((data) => {
       if (!data)
         res
@@ -48,7 +46,7 @@ export const findByApiKey: RequestHandler = (req, res) => {
           .send({ message: `Not found SubmissionKey with apiKey ${apiKey}` });
       else {
         res.send(data);
-        console.log("data for aubmission key is : ", data);
+        /**/
       }
     })
     .catch((err) => {

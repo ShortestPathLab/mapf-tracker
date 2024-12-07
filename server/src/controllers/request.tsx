@@ -44,7 +44,7 @@ export const findByInstance_id: RequestHandler = (req, res) => {
 
 async function queueMail(args: Infer<typeof Request>) {
   log.info("Preparing mail", args);
-  const a = await render(<RequestConfirmation {...args} />);
+  const a = await render(<RequestConfirmation {...args} />, { pretty: true });
   log.info(a);
   mail(
     "noreply@pathfinding.ai",
@@ -64,7 +64,7 @@ export const create = async (req, res) => {
   const obj = {
     requesterName: req.body.requesterName,
     requesterEmail: req.body.requesterEmail,
-    requesterAffilation: req.body.requesterAffilation,
+    requesterAffiliation: req.body.requesterAffiliation,
     googleScholar: req.body.googleScholar,
     dblp: req.body.dblp,
     justification: req.body.justification,
@@ -93,8 +93,7 @@ export const updateRequest = async (req, res) => {
   const { reviewStatus, ...otherFields } = req.body;
   try {
     const request = await Request.findById(id);
-    console.log(request);
-    if (!request) {
+    /**/ if (!request) {
       return res
         .status(404)
         .send({ message: `Request with id ${id} not found` });
@@ -113,8 +112,7 @@ export const updateRequest = async (req, res) => {
       previousStatus === "not-reviewed" &&
       reviewStatus.status === "approved"
     ) {
-      console.log("innnnnn here");
-      // generate new submission key api for the user
+      /**/ // generate new submission key api for the user
       const apiKey = crypto.randomBytes(16).toString("hex");
       const creationDate = new Date();
       const expirationDate = new Date();

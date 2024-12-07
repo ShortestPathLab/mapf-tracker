@@ -5,7 +5,7 @@ import viteTsconfigPaths from "vite-tsconfig-paths";
 import remarkGfm from "remark-gfm";
 export default defineConfig({
   // depending on your application, base can also be "/"
-  base: "",
+  base: "/",
   plugins: [
     viteTsconfigPaths(),
     {

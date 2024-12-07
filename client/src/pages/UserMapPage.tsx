@@ -243,7 +243,7 @@ const refreshLeader = (callback, algo_id) => {
     },
   };
 
-  // console.log(JSON.parse(localStorage.getItem('user')).id)
+  // /**/).id)
   fetch(
     APIConfig.apiUrl + "/user/getMapSubmittedInfo/" + algo_id,
     requestOptions
@@ -344,8 +344,7 @@ function parseScen(text, num_of_agents, solution_string) {
       previous_location = next_location;
     }
   }
-  console.log("finish scenario");
-  return agent_state;
+  /**/ return agent_state;
 }
 
 export default function UserMapPage() {
@@ -374,7 +373,7 @@ export default function UserMapPage() {
   const [showProgress, setShowProgress] = React.useState(false);
 
   const handleSave = (incommingFiles) => {
-    // console.log("incomming files", incommingFiles);
+    // /**/;
     setValidationText("");
     setFiles(incommingFiles);
     setOpenSubmit(true);
@@ -395,15 +394,13 @@ export default function UserMapPage() {
         }
       });
     });
-    console.log("finish loading");
-    return map;
+    /**/ return map;
   }
 
   const load_map = async function () {
     const map_file = selectedRow.map_name + ".map";
     const map_path = "./assets/maps/" + map_file;
-    console.log(selectedRow.map_name);
-    const map_text = await fetch(map_path)
+    /**/ const map_text = await fetch(map_path)
       .then((r) => r.text())
       .catch((err) => console.error(err));
     return parseMap(map_text);
@@ -642,7 +639,7 @@ export default function UserMapPage() {
                   parseInt(results.data[3]),
                   results.data[6]
                 );
-                // console.log(parsed_solution);
+                // /**/;
                 if (!validate_path(parsed_solution, map)) {
                   foundError = true;
                   current_display_string = current_display_string.concat(
@@ -656,14 +653,14 @@ export default function UserMapPage() {
                 // await new Promise(r => setTimeout(r, 2000));
               }
               //check path here;
-              // console.log(results.data[6])
+              // /**/
             }
           }
           counter++;
           parser.resume();
         },
         error: function (error) {
-          // console.log(error);
+          // /**/;
           setValidationText(current_display_string.concat(error));
           foundError = true;
           // return {complete(!foundError),counter};
@@ -715,7 +712,7 @@ export default function UserMapPage() {
               },
               body: JSON.stringify(chunk_array),
             };
-            // console.log(JSON.parse(localStorage.getItem('user')).id)
+            // /**/).id)
             await fetch(
               APIConfig.apiUrl +
                 "/user/submitChunkResults/" +
@@ -733,7 +730,7 @@ export default function UserMapPage() {
                   setSubmissionProgress((counter + 1) / row_number);
                 }
               })
-              .catch((err) => console.log(err));
+              .catch(console.log);
             // clean;
             chunk_array = [];
           }
@@ -741,9 +738,7 @@ export default function UserMapPage() {
           parser.resume();
         },
         complete: function () {
-          console.log(counter);
-
-          if (foundError === false) {
+          /**/ if (foundError === false) {
             setSubmissionFeedbackText(
               "Finished submission, total number of row: ".concat("", counter)
             );
@@ -759,7 +754,7 @@ export default function UserMapPage() {
   };
 
   const submitted_file = async function () {
-    // validate_file().then((result)=>console.log("validation results", result))
+    // validate_file().then((result)=>/**/)
     setShowProgress(false);
     setSubmissionProgress(0);
     setValidationText("");
@@ -783,7 +778,7 @@ export default function UserMapPage() {
       };
       let displayText = "Finalizing submission ...";
       setFinalizingText(displayText);
-      // console.log(JSON.parse(localStorage.getItem('user')).id)
+      // /**/).id)
       await fetch(
         APIConfig.apiUrl + "/user/updateProgress/" + location.state.algo_id,
         requestOptions
@@ -799,16 +794,16 @@ export default function UserMapPage() {
             setFinalizingText(displayText);
           }
         })
-        .catch((err) => console.log(err));
+        .catch(console.log);
     }
     setActiveButton(true);
     refreshLeader((data) => {
       setData(data);
       setRows(data);
     }, location.state.algo_id);
-    console.log("validtion result", result);
-    // console.log("validtion result", first)
-    // console.log("validtion result", second)
+    /**/
+    // /**/
+    // /**/
     // var result =  await validate_file();
   };
 

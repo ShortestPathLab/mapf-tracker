@@ -64,11 +64,11 @@ function ResponsiveAppBar() {
   const location = useLocation();
 
   const handleOpenNavMenu = (event) => {
-    // console.log(event.currentTarget);
+    // /**/;
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
-    // console.log(event.currentTarget);
+    // /**/;
     setAnchorElUser(event.currentTarget);
   };
 
@@ -98,7 +98,7 @@ function ResponsiveAppBar() {
   }, [location]);
 
   const handleCloseNavMenu = (page) => {
-    // console.log(page);
+    // /**/;
     if (page === "BenchmarkResults") {
       navigate("/benchmarks");
     } else if (page === "BenchmarkDataset") {
@@ -123,12 +123,12 @@ function ResponsiveAppBar() {
       // window.location.href = 'http://tracker.pathfinding.ai/download';
     }
 
-    // console.log(anchorElNav);
+    // /**/;
     setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = (page) => {
-    // console.log(page);
+    // /**/;
     if (page === "Logout") {
       localStorage.removeItem("user");
       setLogin(false);
