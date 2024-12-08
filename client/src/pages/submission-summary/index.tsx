@@ -154,7 +154,7 @@ export default function SubmissionSummaryPage() {
         path={[
           { name: "Submit", url: "/submit" },
           { name: "Submit an algorithm", url: "/contributes" },
-          { name: "Manage submissions", url: "/trackSubmission" },
+          { name: "Manage submissions", url: "/track" },
         ]}
       >
         {sm ? (

@@ -1,11 +1,4 @@
 import {
-  Build,
-  BuildOutlined,
-  FileUploadOutlined,
-  Home,
-  HomeOutlined,
-} from "@mui/icons-material";
-import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
@@ -15,7 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { LostConnectionWarning } from "components/LostConnectionWarning";
-import { Route, Router } from "components/Router";
+import { Router } from "components/Router";
 import AppBar from "components/appbar";
 import { useSm } from "components/dialog/useSmallDisplay";
 import {
@@ -26,27 +19,15 @@ import { useNavigate } from "hooks/useNavigation";
 import { find } from "lodash";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
-import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
-import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
-import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
-import DirectoryPage from "pages/directory";
-import SubmissionSummaryPage from "pages/submission-summary";
 import { useMemo, useReducer } from "react";
 import { matchPath, useLocation } from "react-router-dom";
 import "./App.css";
 import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
-import Submissions from "./pages/AlgorithmsPage";
-import UserMapPage from "./pages/UserMapPage";
-import AdminDashboard from "./pages/admin-dashboard";
-import AdminDashboardOld from "./pages/admin-dashboard/index.old";
-import ContributePage from "./pages/contribute";
-import DocsPage from "./pages/docs";
-import TrackSubmission from "./pages/submissions";
-import Summary from "./pages/summary/DashboardPage";
-import Visualiser from "./pages/visualiser";
 import { theme } from "./theme";
 import { ThemeContext } from "./utils/ThemeProvider";
+import { routes } from "routes";
+import { bottomBarPaths } from "bottomBarPaths";
 
 export const queryClient = new QueryClient();
 
@@ -79,71 +60,9 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
 export function Content() {
   const lg = useSm();
-
-  const routes: Route[] = [
-    {
-      path: "/",
-      content: <DirectoryPage labels={["Browse", "Docs"]} />,
-    },
-    {
-      path: "/submit",
-      content: <DirectoryPage labels={["Make a submission"]} title="Submit" />,
-    },
-    {
-      path: "/manage",
-      content: (
-        <DirectoryPage labels={["Appearance", "Manage"]} title="Manage" />
-      ),
-    },
-    {
-      path: "/benchmarks",
-      content: <BenchmarksRootLevelPage />,
-      parent: "/",
-    },
-    {
-      path: "/scenarios",
-      content: <BenchmarksMapLevelPage />,
-      parent: "/benchmarks",
-    },
-    {
-      path: "/instances",
-      content: <BenchmarksScenarioLevelPage />,
-      parent: "/scenarios",
-    },
-    { path: "/visualization", content: <Visualiser />, parent: "/instances" },
-    { path: "/summary", content: <Summary />, parent: "/" },
-    { path: "/submissions", content: <Submissions />, parent: "/" },
-    { path: "/contributes", content: <ContributePage />, parent: "submit" },
-    {
-      path: "/trackSubmission",
-      content: <TrackSubmission />,
-      parent: "/submit",
-    },
-    {
-      path: "/submissionSummary",
-      content: <SubmissionSummaryPage />,
-      parent: "/trackSubmission",
-    },
-    {
-      path: "/dashboard/:section?",
-      content: <AdminDashboard />,
-    },
-    {
-      path: "/docs/:article?",
-      content: <DocsPage />,
-      parent: "/",
-    },
-    {
-      path: "/dashboard-old",
-      content: <AdminDashboardOld />,
-    },
-    {
-      path: "/user/maps",
-      content: <UserMapPage />,
-    },
-  ];
   return (
     <>
       <Stack>
@@ -170,28 +89,8 @@ export function Content() {
 function BottomBar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const paths = [
-    {
-      label: "Browse",
-      url: "/",
-      icon: <HomeOutlined />,
-      iconSelected: <Home />,
-    },
-    {
-      label: "Submit",
-      url: "/submit",
-      icon: <FileUploadOutlined />,
-      iconSelected: <FileUploadOutlined />,
-    },
-    {
-      label: "Manage",
-      url: "/manage",
-      icon: <BuildOutlined />,
-      iconSelected: <Build />,
-    },
-  ];
   const selected = find(
-    paths,
+    bottomBarPaths,
     (c) => !!matchPath(`${c?.url}/*`, pathname)
   )?.url;
   return (
@@ -209,7 +108,7 @@ function BottomBar() {
         bottom: 0,
       }}
     >
-      {paths.map(({ label, url, icon, iconSelected }) => (
+      {bottomBarPaths.map(({ label, url, icon, iconSelected }) => (
         <BottomNavigationAction
           key={label}
           sx={{

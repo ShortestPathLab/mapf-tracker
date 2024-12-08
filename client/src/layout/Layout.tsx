@@ -21,6 +21,7 @@ import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 
 export type LayoutProps = {
+  disablePadding?: boolean;
   flat?: boolean;
   collapse?: boolean;
   width?: string | number;
@@ -52,6 +53,7 @@ export default function Layout({
   slotProps,
   description,
   flat,
+  disablePadding,
 }: LayoutProps) {
   const lg = useSm();
   const xs = useXs();
@@ -65,8 +67,8 @@ export default function Layout({
           sx: {
             bgcolor: "background.default",
             gap: 4,
-            px: xs ? 2 : 3,
-            py: xs ? 2 : 3,
+            px: disablePadding ? 0 : xs ? 2 : 3,
+            py: disablePadding ? 0 : xs ? 2 : 3,
             maxWidth: width,
             mx: "auto",
           },

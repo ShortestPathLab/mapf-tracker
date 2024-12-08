@@ -31,8 +31,53 @@ import { useLocalStorageList } from "../../hooks/useLocalStorageList";
 import { SubmissionKeyRequestFormDialog } from "./SubmissionKeyRequestFormDialog";
 import { SubmissionLocationState } from "./SubmissionLocationState";
 import { handleRequestDetailUpdated } from "./handleRequestDetailUpdated";
-import { topbarHeight } from "layout/topbarHeight";
-import Enter from "components/transitions/Enter";
+
+export function AddKey() {
+  const navigate = useNavigate();
+  const { mutateAsync: checkKey, isPending: isChecking } = useMutation({
+    mutationFn: (key: string) =>
+      get(`${APIConfig.apiUrl}/submission_key/${key}`),
+    mutationKey: ["checkKey"],
+  });
+
+  const handleApiFormSubmit = async ({ key }, { resetForm }) => {
+    notify("Checking your key");
+    const { ok } = await checkKey(key);
+    if (ok) {
+      resetForm();
+      push(key);
+      notify("Your submission key was added");
+      navigateToDetails(key);
+      return;
+    }
+    notify("Your submission key was invalid");
+  };
+  const [keys, { push }] = useLocalStorageList<string>("submission-keys");
+
+  const notify = useSnackbar();
+
+  function navigateToDetails(key: string | number) {
+    navigate<SubmissionLocationState>("/submissionSummary", {
+      apiKey: key,
+    });
+  }
+  return (
+    <AddKeyForm
+      key="add-key"
+      keys={keys}
+      onSubmit={handleApiFormSubmit}
+      submit={({ isValid }) => (
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={isChecking || !isValid}
+        >
+          {isChecking ? "Checking key" : "Go"}
+        </Button>
+      )}
+    />
+  );
+}
 
 export default function TrackSubmission() {
   const sm = useSm();
@@ -45,14 +90,8 @@ export default function TrackSubmission() {
       title: "Edit request details",
     }
   );
-  const { mutateAsync: checkKey, isPending: isChecking } = useMutation({
-    mutationFn: (key: string) =>
-      get(`${APIConfig.apiUrl}/submission_key/${key}`),
-    mutationKey: ["checkKey"],
-  });
 
-  const [keys, { push, filter }] =
-    useLocalStorageList<string>("submission-keys");
+  const [keys, { filter }] = useLocalStorageList<string>("submission-keys");
   const results = useRequestsData(keys);
 
   const isLoading = some(results, { isLoading: true });
@@ -69,19 +108,6 @@ export default function TrackSubmission() {
       apiKey: key,
     });
   }
-
-  const handleApiFormSubmit = async ({ key }, { resetForm }) => {
-    notify("Checking your key");
-    const { ok } = await checkKey(key);
-    if (ok) {
-      resetForm();
-      push(key);
-      notify("Your submission key was added");
-      navigateToDetails(key);
-      return;
-    }
-    notify("Your submission key was invalid");
-  };
 
   // ─────────────────────────────────────────────────────────────────────
   const actions = useDataGridActions<Request & { id: string; key: string }>({
@@ -158,38 +184,14 @@ export default function TrackSubmission() {
     },
     actions,
   ];
-  const minimal = !sm && !rows.length;
   const header = [
-    <AddKeyForm
-      key="add-key"
-      keys={keys}
-      onSubmit={handleApiFormSubmit}
-      submit={({ isValid }) => (
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={isChecking || !isValid}
-        >
-          {isChecking ? "Checking key" : "Add key"}
-        </Button>
-      )}
-    />,
+    <AddKey key="add-key" />,
     <Typography variant="body2" color="text.secondary" key="no-key">
       Don&apos;t have a submission (API) key? You need one to submit data.{" "}
-      <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/contributes")}>
+      <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/submit")}>
         Request one here.
       </Link>
     </Typography>,
-  ];
-  const table = [
-    <FlatCard key="table">
-      <DataGrid
-        clickable
-        columns={columns}
-        rows={rows}
-        onRowClick={({ row }) => navigateToDetails(row.key)}
-      />
-    </FlatCard>,
   ];
   return (
     !isLoading && (
@@ -197,39 +199,16 @@ export default function TrackSubmission() {
         slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
         title="My submissions"
         path={[{ name: "Submit", url: "/submit" }]}
-        render={minimal ? ({ children }) => children : undefined}
       >
-        {minimal ? (
-          <Enter in>
-            <Stack
-              sx={{
-                m: sm ? -2 : -3,
-                alignItems: "center",
-                height: `calc(100dvh - ${topbarHeight(sm)}px)`,
-                justifyContent: "center",
-              }}
-            >
-              <Stack sx={{ gap: 4, p: 2, alignItems: "center", mb: 8 }}>
-                <Typography variant="h2">Submit data to the tracker</Typography>
-                <Stack
-                  sx={{
-                    textAlign: "center",
-                    width: 720,
-                    maxWidth: "100%",
-                    gap: 4,
-                  }}
-                >
-                  {header}
-                </Stack>
-              </Stack>
-            </Stack>
-          </Enter>
-        ) : (
-          <>
-            <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
-            {table}
-          </>
-        )}
+        <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
+        <FlatCard>
+          <DataGrid
+            clickable
+            columns={columns}
+            rows={rows}
+            onRowClick={({ row }) => navigateToDetails(row.key)}
+          />
+        </FlatCard>
         {requestDetails}
       </Layout>
     )

@@ -49,8 +49,6 @@ import { ThemeContext } from "utils/ThemeProvider";
 import { useSnackbar } from "./Snackbar";
 import { useSm } from "./dialog/useSmallDisplay";
 
-export const navbarHeight = (sm?: boolean) => (sm ? 48 : 64);
-
 const settings = ["Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
@@ -489,7 +487,7 @@ function ResponsiveAppBar() {
                     <MenuList>
                       <MenuItem
                         onClick={() => {
-                          navigate("/trackSubmission");
+                          navigate("/track");
                           state.close();
                         }}
                       >

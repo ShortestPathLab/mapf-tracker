@@ -24,7 +24,7 @@ export default function TrackSubmissionHero() {
         <Button
           variant="contained"
           fullWidth
-          onClick={() => navigate("/trackSubmission")}
+          onClick={() => navigate("/track")}
         >
           Start submitting
         </Button>

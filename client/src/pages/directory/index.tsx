@@ -1,5 +1,5 @@
 import { Box, Card, CardActionArea, Stack, Typography } from "@mui/material";
-import { useNavigationContent } from "components/appbar";
+import { useNavigationContent } from "components/appbar/useNavigationContent";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid, Layout } from "layout";
 import { PageHeaderProps } from "layout/PageHeader";

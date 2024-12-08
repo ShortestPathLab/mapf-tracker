@@ -1,5 +1,5 @@
 import { CheckOutlined } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Floating } from "components/Floating";
 import { useSnackbar } from "components/Snackbar";
@@ -14,7 +14,13 @@ import { Request } from "queries/useRequestQuery";
 const hintText = (algorithm: string, email: string) =>
   `Are you sure you want to submit this request for "${algorithm}"? Once submitted, you will not be able to edit it. Make sure all details are entered correctly.\n\nYou will receive a confirmation email in your contact email inbox, ${email}.`;
 
-export function SubmitRequestForm({ onClose }: { onClose?: () => void }) {
+export function SubmitRequestForm({
+  onClose,
+  floatingSubmitButton,
+}: {
+  floatingSubmitButton?: boolean;
+  onClose?: () => void;
+}) {
   const notify = useSnackbar();
 
   const { open, close, dialog } = useDialog(ConfirmDialog, {
@@ -29,11 +35,13 @@ export function SubmitRequestForm({ onClose }: { onClose?: () => void }) {
     mutationKey: ["requestSubmissionKey"],
   });
 
+  const ButtonPositioning = floatingSubmitButton ? Floating : Box;
+
   return (
     <>
       <SubmissionKeyRequestForm
         submit={({ isSubmitting, submitForm, values }) => (
-          <Floating>
+          <ButtonPositioning>
             <Button
               fullWidth
               sx={{ mt: 4 }}
@@ -61,7 +69,7 @@ export function SubmitRequestForm({ onClose }: { onClose?: () => void }) {
             >
               {isSubmitting ? "Submitting request..." : "Submit request"}
             </Button>
-          </Floating>
+          </ButtonPositioning>
         )}
         onSubmit={async (values, { resetForm }) => {
           onClose?.();
