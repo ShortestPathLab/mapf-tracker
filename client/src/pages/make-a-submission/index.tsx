@@ -21,6 +21,7 @@ import {
   useForkRef,
 } from "@mui/material";
 import { Item } from "components/Item";
+import { appbarHeight } from "components/appbar";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid, Layout } from "layout";
@@ -47,7 +48,6 @@ function Section({
   contentRef?: React.ForwardedRef<HTMLDivElement>;
 }) {
   const xs = useXs();
-  const sm = useSm();
   const content = useRef<HTMLDivElement>(null);
   const title = useRef<HTMLButtonElement>(null);
   const contentFork = useForkRef<HTMLDivElement>(content, contentRef);
@@ -87,7 +87,7 @@ function Section({
           height: 72,
           position: "sticky",
           top: 0,
-          bottom: bottomBarHeight(sm),
+          bottom: 0,
           px: xs ? 2 : 3,
           alignItems: "center",
           bgcolor: "background.default",
@@ -111,8 +111,19 @@ function Section({
 
 function SectionContent({ children }: { children?: ReactNode }) {
   const xs = useXs();
+  const sm = useSm();
   return (
-    <Stack sx={{ width: 960, maxWidth: "100%", mx: "auto", py: xs ? 4 : 6 }}>
+    <Stack
+      sx={{
+        width: 960,
+        maxWidth: "100%",
+        mx: "auto",
+        py: xs ? 4 : 6,
+        minHeight: `calc(100dvh - ${
+          appbarHeight(sm) + 68 * 2 + bottomBarHeight(sm)
+        }px)`,
+      }}
+    >
       <Stack sx={{ p: xs ? 2 : 3 }}>{children}</Stack>
     </Stack>
   );

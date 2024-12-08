@@ -195,7 +195,7 @@ export default function TrackSubmission() {
     <Layout
       slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
       title="My submissions"
-      path={[{ name: "Submit", url: "/submit" }]}
+      path={[{ name: "Home", url: "/" }]}
     >
       <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
       <FlatCard>

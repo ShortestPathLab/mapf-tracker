@@ -18,15 +18,16 @@ import Visualiser from "./pages/visualiser";
 export const routes: Route[] = [
   {
     path: "/",
-    content: <DirectoryPage labels={["Browse", "Docs"]} />,
+    content: <DirectoryPage labels={["Browse", "Make a submission", "Docs"]} />,
   },
   {
     path: "/submit",
     content: <MakeASubmissionPage />,
+    parent: "/",
   },
   {
     path: "/manage",
-    content: <DirectoryPage labels={["Appearance", "Manage"]} title="Manage" />,
+    content: <DirectoryPage labels={["Settings"]} title="Settings" />,
   },
   {
     path: "/benchmarks",
@@ -50,7 +51,7 @@ export const routes: Route[] = [
   {
     path: "/track",
     content: <TrackSubmission />,
-    parent: "/submit",
+    parent: "/",
   },
   {
     path: "/submissionSummary",

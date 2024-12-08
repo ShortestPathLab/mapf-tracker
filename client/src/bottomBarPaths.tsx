@@ -1,28 +1,21 @@
 import {
-  Build,
-  BuildOutlined,
-  FileUploadOutlined,
   Home,
   HomeOutlined,
+  Settings,
+  SettingsOutlined,
 } from "@mui/icons-material";
 
 export const bottomBarPaths = [
   {
-    label: "Browse",
+    label: "Home",
     url: "/",
     icon: <HomeOutlined />,
     iconSelected: <Home />,
   },
   {
-    label: "Submit",
-    url: "/submit",
-    icon: <FileUploadOutlined />,
-    iconSelected: <FileUploadOutlined />,
-  },
-  {
-    label: "Manage",
+    label: "Settings",
     url: "/manage",
-    icon: <BuildOutlined />,
-    iconSelected: <Build />,
+    icon: <SettingsOutlined />,
+    iconSelected: <Settings />,
   },
 ];
