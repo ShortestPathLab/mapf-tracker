@@ -43,7 +43,9 @@ export function SetReviewOutcomeForm({
               }}
             >
               {reviewOutcomes.map((r) => (
-                <MenuItem value={r}>{startCase(r)}</MenuItem>
+                <MenuItem value={r} key={r}>
+                  {startCase(r)}
+                </MenuItem>
               ))}
             </Field>
             <Field<ReviewOutcome>

@@ -1,5 +1,5 @@
 import { FolderOutlined } from "@mui/icons-material";
-import { Box, Card, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { ReactNode } from "react";
 
 export function IconCard({ icon = <FolderOutlined /> }: { icon?: ReactNode }) {

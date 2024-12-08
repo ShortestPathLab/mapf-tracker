@@ -2,7 +2,6 @@ import { Dialog } from "components/dialog";
 import { merge } from "lodash";
 import { nanoid } from "nanoid";
 import { ComponentProps, ReactNode, useMemo, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
 import { useLocationState, useNavigate } from "./useNavigation";
 
 export type DialogContentProps = {
@@ -24,12 +23,10 @@ export function useDialog<T>(
     {}
   );
   const open = (s?: T & DialogContentProps) => {
-    setState(s ?? ({} as any));
-    // setOpen(true);
+    setState(s ?? ({} as T));
     navigate(pathname(), {}, { ...b, [key]: true });
   };
   const close = () => {
-    // setOpen(false);
     navigate(pathname(), {}, { ...b, [key]: false });
     setModalProps({});
   };

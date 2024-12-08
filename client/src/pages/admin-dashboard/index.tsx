@@ -1,7 +1,7 @@
 import { TabContext } from "@mui/lab";
 import { Box, Stack } from "@mui/material";
 import { Router } from "components/Router";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 import { head } from "lodash";
 import { BlankPage } from "pages/Blank";
 import { useCredentials } from "queries/useLogInQuery";

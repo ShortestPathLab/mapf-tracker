@@ -1,7 +1,6 @@
-import { UseQueryResult, useQueries } from "@tanstack/react-query";
-import { Instance, SummarySlice } from "core/types";
-import { filter, map, some, zip } from "lodash";
-import { useInstanceData, useInstancesData } from "queries/useInstanceQuery";
+import { SummarySlice } from "core/types";
+import { filter } from "lodash";
+import { useInstanceData } from "queries/useInstanceQuery";
 import {
   OngoingSubmission,
   useOngoingSubmissionScenarioQuery,

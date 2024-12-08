@@ -22,6 +22,6 @@ export const getInstanceAggregateProportions = <
 });
 
 export const roundValues =
-  <T extends {}>(to: number = 0) =>
+  <T extends object>(to: number = 0) =>
   (c: T) =>
     mapValues(c, (v) => (typeof v === "number" ? round(v, to) : v));

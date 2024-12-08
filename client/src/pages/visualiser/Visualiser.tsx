@@ -27,11 +27,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
-import { usePlayback } from "./usePlayback";
-import { useSolution } from "./useSolution";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
-import { navbarHeight } from "components/Navbar";
+import { usePlayback } from "./usePlayback";
+import { useSolution } from "./useSolution";
 
 const SCALE_SHOW_GRID_THRESHOLD = 30;
 

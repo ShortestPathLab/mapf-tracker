@@ -1,15 +1,4 @@
-import {
-  Dispatch,
-  MutableRefObject,
-  Ref,
-  RefObject,
-  SetStateAction,
-  createContext,
-  useContext,
-  useRef,
-  useState,
-} from "react";
-import { useGetSet } from "react-use";
+import { MutableRefObject, createContext, useContext, useRef } from "react";
 
 export const ModalContext = createContext<MutableRefObject<number>>({
   current: 1,

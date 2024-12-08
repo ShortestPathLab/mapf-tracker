@@ -2,8 +2,12 @@ import { FileDownloadOutlined, RefreshOutlined } from "@mui/icons-material";
 import { Button, Chip } from "@mui/material";
 
 export const defaultExtras = [
-  <Button startIcon={<FileDownloadOutlined />}>Download</Button>,
-  <Button startIcon={<RefreshOutlined />}>Refresh</Button>,
+  <Button key="download" startIcon={<FileDownloadOutlined />}>
+    Download
+  </Button>,
+  <Button key="refresh" startIcon={<RefreshOutlined />}>
+    Refresh
+  </Button>,
 ];
 export const defaultStatus = (
   <Chip sx={{ alignSelf: "flex-start" }} color="success" label="In Progress" />

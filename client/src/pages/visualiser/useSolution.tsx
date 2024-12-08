@@ -1,5 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+import { head, last, memoize } from "lodash";
+import { parseMap, parseScenario } from "parser";
+import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
+import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
+import { useInstanceData } from "queries/useInstanceQuery";
+import { useSolutionData } from "queries/useSolutionQuery";
 import { useMemo } from "react";
-import { APIConfig } from "core/config";
 import {
   DoneException,
   Reader,
@@ -8,14 +14,6 @@ import {
   createOffsetMap,
   sumPositions,
 } from "validator";
-import { head, last, memoize } from "lodash";
-import { parseMap } from "./parseMap";
-import { parseScenario } from "./parseScenario";
-import { useQuery } from "@tanstack/react-query";
-import { useInstanceData } from "queries/useInstanceQuery";
-import { useSolutionData } from "queries/useSolutionQuery";
-import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
-import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);

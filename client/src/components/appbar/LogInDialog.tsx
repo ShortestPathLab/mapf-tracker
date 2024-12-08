@@ -5,7 +5,7 @@ import { noop } from "lodash";
 import { ReactNode } from "react";
 import { Field } from "../Field";
 import { useSnackbar } from "../Snackbar";
-import { useLogInMutation } from "../../queries/useLogInQuery";
+import { useLogInMutation } from "queries/useLogInQuery";
 
 export type LogInFormData = { username: string; password: string };
 function LogInForm({
@@ -59,7 +59,7 @@ export function LogInDialog({ onClose }: DialogContentProps) {
             notify("Couldn't log in");
           }
         }}
-        submit={(s) => (
+        submit={() => (
           <Button variant="contained" type="submit">
             Log in
           </Button>

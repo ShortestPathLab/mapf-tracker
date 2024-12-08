@@ -8,21 +8,19 @@ import {
   TextField,
 } from "@mui/material";
 import {
-  GridColDef as MuiGridColDef,
+  GridRow,
+  GridRowProps,
   GridValidRowModel,
   DataGrid as MuiDataGrid,
   DataGridProps as MuiDataGridProps,
-  GridToolbar,
-  GridRow,
-  GridRowProps,
+  GridColDef as MuiGridColDef,
 } from "@mui/x-data-grid";
-import { usePanel } from "components/dialog/ScrollPanel";
 import { useScroll } from "components/dialog/Scrollbars";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map, snakeCase } from "lodash";
 import { ReactNode, useRef, useState } from "react";
 import { useCss, useIntersection } from "react-use";
-import { paper } from "theme";
+import { setFromEvent } from "utils/set";
 
 function includeItemByFuzzyJSONString<T>(item: T, input: string): boolean {
   return snakeCase(JSON.stringify(item))
@@ -65,7 +63,9 @@ export type DataGridProps<T extends GridValidRowModel> = MuiDataGridProps<T> & {
   columns: GridColDef<T>[];
 };
 
-export default function DataGrid<T extends GridValidRowModel = {}>({
+export default function DataGrid<
+  T extends GridValidRowModel = { [K: string | symbol]: unknown }
+>({
   clickable,
   columns,
   rows,
@@ -96,7 +96,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
               variant="filled"
               label="Search items"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={setFromEvent(setInput)}
               sx={{ width: "100%" }}
               InputProps={{
                 startAdornment: (
@@ -144,7 +144,7 @@ export default function DataGrid<T extends GridValidRowModel = {}>({
             cellClassName: center,
             ...c,
           }))}
-          rows={filter(rows, (c) => includeItemByFuzzyJSONString(c, input))}
+          rows={filter(rows, (c) => shouldIncludeItem(c, input))}
         />
       )}
     </Stack>

@@ -22,7 +22,7 @@ export function AlgorithmByMapChart() {
   const algorithmSelectorState = useAlgorithmSelector(slices);
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useMapData(metric);
-  const algorithms = getAlgorithms(data);
+  const algorithms = getAlgorithms(data, "solved_instances");
   return (
     <>
       <ChartOptions

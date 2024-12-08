@@ -34,7 +34,7 @@ export function Info() {
           content: <Format />,
         },
       ].map(({ title, content }) => (
-        <Accordion label={title}>
+        <Accordion label={title} key={title}>
           <Prose sx={{ mt: -2, overflow: "hidden" }}>{content}</Prose>
         </Accordion>
       ))}

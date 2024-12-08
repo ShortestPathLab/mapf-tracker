@@ -24,6 +24,7 @@ import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
+import { Layout } from "layout";
 import PropTypes from "prop-types";
 import * as React from "react";
 import {
@@ -35,10 +36,8 @@ import {
   RadarChart,
   Tooltip,
 } from "recharts";
-import { APIConfig } from "../core/config";
-import PageHeader from "../layout/PageHeader";
-import { Layout } from "layout";
 import { paper } from "theme";
+import { APIConfig } from "../core/config";
 
 const angle = {
   Warehouse: -40,

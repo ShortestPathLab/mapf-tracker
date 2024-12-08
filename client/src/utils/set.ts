@@ -1,11 +1,11 @@
 export const setFromEvent =
-  <T>(f: (t: T) => void) =>
-  (e: { target: { value: any } }) => {
+  <T, U extends (t: T) => void>(f: U) =>
+  (e: { target: { value: T } }) => {
     f(e.target.value);
   };
 
 export const setFromParam =
-  <T>(f: (t: T) => void, index: number = 1) =>
-  (...args: any[]) => {
+  <T, Params extends []>(f: (t: T) => void, index: number = 1) =>
+  (...args: Params) => {
     f(args[index]);
   };

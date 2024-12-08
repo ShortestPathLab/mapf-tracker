@@ -1,26 +1,15 @@
-import {
-  entries,
-  filter,
-  isInteger,
-  isNaN,
-  isUndefined,
-  map,
-  mapValues,
-  startsWith,
-} from "lodash";
+import { entries, filter, isNaN, isUndefined, map, mapValues } from "lodash";
 import { useCallback, useMemo } from "react";
 import {
   Location,
   useLocation as useRouterLocation,
-  generatePath,
   useNavigate as useRouterNavigate,
 } from "react-router-dom";
 function isValidHttpUrl(string: string) {
   let url: URL;
-
   try {
     url = new URL(string);
-  } catch (_) {
+  } catch {
     return false;
   }
 
@@ -29,7 +18,7 @@ function isValidHttpUrl(string: string) {
 export function useNavigate() {
   const navigate = useRouterNavigate();
   return useCallback(
-    <T extends {} = {}, U extends {} = {}>(
+    <T extends object = object, U extends object = object>(
       url: string,
       state?: T,
       session?: U
@@ -53,7 +42,10 @@ export function useNavigate() {
   );
 }
 
-export function useLocationState<T extends {} = {}, U extends {} = {}>() {
+export function useLocationState<
+  T extends object = object,
+  U extends object = object
+>() {
   const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
   return useMemo(() => {
     const params = Object.fromEntries(new URLSearchParams(location.search));

@@ -3,32 +3,28 @@ import {
   Button,
   ButtonGroup,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Menu,
-  MenuItem,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
+import Accordion from "components/Accordion";
+import { useSnackbar } from "components/Snackbar";
+import { Dialog } from "components/dialog";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
 import { DialogContentProps, useDialog } from "hooks/useDialog";
 import { Grid } from "layout";
-import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
+import { delay } from "lodash";
 import { paper } from "theme";
-import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
-import { SetReviewOutcomeForm } from "./SetReviewOutcomeForm";
 import {
   RequestWithReviewOutcome,
   useRequestsUpdateMutation,
 } from "../../../queries/useRequestsQuery";
-import { useSnackbar } from "components/Snackbar";
-import Accordion from "components/Accordion";
-import { delay } from "lodash";
-import { Dialog } from "components/dialog";
+import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
+import { SetReviewOutcomeForm } from "./SetReviewOutcomeForm";
 
 export function ReviewRequestDialog({
   data,

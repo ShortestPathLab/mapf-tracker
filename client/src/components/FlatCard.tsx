@@ -1,5 +1,4 @@
 import { Box, BoxProps, Card, CardProps } from "@mui/material";
-import { ReactNode } from "react";
 import { useSm } from "./dialog/useSmallDisplay";
 
 export function FlatCard({ children, ...props }: BoxProps & CardProps) {

@@ -32,7 +32,7 @@ import { SubmissionKeyRequestFormDialog } from "./SubmissionKeyRequestFormDialog
 import { SubmissionLocationState } from "./SubmissionLocationState";
 import { handleRequestDetailUpdated } from "./handleRequestDetailUpdated";
 import { topbarHeight } from "layout/topbarHeight";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 
 export default function TrackSubmission() {
   const sm = useSm();

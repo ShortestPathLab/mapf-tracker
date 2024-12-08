@@ -1,13 +1,14 @@
+import { BaseMetric, metrics } from "core/metrics";
 import { find, head } from "lodash";
-import { BaseMetric, Metric, metrics } from "core/metrics";
 import { useState } from "react";
 import { useList } from "react-use";
+import { AxisDomain } from "recharts/types/util/types";
 
 export type Slice = {
   key: string;
   name: string;
-  formatter?: (a: any) => any;
-  domain?: any;
+  formatter?: (a: string | number) => string;
+  domain?: AxisDomain;
 };
 
 export function useAlgorithmSelector<T extends BaseMetric>(

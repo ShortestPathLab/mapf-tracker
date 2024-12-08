@@ -1,7 +1,6 @@
 import { CloseOutlined as CloseIcon } from "@mui/icons-material";
 import { Button, IconButton, Snackbar } from "@mui/material";
-import { filter, noop } from "lodash";
-import { Label } from "./Label";
+import { noop } from "lodash";
 import {
   ReactNode,
   createContext,
@@ -10,8 +9,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import React from "react";
 import usePortal from "react-useportal";
+import { Label } from "./Label";
 
 type A = (
   message?: string,
@@ -45,7 +44,7 @@ export function useSnackbar() {
 export function useSnackbarAction<T extends []>() {
   const push = useSnackbar();
   return (
-      f: (...args: T) => Promise<any>,
+      f: (...args: T) => Promise<unknown>,
       { start = "Preparing...", end = "Done" }: { start?: string; end?: string }
     ) =>
     async (...params: T) => {
@@ -93,8 +92,8 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
     [setSnackPack]
   );
 
-  const handleClose = (_: any, reason?: string) => {
-    reason !== "clickaway" && setOpen(false);
+  const handleClose = (_: unknown, reason?: string) => {
+    if (reason !== "clickaway") setOpen(false);
   };
 
   const handleExited = () => setCurrent(undefined);

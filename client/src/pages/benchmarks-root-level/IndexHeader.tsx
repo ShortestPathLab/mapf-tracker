@@ -1,11 +1,10 @@
 import { RouteOutlined } from "@mui/icons-material";
 import {
-  CollapseProps,
-  Collapse,
-  Stack,
   ButtonBase,
+  Collapse,
+  CollapseProps,
+  Stack,
   Typography,
-  Divider,
 } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 

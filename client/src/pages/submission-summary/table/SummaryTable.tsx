@@ -22,7 +22,7 @@ import {
 import { Bar, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { Item } from "components/Item";
 import {

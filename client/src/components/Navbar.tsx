@@ -44,10 +44,10 @@ import { useNavigate } from "hooks/useNavigation";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import * as React from "react";
 import { useLocation } from "react-router-dom";
+import { paper } from "theme";
 import { ThemeContext } from "utils/ThemeProvider";
 import { useSnackbar } from "./Snackbar";
 import { useSm } from "./dialog/useSmallDisplay";
-import { paper } from "theme";
 
 export const navbarHeight = (sm?: boolean) => (sm ? 48 : 64);
 
@@ -75,7 +75,7 @@ function ResponsiveAppBar() {
   const parseJwt = (token) => {
     try {
       return JSON.parse(atob(token.split(".")[1]));
-    } catch (e) {
+    } catch {
       return null;
     }
   };

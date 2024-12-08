@@ -29,9 +29,10 @@ export function Sidebar(props: StackProps) {
           onChange={(_, v) => navigate(`/dashboard/${v}`)}
           orientation="vertical"
         >
-          {pages().map(({ content, icon, ...page }) => (
+          {pages().map(({ value, label, description }) => (
             <Tab
-              {...page}
+              key={value}
+              {...{ value, label, description }}
               iconPosition="start"
               sx={{ justifyContent: "flex-start", px: 3, minHeight: 64 }}
             />

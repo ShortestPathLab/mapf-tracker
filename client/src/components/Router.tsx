@@ -1,5 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map, some } from "lodash";
 import { ReactNode } from "react";

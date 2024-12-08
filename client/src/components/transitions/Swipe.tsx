@@ -1,4 +1,5 @@
-import { Backdrop, duration, useForkRef, useTheme } from "@mui/material";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useForkRef, useTheme } from "@mui/material";
 import * as React from "react";
 import { Transition } from "react-transition-group";
 export const reflow = (node: Element) => node.scrollTop;
@@ -38,11 +39,11 @@ export function getTransitionProps(
 
 const styles = {
   entering: {
-    transform: "translateY(0) translateX(0)",
+    transform: "translateY(0)",
     opacity: 1,
   },
   entered: {
-    transform: "translateY(0) translateX(0)",
+    transform: "translateY(0)",
     opacity: 1,
   },
   exiting: {},
@@ -54,7 +55,7 @@ const styles = {
  * The Fade transition is used by the [Modal](/material-ui/react-modal/) component.
  * It uses [react-transition-group](https://github.com/reactjs/react-transition-group) internally.
  */
-const Enter = React.forwardRef<any, any>((props, ref) => {
+const Swipe = React.forwardRef<any, any>((props, ref) => {
   const theme = useTheme();
   const defaultTimeout = {
     enter: theme.transitions.duration.enteringScreen,
@@ -75,11 +76,8 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
     onExiting,
     style,
     timeout = defaultTimeout,
-     
+
     TransitionComponent = Transition,
-    backdrop,
-    distance = 16,
-    axis = "Y",
     ...other
   } = props;
 
@@ -182,16 +180,12 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
       {(state: any, childProps: any) => {
         return React.cloneElement(children, {
           style: {
-            boxShadow: backdrop
-              ? "0px -16px 0px 0px rgba(0,0,0,0.4)"
-              : undefined,
-            transform: `translate${axis}(${distance}px)`,
-            opacity: 0,
+            transform: "translateY(100vh)",
+            opacity: 1,
             visibility: state === "exited" && !inProp ? "hidden" : undefined,
             ...styles[state],
             ...style,
-            transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-            ...children.props?.style,
+            ...children.props.style,
           },
           ref: handleRef,
           ...childProps,
@@ -201,4 +195,4 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
   );
 });
 
-export default Enter;
+export default Swipe;

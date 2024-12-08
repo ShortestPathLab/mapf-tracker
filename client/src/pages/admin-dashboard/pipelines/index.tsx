@@ -1,13 +1,13 @@
-import { Card, CircularProgress, Stack, useTheme } from "@mui/material";
+import { CircularProgress, Stack, useTheme } from "@mui/material";
 import { Background, Controls, ReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { Layout } from "layout";
 import { renderFixed } from "layout/renderFixed";
+import { topbarHeight } from "layout/topbarHeight";
 import { usePipelineViewerData } from "queries/usePipelineQuery";
 import { CSSProperties } from "react";
 import { PipelineStageNode } from "./PipelineStageNode";
-import { topbarHeight } from "layout/topbarHeight";
 
 export default function index() {
   const sm = useSm();

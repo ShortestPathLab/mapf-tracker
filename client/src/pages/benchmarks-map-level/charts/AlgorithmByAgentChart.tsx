@@ -1,17 +1,14 @@
 import { useTheme } from "@mui/material";
-import { capitalize, chain, keyBy } from "lodash";
-import {
-  useScenarioData,
-  useScenarioOnAgentData,
-} from "queries/useScenarioQuery";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
+import { getAlgorithms } from "components/analysis/getAlgorithms";
 import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
 import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { getAlgorithms } from "components/analysis/getAlgorithms";
+import { chain, keyBy } from "lodash";
+import { useScenarioOnAgentData } from "queries/useScenarioQuery";
 
 export const slices = [
   {
@@ -25,7 +22,7 @@ export function AlgorithmByAgentChart({ map }: { map: string }) {
   const algorithmSelectorState = useAlgorithmSelector(slices);
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useScenarioOnAgentData(metric, map);
-  const algorithms = getAlgorithms(data);
+  const algorithms = getAlgorithms(data, "solved_instances");
   return (
     <>
       <ChartOptions

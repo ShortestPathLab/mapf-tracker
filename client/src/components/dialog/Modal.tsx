@@ -38,8 +38,8 @@ import {
 } from "react";
 import { paper, useAcrylic, usePaper } from "theme";
 import { Scroll } from "./Scrollbars";
-import Swipe from "./Swipe";
-import Show from "./Show";
+import Show from "components/transitions/Show";
+import Swipe from "components/transitions/Swipe";
 
 export function AppBarTitle({ children }: { children?: ReactNode }) {
   return (
@@ -71,12 +71,8 @@ type ModalAppBarProps = {
 
 export function ModalAppBar({
   onClose = () => {},
-  style,
-  elevatedStyle,
   children,
-  transitionProperties = ["box-shadow", "background", "border-bottom"],
   elevatedChildren,
-  simple,
   position = "sticky",
 }: ModalAppBarProps) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -392,7 +388,7 @@ export function ManagedModal({
   title?: string;
   options?: ComponentProps<typeof Modal>;
   trigger?: (
-    onClick: (e: SyntheticEvent<any, Event>) => void,
+    onClick: (e: SyntheticEvent<Element, Event>) => void,
     isOpen: boolean
   ) => ReactNode;
   appBar?: ModalAppBarProps;

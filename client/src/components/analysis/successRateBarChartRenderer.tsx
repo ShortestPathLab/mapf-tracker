@@ -14,7 +14,7 @@ export function successRateBarChartRenderer({
   xAxisDataKey?: string;
   proportionClosedKey?: string;
   proportionSolvedKey?: string;
-  formatter?: (c: any) => any;
+  formatter?: (c: string | number) => string;
 }) {
   return () => (
     <BarChart barCategoryGap={0}>

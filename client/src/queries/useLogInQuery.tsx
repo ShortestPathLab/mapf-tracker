@@ -7,7 +7,7 @@ import { LogInFormData } from "components/appbar/LogInDialog";
 const parseJwt = (token: string) => {
   try {
     return JSON.parse(atob(token.split(".")[1]));
-  } catch (e) {
+  } catch {
     return null;
   }
 };

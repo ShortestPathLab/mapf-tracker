@@ -4,7 +4,6 @@ import TouchRipple, {
 } from "@mui/material/ButtonBase/TouchRipple";
 import { Handle, Position } from "@xyflow/react";
 import { useDialog } from "hooks/useDialog";
-import { PipelineStageNodeData } from "queries/usePipelineQuery";
 import { SyntheticEvent, useRef } from "react";
 import { StageStatus } from "./StageStatus";
 import { StageStatusDialog } from "./StageStatusDialog";

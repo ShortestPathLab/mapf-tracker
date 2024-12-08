@@ -1,4 +1,6 @@
-import { duration, useForkRef, useTheme } from "@mui/material";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useForkRef, useTheme } from "@mui/material";
 import * as React from "react";
 import { Transition } from "react-transition-group";
 export const reflow = (node: Element) => node.scrollTop;
@@ -38,30 +40,23 @@ export function getTransitionProps(
 
 const styles = {
   entering: {
-    transform: "scale(101%)",
-    opacity: 0,
-  },
-  entered: {
-    transform: "scale(100%)",
+    transform: "translateY(0) translateX(0)",
     opacity: 1,
   },
-  exiting: {
-    transform: "scale(99%)",
-    opacity: 0,
+  entered: {
+    transform: "translateY(0) translateX(0)",
+    opacity: 1,
   },
-  exited: {
-    opacity: 0,
-  },
-  unmounted: {
-    opacity: 0,
-  },
+  exiting: {},
+  exited: {},
+  unmounted: {},
 } as any;
 
 /**
  * The Fade transition is used by the [Modal](/material-ui/react-modal/) component.
  * It uses [react-transition-group](https://github.com/reactjs/react-transition-group) internally.
  */
-const Show = React.forwardRef<any, any>((props, ref) => {
+const Enter = React.forwardRef<any, any>((props, ref) => {
   const theme = useTheme();
   const defaultTimeout = {
     enter: theme.transitions.duration.enteringScreen,
@@ -82,8 +77,11 @@ const Show = React.forwardRef<any, any>((props, ref) => {
     onExiting,
     style,
     timeout = defaultTimeout,
-     
+
     TransitionComponent = Transition,
+    backdrop,
+    distance = 16,
+    axis = "Y",
     ...other
   } = props;
 
@@ -186,12 +184,16 @@ const Show = React.forwardRef<any, any>((props, ref) => {
       {(state: any, childProps: any) => {
         return React.cloneElement(children, {
           style: {
-            transform: "scale(101%)",
+            boxShadow: backdrop
+              ? "0px -16px 0px 0px rgba(0,0,0,0.4)"
+              : undefined,
+            transform: `translate${axis}(${distance}px)`,
             opacity: 0,
             visibility: state === "exited" && !inProp ? "hidden" : undefined,
             ...styles[state],
             ...style,
-            ...children.props.style,
+            transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+            ...children.props?.style,
           },
           ref: handleRef,
           ...childProps,
@@ -201,4 +203,4 @@ const Show = React.forwardRef<any, any>((props, ref) => {
   );
 });
 
-export default Show;
+export default Enter;

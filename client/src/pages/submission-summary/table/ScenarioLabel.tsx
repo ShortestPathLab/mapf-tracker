@@ -1,11 +1,10 @@
 import { RouteOutlined } from "@mui/icons-material";
 import { Stack } from "@mui/material";
+import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";
-import Enter from "components/dialog/Enter";
 import { isUndefined, startCase } from "lodash";
 import pluralize from "pluralize";
 import { useScenarioData } from "queries/useBenchmarksQuery";
-import { IconCard } from "components/IconCard";
 
 export function ScenarioLabel({
   scenarioId,

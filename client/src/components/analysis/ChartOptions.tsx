@@ -30,7 +30,9 @@ export default function ChartOptions({
           value={slice.key}
         >
           {slices.map(({ key, name }) => (
-            <MenuItem value={key}>{name}</MenuItem>
+            <MenuItem key={key} value={key}>
+              {name}
+            </MenuItem>
           ))}
         </TextField>
       )}
@@ -42,14 +44,16 @@ export default function ChartOptions({
         value={metric}
       >
         {metrics.map(({ key, name }) => (
-          <MenuItem value={key}>{name}</MenuItem>
+          <MenuItem key={key} value={key}>
+            {name}
+          </MenuItem>
         ))}
       </TextField>
       <TextField
         select
         SelectProps={{
           multiple: true,
-          renderValue: (selected: any) => (
+          renderValue: (selected: string[]) => (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {map(selected, (value) => (
                 <Chip
@@ -66,10 +70,16 @@ export default function ChartOptions({
         label="Algorithm"
         variant="filled"
         value={selected}
-        onChange={setFromEvent(setSelected)}
+        onChange={
+          setFromEvent(setSelected) as (e: {
+            target: { value: unknown };
+          }) => void
+        }
       >
         {algorithms.map((a) => (
-          <MenuItem value={a}>{a}</MenuItem>
+          <MenuItem key={a} value={a}>
+            {a}
+          </MenuItem>
         ))}
       </TextField>
     </Stack>

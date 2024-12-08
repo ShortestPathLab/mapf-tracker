@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Dialog } from "components/dialog";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 import { format } from "date-fns";
 import { identity, map, orderBy } from "lodash";
 import pluralize from "pluralize";

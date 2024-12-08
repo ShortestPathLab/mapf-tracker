@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import Appbar, { appbarHeight } from "components/appbar";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useScrollState } from "components/dialog/useScrollState";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";

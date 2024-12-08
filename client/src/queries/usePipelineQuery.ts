@@ -2,12 +2,12 @@ import dagre from "@dagrejs/dagre";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Edge, Node, Position } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { APIConfig } from "core/config";
-import { capitalize, flatMap, map, pick, startCase } from "lodash";
-import { json } from "queries/query";
-import { get } from "./mutation";
 import { queryClient } from "App";
+import { APIConfig } from "core/config";
+import { flatMap, map, pick } from "lodash";
+import { json } from "queries/query";
 import { useMemo } from "react";
+import { get } from "./mutation";
 
 const REFETCH_MS = 1000;
 
@@ -26,7 +26,7 @@ type StatusType = "invalidated" | "done" | "running" | "error" | "pending";
 type Status = {
   type: StatusType;
   stage: string;
-  variables: any;
+  variables: object;
   timestamp: number;
 };
 type PipelineStatusResult = {

@@ -1,6 +1,6 @@
 import {
-  Autocomplete as MuiAutocomplete,
   AutocompleteProps,
+  Autocomplete as MuiAutocomplete,
   SxProps,
 } from "@mui/material";
 import Box, { BoxProps } from "@mui/material/Box";
@@ -12,15 +12,17 @@ import {
   ErrorMessage,
   ErrorMessageProps,
   Field as FormikField,
-  useFormik,
   useFormikContext,
 } from "formik";
-import { ComponentProps, ComponentType, forwardRef, Ref } from "react";
+import { ComponentProps, ComponentType, Ref, forwardRef } from "react";
 import { paper } from "theme";
 
 export function Field<
-  Schema extends {} = any,
-  T extends ComponentType<{}> = typeof TextField
+  Schema extends Record<string, string | number | object> = Record<
+    string,
+    string | number | object
+  >,
+  T extends ComponentType<object> = typeof TextField
 >({
   slotProps = {},
   as,
@@ -58,7 +60,7 @@ export function Field<
             mt: 1,
             ...slotProps.error?.sx,
           } as SxProps,
-        } as any)}
+        } as unknown as ErrorMessageProps)}
       />
     </Box>
   );
@@ -110,7 +112,9 @@ export const Autocomplete = forwardRef(function <
     <MuiAutocomplete
       disabled={disabled}
       {...autoCompleteProps}
-      onBlur={(e) => form.setFieldValue(props.name, e.target["value" as any])}
+      onBlur={(e) =>
+        form.setFieldValue(props.name, e.target["value" as string])
+      }
       renderInput={(props1) => <TextField ref={ref} {...props} {...props1} />}
     />
   );

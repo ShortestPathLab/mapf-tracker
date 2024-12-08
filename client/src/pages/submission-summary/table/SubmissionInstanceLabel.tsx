@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack } from "@mui/material";
 import { Item } from "components/Item";
-import Enter from "components/dialog/Enter";
+import Enter from "components/transitions/Enter";
 import { format, parseISO } from "date-fns";
 import pluralize from "pluralize";
 import {

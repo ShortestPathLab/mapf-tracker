@@ -1,9 +1,8 @@
 import { GridValidRowModel } from "@mui/x-data-grid";
 import { DataGrid } from "components/data-grid";
 import { DataGridProps } from "components/data-grid/DataGrid";
-import { flatMap, flatMapDeep, isUndefined, map } from "lodash";
+import { flatMap, isUndefined } from "lodash";
 import { useMemo, useState } from "react";
-import { useSet } from "react-use";
 
 export type BooleanMap = { [K in string]?: boolean };
 
@@ -55,7 +54,8 @@ export function TreeDataGrid<T extends GridValidRowModel>({
       shouldIncludeItem={defaultShouldIncludeItem}
       onRowClick={(props, e, d) => {
         const { row, id } = props;
-        getChildren?.(row)?.length && onExpandedChange?.(toggle(expanded, id));
+        if (getChildren?.(row)?.length)
+          onExpandedChange?.(toggle(expanded, id));
         onRowClick?.(props, e, d);
       }}
     />

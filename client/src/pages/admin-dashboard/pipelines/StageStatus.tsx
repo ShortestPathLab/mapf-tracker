@@ -17,7 +17,8 @@ import { usePipelineStatus } from "queries/usePipelineQuery";
 import { Counter } from "../../../components/Counter";
 import { DATE_TIME_FORMAT } from "utils/format";
 
-const sentenceCase = (id: string): any => capitalize(startCase(id));
+const sentenceCase = (id: string) => capitalize(startCase(id));
+
 export function StageStatus({
   stage,
   ...props

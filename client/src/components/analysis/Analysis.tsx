@@ -1,7 +1,6 @@
 import { ExpandMoreOutlined } from "@mui/icons-material";
 import {
   Button,
-  Card,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -59,7 +58,7 @@ export function AnalysisButton({
   ),
 }: {
   template: Template[];
-  button?: (onClick: (e: SyntheticEvent<any, Event>) => void) => ReactNode;
+  button?: (onClick: (e: SyntheticEvent<Element, Event>) => void) => ReactNode;
 }) {
   const single = template.length == 1;
   return single ? (
@@ -119,7 +118,7 @@ export function AnalysisButton({
 function Chart({ data }: { data: Variant[] }) {
   const [tab, setTab] = useState(head(data)?.name);
   const current = find(data, { name: tab });
-  const lg = (width: any) => width > 960;
+  const lg = (width: number) => width > 960;
   const height = 720;
   return (
     <AutoSizer style={{ width: "100%", height }}>

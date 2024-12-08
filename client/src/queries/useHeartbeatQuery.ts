@@ -10,7 +10,7 @@ export function useHeartBeatQuery() {
           signal: AbortSignal.timeout(3000),
         });
         return req.ok;
-      } catch (_) {
+      } catch {
         return false;
       }
     },

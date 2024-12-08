@@ -23,7 +23,7 @@ export function usePlayback(span: number) {
     pause: () => setPaused(true),
     restart: () => {
       setPaused(true);
-      setStep((p) => 0);
+      setStep(() => 0);
     },
     step,
     paused,

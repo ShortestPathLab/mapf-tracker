@@ -1,19 +1,19 @@
 import { useTheme } from "@mui/material";
-import { accentColors, tone } from "utils/colors";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import { formatPercentage } from "utils/format";
 import { getAlgorithms } from "components/analysis/getAlgorithms";
 import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
 import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { capitalize, chain, keyBy, map, slice } from "lodash";
 import { scenarioMetrics } from "core/metrics";
+import { chain, keyBy, map } from "lodash";
 import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
 import { Bar, BarChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
+import { accentColors, tone } from "utils/colors";
+import { formatPercentage } from "utils/format";
 
 export function LowerBoundChart({ scenario }: { scenario: string | number }) {
   const { palette } = useTheme();

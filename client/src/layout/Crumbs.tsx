@@ -20,6 +20,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
         <Breadcrumbs sx={{ overflowX: "auto" }}>
           {path.map(({ name, url, state }) => (
             <Link
+              key={name}
               sx={{ cursor: "pointer" }}
               underline="hover"
               color="inherit"
