@@ -23,7 +23,7 @@ import { AddKeyForm } from "forms/AddKeyForm";
 import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
-import { merge, some, zipWith } from "lodash";
+import { merge, zipWith } from "lodash";
 import { Status } from "pages/submission-summary/Status";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
@@ -93,8 +93,6 @@ export default function TrackSubmission() {
 
   const [keys, { filter }] = useLocalStorageList<string>("submission-keys");
   const results = useRequestsData(keys);
-
-  const isLoading = some(results, { isLoading: true });
 
   const rows = zipWith(keys, results, (key, { data }) => ({
     ...data,
@@ -194,23 +192,21 @@ export default function TrackSubmission() {
     </Typography>,
   ];
   return (
-    !isLoading && (
-      <Layout
-        slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
-        title="My submissions"
-        path={[{ name: "Submit", url: "/submit" }]}
-      >
-        <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
-        <FlatCard>
-          <DataGrid
-            clickable
-            columns={columns}
-            rows={rows}
-            onRowClick={({ row }) => navigateToDetails(row.key)}
-          />
-        </FlatCard>
-        {requestDetails}
-      </Layout>
-    )
+    <Layout
+      slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
+      title="My submissions"
+      path={[{ name: "Submit", url: "/submit" }]}
+    >
+      <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
+      <FlatCard>
+        <DataGrid
+          clickable
+          columns={columns}
+          rows={rows}
+          onRowClick={({ row }) => navigateToDetails(row.key)}
+        />
+      </FlatCard>
+      {requestDetails}
+    </Layout>
   );
 }
