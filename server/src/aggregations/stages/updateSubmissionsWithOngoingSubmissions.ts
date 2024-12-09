@@ -1,7 +1,6 @@
 import { OngoingSubmission } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateInstances } from "./updateInstancesFromSubmissions";
-import { stage as updateAlgorithms } from "./updateAlgorithmsFromSubmissions";
 import { stage as updateSolutionPaths } from "./updateSolutionPathsFromSubmissions";
 
 /**
@@ -102,7 +101,7 @@ export const stage: PipelineStage = {
   run: async () => ({
     result: await updateSubmissionsWithOngoingSubmissions(),
   }),
-  dependents: [updateInstances, updateAlgorithms, updateSolutionPaths],
+  dependents: [updateInstances, updateSolutionPaths],
   description: `
 Aggregation pipeline that groups by unique combination of
 api key, map id, scenario id, and agent count, and sums up

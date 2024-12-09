@@ -1,4 +1,5 @@
 import { Instance } from "models";
+import { stage as updateAlgorithms } from "./updateAlgorithmsFromSubmissions";
 import { PipelineStage } from "../pipeline";
 import { stage as updateScenarios } from "./updateScenariosFromInstances";
 
@@ -46,7 +47,7 @@ export const updateInstancesFromSubmissions = () =>
 export const stage: PipelineStage = {
   key: "updateInstancesFromSubmissions",
   run: async () => ({ result: await updateInstancesFromSubmissions() }),
-  dependents: [updateScenarios],
+  dependents: [updateScenarios, updateAlgorithms],
   description: `
 This pipeline aggregates all submissions for each instance and updates the
 instance model with the best lower and solution costs.

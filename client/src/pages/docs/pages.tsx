@@ -4,14 +4,16 @@ import {
   CampaignOutlined,
   FileDownloadOutlined,
   FileUploadOutlined,
+  ShapeLineOutlined,
 } from "@mui/icons-material";
-import DemoPage from "./docs-demo.mdx";
-import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
-import DatasetPage from "./docs-get-dataset.mdx";
-import AboutPage from "./about";
-import MotivationsPage from "./docs-motivations.mdx";
 import { find } from "lodash";
+import AboutPage from "./about";
 import { createArticlePage } from "./createArticlePage";
+import DemoPage from "./docs-demo.mdx";
+import DatasetPage from "./docs-get-dataset.mdx";
+import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
+import MotivationsPage from "./docs-motivations.mdx";
+import ProblemDefinitionPage from "./docs-problem-definition.md";
 
 export type Page = ReturnType<typeof pages>[number];
 
@@ -32,6 +34,13 @@ export const pages = () => [
     icon: <CampaignOutlined />,
     content: <MotivationsPage />,
     description: "Calling for all MAPF researchers to share your work with us",
+  }),
+  createArticlePage({
+    key: "problem-definition",
+    title: "Problem definition",
+    icon: <ShapeLineOutlined />,
+    content: <ProblemDefinitionPage />,
+    description: "What exactly is MAPF Tracker tracking?",
   }),
   createArticlePage({
     key: "how-to-submit",

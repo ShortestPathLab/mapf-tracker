@@ -1,4 +1,4 @@
-import { Algorithm, Submission } from "models";
+import { Algorithm, Instance, Submission } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistory";
 import submission from "routes/submission";
@@ -10,14 +10,46 @@ export const updateAlgorithmsFromSubmissions = async () =>
       Submission.aggregate([
         { $match: { algo_id: document._id } },
         {
+          $lookup: {
+            from: Instance.collection.collectionName,
+            localField: "instance_id",
+            foreignField: "_id",
+            as: "instance",
+          },
+        },
+        {
           $facet: {
-            best_lower: [{ $match: { best_lower: true } }, { $count: "count" }],
+            best_lower: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$lower_cost", { $first: "$instance.lower_cost" }],
+                  },
+                },
+              },
+              { $count: "count" },
+            ],
             best_solution: [
-              { $match: { best_solution: true } },
+              {
+                $match: {
+                  $expr: {
+                    $eq: [
+                      "$solution_cost",
+                      { $first: "$instance.solution_cost" },
+                    ],
+                  },
+                },
+              },
               { $count: "count" },
             ],
             instances_closed: [
-              { $match: { lower_cost: { $eq: "$solution_cost" } } },
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$solution_cost", { $first: "$instance.lower_cost" }],
+                  },
+                },
+              },
               { $count: "count" },
             ],
             instances_solved: [

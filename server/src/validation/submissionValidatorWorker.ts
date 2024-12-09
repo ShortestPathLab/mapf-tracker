@@ -1,4 +1,4 @@
-import { chain, each, isInteger, isNumber, max, once } from "lodash";
+import { chain, each, isInteger, isNumber, max, min, once } from "lodash";
 import { context } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { Document, Types } from "mongoose";
@@ -194,15 +194,26 @@ async function setSolutionCost(
   // There's already an error, don't bother checking solution cost
   if (errors.length) return;
   if (isNumber(submission.cost)) {
+    // Check if cost is correct
     if (submission.cost !== realCost) {
       errors.push(
         `Cost mismatch, expected ${realCost}, but submission listed its cost as ${submission.cost}`
       );
+      // Don't bother fixing lower bound cost
       return;
     }
   } else {
     // No cost specified, use real cost
     await submission.set("solutionCost", realCost).save();
+  }
+  // At this point the submission's cost is correct
+  const lowerBound = isNumber(submission.lowerBound)
+    ? min([submission.lowerBound, realCost])
+    : realCost;
+  // Check if lower bound is correct
+  // If incorrect, correct it with real cost
+  if (lowerBound !== submission.lowerBound) {
+    await submission.set("lowerBound", lowerBound).save();
   }
 }
 
