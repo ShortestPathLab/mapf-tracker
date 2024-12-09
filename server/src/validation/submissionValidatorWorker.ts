@@ -191,6 +191,8 @@ async function setSolutionCost(
   realCost: number,
   errors: string[]
 ) {
+  // There's already an error, don't bother checking solution cost
+  if (errors.length) return;
   if (isNumber(submission.cost)) {
     if (submission.cost !== realCost) {
       errors.push(

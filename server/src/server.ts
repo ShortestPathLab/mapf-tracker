@@ -28,19 +28,19 @@ app.use(
   })
 );
 app.use(urlencoded({ extended: true }));
-app.use(
-  logger({
-    customSuccessMessage: (req) => `[Server] ${req.method} ${req.url}`,
-    serializers: {
-      req(req) {
-        return pick(req, "url", "method", "id", "body");
-      },
-      res(res) {
-        return pick(res, "statusCode", "body");
-      },
-    },
-  })
-);
+// app.use(
+//   logger({
+//     customSuccessMessage: (req) => `[Server] ${req.method} ${req.url}`,
+//     serializers: {
+//       req(req) {
+//         return pick(req, "url", "method", "id", "body");
+//       },
+//       res(res) {
+//         return pick(res, "statusCode", "body");
+//       },
+//     },
+//   })
+// );
 
 await connectToDatabase();
 

@@ -1,26 +1,31 @@
 import { Card, Box } from "@mui/material";
-import { Scroll } from "./Scrollbars";
+import { CodeBlock } from "components/CodeBlock";
+
 
 ##### Solution string format
 
-For each agent, we use a motion string to represent the path, where the symbol `u`, `d`, `l` and `r` represents moving up, down, left and right respectively, and `w` represents waiting at its current location (eg., a path [(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)] is converted to a motion string `drruwl`). We use `\n` to separate the paths between different agents.
+For each agent, we use a motion string to represent the path, where the symbol `u`, `d`, `l` and `r` represents moving up, down, left and right respectively, and `w` represents waiting at its current location.
 
-Note that coordinates should be using pixel origin, i.e. (0, 0) is in the top left corner of the map. This means that an agent with an increasing y-coordinate is going down.
+For example, the path:
 
-Solution plans should be run-length encoded before submission to keep file size low. Please encode single actions as `w` rather than as `1w`.
+<CodeBlock>
+{`(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)`}
+</CodeBlock>
 
-##### Example File
+is converted to a motion string:
 
-<Box>
+<CodeBlock>
+{`drruwl`}
+</CodeBlock>
 
-<Scroll x>
+We use `\n` to separate the paths between different agents. Or, in supported formats, you can represent them as a list of strings.
 
-| map_name    | scen_type | type_id | agents | lower_cost | solution_cost | solution_plan                                       |
-| ----------- | --------- | ------- | ------ | ---------- | ------------- | --------------------------------------------------- |
-| empty-32-32 | even      | 1       | 1      | 14         | 14            | u2ru3r3u4r                                          |
-| empty-32-32 | even      | 1       | 2      | 38         | 38            | u2ru3r3u4r <br /> 2dr2d3r2dr2drd2rdr5d              |
-| empty-32-32 | even      | 1       | 3      | 50         | 50            | u2ru3r3u4r <br /> 2dr2d3r2dr2drd2rdr5d <br /> 12d   |
+###### Coordinate system
 
-</Scroll>
+Coordinates should be using pixel origin, i.e. (0, 0) is in the top left corner of the map. This means that an agent with an increasing y-coordinate is going down, and should be represented by the character `d`.
 
-</Box>
+For convenience, we offer a boolean property `flip_up_down`. If true, the coordinate system is reversed, i.e. (0, 0) is in the bottom left corner of the map.
+
+###### Run-length encoding
+
+Solution plans can be optionally run-length encoded before submission to keep file size low. For a sequence of repeated actions, such as `wwwww`, you can instead represent this as `5w`. Please encode single actions as `w` rather than as `1w`.

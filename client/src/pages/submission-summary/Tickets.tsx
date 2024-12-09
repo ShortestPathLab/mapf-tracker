@@ -56,6 +56,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                           error: (
                             <Dialog
                               padded
+                              slotProps={{ modal: { variant: "default" } }}
                               title="Error details"
                               trigger={(onClick) => (
                                 <Link
@@ -66,8 +67,10 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                                 </Link>
                               )}
                             >
-                              Your file failed to pass schema validation. The
-                              following is the error returned by the server.
+                              <Typography>
+                                Your file failed to pass schema validation. The
+                                following is the error returned by the server.
+                              </Typography>
                               <GenericDetailsList data={{ error }} />
                             </Dialog>
                           ),

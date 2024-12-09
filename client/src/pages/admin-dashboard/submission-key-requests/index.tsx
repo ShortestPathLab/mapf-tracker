@@ -6,7 +6,7 @@ import {
 import { Box } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
-import { useDataGridActions } from "components/data-grid";
+import { cellRendererText, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { useDialog } from "hooks/useDialog";
 import { Layout } from "layout";
@@ -17,6 +17,7 @@ import {
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
+import { Item } from "components/Item";
 
 export default function index() {
   const { data: requests } = useRequestsQuery();
@@ -65,6 +66,9 @@ export default function index() {
       headerName: "Algorithm",
       sortable: false,
       width: 220,
+      renderCell: ({ row }) => (
+        <Item secondary={row.id?.slice?.(-8)} primary={row.algorithmName} />
+      ),
     },
     {
       fold: true,
@@ -72,6 +76,7 @@ export default function index() {
       headerName: "Requester",
       sortable: false,
       width: 140,
+      renderCell: cellRendererText,
     },
     {
       fold: true,
@@ -79,6 +84,7 @@ export default function index() {
       headerName: "Email",
       sortable: false,
       width: 220,
+      renderCell: cellRendererText,
     },
 
     {
@@ -96,9 +102,13 @@ export default function index() {
       sortable: true,
       width: 180,
       renderCell: ({ row }) =>
-        row.reviewStatus.comments || (
-          <Box color="text.secondary">No comments</Box>
-        ),
+        cellRendererText({
+          formattedValue: row.reviewStatus.comments || (
+            <Box component="span" color="text.secondary">
+              No comments
+            </Box>
+          ),
+        }),
     },
     actions,
   ];

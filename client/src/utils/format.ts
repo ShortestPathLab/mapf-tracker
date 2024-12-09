@@ -1,7 +1,8 @@
 import { format, parse, parseISO } from "date-fns";
 import { tryChain } from "./tryChain";
 
-export const formatPercentage = (c: number) => `${(c * 100).toFixed(2)}%`;
+export const formatPercentage = (c: number, d: number = 2) =>
+  `${(c * 100).toFixed(d)}%`;
 
 export const DATE_TIME_FORMAT = "HH:mmaaa, dd MMM yyyy";
 

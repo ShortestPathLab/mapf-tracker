@@ -5,13 +5,21 @@ import { ReactNode } from "react";
 export function Item({
   primary,
   secondary,
+  invert,
 }: {
   primary?: ReactNode;
   secondary?: ReactNode;
+  invert?: boolean;
 }) {
   const sm = useSm();
   return (
     <ListItemText
+      sx={
+        invert && {
+          display: "flex",
+          flexDirection: "column-reverse",
+        }
+      }
       primary={primary && <Typography variant="body1">{primary}</Typography>}
       secondary={
         secondary && (

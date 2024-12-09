@@ -19,7 +19,7 @@ export default function index() {
     <Layout
       flat
       collapse={false}
-      title="View solution"
+      title="Visualisation"
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },

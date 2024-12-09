@@ -11,31 +11,51 @@ import {
   ButtonBase,
   Card,
   CardActionArea,
-  Divider,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import { CodeBlock } from "components/CodeBlock";
 import { useSnackbar } from "components/Snackbar";
+import { url } from "core/config";
 import SubmitWithApiContent from "docs/submitWithApi.mdx";
 import { useDialog } from "hooks/useDialog";
 import { Grid, Prose } from "layout";
-import { findKey, some } from "lodash";
+import { find, findKey, some } from "lodash";
+import { ArticleCard } from "pages/docs/ArticleCard";
+import { pages } from "pages/docs/pages";
 import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { paper } from "theme";
-import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import { Tickets } from "./Tickets";
 import { useSubmissionMutation } from "./useSubmissionMutation";
 
 export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
+  const page = find(pages(), { value: "how-to-submit" });
   return (
-    <>
-      <SubmissionRequestGlance apiKey={apiKey} />
-      <Divider sx={{ my: 2 }} />
-      <Prose>
-        <SubmitWithApiContent apiKey={apiKey} />
-      </Prose>
-    </>
+    <Stack sx={{ gap: 2, mt: -2 }}>
+      <Stack>
+        <Prose>
+          <SubmitWithApiContent />
+        </Prose>
+        <CodeBlock language="plaintext">
+          {`${url}/ongoing_submission/create/${apiKey}`}
+        </CodeBlock>
+      </Stack>
+      <Stack sx={{ gap: 2 }}>
+        <Typography variant="overline" color="text.secondary">
+          Read the docs
+        </Typography>
+        <Grid width={240}>
+          <Tooltip title="Open this article in a new tab">
+            <ArticleCard
+              page={page}
+              onClick={() => open(`/docs/${page.value}`, "_blank")}
+            />
+          </Tooltip>
+        </Grid>
+      </Stack>
+    </Stack>
   );
 }
 
@@ -111,13 +131,10 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function JsonApiDialog({ apiKey }: { apiKey?: string | number }) {
   return (
-    <>
-      <SubmissionRequestGlance apiKey={apiKey} />
-      <Divider sx={{ my: 2 }} />
-      Not implemented.
-    </>
+    <Typography color="text.secondary">This feature is coming soon.</Typography>
   );
 }
 
@@ -127,7 +144,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
     {
       padded: true,
       title: "Submit via REST API",
-      slotProps: { modal: { width: 720 } },
+      slotProps: { modal: { width: 580, variant: "default" } },
     }
   );
   const { open: openJsonApiDialog, dialog: jsonApiDialog } = useDialog(
@@ -135,7 +152,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
     {
       padded: true,
       title: "Submit via copy and paste",
-      slotProps: { modal: { width: 720 } },
+      slotProps: { modal: { width: 720, variant: "default" } },
     }
   );
   const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useDialog(
@@ -192,7 +209,11 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
         {spreadSheetDialog}
         {jsonApiDialog}
       </Grid>
-      <Button sx={{ alignSelf: "flex-start" }} startIcon={<HelpOutlined />}>
+      <Button
+        sx={{ alignSelf: "flex-start" }}
+        startIcon={<HelpOutlined />}
+        onClick={() => open("/docs/how-to-submit", "_blank")}
+      >
         I need help submitting data
       </Button>
     </>

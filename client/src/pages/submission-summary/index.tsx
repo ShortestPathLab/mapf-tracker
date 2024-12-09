@@ -23,6 +23,7 @@ import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import SummaryTable from "./table/SummaryTable";
+import { useRequestData } from "queries/useRequestQuery";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
@@ -31,6 +32,7 @@ export default function SubmissionSummaryPage() {
   const { apiKey } = useLocationState<SubmissionLocationState>();
   const { data } = useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
+  const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useDialog(ConfirmDialog, {
     title: "Finish submission",
@@ -150,11 +152,10 @@ export default function SubmissionSummaryPage() {
     <>
       <Layout
         flat
-        title="Submit data"
+        title={requestData?.algorithmName ?? "Submit data"}
         path={[
-          { name: "Submit", url: "/submit" },
-          { name: "Submit an algorithm", url: "/contributes" },
-          { name: "Manage submissions", url: "/track" },
+          { name: "Home", url: "/" },
+          { name: "My submissions", url: "/track" },
         ]}
       >
         {sm ? (

@@ -16,15 +16,16 @@ import {
   Collapse,
   Divider,
   Stack,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
-import { Bar, useDataGridActions } from "components/data-grid";
+import { Bar, formatValue, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
-import Enter from "components/transitions/Enter";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { Item } from "components/Item";
+import Enter from "components/transitions/Enter";
 import {
   TreeDataGrid,
   useBooleanMap,
@@ -32,6 +33,7 @@ import {
 import { Instance, SummarySlice } from "core/types";
 import { useDialog } from "hooks/useDialog";
 import { identity, isNumber, join, sumBy, times } from "lodash";
+import pluralize from "pluralize";
 import {
   deleteAll,
   OngoingSubmission,
@@ -146,13 +148,36 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   const total = (row: Models["map"] | Models["scenario"]) =>
     row.count.total - row.count.outdated;
 
+  const summaryIcon = (row: Models["map"] | Models["scenario"]) =>
+    row.count.invalid ? (
+      <Tooltip
+        title={`${pluralize("instance", row.count.invalid, true)} of ${total(
+          row
+        )} invalid`}
+      >
+        <CloseOutlined color="error" fontSize="small" />
+      </Tooltip>
+    ) : (
+      <Tooltip title="All instances valid">
+        <DoneOutlined color="success" fontSize="small" />
+      </Tooltip>
+    );
+
+  const hasRun = (row: Models["map"] | Models["scenario"]) =>
+    row.count.valid + row.count.invalid + row.count.outdated;
+
+  const progressLabel = (row: Models["map"] | Models["scenario"]) =>
+    formatValue(hasRun(row) / row.count.total);
+
   const bar = (row: Models["map"] | Models["scenario"]) => (
     <Bar
       buffer
+      label={
+        hasRun(row) === row.count.total ? summaryIcon(row) : progressLabel(row)
+      }
       values={[
         {
-          color:
-            row.count.valid === total(row) ? "success.main" : "primary.main",
+          color: "success.main",
           value: row.count.valid / total(row),
           label: "Valid",
         },
@@ -206,8 +231,8 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         }),
     },
     {
-      field: "count.valid",
-      headerName: "Validity",
+      field: "count.total",
+      headerName: "Results",
       type: "number",
       renderCell: ({ row }) =>
         disambiguate(row, {
@@ -289,7 +314,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     },
     {
       field: "info",
-      headerName: "Info",
+      headerName: "Details",
       type: "number",
       renderCell: ({ row }) =>
         disambiguate(row, {

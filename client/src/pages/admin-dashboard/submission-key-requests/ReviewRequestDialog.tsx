@@ -47,7 +47,7 @@ export function ReviewRequestDialog({
     <Grid sx={{ gap: sm ? 4 : 3 }} width={420}>
       <Stack>
         <Accordion
-          sx={{ p: sm ? 2 : 3, ...paper() }}
+          sx={{ p: sm ? 2 : 3, ...paper(0) }}
           slotProps={{
             label: { variant: "h5" },
             summary: { sx: { py: 0, my: -2 } },

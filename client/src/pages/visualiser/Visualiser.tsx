@@ -1,4 +1,5 @@
 import {
+  BlurOffOutlined,
   ChevronLeftOutlined,
   ChevronRightOutlined,
   FirstPageOutlined,
@@ -7,6 +8,7 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
+  Button,
   Card,
   CircularProgress,
   Divider,
@@ -24,6 +26,7 @@ import memoizee from "memoizee";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { Graphics as PixiGraphics } from "pixi.js";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
@@ -112,6 +115,7 @@ export function Visualiser1({
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const sm = useSm();
+  const navigate = useNavigate();
 
   // ─────────────────────────────────────────────────────────────────────
 
@@ -178,6 +182,8 @@ export function Visualiser1({
     return () => void viewport.current.off("moved", f);
   }, [viewport.current, x, setShowGrid]);
 
+  const noVisualisation = !isLoading && !result;
+
   return (
     <Box
       sx={{
@@ -186,103 +192,129 @@ export function Visualiser1({
         position: "absolute",
       }}
     >
-      <AutoSize>
-        {(size) => (
-          <>
-            {isLoading ? (
+      {noVisualisation ? (
+        <Stack
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+            gap: 2,
+          }}
+        >
+          <BlurOffOutlined />
+          <Typography>No visualisation available</Typography>
+          <Button
+            variant="contained"
+            sx={{ py: 1, px: 2, mt: 2 }}
+            onClick={() => navigate(-1)}
+          >
+            Go back
+          </Button>
+        </Stack>
+      ) : (
+        <AutoSize>
+          {(size) => (
+            <>
+              {isLoading ? (
+                <Stack
+                  sx={{
+                    ...size,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CircularProgress />
+                </Stack>
+              ) : (
+                <Stage
+                  {...size}
+                  renderOnComponentChange
+                  options={{
+                    antialias: true,
+                    powerPreference: "high-performance",
+                  }}
+                >
+                  <Graphics
+                    draw={$bg(
+                      theme.palette.background.default,
+                      size.width,
+                      size.height
+                    )}
+                  />
+                  <Viewport
+                    {...size}
+                    key={`${size.width},${size.height}`}
+                    ref={viewport}
+                  >
+                    <Container
+                      scale={scale(size.width, size.height)}
+                      x={offsetX(size.width, size.height)}
+                      y={offsetY(size.width, size.height)}
+                    >
+                      <Graphics draw={drawAgents} />
+                      <Graphics draw={drawMap} />
+                      {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
+                      <Graphics draw={drawBox} alpha={0.1} />
+                    </Container>
+                  </Viewport>
+                </Stage>
+              )}
               <Stack
-                sx={{ ...size, alignItems: "center", justifyContent: "center" }}
-              >
-                <CircularProgress />
-              </Stack>
-            ) : (
-              <Stage
-                {...size}
-                renderOnComponentChange
-                options={{
-                  antialias: true,
-                  powerPreference: "high-performance",
+                sx={{
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
+                  // p: 4,
                 }}
               >
-                <Graphics
-                  draw={$bg(
-                    theme.palette.background.default,
-                    size.width,
-                    size.height
-                  )}
-                />
-                <Viewport
-                  {...size}
-                  key={`${size.width},${size.height}`}
-                  ref={viewport}
-                >
-                  <Container
-                    scale={scale(size.width, size.height)}
-                    x={offsetX(size.width, size.height)}
-                    y={offsetY(size.width, size.height)}
-                  >
-                    <Graphics draw={drawAgents} />
-                    <Graphics draw={drawMap} />
-                    {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
-                    <Graphics draw={drawBox} alpha={0.1} />
-                  </Container>
-                </Viewport>
-              </Stage>
-            )}
-            <Stack
-              sx={{
-                position: "absolute",
-                right: 0,
-                bottom: 0,
-                // p: 4,
-              }}
-            >
-              <Card sx={{ py: 1, m: sm ? 2 : 3, px: 2, ...paper() }}>
-                <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-                  {!sm && (
-                    <>
-                      <Typography sx={{ px: 2 }}>
-                        {step} / {timespan}
-                      </Typography>
-                      <Divider orientation="vertical" flexItem />
-                    </>
-                  )}
-                  {[
-                    {
-                      name: "Restart",
-                      icon: <FirstPageOutlined />,
-                      action: restart,
-                    },
-                    {
-                      name: "Step back",
-                      icon: <ChevronLeftOutlined />,
-                      action: backwards,
-                    },
-                    {
-                      name: paused ? "Play" : "Pause",
-                      icon: paused ? (
-                        <PlayArrowOutlined sx={{ color: "primary.main" }} />
-                      ) : (
-                        <PauseOutlined sx={{ color: "primary.main" }} />
-                      ),
-                      action: paused ? play : pause,
-                    },
-                    {
-                      name: "Step forward",
-                      icon: <ChevronRightOutlined />,
-                      action: forwards,
-                    },
-                  ].map(({ name, icon, action }) => (
-                    <Tooltip title={name} key={name}>
-                      <IconButton onClick={action}>{icon}</IconButton>
-                    </Tooltip>
-                  ))}
-                </Stack>
-              </Card>
-            </Stack>
-          </>
-        )}
-      </AutoSize>
+                <Card sx={{ py: 1, m: sm ? 2 : 3, px: 2, ...paper() }}>
+                  <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+                    {!sm && (
+                      <>
+                        <Typography sx={{ px: 2 }}>
+                          {step} / {timespan}
+                        </Typography>
+                        <Divider orientation="vertical" flexItem />
+                      </>
+                    )}
+                    {[
+                      {
+                        name: "Restart",
+                        icon: <FirstPageOutlined />,
+                        action: restart,
+                      },
+                      {
+                        name: "Step back",
+                        icon: <ChevronLeftOutlined />,
+                        action: backwards,
+                      },
+                      {
+                        name: paused ? "Play" : "Pause",
+                        icon: paused ? (
+                          <PlayArrowOutlined sx={{ color: "primary.main" }} />
+                        ) : (
+                          <PauseOutlined sx={{ color: "primary.main" }} />
+                        ),
+                        action: paused ? play : pause,
+                      },
+                      {
+                        name: "Step forward",
+                        icon: <ChevronRightOutlined />,
+                        action: forwards,
+                      },
+                    ].map(({ name, icon, action }) => (
+                      <Tooltip title={name} key={name}>
+                        <IconButton onClick={action}>{icon}</IconButton>
+                      </Tooltip>
+                    ))}
+                  </Stack>
+                </Card>
+              </Stack>
+            </>
+          )}
+        </AutoSize>
+      )}
     </Box>
   );
 }

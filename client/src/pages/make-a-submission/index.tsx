@@ -315,8 +315,8 @@ export default function MakeASubmissionPage() {
           <AddKey />
           <Stack sx={{ gap: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              An API key is a 32 character string of numbers 0-9 and lowercase
-              letters a-f.{" "}
+              An API key is a 32-character string of numbers 0-9 and lowercase
+              letters a-f.
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ pt: 4 }}>
               Don&apos;t have a submission (API) key? You need one to submit

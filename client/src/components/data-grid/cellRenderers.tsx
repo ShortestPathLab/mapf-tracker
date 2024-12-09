@@ -2,7 +2,7 @@ import { LinearProgress, Stack, Tooltip, Typography } from "@mui/material";
 import { round, floor, find, map, sumBy, head } from "lodash";
 import { ReactNode } from "react";
 
-const formatValue = (v: number) =>
+export const formatValue = (v: number) =>
   v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%";
 
 export const cellRendererText = ({
@@ -77,7 +77,7 @@ export const Bar = ({
     >
       <Stack direction="row" sx={{ flex: 1 }}>
         {map(values, ({ value, color, label }) => (
-          <Tooltip title={`${label}: ${round(value * 100, 4)}%`}>
+          <Tooltip title={`${label}: ${formatValue(value)}`}>
             <LinearProgress
               sx={{
                 bgcolor: "transparent",

@@ -1,19 +1,13 @@
-import {
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, List, ListItem, Stack, Typography } from "@mui/material";
+import { Item } from "components/Item";
 import { useSnackbar } from "components/Snackbar";
 import { DialogContentProps } from "hooks/useDialog";
-import { SetReviewOutcomeForm } from "./SetReviewOutcomeForm";
 import {
   RequestWithReviewOutcome,
   useRequestsUpdateMutation,
   useSendOutcomeMutation,
 } from "queries/useRequestsQuery";
+import { SetReviewOutcomeForm } from "./SetReviewOutcomeForm";
 
 const hintText = (data?: RequestWithReviewOutcome) =>
   `A response email will sent to ${data?.requesterEmail} along with the review outcome and comments. If the request was approved, a new submission (API) key will be included.`;
@@ -33,10 +27,10 @@ export function ConfirmNotifyDialog({
     <Stack sx={{ gap: 2 }}>
       <List sx={{ mx: -2, mt: -2 }}>
         <ListItem>
-          <ListItemText primary={data?.requesterName} secondary="Recipient" />
+          <Item invert primary={data?.requesterName} secondary="Recipient" />
         </ListItem>
         <ListItem>
-          <ListItemText primary={data?.requesterEmail} secondary="Address" />
+          <Item invert primary={data?.requesterEmail} secondary="Address" />
         </ListItem>
       </List>
       <SetReviewOutcomeForm

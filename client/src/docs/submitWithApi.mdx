@@ -1,18 +1,2 @@
-{/** @typedef {{apiKey?: string | number}} Props **/}
-
-import { url } from "../core/config";
-import { CodeBlock } from "../components/CodeBlock";
-import JSONSchema from "./JSONSchema.mdx";
-import Accordion from "../components/Accordion";
-
-#### Submit via REST API
-
 If you want to programmatically submit results to MAPF Tracker, you can do so via our REST API. Make a `POST` request to this URL:
 
-<CodeBlock language="plaintext">
-    {`${url}/ongoing_submission/create/${props.apiKey}`}
-</CodeBlock>
-
-<Accordion label="Show schema" slotProps={{summary: {sx: {py: 0, mb:-2}}}}>
-    <JSONSchema />
-</Accordion>

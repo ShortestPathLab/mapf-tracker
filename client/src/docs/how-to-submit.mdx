@@ -1,35 +1,68 @@
 import Format from './format.mdx';
 import Schema from './JSONSchema.mdx';
+import Faq from './faq.mdx';
+import ValidationRules from './validation-rules.md'
+import { Link } from "components/Link";
 
-### The submission process
+Have an algorithm you'd like listed on the tracker? Here's how you can do it.
 
-It's easy to submit your results to MAPF Tracker.
+#### Submitting to the tracker in a nutshell
 
-1. Request a submission (API) key [here](.). We'll ask you to provide some details and credentials related to your submission.
-2. A team member will review your request. If accepted, they will send you an email with your submission (API) key.
-3. Once you have your submission (API) key, you can start submitting your solution to the tracker [here](/contribute/submit-solution). An automated process will validate your submission.
+Submitting to MAPF Tracker is easy.
+
+1. Request a submission (API) key. We'll ask you to provide some details and credentials related to your submission.
+2. A team member will review your request. If accepted, they will email you with your submission (API) key.
+3. Once you have your submission (API) key, you can start submitting your solution to the tracker. An automated process will validate your submission.
 4. After you finalise your submission, your results will be reflected in the benchmarks.
 
-#### Requesting a submission (API) key
+Ready to submit? <Link href="/submit">Started here.</Link>
 
-Todo
+#### Getting a submission (API) key
 
-#### Submitting a solution
+The submission (API) key allows you to submit solutions under your algorithm. It is a 32-character hexadecimal string. Each key is unique and can only be used once. Once it expires, you will need to request a new key. 
 
-Todo
+You can request for a submission key <Link href="/submit">here</Link>. We'll ask you some questions regarding you and your algorithm. Once we approve your request, we'll email you with your submission (API) key.
 
-### Solution format
+#### Submitting solutions
+
+Once you've obtained an API key, you can enter it <Link href="/track">here</Link> to access a web console for uploading your solutions. You can upload data via any of the following methods:
+
+- File upload via the web console (drag and drop)
+- Copy and paste via the web console
+- REST API
+
+We'll automatically validate your submission and reject any invalid solutions. After you finalise your submission, your results will automatically be reflected in the benchmarks.
+
+##### File upload
+
+In the web console, click **Upload files**. In the dialog, open one or more valid files.
+
+##### Copy and paste
+
+In the web console, click **Copy and paste**. In the dialog, enter your solution data as one of the supported formats in the editor. Choose the appropriate format from the dropdown.
+
+##### REST API
+
+In the web console, click **REST API**. The dialog will show the endpoint to submit data to. Make a `POST` request to this endpoint with your data. Make sure to include the `Content-Type` header with an appropriate value.
+
+| Format | Content-Type       |
+| ------ | ------------------ |   
+| JSON   | `application/json` |
+| YAML   | `application/yaml` |
+| CSV    | `text/csv`         |
+
+#### Solution format
 
 <Schema />
 
 <Format />
 
-#### Supported file formats
+#### Validation
 
-Todo
+After uploading, your submissions will be automatically validated. We'll reject any invalid submissions.
 
-### Frequently asked questions
+<ValidationRules />
 
-#### What should I do if my API key expires?
+#### Frequently asked questions
 
-Todo
+<Faq />

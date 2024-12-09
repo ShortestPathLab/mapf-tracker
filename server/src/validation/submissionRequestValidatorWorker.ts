@@ -147,11 +147,13 @@ const submitBatch = async (
 
 const handlers = [
   {
+    name: "Single instance submission",
     schema: submissionBaseSchema,
     handler: submitOne,
     transformer: submissionSchema,
   },
   {
+    name: "Batch submission",
     schema: submissionBaseSchema.array(),
     handler: submitBatch,
     transformer: submissionSchema.array(),
@@ -175,9 +177,9 @@ export async function run({
     return {
       error: {
         description: "Does not match any schema.",
-        attempts: handlers.map(({ schema }) => {
+        attempts: handlers.map(({ name, schema }) => {
           const { error } = schema.safeParse(d);
-          return error.format();
+          return { name, error: error.format() };
         }),
       },
     };

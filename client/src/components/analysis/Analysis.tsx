@@ -63,7 +63,14 @@ export function AnalysisButton({
   const single = template.length == 1;
   return single ? (
     <Dialog
-      slotProps={{ modal: { width: 1600, variant: "default" } }}
+      slotProps={{
+        modal: {
+          width: "100vw",
+          variant: "default",
+          fullScreen: true,
+          height: "100vh",
+        },
+      }}
       appBar={{ children: <Title>{head(template).name}</Title> }}
       trigger={(onClick) => button(onClick)}
     >

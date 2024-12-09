@@ -20,6 +20,7 @@ import Layout, { LayoutProps } from "layout/Layout";
 import { last } from "lodash";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { appName } from "core/config";
+import { paper } from "theme";
 
 function useHeaders() {
   const ref = useRef<HTMLDivElement>(null);
@@ -112,16 +113,44 @@ export function ArticleLayout({
       <Stack direction={sm ? "column-reverse" : "row"} sx={{ gap: sm ? 2 : 6 }}>
         <Stack ref={ref} sx={{ flex: 1, gap: 4 }}>
           {author}
-          {children}
-          <IconButton
-            edge="start"
+          <Stack
+            sx={{
+              gap: 4,
+              "& .prose h1": { mt: 6, mb: 4, fontSize: "3.5rem" },
+              "& .prose h2": { mt: 6, mb: 4, fontSize: "3rem" },
+              "& .prose h3": { mt: 6, mb: 4, fontSize: "2.5rem" },
+              "& .prose h4": { mt: 6, mb: 4, fontSize: "1.5rem" },
+              "& .prose h5": { mb: 0, mt: 4 },
+              "& .prose h6": { mb: 0, mt: 3 },
+              "& .prose h1:first-child": { mt: 0 },
+              "& .prose h2:first-child": { mt: 0 },
+              "& .prose h3:first-child": { mt: 0 },
+              "& .prose h4:first-child": { mt: 0 },
+              "& .prose h5:first-child": { mt: 0 },
+              "& .prose h6:first-child": { mt: 0 },
+              " hr": { mt: 6 },
+              " table": { ...paper(0), p: 2, my: 2, width: "100%" },
+            }}
+          >
+            {children}
+          </Stack>
+          <Stack
+            direction="row"
             onClick={() =>
               top.current?.scrollIntoView?.({ behavior: "smooth" })
             }
-            sx={{ alignSelf: "flex-start", my: 4 }}
+            sx={{
+              gap: 1,
+              alignSelf: "flex-start",
+              alignItems: "center",
+              my: 4,
+            }}
           >
-            <ArrowUpwardOutlined />
-          </IconButton>
+            <IconButton edge="start">
+              <ArrowUpwardOutlined />
+            </IconButton>
+            <Typography color="text.secondary">Back to top</Typography>
+          </Stack>
         </Stack>
         <Stack
           sx={{
