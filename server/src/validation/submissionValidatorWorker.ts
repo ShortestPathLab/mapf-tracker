@@ -1,4 +1,4 @@
-import { chain, each, isInteger, max, once } from "lodash";
+import { chain, each, isInteger, isNumber, max, once } from "lodash";
 import { context } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { Document, Types } from "mongoose";
@@ -52,18 +52,20 @@ type OngoingSubmissionDocument = Document<
   OngoingSubmission;
 
 function createSolutionCostChecker(expected: number = 0) {
-  let actual: number = 0;
+  let actual: { current: number } = { current: 0 };
   return [
     ({ done }: CheckParameters): CheckResult => {
-      each(done, (c, i) => {
-        actual += +!c[i];
+      each(done, (c) => {
+        actual.current += +!c;
       });
       return {};
     },
     ({}: FinalCheckParameters): CheckResult => {
-      if (actual !== expected) {
+      if (actual.current !== expected) {
         return {
-          errors: [`agent cost incorrect, expected ${actual}, got ${expected}`],
+          errors: [
+            `agent cost incorrect, expected ${actual.current}, got ${expected}`,
+          ],
         };
       }
     },
@@ -175,13 +177,31 @@ async function validateGroup({
 
   // Update solution cost based on validation results
   // TODO: Refactor for immutability
-  submission.set("solutionCost", realCost);
+  await setSolutionCost(submission, realCost.current, errors);
 
   logOutcome(errors, errorAgents, mode);
 
   // Don't have to wait to save results
   saveResults(submission, errors);
   return { errors };
+}
+
+async function setSolutionCost(
+  submission: OngoingSubmissionDocument,
+  realCost: number,
+  errors: string[]
+) {
+  if (isNumber(submission.cost)) {
+    if (submission.cost !== realCost) {
+      errors.push(
+        `Cost mismatch, expected ${realCost}, but submission listed its cost as ${submission.cost}`
+      );
+      return;
+    }
+  } else {
+    // No cost specified, use real cost
+    await submission.set("solutionCost", realCost).save();
+  }
 }
 
 function logOutcome(

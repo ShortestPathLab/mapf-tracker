@@ -1,4 +1,8 @@
+import { connectToDatabase } from "connection";
+import { flatten } from "lodash";
 import { usingTaskMessageHandler } from "queue/usingWorker";
+import { encode } from "validator";
+import { RefinementCtx, z } from "zod";
 import {
   Instance,
   Map,
@@ -6,13 +10,9 @@ import {
   Scenario,
   SubmissionKey,
 } from "../models";
-import { fatal } from "../validation/zod";
-import { encode } from "validator";
-import { RefinementCtx, z } from "zod";
-import { flatten } from "lodash";
-import { connectToDatabase } from "connection";
-import { waitMap } from "../utils/waitMap";
 import { memoizeAsync } from "../utils/memoizeAsync";
+import { waitMap } from "../utils/waitMap";
+import { fatal } from "../validation/zod";
 
 export const getKey = async (
   api_key: string | undefined,
