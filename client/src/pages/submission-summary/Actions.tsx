@@ -16,14 +16,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useSnackbar } from "components/Snackbar";
+import SubmitWithApiContent from "docs/submitWithApi.mdx";
 import { useDialog } from "hooks/useDialog";
 import { Grid, Prose } from "layout";
+import { findKey, some } from "lodash";
 import { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { paper } from "theme";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import { Tickets } from "./Tickets";
-import SubmitWithApiContent from "docs/submitWithApi.mdx";
 import { useSubmissionMutation } from "./useSubmissionMutation";
 
 export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
@@ -37,6 +38,19 @@ export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
     </>
   );
 }
+
+const getFileType = (name: string) => {
+  return findKey(
+    {
+      "application/json": [".json"],
+      "text/csv": [".csv"],
+      "application/yaml": [".yaml", ".yml"],
+    },
+    (extensions) =>
+      some(extensions, (extension) => name.toLowerCase().endsWith(extension))
+  );
+};
+
 export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
   const [dragging, setDragging] = useState(false);
   const { mutateAsync } = useSubmissionMutation({ apiKey });
@@ -55,7 +69,7 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
               notify(`Uploading ${file.name}`);
               await mutateAsync({
                 content: reader.result as string,
-                type: file.type,
+                type: getFileType(file.name),
                 label: file.name,
                 size: file.size,
               });

@@ -12,49 +12,69 @@ MAPF Tracker accepts submissions in JSON, YAML, and CSV, as long as they include
 | `scen_type` | `string` (Required) | Scenario type e.g.`even`, `random` |
 | `type_id` | `number` (Required) | The scenario variant number |
 | `agents` | `number` (Required) | The total number of agents |
-| `solutions` | `string` (Required) | Your solution. This can be a list of path strings, or a single string with the path of each agent delimited by newlines. Paths can be run length encoded. |
+| `solution_plan` | `string` (Required) | Your solution. This can be a list of path strings, or a single string with the path of each agent delimited by newlines. Paths can be run length encoded. |
 | `lower_cost` | `number` | Theoretical lower-bound cost reported by your solver. If unknown, leave empty. |
+| `solution_cost` | `number` | The cost of your solution. This is optional. If provided, this will be checked during validation. |
 
 ##### Examples
 
 ###### JSON
 
+Solutions can be a list of strings or a newline-delimited string.
+
 <CodeBlock language="json">
   {
   `
-{
-  "map_name": "empty-8-8", 
-  "scen_type": "even",
-  "type_id": 0, 
-  "agents": 1, 
-  "solutions": "5r2d3w4d",  
-}
-`.trim()
-  }
-</CodeBlock>
-
-###### YAML
-
-<CodeBlock language="yaml">
   {
-  `
-map_name: "empty-8-8"
-scen_type: even
-type_id: 0
-agents: 1
-solutions: 
-  - 5r2d3w4d
+    "map_name": "empty-8-8", 
+    "scen_type": "even",
+    "type_id": 0, 
+    "agents": 1, 
+    "solution_plan": "5r2d3w4d",  
+  }
 `.trim()
   }
 </CodeBlock>
 
 ###### CSV
 
+We accept only comma-delimitted CSVs. Which can be easier to output for some solvers. Each line of the file represents a solution. Solutions must be newline-delimited strings, Windows or Unix style. Booleans must be the literals `TRUE` or `FALSE`.
+
+<CodeBlock language="csv-with-heading">
+  {
+  `
+  map_name,scen_type,type_id,agents,solution_plan,flip_up_down
+  "empty-8-8",even,0,1,"5r2d3w4d↵5r2d3w4d",FALSE
+`.trim()
+  }
+</CodeBlock>
+
+###### YAML
+
+We also accept YAML, which may be easier to output for some solvers. Solutions can be a list of strings or a newline-delimited string.
+
+Multiple solutions can be batched into one YAML file. Note this is not possible with JSON.
+
 <CodeBlock language="yaml">
   {
   `
-map_name,scen_type,type_id,agents,solutions
-empty-8-8,even,0,1,5r2d3w4d
+  ---
+  # One submission
+  map_name: "empty-8-8"
+  scen_type: even
+  type_id: 0
+  agents: 1
+  solution_plan: 
+    - 5r2d3w4d
+  ---
+  # Another submission
+  map_name: "empty-8-8"
+  scen_type: even
+  type_id: 0
+  agents: 2
+  solution_plan: 
+    - 5r2d3w4d
+    - 5r2d3w4d
 `.trim()
   }
 </CodeBlock>

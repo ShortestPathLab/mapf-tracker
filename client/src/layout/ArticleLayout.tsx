@@ -19,7 +19,7 @@ import { useNavigate } from "hooks/useNavigation";
 import Layout, { LayoutProps } from "layout/Layout";
 import { last } from "lodash";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { name } from "../../public/manifest.json";
+import { appName } from "core/config";
 
 function useHeaders() {
   const ref = useRef<HTMLDivElement>(null);
@@ -158,7 +158,7 @@ export function ArticleLayout({
               edge="start"
               onClick={() => {
                 navigator.share?.({
-                  text: `${name} - ${title}\n${subtitle}\n\n${location.href}`,
+                  text: `${appName} - ${title}\n${subtitle}\n\n${location.href}`,
                 });
               }}
             >
