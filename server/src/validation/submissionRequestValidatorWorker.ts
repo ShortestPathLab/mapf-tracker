@@ -60,6 +60,7 @@ export const submissionBaseSchema = z.object({
       // Accept solution list
       pathSchema(false).array(),
     ])
+    .default([])
     .optional(),
 });
 
