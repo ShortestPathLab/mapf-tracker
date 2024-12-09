@@ -216,7 +216,7 @@ export default function MakeASubmissionPage() {
               {
                 label: "You receive an API key in your inbox",
                 content:
-                  "If you algorithm and submission request has been approved by the team, you will receive an API key in your contact email inbox.",
+                  "If your algorithm and submission request has been approved by the team, you will receive an API key in your contact email inbox.",
                 icon: <MailOutlined sx={{ color: "action.disabled" }} />,
               },
               {
@@ -276,7 +276,9 @@ export default function MakeASubmissionPage() {
           </Button>
           {!xs && (
             <Stack sx={{ gap: 2, mt: 4 }}>
-              <Typography variant="overline">Read the docs</Typography>
+              <Typography variant="overline" color="text.secondary">
+                Read the docs
+              </Typography>
               <Grid width={280} sx={{ gap: 2 }}>
                 {docs.map((page, i) => (
                   <Tooltip key={i} title="Open this article in a new tab">
