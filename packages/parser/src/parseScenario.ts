@@ -1,5 +1,5 @@
 import { Reader } from "validator";
-import { chain, map } from "lodash-es";
+import { chain, map } from "lodash";
 
 export function parseScenarioMeta(scenarioData: string, agentCount?: number) {
   // extract the content from the .scen file

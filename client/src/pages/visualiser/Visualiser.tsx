@@ -95,7 +95,7 @@ const $bg = memoizee(
 export default function () {
   const state = useLocationState<VisualiserLocationState>();
   return (
-    <Visualiser1
+    <Visualisation
       instanceId={state.instanceId}
       solutionId={state.solutionId}
       source={state.source}
@@ -103,7 +103,7 @@ export default function () {
   );
 }
 
-export function Visualiser1({
+export function Visualisation({
   instanceId,
   solutionId,
   source,

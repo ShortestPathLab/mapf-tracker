@@ -1,4 +1,4 @@
-import { last } from "lodash-es";
+import { last } from "lodash";
 
 export function parseMap(map: string): boolean[][] {
   // ignore the top 4 lines, we only want the map data,

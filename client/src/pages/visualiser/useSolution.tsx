@@ -85,22 +85,23 @@ export function useSolution({
   const { data: scenario, isLoading: isScenarioLoading } = useScenarioData(
     instance?.scen_id
   );
-  const { data: mapData1, isLoading: isMapDataLoading } = useMapData(
+  const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(
     instance?.map_id
   );
 
   const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
     queryKey: ["solutionContextData", solutionId, source, instanceId],
     queryFn: async () => {
+      console.log(solution, instance, mapMetaData, scenario);
       const [mapData, scenarioData] = await Promise.all([
-        (await fetch(`./assets/maps/${mapData1.map_name}.map`)).text(),
+        (await fetch(`/assets/maps/${mapMetaData.map_name}.map`)).text(),
         (
           await fetch(
-            `./assets/scens/${mapData1.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
+            `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
           )
         ).text(),
       ]);
-      return {
+      const t = {
         map: parseMap(mapData),
         result: parseScenario(
           scenarioData,
@@ -108,8 +109,10 @@ export function useSolution({
           solution.join("\n")
         ),
       };
+      console.log(t);
+      return t;
     },
-    enabled: !!solution && !!instance && !!mapData1 && !!scenario,
+    enabled: !!solution && !!instance && !!mapMetaData && !!scenario,
   });
 
   const { map, result } = generalData ?? {};
