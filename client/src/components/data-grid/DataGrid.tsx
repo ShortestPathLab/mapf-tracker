@@ -87,7 +87,7 @@ export default function DataGrid<
           <Box sx={{ p: 1 }} />
         ) : (
           <Stack
-            sx={{ p: 2, gap: 2 }}
+            sx={{ py: 2, gap: 2 }}
             direction="row"
             justifyContent="space-between"
             alignItems="center"
@@ -110,7 +110,7 @@ export default function DataGrid<
           </Stack>
         ))}
       {isLoading ? (
-        <CircularProgress sx={{ mx: "auto", mt: 2, mb: 4 }} />
+        <CircularProgress sx={{ mx: "auto", my: 4 }} />
       ) : (
         <MuiDataGrid<T>
           rowSelection={false}

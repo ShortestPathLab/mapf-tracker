@@ -36,7 +36,8 @@ export default function index(props: AppBarProps) {
   const clickHandler =
     (url?: string, action?: () => void, close?: () => void) => () => {
       if (url) {
-        navigate(url);
+        const same = url === pathname;
+        navigate(url, {}, { reason: same ? "top" : "appbar" });
         close?.();
       } else {
         action?.();
@@ -105,7 +106,14 @@ export default function index(props: AppBarProps) {
                           <Collapse in={isOpen}>
                             <List sx={{ mt: label ? -1 : 0 }}>
                               {items.map(
-                                ({ icon, label, url, action, avatar }) => {
+                                ({
+                                  icon,
+                                  selectedIcon,
+                                  label,
+                                  url,
+                                  action,
+                                  avatar,
+                                }) => {
                                   const selected =
                                     url && !!matchPath(`${url}/*`, pathname);
                                   return (
@@ -119,6 +127,7 @@ export default function index(props: AppBarProps) {
                                         px: md ? 1 : 1.5,
                                         // Looks more comfortable when there's space on the right
                                         pr: 3,
+                                        bgcolor: "transparent",
                                       }}
                                       onClick={clickHandler(
                                         url,
@@ -129,13 +138,27 @@ export default function index(props: AppBarProps) {
                                       <ListItemIcon
                                         sx={{
                                           color: selected && "primary.main",
+                                          minWidth: 48,
                                         }}
                                       >
-                                        {avatar ?? icon}
+                                        {avatar ??
+                                          (selected
+                                            ? selectedIcon ?? icon
+                                            : icon)}
                                       </ListItemIcon>
                                       <ListItemText
-                                        primary={label}
-                                        sx={{ color: "text.primary" }}
+                                        primary={
+                                          <Box
+                                            component="span"
+                                            sx={{
+                                              fontWeight: 450,
+                                              fontSize: "0.95rem",
+                                              color: "text.primary",
+                                            }}
+                                          >
+                                            {label}
+                                          </Box>
+                                        }
                                       />
                                     </ListItemButton>
                                   );

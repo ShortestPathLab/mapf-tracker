@@ -15,7 +15,7 @@ export const DetailsList = ({
         <ListItem key={index}>
           <ListItemText
             sx={{ display: "flex", flexDirection: "column-reverse" }}
-            primary={item.value}
+            primary={item.value ?? "--"}
             secondary={item.label}
           />
         </ListItem>

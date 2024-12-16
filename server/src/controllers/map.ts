@@ -1,5 +1,17 @@
 import { RequestHandler } from "express";
 import { Map } from "models";
+import { route } from "query";
+import z from "zod";
+import { createPreviewAsync } from "./createPreview.worker";
+
+export const preview: RequestHandler = route(
+  z.object({
+    map: z.string().optional(),
+    instance: z.string().optional(),
+    scenario: z.string().optional(),
+  }),
+  async (data) => await createPreviewAsync(data)
+);
 
 export const findAll: RequestHandler = (req, res) => {
   Map.find({})

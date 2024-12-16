@@ -88,6 +88,7 @@ export function useAcrylic(color?: string): SxProps<Theme> {
 const solid = (b: string) => `linear-gradient(to bottom, ${b}, ${b})`;
 
 export const paper = (elevation: number = 1) => ({
+  boxSizing: "border-box",
   borderRadius: 1,
   backdropFilter: "blur(16px)",
   transition: ({ transitions }) =>

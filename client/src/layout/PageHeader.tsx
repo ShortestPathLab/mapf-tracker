@@ -20,13 +20,13 @@ export default function PageHeader({
   return (
     <Stack
       sx={{
-        gap: sm ? 1 : 2,
+        gap: 1,
         mb: sm ? -1 : 0,
       }}
     >
       <Typography variant="h2">{current}</Typography>
       {description && (
-        <Typography color="text.secondary" variant="body2">
+        <Typography color="text.secondary" variant="subtitle1">
           {description}
         </Typography>
       )}

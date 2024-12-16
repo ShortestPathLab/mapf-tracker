@@ -1,29 +1,25 @@
 import { CheckOutlined } from "@mui/icons-material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Button, Divider, Stack, Tab, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { ConfirmDialog } from "components/dialog/Modal";
-import { Scroll } from "components/dialog/Scrollbars";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useDialog } from "hooks/useDialog";
 import { useLocationState } from "hooks/useNavigation";
-import { Layout } from "layout";
-import { topbarHeight } from "layout/topbarHeight";
+import { BentoLayout } from "layout/BentoLayout";
 import { sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   useFinaliseOngoingSubmissionMutation,
   useOngoingSubmissionSummaryQuery,
 } from "queries/useOngoingSubmissionQuery";
+import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
-import { useState } from "react";
 import { Actions } from "./Actions";
-import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
+import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
-import { useRequestData } from "queries/useRequestQuery";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
@@ -48,6 +44,7 @@ export default function SubmissionSummaryPage() {
     <SubmissionRequestGlance key="glance" apiKey={apiKey} />,
     <Actions key="actions" apiKey={apiKey} />,
     <Tickets key="tickets" apiKey={apiKey} />,
+    <Box key="gap" sx={{ height: 72 }} />,
   ];
 
   const contentRight = [
@@ -117,6 +114,7 @@ export default function SubmissionSummaryPage() {
         </FlatCard>
       </Stack>
     </SubmissionSummary>,
+    <Box key="gap" sx={{ height: 72 }} />,
   ];
 
   const contentBottom = [
@@ -146,93 +144,20 @@ export default function SubmissionSummaryPage() {
     </Button>,
   ];
 
-  const [tab, setTab] = useState("upload");
-
   return (
     <>
-      <Layout
+      <BentoLayout
         flat
         title={requestData?.algorithmName ?? "Submit data"}
         path={[
           { name: "Home", url: "/" },
           { name: "My submissions", url: "/track" },
         ]}
-      >
-        {sm ? (
-          <>
-            <TabContext value={tab}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <TabList
-                  onChange={(e, v) => setTab(v)}
-                  aria-label="lab API tabs example"
-                >
-                  <Tab label="Upload" value="upload" />
-                  <Tab label="Validation" value="validate" />
-                </TabList>
-              </Box>
-              <TabPanel
-                value="upload"
-                sx={{ display: "flex", gap: 4, flexDirection: "column", p: 0 }}
-              >
-                {contentLeft}
-              </TabPanel>
-              <TabPanel
-                value="validate"
-                sx={{
-                  display: "flex",
-                  gap: 4,
-                  flexDirection: "column",
-                  p: 0,
-                  mt: -6,
-                }}
-              >
-                {contentRight}
-              </TabPanel>
-            </TabContext>
-            {/* Gap for sticky footer */}
-            <Box sx={{ height: 72 }} />
-          </>
-        ) : (
-          <Stack
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              height: `calc(100dvh - ${topbarHeight(sm)}px)`,
-              right: 0,
-            }}
-          >
-            <Stack
-              direction="row"
-              sx={{
-                bgcolor: "background.default",
-                height: "100%",
-              }}
-            >
-              <Scroll y style={{ flex: 0.3, minWidth: 460 }}>
-                <Stack sx={{ gap: 4, p: 3, flex: 1 }}>
-                  <Typography variant="h2">Upload data</Typography>
-                  {contentLeft}
-                  {/* Gap for sticky footer */}
-                  <Box sx={{ height: 72 }} />
-                </Stack>
-              </Scroll>
-              <Divider flexItem orientation="vertical" />
-              <Scroll y style={{ flex: 1 }}>
-                <Stack sx={{ gap: 4, p: 3, flex: 1 }}>
-                  <Typography variant="h2" sx={{ mb: -2 }}>
-                    Validation results
-                  </Typography>
-                  {contentRight}
-                  {/* Gap for sticky footer */}
-                  <Box sx={{ height: 72 }} />
-                </Stack>
-              </Scroll>
-            </Stack>
-          </Stack>
-        )}
-        {dialog}
-      </Layout>
+        contentLeft={contentLeft}
+        contentRight={contentRight}
+        labelLeft="Upload data"
+        labelRight="Validation progress"
+      />
       <Stack
         sx={{
           overflow: "hidden",
@@ -245,6 +170,7 @@ export default function SubmissionSummaryPage() {
       >
         {contentBottom}
       </Stack>
+      {dialog}
     </>
   );
 }

@@ -4,7 +4,7 @@ import { tryChain } from "./tryChain";
 export const formatPercentage = (c: number, d: number = 2) =>
   `${(c * 100).toFixed(d)}%`;
 
-export const DATE_TIME_FORMAT = "HH:mmaaa, dd MMM yyyy";
+export const DATE_TIME_FORMAT = "HH:mmaaa dd MMM yyyy";
 
 export const formatDate = (c: unknown) => {
   return tryChain(

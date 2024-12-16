@@ -1,5 +1,6 @@
 import mongoose, { Model } from "mongoose";
 import config from "config/db";
+import { Document } from "mongoose";
 
 mongoose.Promise = global.Promise;
 
@@ -23,5 +24,5 @@ export type Infer<T extends Model<any, any, any, any>> = T extends Model<
   any,
   any
 >
-  ? R
+  ? R & Document<unknown, any, R>
   : never;

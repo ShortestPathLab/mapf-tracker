@@ -14,10 +14,9 @@ import { Scroll } from "components/dialog/Scrollbars";
 import { useScrollState } from "components/dialog/useScrollState";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
-import { useNavigate } from "hooks/useNavigation";
+import { useHistory, useNavigate } from "hooks/useNavigation";
 import { last, merge } from "lodash";
 import { ReactNode, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 
@@ -58,11 +57,14 @@ export default function Layout({
 }: LayoutProps) {
   const lg = useSm();
   const xs = useXs();
-  const location = useLocation();
+  const { location, action } = useHistory();
   const [, isTop, , panel, setPanel] = useScrollState(appbarHeight(lg));
   useEffect(() => {
-    panel?.scrollTo?.({ top: 0, behavior: "smooth" });
-  }, [location.key]);
+    console.log(location, action);
+    if (location.state?.session?.reason === "top" && action === "forward") {
+      panel?.scrollTo?.({ top: 0, behavior: "smooth" });
+    }
+  }, [location, action]);
   const navigate = useNavigate();
   const header = <PageHeader {...{ current: title, path, description }} />;
   const content = (

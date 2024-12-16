@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import { Counter } from "components/Counter";
 import { filter, minBy, now, sumBy } from "lodash";
 import {
@@ -7,6 +6,7 @@ import {
 } from "queries/useOngoingSubmissionQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
+import { Dot } from "components/Dot";
 
 export function Status({ apiKey }: { apiKey?: string | number }) {
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
@@ -24,15 +24,8 @@ export function Status({ apiKey }: { apiKey?: string | number }) {
 
   return (
     <>
-      <Box
+      <Dot
         sx={{
-          display: "inline-block",
-          width: 6,
-          height: 6,
-          borderRadius: 1,
-          mr: 1,
-          verticalAlign: "middle",
-          mb: 0.25,
           bgcolor:
             {
               submitted: "text.secondary",

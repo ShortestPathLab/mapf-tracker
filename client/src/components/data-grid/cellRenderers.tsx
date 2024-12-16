@@ -16,8 +16,9 @@ export const cellRendererText = ({
       overflow: "hidden",
       textOverflow: "ellipsis",
     }}
+    color={formattedValue ? "text.primary" : "text.secondary"}
   >
-    {formattedValue}
+    {formattedValue ?? "--"}
   </Typography>
 );
 

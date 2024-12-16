@@ -1,4 +1,4 @@
-import { Box, BoxProps, Card, CardProps } from "@mui/material";
+import { Box, BoxProps, CardProps } from "@mui/material";
 import { useSm } from "./dialog/useSmallDisplay";
 
 export function FlatCard({ children, ...props }: BoxProps & CardProps) {
@@ -8,6 +8,6 @@ export function FlatCard({ children, ...props }: BoxProps & CardProps) {
       {children}
     </Box>
   ) : (
-    <Card {...props}>{children}</Card>
+    children
   );
 }

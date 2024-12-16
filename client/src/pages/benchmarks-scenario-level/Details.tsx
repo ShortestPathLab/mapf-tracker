@@ -7,15 +7,21 @@ import {
   TimelineSeparator,
   timelineItemClasses,
 } from "@mui/lab";
-import { ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import {
+  Divider,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { DetailsList } from "components/DetailsList";
+import { Dot } from "components/Dot";
 import Grid from "layout/Grid";
 import { capitalize, head } from "lodash";
 import pluralize from "pluralize";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
-import { paper } from "theme";
 import { formatDate } from "utils/format";
 
 export default function Details({ id }: { id?: string }) {
@@ -24,34 +30,45 @@ export default function Details({ id }: { id?: string }) {
   const { data: scenario } = useScenarioData(instance?.scen_id);
   const { data: map } = useMapData(instance?.map_id);
   return (
-    <Grid gap={4}>
-      <Stack sx={paper(0)}>
-        <DetailsList
-          items={[
-            {
-              label: "Instance",
-              value: pluralize("agent", instance?.agents, true),
-            },
-            {
-              label: "Scenario",
-              value: `${scenario?.scen_type}-${scenario?.type_id}`,
-            },
-            { label: "Map", value: `${map?.map_name}` },
-            {
-              label: "Status",
-              value: capitalize(
-                [
-                  isFinite(instance?.solution_cost) ? "solved" : "unsolved",
-                  isFinite(instance?.solution_cost) &&
-                  instance.solution_cost === instance?.lower_cost
-                    ? "closed"
-                    : "open",
-                ].join(", ")
-              ),
-            },
-          ]}
-        />
-      </Stack>
+    <Stack sx={{ gap: 4 }}>
+      <DetailsList
+        sx={{ m: -2 }}
+        items={[
+          {
+            label: "Instance",
+            value: pluralize("agent", instance?.agents, true),
+          },
+          {
+            label: "Scenario",
+            value: `${scenario?.scen_type}-${scenario?.type_id}`,
+          },
+          { label: "Map", value: `${map?.map_name}` },
+          {
+            label: "Status",
+            value: (
+              <>
+                <Dot
+                  sx={{
+                    bgcolor: instance?.solution_cost
+                      ? "success.main"
+                      : "warning.main",
+                  }}
+                />
+                {capitalize(
+                  [
+                    instance?.solution_cost ? "solved" : "unsolved",
+                    instance?.solution_cost &&
+                    instance.solution_cost === instance?.lower_cost
+                      ? "closed"
+                      : "open",
+                  ].join(", ")
+                )}
+              </>
+            ),
+          },
+        ]}
+      />
+      <Divider />
       <Grid sx={{ gap: 4 }}>
         {[
           {
@@ -104,6 +121,6 @@ export default function Details({ id }: { id?: string }) {
           </Stack>
         ))}
       </Grid>
-    </Grid>
+    </Stack>
   );
 }

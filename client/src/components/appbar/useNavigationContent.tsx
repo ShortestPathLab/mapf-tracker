@@ -1,8 +1,11 @@
 import {
+  Book,
   BookOutlined,
   CodeOutlined,
+  Create,
   CreateOutlined,
   DarkModeOutlined,
+  EmojiEvents,
   EmojiEventsOutlined,
   FileUploadOutlined,
   GitHub,
@@ -43,6 +46,7 @@ export function useNavigationContent() {
       avatar?: ReactNode;
       url?: string;
       icon?: ReactNode;
+      selectedIcon?: ReactNode;
       last?: boolean;
       action?: () => void;
     }[];
@@ -51,7 +55,7 @@ export function useNavigationContent() {
       label: "Browse",
       items: [
         {
-          label: "Benchmarks",
+          label: "Browse",
           url: "/benchmarks",
           icon: <MultilineChartOutlined />,
           description:
@@ -61,6 +65,7 @@ export function useNavigationContent() {
           label: "Submissions",
           url: "/submissions",
           icon: <EmojiEventsOutlined />,
+          selectedIcon: <EmojiEvents />,
           description: "View and compare submitted algorithms",
         },
       ],
@@ -73,6 +78,7 @@ export function useNavigationContent() {
           label: "Make a submission",
           url: "/submit",
           icon: <CreateOutlined />,
+          selectedIcon: <Create />,
           description:
             "If you want to contribute, start by requesting an API key",
         },
@@ -94,6 +100,7 @@ export function useNavigationContent() {
           label: "Docs",
           url: "/docs",
           icon: <BookOutlined />,
+          selectedIcon: <Book />,
           description: "View the documentation",
         },
         {
@@ -142,7 +149,7 @@ export function useNavigationContent() {
           : [
               {
                 iconButton: true,
-                label: "Admin",
+                label: "Management",
                 action: showLogIn,
                 icon: <PersonOutlined />,
                 description: "Log in to manage this platform",

@@ -1,17 +1,13 @@
 import { FileDownloadOutlined, ShowChartOutlined } from "@mui/icons-material";
-import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";
+import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { AnalysisButton } from "components/analysis/Analysis";
-import {
-  cellRendererBar,
-  cellRendererText,
-  useDataGridActions,
-} from "components/data-grid";
+import { cellRendererBar, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { InstanceCollection } from "core/types";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
-import { capitalize } from "lodash";
+import { startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
@@ -68,34 +64,18 @@ export default function Table() {
 
   const columns: GridColDef<InstanceCollection>[] = [
     {
-      field: "Icon",
-      width: 48,
-      renderCell: () => <IconCard />,
-      flex: 0,
-    },
-    {
-      field: "type_id",
-      headerName: "Scenario ID",
-      type: "number",
+      field: "scen_type",
+      headerName: "",
       sortable: true,
-      width: 160,
+      width: 220,
+      valueGetter: (_, row) => `${startCase(row.scen_type)} ${row.type_id}`,
       renderCell: ({ value, row }) => (
         <Item
-          primary={`Scenario ${value}`}
+          icon={<PreviewCard scenario={row.id} />}
+          primary={startCase(value)}
           secondary={`${row.instances ?? "?"} instances`}
         />
       ),
-    },
-    {
-      field: "scen_type",
-      headerName: "Scenario type",
-      sortable: true,
-      align: "left",
-      headerAlign: "left",
-      width: 150,
-      valueFormatter: capitalize,
-      fold: true,
-      renderCell: cellRendererText,
     },
     {
       field: "solved_percentage",

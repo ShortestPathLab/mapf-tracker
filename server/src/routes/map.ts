@@ -7,5 +7,6 @@ export default (app: Application) => {
   // router.use(cache("1 day"));
   router.get("/", map.findAll);
   router.get("/:id", map.findOne);
+  router.post("/preview", map.preview);
   app.use("/api/map", router);
 };

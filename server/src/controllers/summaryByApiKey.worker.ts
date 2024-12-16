@@ -1,16 +1,10 @@
 import { connectToDatabase } from "connection";
 import { chain, countBy, groupBy, head, mapValues, once } from "lodash";
-import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
-import _memoize from "p-memoize";
+import { Infer, OngoingSubmission } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { asyncMap } from "utils/waitMap";
 import { z } from "zod";
-
-const memoize = _memoize as <T>(t: T) => T;
-
-const findInstance = memoize((id: string) => Instance.findById(id));
-const findMap = memoize((id: string) => Map.findById(id));
-const findScenario = memoize((id: string) => Scenario.findById(id));
+import { findInstance, findScenario, findMap } from "./findMemo";
 
 export const path = import.meta.path;
 

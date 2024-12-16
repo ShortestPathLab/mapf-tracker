@@ -73,25 +73,16 @@ function createSolutionCostChecker(expected: number = 0) {
   ] as const;
 }
 
-const contentCacheKey = ([{ map, scenario }]: [
-  { map: Infer<typeof Map>; scenario: Infer<typeof Scenario> }
-]): string => `${map}::${scenario}`;
-
 const findInstance = memoizeAsync((id: string) => Instance.findById(id));
 const findMap = memoizeAsync((id: string) => Map.findById(id));
 const findScenario = memoizeAsync((id: string) => Scenario.findById(id));
-
-const getMapMemo = memoizeAsync(getMap, { cacheKey: contentCacheKey });
-const getScenarioMemo = memoizeAsync(getScenario, {
-  cacheKey: contentCacheKey,
-});
 
 async function getMeta(instanceId: Types.ObjectId) {
   const instance = await findInstance(instanceId.toString());
   const map = await findMap(instance.map_id.toString());
   const scenario = await findScenario(instance.scen_id.toString());
-  const mapContent = await getMapMemo({ map, scenario });
-  const scenarioContent = await getScenarioMemo({ map, scenario });
+  const mapContent = await getMap({ map, scenario });
+  const scenarioContent = await getScenario({ map, scenario });
   return { map, scenario, mapContent, scenarioContent };
 }
 

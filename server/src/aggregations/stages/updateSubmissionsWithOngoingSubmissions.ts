@@ -116,5 +116,8 @@ The pipeline is as follows:
 4. Add algo_id by looking up submission key id.
 5. Add instance id by looking up instance id.
 6. Merge into submission model.
+
+This pipeline does not delete documents in the \`submissions\` that do not have an \`ongoing_submission\` counterpart.
+
   `,
 };

@@ -34,7 +34,7 @@ export function Sidebar(props: StackProps) {
               key={value}
               {...{ value, label, description }}
               iconPosition="start"
-              sx={{ justifyContent: "flex-start", px: 3, minHeight: 64 }}
+              sx={{ justifyContent: "flex-start", px: 3, minHeight: 56 }}
             />
           ))}
         </Tabs>

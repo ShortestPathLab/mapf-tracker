@@ -11,5 +11,6 @@
     "skipLibCheck": true /* Specify multiple folders that act like './node_modules/@types'. */,
     "types": ["bun-types"]
   },
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

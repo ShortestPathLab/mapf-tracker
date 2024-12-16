@@ -2,9 +2,8 @@ import {
   BlurOnOutlined,
   FileDownloadOutlined,
   InfoOutlined,
-  RouteOutlined,
 } from "@mui/icons-material";
-import { IconCard } from "components/IconCard";
+import { Item } from "components/Item";
 import { useSnackbarAction } from "components/Snackbar";
 import { cellRendererText, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
@@ -19,7 +18,7 @@ import { cloneElement } from "react";
 import { formatDate } from "utils/format";
 import Details from "./Details";
 import { downloadRow } from "./download";
-import { Item } from "components/Item";
+import { PreviewCard } from "../../components/PreviewCard";
 
 export default function Table() {
   const state = useLocationState<ScenarioLevelLocationState>();
@@ -68,19 +67,14 @@ export default function Table() {
 
   const columns: GridColDef<Instance>[] = [
     {
-      field: "Icon",
-      width: 48,
-      renderCell: () => <IconCard icon={<RouteOutlined />} />,
-      flex: 0,
-    },
-    {
       field: "agents",
-      headerName: "Agent count",
+      headerName: "",
       type: "number",
       sortable: true,
       width: 160,
       renderCell: ({ value, row }) => (
         <Item
+          icon={<PreviewCard instance={row.id} />}
           primary={pluralize("agent", value, true)}
           secondary={row.solution_algos ? "Solved" : "Unsolved"}
         />
@@ -103,7 +97,7 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
-      width: 150,
+      width: 70,
       fold: true,
       renderCell: cellRendererText,
     },
@@ -113,7 +107,7 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
-      width: 150,
+      width: 70,
       fold: true,
       renderCell: cellRendererText,
     },
@@ -135,7 +129,7 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
-      width: 150,
+      width: 70,
       fold: true,
       renderCell: cellRendererText,
     },
@@ -146,7 +140,7 @@ export default function Table() {
       sortable: true,
       align: "left",
       headerAlign: "left",
-      width: 150,
+      width: 70,
       fold: true,
       renderCell: cellRendererText,
     },

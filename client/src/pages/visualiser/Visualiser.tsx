@@ -203,7 +203,7 @@ export function Visualisation({
           }}
         >
           <BlurOffOutlined />
-          <Typography>No visualisation available</Typography>
+          <Typography>No solution available</Typography>
           <Button
             variant="contained"
             sx={{ py: 1, px: 2, mt: 2 }}

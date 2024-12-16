@@ -33,8 +33,18 @@ export function Analysis({ template }: { template: Template[] }) {
   return (
     <Stack direction="column" sx={{ gap: 2 }}>
       {map(template, ({ variants, name }) => (
-        <Stack direction="column">
-          <Typography sx={{ p: 2 }} variant="h6">
+        <Stack
+          direction="column"
+          sx={{
+            boxShadow: (t) => `inset 0px 0px 0px 1px ${t.palette.divider}`,
+            borderRadius: 1,
+          }}
+        >
+          <Typography
+            sx={{ p: 2, py: 1 }}
+            variant="overline"
+            color="text.secondary"
+          >
             {name}
           </Typography>
           <Chart data={variants} />

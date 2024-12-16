@@ -24,10 +24,10 @@ export function useDialog<T>(
   );
   const open = (s?: T & DialogContentProps) => {
     setState(s ?? ({} as T));
-    navigate(pathname(), {}, { ...b, [key]: true });
+    navigate(pathname(), {}, { ...b, [key]: true, reason: "modal" });
   };
   const close = () => {
-    navigate(pathname(), {}, { ...b, [key]: false });
+    navigate(-1);
     setModalProps({});
   };
   return {
