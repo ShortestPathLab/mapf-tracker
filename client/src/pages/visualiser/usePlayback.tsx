@@ -1,4 +1,4 @@
-import { max, min } from "lodash";
+import { delay, max, min } from "lodash";
 import { useEffect, useState } from "react";
 
 export function usePlayback(span: number) {
@@ -11,7 +11,7 @@ export function usePlayback(span: number) {
       if (cancelled) return;
       setStep((p) => min([p + 1, span])!);
       setPaused(step === span);
-      requestAnimationFrame(f);
+      delay(f, 1000 / 24);
     };
     requestAnimationFrame(f);
     return () => void (cancelled = true);

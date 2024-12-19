@@ -93,7 +93,11 @@ export const Bar = ({
         ))}
         {slack > 0 && (
           <LinearProgress
-            sx={{ flex: slack, transition: `flex 2s ${easeCircle}` }}
+            sx={{
+              flex: slack,
+              bgcolor: "action.disabledBackground",
+              transition: `flex 2s ${easeCircle}`,
+            }}
             value={0}
             valueBuffer={0}
             variant={buffer ? "buffer" : "determinate"}

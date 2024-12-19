@@ -60,7 +60,6 @@ export default function Layout({
   const { location, action } = useHistory();
   const [, isTop, , panel, setPanel] = useScrollState(appbarHeight(lg));
   useEffect(() => {
-    console.log(location, action);
     if (location.state?.session?.reason === "top" && action === "forward") {
       panel?.scrollTo?.({ top: 0, behavior: "smooth" });
     }

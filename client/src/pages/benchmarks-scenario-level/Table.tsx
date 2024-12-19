@@ -1,24 +1,17 @@
-import {
-  BlurOnOutlined,
-  FileDownloadOutlined,
-  InfoOutlined,
-} from "@mui/icons-material";
+import { FileDownloadOutlined } from "@mui/icons-material";
 import { Item } from "components/Item";
 import { useSnackbarAction } from "components/Snackbar";
 import { cellRendererText, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog } from "components/dialog";
 import { Instance } from "core/types";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
 import pluralize from "pluralize";
 import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
-import { cloneElement } from "react";
 import { formatDate } from "utils/format";
-import Details from "./Details";
-import { downloadRow } from "./download";
 import { PreviewCard } from "../../components/PreviewCard";
+import { downloadRow } from "./download";
 
 export default function Table() {
   const state = useLocationState<ScenarioLevelLocationState>();
@@ -36,26 +29,7 @@ export default function Table() {
     });
 
   const actions = useDataGridActions<Instance>({
-    items: [
-      {
-        name: "Open visualisation",
-        icon: <BlurOnOutlined />,
-        action: openVisualisation,
-      },
-      {
-        name: "Details",
-        icon: <InfoOutlined />,
-        render: (row, trigger) => (
-          <Dialog
-            title="Instance details"
-            trigger={(onClick) => cloneElement(trigger, { onClick })}
-            padded
-          >
-            <Details id={row.id} />
-          </Dialog>
-        ),
-      },
-    ],
+    items: [],
     menuItems: [
       {
         name: "Download result (CSV)",
@@ -71,7 +45,7 @@ export default function Table() {
       headerName: "",
       type: "number",
       sortable: true,
-      width: 160,
+      width: 200,
       renderCell: ({ value, row }) => (
         <Item
           icon={<PreviewCard instance={row.id} />}

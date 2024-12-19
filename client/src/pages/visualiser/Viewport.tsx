@@ -8,6 +8,7 @@ export interface ViewportProps {
   width: number;
   height: number;
   children?: React.ReactNode;
+  onViewport: (v: PixiViewport) => void;
 }
 
 export interface PixiComponentViewportProps extends ViewportProps {
@@ -25,10 +26,10 @@ const PixiComponentViewport = PixiComponent("Viewport", {
       worldWidth: props.width * 2,
       worldHeight: props.height * 2,
       ticker: props.app.ticker,
-      events: events,
+      events,
     });
     viewport.drag().pinch().wheel().clampZoom({});
-
+    props.onViewport?.(viewport);
     return viewport;
   },
 });

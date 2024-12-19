@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { head, last, memoize } from "lodash";
+import { head, last, memoize, pick } from "lodash";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
@@ -41,26 +41,47 @@ export function processAgent(agent: string) {
   };
 }
 
+const defaultOffsetMap = {
+  u: { x: 0, y: -1 },
+  d: { x: 0, y: 1 },
+  l: { x: -1, y: 0 },
+  r: { x: 1, y: 0 },
+};
+
 function createAgentPositionGetter(
   sources: { x: number; y: number }[],
   paths: string[]
 ) {
   const as = paths.map((c) => processAgent(c || "w"));
-  const f = memoize((n: number): { x: number; y: number }[] => {
-    if (n === 0) {
+  const getAgentPositions = memoize((t: number): { x: number; y: number }[] => {
+    if (t === 0) {
       return sources;
     } else {
       // TODO: still using math origin! data in solution_paths has not been swapped over yet.
-      const offsets = createOffsetMap(createActionMap(n - 1, as), {
-        u: { x: 0, y: -1 },
-        d: { x: 0, y: 1 },
-        l: { x: -1, y: 0 },
-        r: { x: 1, y: 0 },
-      });
-      return sumPositions(f(n - 1), offsets);
+      const offsets = createOffsetMap(
+        createActionMap(t - 1, as),
+        defaultOffsetMap
+      );
+      return sumPositions(getAgentPositions(t - 1), offsets);
     }
   });
-  return f;
+  const bs = paths.map((c) => processAgent(c || "w"));
+  const getAgentPosition = memoize(
+    (n: number): { action?: string; x: number; y: number }[] => {
+      let t = 0;
+      const path: { x: number; y: number; action?: string }[] = [sources[n]];
+      while (!bs[n].done(t)) {
+        const [offset] = sumPositions(
+          [pick(last(path), "x", "y")],
+          createOffsetMap(createActionMap(t, [bs[n]]), defaultOffsetMap)
+        );
+        path.push({ ...offset, action: bs[n].seek(t) });
+        t++;
+      }
+      return path;
+    }
+  );
+  return { getAgentPositions, getAgentPath: getAgentPosition };
 }
 
 type SolutionParameters = {
@@ -92,7 +113,6 @@ export function useSolution({
   const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
     queryKey: ["solutionContextData", solutionId, source, instanceId],
     queryFn: async () => {
-      console.log(solution, instance, mapMetaData, scenario);
       const [mapData, scenarioData] = await Promise.all([
         (await fetch(`/assets/maps/${mapMetaData.map_name}.map`)).text(),
         (
@@ -101,7 +121,7 @@ export function useSolution({
           )
         ).text(),
       ]);
-      const t = {
+      return {
         map: parseMap(mapData),
         result: parseScenario(
           scenarioData,
@@ -109,8 +129,6 @@ export function useSolution({
           solution.join("\n")
         ),
       };
-      console.log(t);
-      return t;
     },
     enabled: !!solution && !!instance && !!mapMetaData && !!scenario,
   });
@@ -118,7 +136,7 @@ export function useSolution({
   const { map, result } = generalData ?? {};
   const { sources, paths } = result ?? {};
 
-  const getAgentPosition = useMemo(
+  const getters = useMemo(
     () => createAgentPositionGetter(sources ?? [], paths ?? []),
     [sources, paths]
   );
@@ -133,6 +151,6 @@ export function useSolution({
       isMapDataLoading,
     map: map ?? [],
     result,
-    getAgentPosition,
+    ...getters,
   };
 }

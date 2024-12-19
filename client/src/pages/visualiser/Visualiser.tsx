@@ -2,6 +2,7 @@ import {
   BlurOffOutlined,
   ChevronLeftOutlined,
   ChevronRightOutlined,
+  CloseOutlined,
   FirstPageOutlined,
   PauseOutlined,
   PlayArrowOutlined,
@@ -19,23 +20,51 @@ import {
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
+import { Item } from "components/Item";
 import { useSm } from "components/dialog/useSmallDisplay";
+import Enter from "components/transitions/Enter";
 import { useLocationState } from "hooks/useNavigation";
-import { each, min, range, trim } from "lodash";
+import {
+  ceil,
+  each,
+  find,
+  findIndex,
+  first,
+  floor,
+  head,
+  isUndefined,
+  last,
+  mapValues,
+  min,
+  range,
+  trim,
+  zip,
+} from "lodash";
 import memoizee from "memoizee";
 import { Viewport as PixiViewport } from "pixi-viewport";
-import { Graphics as PixiGraphics } from "pixi.js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { FederatedPointerEvent, Graphics as PixiGraphics } from "pixi.js";
+import {
+  Reducer,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
+import { lerp, useLerp } from "../../utils/useLerp";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
+import { Dot } from "components/Dot";
+import { Bar } from "components/data-grid";
 
-const SCALE_SHOW_GRID_THRESHOLD = 30;
+const SCALE_SHOW_GRID_THRESHOLD = 20;
 
 const LINE_WIDTH = 0.05;
 const WHITE = "#ffffff";
@@ -74,17 +103,33 @@ const $agents =
   (agents: { color: string; x: number; y: number }[]) => (g: PixiGraphics) => {
     g.clear();
     for (const { x, y, color } of agents) {
-      g.beginFill(hexToInt(color)).drawRect(x, y, 1, 1).endFill();
+      g.beginFill(hexToInt(color))
+        .drawCircle(x + 0.5, y + 0.5, 0.5)
+        .endFill();
     }
   };
 
 const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
   each(map, (row, y) => {
     each(row, (b, x) => {
-      if (b) g.beginFill(hexToInt(color)).drawRect(x, y, 1, 1).endFill();
+      if (b) g.beginFill(hexToInt(color), 0.85).drawRect(x, y, 1, 1).endFill();
     });
   });
 };
+
+const $agent = memoizee(
+  (color: string, path: { x: number; y: number }[]) => (g: PixiGraphics) => {
+    g.clear();
+    g.lineStyle(LINE_WIDTH, hexToInt(color));
+    g.moveTo(head(path).x + 0.5, head(path).y + 0.5);
+    each(path, (point) => {
+      g.lineTo(point.x + 0.5, point.y + 0.5);
+    });
+    g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
+    g.drawCircle(last(path).x + 0.5, last(path).y + 0.5, 0.5);
+  },
+  { normalizer: JSON.stringify }
+);
 
 const $bg = memoizee(
   (color, width, height): ((graphics: PixiGraphics) => void) =>
@@ -119,18 +164,34 @@ export function Visualisation({
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const { map, result, getAgentPosition, isLoading } = useSolution({
-    instanceId,
-    solutionId,
-    source,
-  });
+  const { map, result, getAgentPositions, getAgentPath, isLoading } =
+    useSolution({
+      instanceId,
+      solutionId,
+      source,
+    });
 
   const { timespan = 0, x = 0, y = 0 } = result ?? {};
 
   const { step, backwards, forwards, play, pause, paused, restart } =
     usePlayback(timespan);
 
+  const time = useLerp(step);
+
+  type P = {
+    agent?: number;
+    show?: boolean;
+  };
+  const [selection, setSelection] = useReducer<Reducer<P, P>>(
+    (a, b) => ({ ...a, ...b }),
+    {}
+  );
+
   // ─────────────────────────────────────────────────────────────────────
+
+  const getAgentColor = useMemo(() => {
+    return (i: number) => colors[i % colors.length]?.[dark ? "300" : "A400"];
+  }, [dark]);
 
   const drawGrid = useMemo(
     () => $grid({ x, y }, dark ? WHITE : BLACK),
@@ -142,45 +203,89 @@ export function Visualisation({
     [x, y, dark]
   );
 
+  const drawAgent = useMemo(
+    () =>
+      !isUndefined(selection.agent) &&
+      $agent(getAgentColor(selection.agent), getAgentPath?.(selection.agent)),
+    [step, getAgentColor, selection, getAgentPath]
+  );
+
   const drawMap = useMemo(() => $map(map, dark ? WHITE : BLACK), [map, dark]);
 
   const drawAgents = useMemo(() => {
-    const positions = getAgentPosition(step);
+    const [a, b] = [floor(time), ceil(time)];
+    const t = time - a;
+    const positions = zip(getAgentPositions(a), getAgentPositions(b));
     return $agents(
-      positions.map(({ x, y }, i) => ({
-        x,
-        y,
-        color: colors[i % colors.length][dark ? "300" : "A400"],
+      positions.map(([a, b], i) => ({
+        x: lerp(a.x, b.x, t),
+        y: lerp(a.y, b.y, t),
+        color: getAgentColor(i),
       }))
     );
-  }, [getAgentPosition, step, dark]);
-
-  // ─────────────────────────────────────────────────────────────────────
-
-  const scale = (width: number, height: number) =>
-    (min([width, height])! / min([x, y])!) * 0.7;
-
-  const offsetX = (w: number, h: number) => (w - scale(w, h) * x) / 2;
-  const offsetY = (w: number, h: number) => (h - scale(w, h) * y) / 2;
+  }, [getAgentPositions, getAgentColor, time, dark]);
 
   // ──────────────────────────────────────────────────────────────────────
 
-  const viewport = useRef<PixiViewport | null>(null);
+  const [viewport, setViewport] = useState<PixiViewport>();
   const [showGrid, setShowGrid] = useState(false);
+  const container = useRef<HTMLDivElement>();
+
+  const updateShowGrid = useCallback(() => {
+    if (viewport && x) {
+      setShowGrid(viewport.scale.x > SCALE_SHOW_GRID_THRESHOLD);
+    }
+  }, [viewport, x, setShowGrid]);
 
   useEffect(() => {
-    if (!viewport.current || !x) return;
-    const f = () => {
-      setShowGrid(
-        scale(viewport.current.screenWidth, viewport.current.screenHeight) *
-          viewport.current.scale.x >
-          SCALE_SHOW_GRID_THRESHOLD
-      );
-    };
-    viewport.current.on("moved", f);
-    f();
-    return () => void viewport.current.off("moved", f);
-  }, [viewport.current, x, setShowGrid]);
+    if (viewport) {
+      viewport.on("moved", updateShowGrid);
+      updateShowGrid();
+      return () => void viewport.off("moved", updateShowGrid);
+    }
+  }, [viewport, updateShowGrid]);
+
+  useEffect(() => {
+    if (viewport && x && y) {
+      viewport.animate({
+        position: { x: x / 2, y: y / 2 },
+        time: 0,
+        scale: min([x, y]) * 0.75,
+        callbackOnComplete: updateShowGrid,
+      });
+    }
+  }, [viewport, x, y, updateShowGrid]);
+
+  useEffect(() => {
+    if (viewport && container.current) {
+      const f = (e: FederatedPointerEvent) => {
+        const position = mapValues(viewport.toWorld(e.screen), (x) => floor(x));
+        const agent = find(
+          getAgentPositions(step),
+          (a) => a.x === position.x && a.y === position.y
+        );
+        container.current.style.cursor = agent ? "pointer" : "default";
+      };
+      viewport.on("mousemove", f);
+      return () => void viewport.off("mousemove", f);
+    }
+  }, [viewport, step, getAgentPositions, container.current]);
+
+  useEffect(() => {
+    if (viewport) {
+      const f = (e: { world: { x: number; y: number } }) => {
+        const position = mapValues(e.world, (x) => floor(x));
+        const agent = findIndex(
+          getAgentPositions(step),
+          (a) => a.x === position.x && a.y === position.y
+        );
+        if (agent === -1) return;
+        setSelection({ agent, show: true });
+      };
+      viewport.on("clicked", f);
+      return () => void viewport.off("clicked", f);
+    }
+  }, [viewport, getAgentPositions, step, setSelection]);
 
   const noVisualisation = !isLoading && !result;
 
@@ -227,38 +332,36 @@ export function Visualisation({
                   <CircularProgress />
                 </Stack>
               ) : (
-                <Stage
-                  {...size}
-                  renderOnComponentChange
-                  options={{
-                    antialias: true,
-                    powerPreference: "high-performance",
-                  }}
-                >
-                  <Graphics
-                    draw={$bg(
-                      theme.palette.background.default,
-                      size.width,
-                      size.height
-                    )}
-                  />
-                  <Viewport
+                <Box ref={container} sx={size}>
+                  <Stage
                     {...size}
-                    key={`${size.width},${size.height}`}
-                    ref={viewport}
+                    options={{
+                      antialias: true,
+                      powerPreference: "high-performance",
+                    }}
                   >
-                    <Container
-                      scale={scale(size.width, size.height)}
-                      x={offsetX(size.width, size.height)}
-                      y={offsetY(size.width, size.height)}
+                    <Graphics
+                      draw={$bg(
+                        theme.palette.background.default,
+                        size.width,
+                        size.height
+                      )}
+                    />
+                    <Viewport
+                      {...size}
+                      key={`${size.width},${size.height}`}
+                      onViewport={setViewport}
                     >
-                      <Graphics draw={drawAgents} />
-                      <Graphics draw={drawMap} />
-                      {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
-                      <Graphics draw={drawBox} alpha={0.1} />
-                    </Container>
-                  </Viewport>
-                </Stage>
+                      <Container>
+                        <Graphics draw={drawAgents} />
+                        <Graphics draw={drawMap} />
+                        {selection.show && <Graphics draw={drawAgent} />}
+                        {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
+                        <Graphics draw={drawBox} alpha={0.1} />
+                      </Container>
+                    </Viewport>
+                  </Stage>
+                </Box>
               )}
               <Stack
                 sx={{
@@ -311,10 +414,92 @@ export function Visualisation({
                   </Stack>
                 </Card>
               </Stack>
+              <Enter in={selection.show} axis="X" key={selection.agent}>
+                <Stack
+                  sx={{
+                    ...paper(1),
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    m: sm ? 2 : 3,
+                  }}
+                >
+                  {!isUndefined(selection.agent) && (
+                    <>
+                      <Stack
+                        direction="row"
+                        sx={{
+                          alignItems: "center",
+                          py: 0.5,
+                          px: 2,
+                          gap: 4,
+                        }}
+                      >
+                        <Typography sx={{ flex: 1 }}>
+                          <Dot
+                            sx={{ bgcolor: getAgentColor(selection.agent) }}
+                          />
+                          Agent {selection.agent}
+                        </Typography>
+                        <IconButton
+                          edge="end"
+                          onClick={() => setSelection({ show: false })}
+                        >
+                          <CloseOutlined />
+                        </IconButton>
+                      </Stack>
+                      <Stack sx={{ p: 2, minWidth: 180 }}>
+                        <Item
+                          invert
+                          primary={getAgentPath(selection.agent).length - 1}
+                          secondary="Cost"
+                        />
+                        {[
+                          {
+                            name: "Moving",
+                            value: proportionOf(
+                              getAgentPath(selection.agent),
+                              (p) => p.action !== "w"
+                            ),
+                          },
+                          {
+                            name: "Waiting",
+                            value: proportionOf(
+                              getAgentPath(selection.agent),
+                              (p) => p.action === "w"
+                            ),
+                          },
+                        ].map(({ name, value }) => (
+                          <Item
+                            invert
+                            key={name}
+                            primary={
+                              <Bar
+                                values={[
+                                  {
+                                    label: name,
+                                    value: value,
+                                    color: getAgentColor(selection.agent),
+                                  },
+                                ]}
+                              />
+                            }
+                            secondary={name}
+                          />
+                        ))}
+                      </Stack>
+                    </>
+                  )}
+                </Stack>
+              </Enter>
             </>
           )}
         </AutoSize>
       )}
     </Box>
   );
+}
+
+function proportionOf<T>(xs: T[], f: (x: T) => boolean): number {
+  return xs.filter(f).length / xs.length;
 }

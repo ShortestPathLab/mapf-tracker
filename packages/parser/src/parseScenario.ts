@@ -31,7 +31,7 @@ export function parseScenario(
   agentCount: number,
   solutionData: string
 ) {
-  const { sources, width, height } = parseScenarioMeta(
+  const { sources, width, height, goals } = parseScenarioMeta(
     scenarioData,
     agentCount
   );
@@ -58,6 +58,7 @@ export function parseScenario(
   return {
     paths,
     sources,
+    goals,
     x: width,
     y: height,
     timespan,
