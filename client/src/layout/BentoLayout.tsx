@@ -1,10 +1,44 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Divider, Stack, Tab, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { useSm } from "components/dialog/useSmallDisplay";
-import { ReactNode, useState } from "react";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { ReactNode, useRef, useState } from "react";
+import { useRafLoop } from "react-use";
 import Layout, { LayoutProps } from "./Layout";
+import { navbarHeight } from "./navbarHeight";
 import { topbarHeight } from "./topbarHeight";
+
+function TabBar({ children }: { children?: ReactNode }) {
+  const sm = useSm();
+  const xs = useXs();
+  const ref = useRef<HTMLElement>(null);
+  const threshold = navbarHeight(sm);
+  const [top, setTop] = useState(false);
+  useRafLoop(() => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setTop(rect.top >= threshold);
+    }
+  });
+  return (
+    <Box
+      ref={ref}
+      sx={{
+        borderBottom: 1,
+        borderColor: "divider",
+        mx: xs ? -2 : -3,
+        px: xs ? 0 : 1,
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
+        transition: (t) => t.transitions.create("background-color"),
+        bgcolor: top ? "background.default" : "background.paper",
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
 
 export function BentoLayout({
   contentLeft,
@@ -27,22 +61,12 @@ export function BentoLayout({
     <Layout flat {...props}>
       {sm ? (
         <TabContext value={tab}>
-          <Box
-            sx={{
-              borderBottom: 1,
-              borderColor: "divider",
-              mx: -2,
-              position: "sticky",
-              top: 0,
-              zIndex: 1,
-              bgcolor: "background.default",
-            }}
-          >
+          <TabBar>
             <TabList onChange={(e, v) => setTab(v)}>
               <Tab label={labelLeft} value="left" />
               <Tab label={labelRight} value="right" />
             </TabList>
-          </Box>
+          </TabBar>
           <TabPanel
             value="left"
             sx={{ display: "flex", gap: 4, flexDirection: "column", p: 0 }}

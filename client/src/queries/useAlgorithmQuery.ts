@@ -16,6 +16,13 @@ export const useAlgorithmsData = () => {
       json<AlgorithmCollection[]>(`${APIConfig.apiUrl}/algorithm/`),
   });
 };
+export const useAlgorithmDetailsData = () => {
+  return useQuery({
+    queryKey: ["algorithms-detailed"],
+    queryFn: () =>
+      json<AlgorithmCollection[]>(`${APIConfig.apiUrl}/algorithm/all_detail`),
+  });
+};
 
 export const useAlgorithmForInstanceData = (id: string) => {
   return useQuery({

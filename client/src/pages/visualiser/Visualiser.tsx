@@ -13,19 +13,22 @@ import {
   Card,
   CircularProgress,
   Divider,
+  Fade,
   IconButton,
+  Slider,
   Stack,
   Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
+import { Dot } from "components/Dot";
 import { Item } from "components/Item";
+import { Bar } from "components/data-grid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import { useLocationState } from "hooks/useNavigation";
 import {
-  ceil,
   each,
   find,
   findIndex,
@@ -33,9 +36,7 @@ import {
   floor,
   head,
   isUndefined,
-  last,
   mapValues,
-  min,
   range,
   trim,
   zip,
@@ -56,13 +57,11 @@ import { useNavigate } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
-import { lerp, useLerp } from "../../utils/useLerp";
+import { lerp, lerpCircle, useLerp } from "utils/useLerp";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
-import { Dot } from "components/Dot";
-import { Bar } from "components/data-grid";
 
 const SCALE_SHOW_GRID_THRESHOLD = 20;
 
@@ -117,17 +116,22 @@ const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
   });
 };
 
-const $agent = memoizee(
-  (color: string, path: { x: number; y: number }[]) => (g: PixiGraphics) => {
-    g.clear();
-    g.lineStyle(LINE_WIDTH, hexToInt(color));
-    g.moveTo(head(path).x + 0.5, head(path).y + 0.5);
-    each(path, (point) => {
-      g.lineTo(point.x + 0.5, point.y + 0.5);
-    });
-    g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
-    g.drawCircle(last(path).x + 0.5, last(path).y + 0.5, 0.5);
-  },
+const $agentDiagnostics = memoizee(
+  (
+      color: string,
+      path: { x: number; y: number }[],
+      goal: { x: number; y: number }
+    ) =>
+    (g: PixiGraphics) => {
+      g.clear();
+      g.lineStyle(LINE_WIDTH, hexToInt(color));
+      g.moveTo(head(path).x + 0.5, head(path).y + 0.5);
+      each(path, (point) => {
+        g.lineTo(point.x + 0.5, point.y + 0.5);
+      });
+      g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
+      g.drawCircle(goal.x + 0.5, goal.y + 0.5, 0.5);
+    },
   { normalizer: JSON.stringify }
 );
 
@@ -147,6 +151,38 @@ export default function () {
     />
   );
 }
+
+const $pointer = memoizee((color: string) => (g: PixiGraphics) => {
+  return g
+    .beginFill(hexToInt(color))
+    .drawPolygon(-0.12, -0.7, 0.12, -0.7, 0, -0.8)
+    .endFill();
+});
+
+export function Arrow({
+  position,
+  color,
+  rotation,
+  opacity,
+}: {
+  opacity: number;
+  position: { x: number; y: number };
+  color: string;
+  rotation: number;
+}) {
+  return (
+    <Graphics
+      alpha={opacity}
+      x={position.x + 0.5}
+      y={position.y + 0.5}
+      draw={$pointer(color)}
+      rotation={rotation + Math.PI / 2}
+    />
+  );
+}
+
+const getAngle = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+  Math.atan2(b.y - a.y, b.x - a.x);
 
 export function Visualisation({
   instanceId,
@@ -171,9 +207,9 @@ export function Visualisation({
       source,
     });
 
-  const { timespan = 0, x = 0, y = 0 } = result ?? {};
+  const { timespan = 0, x = 0, y = 0, goals } = result ?? {};
 
-  const { step, backwards, forwards, play, pause, paused, restart } =
+  const { step, backwards, forwards, play, pause, paused, restart, seek } =
     usePlayback(timespan);
 
   const time = useLerp(step);
@@ -206,15 +242,19 @@ export function Visualisation({
   const drawAgent = useMemo(
     () =>
       !isUndefined(selection.agent) &&
-      $agent(getAgentColor(selection.agent), getAgentPath?.(selection.agent)),
-    [step, getAgentColor, selection, getAgentPath]
+      $agentDiagnostics(
+        getAgentColor(selection.agent),
+        getAgentPath?.(selection.agent),
+        goals?.[selection.agent]
+      ),
+    [step, getAgentColor, selection, getAgentPath, goals]
   );
 
   const drawMap = useMemo(() => $map(map, dark ? WHITE : BLACK), [map, dark]);
 
+  const [a, b, c] = [floor(time), floor(time) + 1, floor(time) + 2];
+  const t = time - a;
   const drawAgents = useMemo(() => {
-    const [a, b] = [floor(time), ceil(time)];
-    const t = time - a;
     const positions = zip(getAgentPositions(a), getAgentPositions(b));
     return $agents(
       positions.map(([a, b], i) => ({
@@ -223,7 +263,7 @@ export function Visualisation({
         color: getAgentColor(i),
       }))
     );
-  }, [getAgentPositions, getAgentColor, time, dark]);
+  }, [a, b, t, getAgentPositions, getAgentColor, dark]);
 
   // ──────────────────────────────────────────────────────────────────────
 
@@ -247,12 +287,10 @@ export function Visualisation({
 
   useEffect(() => {
     if (viewport && x && y) {
-      viewport.animate({
-        position: { x: x / 2, y: y / 2 },
-        time: 0,
-        scale: min([x, y]) * 0.75,
-        callbackOnComplete: updateShowGrid,
-      });
+      viewport.fit(false, x, y);
+      viewport.moveCenter(x / 2, y / 2);
+      viewport.zoom(10, true);
+      updateShowGrid();
     }
   }, [viewport, x, y, updateShowGrid]);
 
@@ -332,42 +370,77 @@ export function Visualisation({
                   <CircularProgress />
                 </Stack>
               ) : (
-                <Box ref={container} sx={size}>
-                  <Stage
-                    {...size}
-                    options={{
-                      antialias: true,
-                      powerPreference: "high-performance",
-                    }}
-                  >
-                    <Graphics
-                      draw={$bg(
-                        theme.palette.background.default,
-                        size.width,
-                        size.height
-                      )}
-                    />
-                    <Viewport
+                <Fade
+                  in
+                  style={{
+                    transitionDelay: "300ms",
+                  }}
+                  key={`${size.width},${size.height}`}
+                >
+                  <Box ref={container} sx={size}>
+                    <Stage
                       {...size}
-                      key={`${size.width},${size.height}`}
-                      onViewport={setViewport}
+                      options={{
+                        antialias: true,
+                        powerPreference: "high-performance",
+                      }}
                     >
-                      <Container>
-                        <Graphics draw={drawAgents} />
-                        <Graphics draw={drawMap} />
-                        {selection.show && <Graphics draw={drawAgent} />}
-                        {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
-                        <Graphics draw={drawBox} alpha={0.1} />
-                      </Container>
-                    </Viewport>
-                  </Stage>
-                </Box>
+                      <Graphics
+                        draw={$bg(
+                          theme.palette.background.default,
+                          size.width,
+                          size.height
+                        )}
+                      />
+                      <Viewport {...size} onViewport={setViewport}>
+                        <Container>
+                          <Graphics draw={drawMap} />
+                          {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
+                          <Graphics draw={drawAgents} />
+                          {selection.show && <Graphics draw={drawAgent} />}
+                          {zip(
+                            getAgentPositions(a),
+                            getAgentPositions(b),
+                            getAgentPositions(c)
+                          ).map(([current, next, next2], i) => {
+                            const [nextDidMove, prevDidMove] = [
+                              next2.x !== next.x || next2.y !== next.y,
+                              next.x !== current.x || next.y !== current.y,
+                            ];
+                            const [nextAngle, prevAngle] = [
+                              getAngle(next ?? current, next2 ?? current),
+                              getAngle(current, next ?? current),
+                            ];
+                            return (
+                              <Arrow
+                                opacity={lerp(+prevDidMove, +nextDidMove, t)}
+                                position={{
+                                  x: lerp(current.x, next.x, t),
+                                  y: lerp(current.y, next.y, t),
+                                }}
+                                color={getAgentColor(i)}
+                                rotation={lerpCircle(
+                                  prevDidMove ? prevAngle : nextAngle,
+                                  nextDidMove ? nextAngle : prevAngle,
+                                  t
+                                )}
+                                key={i}
+                              />
+                            );
+                          })}
+                          <Graphics draw={drawBox} alpha={0.1} />
+                        </Container>
+                      </Viewport>
+                    </Stage>
+                  </Box>
+                </Fade>
               )}
               <Stack
                 sx={{
                   position: "absolute",
                   right: 0,
                   bottom: 0,
+                  maxWidth: "100%",
                   // p: 4,
                 }}
               >
@@ -411,6 +484,19 @@ export function Visualisation({
                         <IconButton onClick={action}>{icon}</IconButton>
                       </Tooltip>
                     ))}
+                    <Divider orientation="vertical" flexItem />
+                    <Slider
+                      value={step}
+                      onChange={(_, n) => seek(+n)}
+                      min={0}
+                      max={timespan}
+                      step={1}
+                      sx={{
+                        mx: 2,
+                        width: 240,
+                        flex: 1,
+                      }}
+                    />
                   </Stack>
                 </Card>
               </Stack>

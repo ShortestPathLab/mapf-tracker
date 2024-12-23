@@ -26,12 +26,16 @@ export const cellRendererBar = ({
   value,
   valueBuffer = 0,
   buffer,
+  label,
+  labelWidth = 32,
 }: {
   value?: number;
   valueBuffer?: number;
   buffer?: boolean;
+  label?: ReactNode;
+  labelWidth?: number;
 }) => (
-  <Tooltip title={`${round(value * 100, 4)}%`}>
+  <Tooltip title={label ?? `${round(value * 100, 4)}%`}>
     <Stack
       direction="row"
       sx={{
@@ -47,8 +51,11 @@ export const cellRendererBar = ({
         valueBuffer={valueBuffer * 100}
         variant={buffer ? "buffer" : "determinate"}
       />
-      <Typography variant="overline" sx={{ width: 32, textAlign: "right" }}>
-        {formatValue(value)}
+      <Typography
+        variant="overline"
+        sx={{ width: labelWidth, textAlign: "right" }}
+      >
+        {label ?? formatValue(value)}
       </Typography>
     </Stack>
   </Tooltip>

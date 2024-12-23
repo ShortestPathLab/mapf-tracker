@@ -101,6 +101,7 @@ export function ModalAppBar({
       elevation={0}
       position={position}
       style={{
+        pointerEvents: "none",
         color: theme.palette.text.primary,
         background: "transparent",
       }}
@@ -122,6 +123,7 @@ export function ModalAppBar({
         <IconButton
           style={{
             marginRight: theme.spacing(1),
+            pointerEvents: "all",
           }}
           aria-label="open drawer"
           edge="start"

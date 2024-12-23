@@ -56,6 +56,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
               { $match: { solution_cost: { $ne: null } } },
               { $count: "count" },
             ],
+            instances: [{ $count: "count" }],
           },
         },
         {
@@ -65,6 +66,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
             best_solution: { $first: "$best_solution.count" },
             instances_closed: { $first: "$instances_closed.count" },
             instances_solved: { $first: "$instances_solved.count" },
+            instances: { $first: "$instances.count" },
           },
         },
         {
@@ -74,6 +76,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
             best_solution: { $ifNull: ["$best_solution", 0] },
             instances_closed: { $ifNull: ["$instances_closed", 0] },
             instances_solved: { $ifNull: ["$instances_solved", 0] },
+            instances: { $ifNull: ["$instances", 0] },
           },
         },
         {

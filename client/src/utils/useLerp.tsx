@@ -1,4 +1,4 @@
-import { clamp } from "lodash";
+import { clamp, floor } from "lodash";
 import { useState } from "react";
 import { useRafLoop } from "react-use";
 
@@ -9,3 +9,11 @@ export function useLerp(a: number, t: number = 0.1) {
   useRafLoop(() => setCurrent((p) => lerp(p, a, t)));
   return current;
 }
+
+const signedMod = (a, n) => a - floor(a / n) * n;
+
+export const lerpCircle = (a: number, b: number, t: number) => {
+  const diff = b - a;
+  const theta = signedMod(diff + Math.PI, Math.PI * 2) - Math.PI;
+  return lerp(a, a + theta, t);
+};

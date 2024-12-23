@@ -46,6 +46,18 @@ export type AlgorithmCollection = {
   algo_name: string;
 };
 
+export type AlgorithmDetails = AlgorithmCollection &
+  CollectionWithInstanceCount & {
+    authors: string;
+    best_lower: number;
+    best_solution: number;
+    github?: string;
+    instances_closed: number;
+    instances_solved: number;
+    papers?: string;
+    request_id: string;
+  };
+
 export type AlgorithmCollectionCount = AlgorithmCollection & {
   count: number;
   total: number;
