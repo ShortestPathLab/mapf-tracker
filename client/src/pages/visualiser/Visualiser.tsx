@@ -28,22 +28,9 @@ import { Bar } from "components/data-grid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import { useLocationState } from "hooks/useNavigation";
-import {
-  each,
-  find,
-  findIndex,
-  first,
-  floor,
-  head,
-  isUndefined,
-  mapValues,
-  range,
-  trim,
-  zip,
-} from "lodash";
-import memoizee from "memoizee";
+import { find, findIndex, floor, isUndefined, mapValues, zip } from "lodash";
 import { Viewport as PixiViewport } from "pixi-viewport";
-import { FederatedPointerEvent, Graphics as PixiGraphics } from "pixi.js";
+import { FederatedPointerEvent } from "pixi.js";
 import {
   Reducer,
   useCallback,
@@ -62,84 +49,17 @@ import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
 import { usePlayback } from "./usePlayback";
 import { useSolution } from "./useSolution";
-
-const SCALE_SHOW_GRID_THRESHOLD = 20;
-
-const LINE_WIDTH = 0.05;
-const WHITE = "#ffffff";
-const BLACK = "#000000";
-
-function hexToInt(s: string) {
-  return parseInt(trim(s, "#"), 16);
-}
-
-const $grid =
-  ({ x: width, y: height }: { x: number; y: number }, color: string) =>
-  (g: PixiGraphics) => {
-    g.clear();
-    g.lineStyle(LINE_WIDTH, hexToInt(color));
-    for (const x of range(width + 1)) {
-      g.moveTo(x, 0).lineTo(x, height);
-    }
-    for (const y of range(height + 1)) {
-      g.moveTo(0, y).lineTo(width, y);
-    }
-  };
-
-const $box =
-  ({ x: width, y: height }: { x: number; y: number }, color: string) =>
-  (g: PixiGraphics) => {
-    g.clear();
-    g.lineStyle(LINE_WIDTH, hexToInt(color));
-    g.moveTo(0, 0)
-      .lineTo(0, height)
-      .lineTo(width, height)
-      .lineTo(width, 0)
-      .lineTo(0, 0);
-  };
-
-const $agents =
-  (agents: { color: string; x: number; y: number }[]) => (g: PixiGraphics) => {
-    g.clear();
-    for (const { x, y, color } of agents) {
-      g.beginFill(hexToInt(color))
-        .drawCircle(x + 0.5, y + 0.5, 0.5)
-        .endFill();
-    }
-  };
-
-const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
-  each(map, (row, y) => {
-    each(row, (b, x) => {
-      if (b) g.beginFill(hexToInt(color), 0.85).drawRect(x, y, 1, 1).endFill();
-    });
-  });
-};
-
-const $agentDiagnostics = memoizee(
-  (
-      color: string,
-      path: { x: number; y: number }[],
-      goal: { x: number; y: number }
-    ) =>
-    (g: PixiGraphics) => {
-      g.clear();
-      g.lineStyle(LINE_WIDTH, hexToInt(color));
-      g.moveTo(head(path).x + 0.5, head(path).y + 0.5);
-      each(path, (point) => {
-        g.lineTo(point.x + 0.5, point.y + 0.5);
-      });
-      g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
-      g.drawCircle(goal.x + 0.5, goal.y + 0.5, 0.5);
-    },
-  { normalizer: JSON.stringify }
-);
-
-const $bg = memoizee(
-  (color, width, height): ((graphics: PixiGraphics) => void) =>
-    (g) =>
-      g.beginFill(hexToInt(color)).drawRect(0, 0, width, height).endFill()
-);
+import { WHITE, BLACK, SCALE_SHOW_GRID_THRESHOLD } from "./constants";
+import {
+  $grid,
+  $box,
+  $agentDiagnostics,
+  $map,
+  $agents,
+  $bg,
+  getAngle,
+  Arrow,
+} from "./draw";
 
 export default function () {
   const state = useLocationState<VisualiserLocationState>();
@@ -151,38 +71,6 @@ export default function () {
     />
   );
 }
-
-const $pointer = memoizee((color: string) => (g: PixiGraphics) => {
-  return g
-    .beginFill(hexToInt(color))
-    .drawPolygon(-0.12, -0.7, 0.12, -0.7, 0, -0.8)
-    .endFill();
-});
-
-export function Arrow({
-  position,
-  color,
-  rotation,
-  opacity,
-}: {
-  opacity: number;
-  position: { x: number; y: number };
-  color: string;
-  rotation: number;
-}) {
-  return (
-    <Graphics
-      alpha={opacity}
-      x={position.x + 0.5}
-      y={position.y + 0.5}
-      draw={$pointer(color)}
-      rotation={rotation + Math.PI / 2}
-    />
-  );
-}
-
-const getAngle = (a: { x: number; y: number }, b: { x: number; y: number }) =>
-  Math.atan2(b.y - a.y, b.x - a.x);
 
 export function Visualisation({
   instanceId,
@@ -214,11 +102,11 @@ export function Visualisation({
 
   const time = useLerp(step);
 
-  type P = {
+  type Selection = {
     agent?: number;
     show?: boolean;
   };
-  const [selection, setSelection] = useReducer<Reducer<P, P>>(
+  const [selection, setSelection] = useReducer<Reducer<Selection, Selection>>(
     (a, b) => ({ ...a, ...b }),
     {}
   );
@@ -252,18 +140,19 @@ export function Visualisation({
 
   const drawMap = useMemo(() => $map(map, dark ? WHITE : BLACK), [map, dark]);
 
-  const [a, b, c] = [floor(time), floor(time) + 1, floor(time) + 2];
-  const t = time - a;
+  const [t0, t1, t2] = [floor(time), floor(time) + 1, floor(time) + 2];
+  const dt = time - t0;
+
   const drawAgents = useMemo(() => {
-    const positions = zip(getAgentPositions(a), getAgentPositions(b));
+    const positions = zip(getAgentPositions(t0), getAgentPositions(t1));
     return $agents(
       positions.map(([a, b], i) => ({
-        x: lerp(a.x, b.x, t),
-        y: lerp(a.y, b.y, t),
+        x: lerp(a.x, b.x, dt),
+        y: lerp(a.y, b.y, dt),
         color: getAgentColor(i),
       }))
     );
-  }, [a, b, t, getAgentPositions, getAgentColor, dark]);
+  }, [t0, t1, dt, getAgentPositions, getAgentColor, dark]);
 
   // ──────────────────────────────────────────────────────────────────────
 
@@ -399,30 +288,30 @@ export function Visualisation({
                           <Graphics draw={drawAgents} />
                           {selection.show && <Graphics draw={drawAgent} />}
                           {zip(
-                            getAgentPositions(a),
-                            getAgentPositions(b),
-                            getAgentPositions(c)
-                          ).map(([current, next, next2], i) => {
+                            getAgentPositions(t0),
+                            getAgentPositions(t1),
+                            getAgentPositions(t2)
+                          ).map(([p0, p1, p2], i) => {
                             const [nextDidMove, prevDidMove] = [
-                              next2.x !== next.x || next2.y !== next.y,
-                              next.x !== current.x || next.y !== current.y,
+                              p2.x !== p1.x || p2.y !== p1.y,
+                              p1.x !== p0.x || p1.y !== p0.y,
                             ];
                             const [nextAngle, prevAngle] = [
-                              getAngle(next ?? current, next2 ?? current),
-                              getAngle(current, next ?? current),
+                              getAngle(p1 ?? p0, p2 ?? p0),
+                              getAngle(p0, p1 ?? p0),
                             ];
                             return (
                               <Arrow
-                                opacity={lerp(+prevDidMove, +nextDidMove, t)}
+                                opacity={lerp(+prevDidMove, +nextDidMove, dt)}
                                 position={{
-                                  x: lerp(current.x, next.x, t),
-                                  y: lerp(current.y, next.y, t),
+                                  x: lerp(p0.x, p1.x, dt),
+                                  y: lerp(p0.y, p1.y, dt),
                                 }}
                                 color={getAgentColor(i)}
                                 rotation={lerpCircle(
                                   prevDidMove ? prevAngle : nextAngle,
                                   nextDidMove ? nextAngle : prevAngle,
-                                  t
+                                  dt
                                 )}
                                 key={i}
                               />
@@ -492,6 +381,7 @@ export function Visualisation({
                       max={timespan}
                       step={1}
                       sx={{
+                        "& *": { transition: "none !important" },
                         mx: 2,
                         width: 240,
                         flex: 1,

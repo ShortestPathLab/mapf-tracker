@@ -4,6 +4,7 @@ import { FlatCard } from "components/FlatCard";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
+import { TabBar } from "./TabBar";
 
 export function DataInspectorLayout({
   data: dataContent,
@@ -21,40 +22,30 @@ export function DataInspectorLayout({
   return (
     <TabContext value={tab}>
       <Stack sx={{ px: sm ? 0 : 2 }}>
-        <TabList
-          variant={sm ? "fullWidth" : "standard"}
-          sx={{
-            position: "sticky",
-            top: 0,
-            mt: sm ? 0 : -2,
-            pt: sm ? 0 : 2,
-            pb: sm ? 0 : 2,
-            zIndex: 2,
-            bgcolor: "background.default",
-            mx: -2,
-          }}
-          onChange={setFromParam(setTab)}
-        >
-          {[
-            { label: dataTabName, value: "data" },
-            { label: analysisTabName, value: "analysis" },
-          ].map(({ label, value }) => (
-            <Tab
-              sx={{ minWidth: 0, px: sm ? 2 : 0, mr: sm ? 0 : 4 }}
-              label={label}
-              value={value}
-              key={value}
-            />
-          ))}
-        </TabList>
+        <TabBar>
+          <TabList onChange={setFromParam(setTab)}>
+            {[
+              { label: dataTabName, value: "data" },
+              { label: analysisTabName, value: "analysis" },
+            ].map(({ label, value }) => (
+              <Tab
+                sx={{ minWidth: 0, px: sm ? 2 : 0, mr: sm ? 0 : 4 }}
+                label={label}
+                value={value}
+                key={value}
+              />
+            ))}
+          </TabList>
+        </TabBar>
         {[
-          { value: "data", content: dataContent },
+          {
+            value: "data",
+            content: <Box sx={{ py: sm ? 0 : 3 }}>{dataContent}</Box>,
+          },
           {
             value: "analysis",
             content: (
-              <Box sx={{ px: sm ? 2 : 0, py: sm ? 3 : 0 }}>
-                {analysisContent}
-              </Box>
+              <Box sx={{ px: sm ? 2 : 0, py: 3 }}>{analysisContent}</Box>
             ),
           },
         ].map(({ value, content }) => (

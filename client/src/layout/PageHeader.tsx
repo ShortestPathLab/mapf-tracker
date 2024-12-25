@@ -20,13 +20,25 @@ export default function PageHeader({
   return (
     <Stack
       sx={{
-        gap: 1,
+        gap: 2,
         mb: sm ? -1 : 0,
       }}
     >
-      <Typography variant="h2">{current}</Typography>
+      <Typography
+        variant="h2"
+        sx={{
+          fontSize: sm ? "2rem" : "2.25rem",
+          pt: sm ? 3 : 0,
+        }}
+      >
+        {current}
+      </Typography>
       {description && (
-        <Typography color="text.secondary" variant="subtitle1">
+        <Typography
+          color="text.secondary"
+          variant="subtitle2"
+          sx={{ maxWidth: "80%" }}
+        >
           {description}
         </Typography>
       )}

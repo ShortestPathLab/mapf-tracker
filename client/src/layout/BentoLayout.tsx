@@ -1,44 +1,11 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Divider, Stack, Tab, Typography } from "@mui/material";
+import { Divider, Stack, Tab, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
-import { ReactNode, useRef, useState } from "react";
-import { useRafLoop } from "react-use";
+import { useSm } from "components/dialog/useSmallDisplay";
+import { ReactNode, useState } from "react";
 import Layout, { LayoutProps } from "./Layout";
-import { navbarHeight } from "./navbarHeight";
 import { topbarHeight } from "./topbarHeight";
-
-function TabBar({ children }: { children?: ReactNode }) {
-  const sm = useSm();
-  const xs = useXs();
-  const ref = useRef<HTMLElement>(null);
-  const threshold = navbarHeight(sm);
-  const [top, setTop] = useState(false);
-  useRafLoop(() => {
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setTop(rect.top >= threshold);
-    }
-  });
-  return (
-    <Box
-      ref={ref}
-      sx={{
-        borderBottom: 1,
-        borderColor: "divider",
-        mx: xs ? -2 : -3,
-        px: xs ? 0 : 1,
-        position: "sticky",
-        top: 0,
-        zIndex: 1,
-        transition: (t) => t.transitions.create("background-color"),
-        bgcolor: top ? "background.default" : "background.paper",
-      }}
-    >
-      {children}
-    </Box>
-  );
-}
+import { TabBar } from "./TabBar";
 
 export function BentoLayout({
   contentLeft,
