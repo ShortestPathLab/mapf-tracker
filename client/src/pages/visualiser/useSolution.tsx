@@ -14,6 +14,7 @@ import {
   createOffsetMap,
   sumPositions,
 } from "validator";
+import { optimiseGridMap } from "./optimiseGridMap";
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);
@@ -121,19 +122,25 @@ export function useSolution({
           )
         ).text(),
       ]);
+      const parsedMap = parseMap(mapData);
+      const parsedScenario = parseScenario(
+        scenarioData,
+        instance.agents,
+        solution.join("\n")
+      );
       return {
-        map: parseMap(mapData),
-        result: parseScenario(
-          scenarioData,
-          instance.agents,
-          solution.join("\n")
-        ),
+        optimisedMap: optimiseGridMap(parsedMap, {
+          width: parsedScenario.x,
+          height: parsedScenario.y,
+        }),
+        map: parsedMap,
+        result: parsedScenario,
       };
     },
     enabled: !!solution && !!instance && !!mapMetaData && !!scenario,
   });
 
-  const { map, result } = generalData ?? {};
+  const { map, result, optimisedMap } = generalData ?? {};
   const { sources, paths } = result ?? {};
 
   const getters = useMemo(
@@ -150,6 +157,7 @@ export function useSolution({
       isScenarioLoading ||
       isMapDataLoading,
     map: map ?? [],
+    optimisedMap: optimisedMap ?? [],
     result,
     ...getters,
   };

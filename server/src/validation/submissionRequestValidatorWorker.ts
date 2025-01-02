@@ -80,7 +80,7 @@ export const submissionSchema = submissionBaseSchema
     solution_plan:
       typeof solution_plan === "string"
         ? solution_plan.split(/\r\n|\r|\n/)
-        : solution_plan,
+        : solution_plan ?? [],
   }))
   .transform(({ agent_count, ...v }, ctx) => {
     const inferredAgentCount = v.solution_plan.length;

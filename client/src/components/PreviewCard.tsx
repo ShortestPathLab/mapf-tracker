@@ -76,10 +76,10 @@ export function PreviewCard({
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-
+            backgroundPosition: "center",
             borderRadius: 1,
             backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
+            backgroundSize: "contain",
             backgroundImage: `url("data:image/svg+xml;base64,${b64Image}")`,
           }}
         />

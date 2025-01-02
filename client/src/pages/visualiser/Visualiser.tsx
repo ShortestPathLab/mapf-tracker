@@ -30,7 +30,7 @@ import Enter from "components/transitions/Enter";
 import { useLocationState } from "hooks/useNavigation";
 import { find, findIndex, floor, isUndefined, mapValues, zip } from "lodash";
 import { Viewport as PixiViewport } from "pixi-viewport";
-import { FederatedPointerEvent } from "pixi.js";
+import { FederatedPointerEvent, Rectangle } from "pixi.js";
 import {
   Reducer,
   useCallback,
@@ -60,6 +60,7 @@ import {
   getAngle,
   Arrow,
 } from "./draw";
+import { useThrottle } from "react-use";
 
 export default function () {
   const state = useLocationState<VisualiserLocationState>();
@@ -70,6 +71,24 @@ export default function () {
       source={state.source}
     />
   );
+}
+
+function within({ x, y }: { x: number; y: number }, bounds?: Rectangle) {
+  if (bounds) {
+    return (
+      bounds.left < x + 2 &&
+      bounds.right > x - 2 &&
+      bounds.top < y + 2 &&
+      bounds.bottom > y - 2
+    );
+  }
+  return true;
+}
+
+function useThrottleState<T>(ms?: number) {
+  const [state, setState] = useState<T>();
+  const throttleState = useThrottle(state, ms ?? 1000 / 15);
+  return [throttleState, setState] as const;
 }
 
 export function Visualisation({
@@ -88,7 +107,7 @@ export function Visualisation({
 
   // ─────────────────────────────────────────────────────────────────────
 
-  const { map, result, getAgentPositions, getAgentPath, isLoading } =
+  const { result, getAgentPositions, getAgentPath, isLoading, optimisedMap } =
     useSolution({
       instanceId,
       solutionId,
@@ -138,30 +157,37 @@ export function Visualisation({
     [step, getAgentColor, selection, getAgentPath, goals]
   );
 
-  const drawMap = useMemo(() => $map(map, dark ? WHITE : BLACK), [map, dark]);
+  const drawMap = useMemo(
+    () => $map(optimisedMap, dark ? WHITE : BLACK),
+    [optimisedMap, dark]
+  );
 
   const [t0, t1, t2] = [floor(time), floor(time) + 1, floor(time) + 2];
   const dt = time - t0;
 
-  const drawAgents = useMemo(() => {
+  const drawAgents = (bounds?: Rectangle) => {
     const positions = zip(getAgentPositions(t0), getAgentPositions(t1));
     return $agents(
-      positions.map(([a, b], i) => ({
-        x: lerp(a.x, b.x, dt),
-        y: lerp(a.y, b.y, dt),
-        color: getAgentColor(i),
-      }))
+      positions
+        .map(([a, b], i) => ({
+          x: lerp(a.x, b.x, dt),
+          y: lerp(a.y, b.y, dt),
+          color: getAgentColor(i),
+        }))
+        .filter((position) => within(position, bounds))
     );
-  }, [t0, t1, dt, getAgentPositions, getAgentColor, dark]);
+  };
 
   // ──────────────────────────────────────────────────────────────────────
 
   const [viewport, setViewport] = useState<PixiViewport>();
   const [showGrid, setShowGrid] = useState(false);
+  const [bounds, setBounds] = useThrottleState<Rectangle>();
   const container = useRef<HTMLDivElement>();
 
   const updateShowGrid = useCallback(() => {
     if (viewport && x) {
+      setBounds(viewport.getVisibleBounds());
       setShowGrid(viewport.scale.x > SCALE_SHOW_GRID_THRESHOLD);
     }
   }, [viewport, x, setShowGrid]);
@@ -285,38 +311,47 @@ export function Visualisation({
                         <Container>
                           <Graphics draw={drawMap} />
                           {showGrid && <Graphics draw={drawGrid} alpha={0.1} />}
-                          <Graphics draw={drawAgents} />
+                          <Graphics draw={drawAgents(bounds)} />
+                          {showGrid &&
+                            zip(
+                              getAgentPositions(t0),
+                              getAgentPositions(t1),
+                              getAgentPositions(t2)
+                            ).map(([p0, p1, p2], i) => {
+                              const [nextDidMove, prevDidMove] = [
+                                p2.x !== p1.x || p2.y !== p1.y,
+                                p1.x !== p0.x || p1.y !== p0.y,
+                              ];
+                              const [nextAngle, prevAngle] = [
+                                getAngle(p1 ?? p0, p2 ?? p0),
+                                getAngle(p0, p1 ?? p0),
+                              ];
+                              const position = {
+                                x: lerp(p0.x, p1.x, dt),
+                                y: lerp(p0.y, p1.y, dt),
+                              };
+                              return (
+                                within(position, bounds) && (
+                                  <Arrow
+                                    opacity={lerp(
+                                      +prevDidMove,
+                                      +nextDidMove,
+                                      dt
+                                    )}
+                                    position={position}
+                                    color={getAgentColor(i)}
+                                    rotation={lerpCircle(
+                                      prevDidMove ? prevAngle : nextAngle,
+                                      nextDidMove ? nextAngle : prevAngle,
+                                      dt
+                                    )}
+                                    key={i}
+                                  />
+                                )
+                              );
+                            })}
                           {selection.show && <Graphics draw={drawAgent} />}
-                          {zip(
-                            getAgentPositions(t0),
-                            getAgentPositions(t1),
-                            getAgentPositions(t2)
-                          ).map(([p0, p1, p2], i) => {
-                            const [nextDidMove, prevDidMove] = [
-                              p2.x !== p1.x || p2.y !== p1.y,
-                              p1.x !== p0.x || p1.y !== p0.y,
-                            ];
-                            const [nextAngle, prevAngle] = [
-                              getAngle(p1 ?? p0, p2 ?? p0),
-                              getAngle(p0, p1 ?? p0),
-                            ];
-                            return (
-                              <Arrow
-                                opacity={lerp(+prevDidMove, +nextDidMove, dt)}
-                                position={{
-                                  x: lerp(p0.x, p1.x, dt),
-                                  y: lerp(p0.y, p1.y, dt),
-                                }}
-                                color={getAgentColor(i)}
-                                rotation={lerpCircle(
-                                  prevDidMove ? prevAngle : nextAngle,
-                                  nextDidMove ? nextAngle : prevAngle,
-                                  dt
-                                )}
-                                key={i}
-                              />
-                            );
-                          })}
+
                           <Graphics draw={drawBox} alpha={0.1} />
                         </Container>
                       </Viewport>

@@ -39,13 +39,18 @@ export const $agents =
         .endFill();
     }
   };
-export const $map = (map: boolean[][], color: string) => (g: PixiGraphics) => {
-  each(map, (row, y) => {
-    each(row, (b, x) => {
-      if (b) g.beginFill(hexToInt(color), 0.85).drawRect(x, y, 1, 1).endFill();
+export const $map =
+  (
+    map: { width: number; height: number; x: number; y: number }[],
+    color: string
+  ) =>
+  (g: PixiGraphics) => {
+    each(map, ({ x, y, width, height }) => {
+      g.beginFill(hexToInt(color), 0.85)
+        .drawRect(x, y, width, height)
+        .endFill();
     });
-  });
-};
+  };
 export const $agentDiagnostics = memoizee(
   (
       color: string,
