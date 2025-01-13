@@ -12,6 +12,7 @@ import { DoneException } from "./exceptions/DoneException";
 import type { Dictionary } from "lodash";
 import { some, zip } from "lodash";
 import { checkEdgeCollision } from "./checks/checkEdgeCollision";
+import { decode } from "./encode";
 
 type ValidationParameters = {
   paths: string[];
@@ -52,6 +53,18 @@ export function processAgent(agent: string) {
   };
 }
 
+export function processAgentSimple(agent: string) {
+  const decoded = decode(agent);
+  return {
+    seek: (n: number) => {
+      return decoded[n] || "w";
+    },
+    done: (n: number) => {
+      return n >= decoded.length;
+    },
+  };
+}
+
 export const defaultOffsetMap = {
   u: { x: 0, y: -1 },
   d: { x: 0, y: 1 },
@@ -84,12 +97,13 @@ export function validate({
   onFinish = [],
   onError = () => false,
 }: ValidationParameters) {
-  const as = paths.map(processAgent);
+  const as = paths.map(processAgentSimple);
   let i = 0;
   let prev = sources;
   while (some(as, (c) => !c.done(i))) {
     const actions = createActionMap(i, as);
     const next = sumPositions(prev, createOffsetMap(actions));
+    const done = as.map((c) => c.done(i));
     for (const check of onTimestep) {
       const result = check({
         timestep: i,
@@ -99,7 +113,7 @@ export function validate({
         domain,
         sources,
         goals,
-        done: as.map((c) => c.done(i)),
+        done,
       });
       // Stop validation if onError returns true.
       if (result.errors?.length && onError(result)) return false;

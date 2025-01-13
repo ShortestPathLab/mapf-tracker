@@ -32,3 +32,25 @@ export function encode(input: string): string {
 
   return encoded;
 }
+
+/**
+ * From ChatGPT
+ * Run length decoder
+ */
+export function decode(encoded: string): string {
+  let decoded = "";
+  let count = "";
+
+  for (const char of encoded) {
+    if (isNaN(Number(char))) {
+      // If the character is not a number, append it 'count' times to the result
+      decoded += char.repeat(Number(count) || 1);
+      count = ""; // Reset count for the next sequence
+    } else {
+      // If the character is a number, add it to the count
+      count += char;
+    }
+  }
+
+  return decoded;
+}

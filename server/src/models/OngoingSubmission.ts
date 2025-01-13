@@ -18,6 +18,7 @@ const schema = createSchema(
     solutions: [String],
     options: { skipValidation: Schema.Types.Boolean },
     validation: {
+      timeTaken: Number,
       isValidationRun: Schema.Types.Boolean,
       errors: [String],
       outcome: String,

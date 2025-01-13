@@ -6,23 +6,22 @@ export function checkImmediateCollision({
   next,
   timestep,
 }: CheckParameters): CheckResult {
+  const a = next.map($);
+  const hasCollision = new Set(a).size !== a.length;
+  if (!hasCollision) return {};
   const collision = _(next)
     .map((c, i) => [c, i] as const)
-    .groupBy(([c, i]) => $(c))
+    .groupBy(([c]) => $(c))
     .values()
     .find((agents) => agents.length > 1)
     .value();
-  if (collision) {
-    const [p] = head(collision);
-    return {
-      errorAgents: collision.map(([, i]) => i),
-      errors: [
-        `agent-to-agent direct collision, agents ${collision
-          .map(([, i]) => i)
-          .join(" and ")}, at timestep ${timestep} ${$(p)}`,
-      ],
-    };
-  } else {
-    return {};
-  }
+  const [p] = head(collision);
+  return {
+    errorAgents: collision.map(([, i]) => i),
+    errors: [
+      `agent-to-agent direct collision, agents ${collision
+        .map(([, i]) => i)
+        .join(" and ")}, at timestep ${timestep} ${$(p)}`,
+    ],
+  };
 }
