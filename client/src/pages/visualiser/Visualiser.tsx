@@ -28,9 +28,19 @@ import { Bar } from "components/data-grid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import { useLocationState } from "hooks/useNavigation";
-import { find, findIndex, floor, isUndefined, mapValues, zip } from "lodash";
+import {
+  capitalize,
+  filter,
+  find,
+  findIndex,
+  floor,
+  isUndefined,
+  mapValues,
+  zip,
+} from "lodash";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { FederatedPointerEvent, Rectangle } from "pixi.js";
+import pluralize from "pluralize";
 import {
   Reducer,
   useCallback,
@@ -41,31 +51,32 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { useThrottle } from "react-use";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
 import { lerp, lerpCircle, useLerp } from "utils/useLerp";
+import { Diagnostic } from "./Diagnostic";
 import Viewport from "./Viewport";
 import { VisualiserLocationState } from "./VisualiserLocationState";
-import { usePlayback } from "./usePlayback";
-import { useSolution } from "./useSolution";
-import { WHITE, BLACK, SCALE_SHOW_GRID_THRESHOLD } from "./constants";
+import { BLACK, SCALE_SHOW_GRID_THRESHOLD, WHITE } from "./constants";
 import {
-  $grid,
-  $box,
   $agentDiagnostics,
-  $map,
   $agents,
   $bg,
-  getAngle,
+  $box,
+  $grid,
+  $map,
   Arrow,
+  getAngle,
 } from "./draw";
-import { useThrottle } from "react-use";
+import { usePlayback } from "./usePlayback";
+import { useSolution } from "./useSolution";
 
 export default function () {
   const state = useLocationState<VisualiserLocationState>();
   return (
-    <Visualisation
+    <SolutionVisualisation
       instanceId={state.instanceId}
       solutionId={state.solutionId}
       source={state.source}
@@ -91,7 +102,7 @@ function useThrottleState<T>(ms?: number) {
   return [throttleState, setState] as const;
 }
 
-export function Visualisation({
+export function SolutionVisualisation({
   instanceId,
   solutionId,
   source,
@@ -100,21 +111,61 @@ export function Visualisation({
   solutionId?: string;
   source?: "ongoing" | "submitted";
 }) {
+  const { result, ...rest } = useSolution({
+    instanceId,
+    solutionId,
+    source,
+  });
+  return (
+    <Visualisation
+      goals={result?.goals}
+      timespan={result?.timespan}
+      width={result?.x}
+      height={result?.y}
+      {...rest}
+    />
+  );
+}
+
+export function Visualisation({
+  goals,
+  width,
+  height,
+  timespan,
+  getAgentPath,
+  getAgentPositions,
+  isLoading,
+  optimisedMap,
+  diagnostics = [
+    {
+      agents: [44, 94],
+      t: 33,
+      x: 27,
+      y: 3,
+      label: "agent-to-agent direct collision",
+    },
+  ],
+}: {
+  width?: number;
+  height?: number;
+  isLoading?: boolean;
+  goals?: { x: number; y: number }[];
+  timespan?: number;
+  getAgentPositions: (t: number) => { x: number; y: number }[];
+  getAgentPath: (a: number) => {
+    x: number;
+    y: number;
+    action?: string;
+  }[];
+  optimisedMap?: { x: number; y: number; width: number; height: number }[];
+  diagnostics?: Diagnostic[];
+}) {
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const sm = useSm();
   const navigate = useNavigate();
 
   // ─────────────────────────────────────────────────────────────────────
-
-  const { result, getAgentPositions, getAgentPath, isLoading, optimisedMap } =
-    useSolution({
-      instanceId,
-      solutionId,
-      source,
-    });
-
-  const { timespan = 0, x = 0, y = 0, goals } = result ?? {};
 
   const { step, backwards, forwards, play, pause, paused, restart, seek } =
     usePlayback(timespan);
@@ -137,13 +188,13 @@ export function Visualisation({
   }, [dark]);
 
   const drawGrid = useMemo(
-    () => $grid({ x, y }, dark ? WHITE : BLACK),
-    [x, y, dark]
+    () => $grid({ x: width, y: height }, dark ? WHITE : BLACK),
+    [width, height, dark]
   );
 
   const drawBox = useMemo(
-    () => $box({ x, y }, dark ? WHITE : BLACK),
-    [x, y, dark]
+    () => $box({ x: width, y: height }, dark ? WHITE : BLACK),
+    [width, height, dark]
   );
 
   const drawAgent = useMemo(
@@ -152,9 +203,20 @@ export function Visualisation({
       $agentDiagnostics(
         getAgentColor(selection.agent),
         getAgentPath?.(selection.agent),
-        goals?.[selection.agent]
+        goals?.[selection.agent],
+        diagnostics?.filter?.((x) => x.agents.includes(selection.agent)),
+        theme.palette.error.main
       ),
-    [step, getAgentColor, selection, getAgentPath, goals]
+    [
+      diagnostics,
+      step,
+      getAgentColor,
+      selection,
+      getAgentPath,
+      goals,
+      dark,
+      theme.palette.error.main,
+    ]
   );
 
   const drawMap = useMemo(
@@ -186,11 +248,11 @@ export function Visualisation({
   const container = useRef<HTMLDivElement>();
 
   const updateShowGrid = useCallback(() => {
-    if (viewport && x) {
+    if (viewport && width) {
       setBounds(viewport.getVisibleBounds());
       setShowGrid(viewport.scale.x > SCALE_SHOW_GRID_THRESHOLD);
     }
-  }, [viewport, x, setShowGrid]);
+  }, [viewport, width, setShowGrid]);
 
   useEffect(() => {
     if (viewport) {
@@ -201,13 +263,14 @@ export function Visualisation({
   }, [viewport, updateShowGrid]);
 
   useEffect(() => {
-    if (viewport && x && y) {
-      viewport.fit(false, x, y);
-      viewport.moveCenter(x / 2, y / 2);
-      viewport.zoom(10, true);
+    if (viewport && width && height) {
+      viewport
+        .fit(false, width, height)
+        .moveCenter(width / 2, height / 2)
+        .zoom(10, true);
       updateShowGrid();
     }
-  }, [viewport, x, y, updateShowGrid]);
+  }, [viewport, width, height, updateShowGrid]);
 
   useEffect(() => {
     if (viewport && container.current) {
@@ -240,7 +303,7 @@ export function Visualisation({
     }
   }, [viewport, getAgentPositions, step, setSelection]);
 
-  const noVisualisation = !isLoading && !result;
+  const noVisualisation = !isLoading && !timespan;
 
   return (
     <Box
@@ -351,7 +414,6 @@ export function Visualisation({
                               );
                             })}
                           {selection.show && <Graphics draw={drawAgent} />}
-
                           <Graphics draw={drawBox} alpha={0.1} />
                         </Container>
                       </Viewport>
@@ -433,6 +495,7 @@ export function Visualisation({
                     top: 0,
                     right: 0,
                     m: sm ? 2 : 3,
+                    maxWidth: 260,
                   }}
                 >
                   {!isUndefined(selection.agent) && (
@@ -498,6 +561,26 @@ export function Visualisation({
                             secondary={name}
                           />
                         ))}
+                        {(() => {
+                          const errors = filter(diagnostics, ({ agents }) =>
+                            agents.includes(selection.agent)
+                          );
+                          return (
+                            !!errors?.length && (
+                              <Item
+                                invert
+                                primary={errors.map(({ agents, label, t }) => (
+                                  <>
+                                    {capitalize(label)}:{" "}
+                                    {pluralize("agent", agents.length)}{" "}
+                                    {agents.join(", ")} at timestep {t}
+                                  </>
+                                ))}
+                                secondary="Errors"
+                              />
+                            )
+                          );
+                        })()}
                       </Stack>
                     </>
                   )}

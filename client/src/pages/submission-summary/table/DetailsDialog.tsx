@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { Item } from "components/Item";
 import { DialogContentProps, useDialog } from "hooks/useDialog";
-import { Visualisation } from "pages/visualiser/Visualiser";
+import { SolutionVisualisation } from "pages/visualiser/Visualiser";
 import pluralize from "pluralize";
 import { useScenarioData } from "queries/useBenchmarksQuery";
 import GenericDetailsList from "../GenericDetailsList";
@@ -34,7 +34,7 @@ function VisualisationDialog({
           width: "100vw",
         }}
       >
-        <Visualisation {...{ instanceId, solutionId, source }} />
+        <SolutionVisualisation {...{ instanceId, solutionId, source }} />
       </Box>
       <Box sx={{ height: "100dvh" }}></Box>
     </>

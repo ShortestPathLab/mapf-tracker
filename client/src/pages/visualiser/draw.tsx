@@ -3,6 +3,7 @@ import { each, first, head, range, trim } from "lodash";
 import memoizee from "memoizee";
 import { Graphics as PixiGraphics } from "pixi.js";
 import { LINE_WIDTH } from "./constants";
+import { Diagnostic } from "./Diagnostic";
 
 function hexToInt(s: string) {
   return parseInt(trim(s, "#"), 16);
@@ -51,11 +52,26 @@ export const $map =
         .endFill();
     });
   };
+
+const ERROR_SIZE = 0.2;
+
+export function error(x: number, y: number, color = "#ff0000") {
+  return (g: PixiGraphics) => {
+    g.lineStyle(LINE_WIDTH, hexToInt(color));
+    g.moveTo(x + (0.5 - ERROR_SIZE), y + (0.5 - ERROR_SIZE));
+    g.lineTo(x + 0.5 + ERROR_SIZE, y + 0.5 + ERROR_SIZE);
+    g.moveTo(x + (0.5 - ERROR_SIZE), y + 0.5 + ERROR_SIZE);
+    g.lineTo(x + 0.5 + ERROR_SIZE, y + (0.5 - ERROR_SIZE));
+  };
+}
+
 export const $agentDiagnostics = memoizee(
   (
       color: string,
       path: { x: number; y: number }[],
-      goal: { x: number; y: number }
+      goal: { x: number; y: number },
+      diagnostics?: Diagnostic[],
+      diagnosticColor?: string
     ) =>
     (g: PixiGraphics) => {
       g.clear();
@@ -66,6 +82,7 @@ export const $agentDiagnostics = memoizee(
       });
       g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
       g.drawCircle(goal.x + 0.5, goal.y + 0.5, 0.5);
+      each(diagnostics, ({ x, y }) => error(x, y, diagnosticColor)(g));
     },
   { normalizer: JSON.stringify }
 );
