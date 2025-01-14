@@ -1,4 +1,4 @@
-import { chain, each, isInteger, isNumber, max, min, once } from "lodash";
+import { chain, each, isInteger, isNumber, max, min, now, once } from "lodash";
 import { context } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { Document, Types } from "mongoose";
@@ -88,7 +88,8 @@ async function getMeta(instanceId: Types.ObjectId) {
 
 async function saveResults(
   submission: OngoingSubmissionDocument,
-  errors: string[]
+  errors: string[],
+  meta: { timeTaken: number }
 ) {
   log.info("Saving results");
   for (const outdated of await OngoingSubmission.find({
@@ -109,6 +110,7 @@ async function saveResults(
       errors,
       isValidationRun: true,
       outcome: (errors.length ? "invalid" : "valid") satisfies Outcome,
+      ...meta,
     } satisfies OngoingSubmission[typeof validationResultsKey])
     .save();
   log.info("Results saved");
@@ -145,7 +147,7 @@ async function validateGroup({
   const errorAgents: number[][] = [];
 
   const [updateSolutionCost, , realCost] = createSolutionCostChecker();
-
+  const timeStart = now();
   validate({
     domain: { cells, width, height },
     paths: submission.solutions.map((s) => s || "w"),
@@ -166,6 +168,8 @@ async function validateGroup({
     },
   });
 
+  const timeTaken = now() - timeStart;
+
   // Update solution cost based on validation results
   // TODO: Refactor for immutability
   await setSolutionCost(submission, realCost.current, errors);
@@ -173,7 +177,7 @@ async function validateGroup({
   logOutcome(errors, errorAgents, mode);
 
   // Don't have to wait to save results
-  saveResults(submission, errors);
+  saveResults(submission, errors, { timeTaken });
   return { errors };
 }
 

@@ -133,7 +133,7 @@ const submitOne = async (
     instance: data.instance.id,
     lowerBound: data.lower_cost,
     cost: data.solution_cost,
-    solutions: data.solution_plan,
+    solutions: data.solution_plan.map(encode),
     options: { skipValidation: data.skip_validation },
   }).save();
 

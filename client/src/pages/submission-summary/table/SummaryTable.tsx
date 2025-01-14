@@ -13,6 +13,7 @@ import {
   Button,
   capitalize,
   Chip,
+  CircularProgress,
   Collapse,
   Divider,
   Stack,
@@ -262,10 +263,9 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                           />
                         ),
                         queued: (
-                          <HourglassEmptyOutlined
-                            color="primary"
-                            fontSize="small"
-                          />
+                          <Stack sx={{ alignItems: "center" }}>
+                            <CircularProgress size={24} />
+                          </Stack>
                         ),
                       }[submission?.validation?.outcome] ?? (
                         <HourglassEmptyOutlined
