@@ -3,7 +3,7 @@ import { Background, Controls, ReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { Layout } from "layout";
-import { renderFixed } from "layout/renderFixed";
+import { RenderFixed } from "layout/renderFixed";
 import { topbarHeight } from "layout/topbarHeight";
 import { usePipelineViewerData } from "queries/usePipelineQuery";
 import { CSSProperties } from "react";
@@ -19,7 +19,7 @@ export default function index() {
       flat
       title="Pipelines"
       path={[{ name: "Manage", url: "/manage" }]}
-      render={renderFixed(sm)}
+      render={RenderFixed}
     >
       <Stack
         sx={{

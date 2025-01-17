@@ -27,7 +27,11 @@ export function Floating({
       >
         {children}
       </Box>
-      <Box sx={{ visibility: floating ? "hidden" : "visible" }}>{children}</Box>
+      <Box
+        sx={{ visibility: floating ? "hidden" : "visible", display: "flex" }}
+      >
+        {children}
+      </Box>
     </>
   );
 }

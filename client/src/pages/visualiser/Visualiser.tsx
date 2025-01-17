@@ -19,6 +19,7 @@ import {
   Stack,
   Tooltip,
   Typography,
+  alpha,
   useTheme,
 } from "@mui/material";
 import { Container, Graphics, Stage } from "@pixi/react";
@@ -34,7 +35,9 @@ import {
   find,
   findIndex,
   floor,
+  head,
   isUndefined,
+  map,
   mapValues,
   zip,
 } from "lodash";
@@ -111,13 +114,18 @@ export function SolutionVisualisation({
   solutionId?: string;
   source?: "ongoing" | "submitted";
 }) {
-  const { result, ...rest } = useSolution({
+  const { result, diagnostics, ...rest } = useSolution({
     instanceId,
     solutionId,
     source,
   });
   return (
     <Visualisation
+      diagnostics={map(diagnostics?.errors, ({ timesteps, agents, label }) => ({
+        t: head(timesteps),
+        agents,
+        label,
+      }))}
       goals={result?.goals}
       timespan={result?.timespan}
       width={result?.x}
@@ -466,7 +474,7 @@ export function Visualisation({
                         action: forwards,
                       },
                     ].map(({ name, icon, action }) => (
-                      <Tooltip title={name} key={name}>
+                      <Tooltip title={name} key={name} placement="top">
                         <IconButton onClick={action}>{icon}</IconButton>
                       </Tooltip>
                     ))}
@@ -482,6 +490,24 @@ export function Visualisation({
                         mx: 2,
                         width: 240,
                         flex: 1,
+                        ".MuiSlider-rail": {
+                          opacity: 1,
+                          bgcolor: (t) => alpha(t.palette.primary.main, 0.38),
+                          backgroundImage: (t) => {
+                            const ts = map(diagnostics, "t")
+                              .filter((c) => !isUndefined(c))
+                              .map((c) => c / timespan);
+                            return `linear-gradient(to right, ${map(
+                              ts,
+                              (c) =>
+                                `transparent ${c * 100 - 0.5}%, ${
+                                  t.palette.error.main
+                                } ${c * 100 - 0.5}%, ${t.palette.error.main} ${
+                                  c * 100 + 0.5
+                                }%, transparent ${c * 100 + 0.5}%`
+                            ).join(", ")})`;
+                          },
+                        },
                       }}
                     />
                   </Stack>

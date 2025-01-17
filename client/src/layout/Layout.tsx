@@ -16,11 +16,12 @@ import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import { useHistory, useNavigate } from "hooks/useNavigation";
 import { last, merge } from "lodash";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 
 export type LayoutProps = {
+  backBehaviour?: "back" | "up";
   disablePadding?: boolean;
   flat?: boolean;
   collapse?: boolean;
@@ -38,20 +39,23 @@ export type LayoutProps = {
   };
 };
 
+const DefaultLayout = ({ header, children }) => (
+  <>
+    {header}
+    {children}
+  </>
+);
+
 export default function Layout({
   collapse = true,
   width = "none",
-  render = ({ header, children }) => (
-    <>
-      {header}
-      {children}
-    </>
-  ),
+  render = DefaultLayout,
   title,
   path,
   children,
   slotProps,
   description,
+  backBehaviour = "up",
   flat,
   disablePadding,
 }: LayoutProps) {
@@ -82,10 +86,13 @@ export default function Layout({
         slotProps?.content
       )}
     >
-      {render({
-        header: !lg || collapse ? header : undefined,
-        children,
-      })}
+      {createElement(
+        render,
+        {
+          header: !lg || collapse ? header : undefined,
+        },
+        children
+      )}
     </Stack>
   );
   return (
@@ -105,8 +112,12 @@ export default function Layout({
               <IconButton
                 edge="start"
                 onClick={() => {
-                  const { state, url } = last(path);
-                  navigate(url, state);
+                  if (backBehaviour === "up") {
+                    const { state, url } = last(path);
+                    navigate(url, state);
+                  } else {
+                    navigate(-1);
+                  }
                 }}
               >
                 <ArrowBackOutlined />

@@ -20,6 +20,7 @@ export function checkDomainOutOfBounds({
   if (point) {
     const [p, i] = point;
     return {
+      errorTimesteps: [timestep],
       errorAgents: [i],
       errors: [`agent ${i} out of bounds, at timestep ${timestep}, ${$(p)}`],
     };

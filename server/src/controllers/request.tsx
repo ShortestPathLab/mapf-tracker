@@ -7,6 +7,17 @@ import { log } from "logging";
 import { render } from "@react-email/components";
 import React from "react";
 import { mail } from "mail";
+import { queryClient } from "query";
+import { z } from "zod";
+
+const { query } = queryClient(Request);
+
+export const findByEmail = query(
+  z.object({ email: z.string() }),
+  ({ email }) => ({
+    requesterEmail: email,
+  })
+);
 
 export const findAll: RequestHandler = (req, res) => {
   Request.find({})
@@ -45,7 +56,6 @@ export const findByInstance_id: RequestHandler = (req, res) => {
 async function queueMail(args: Infer<typeof Request>) {
   log.info("Preparing mail", args);
   const a = await render(<RequestConfirmation {...args} />, { pretty: true });
-  log.info(a);
   mail(
     "noreply@pathfinding.ai",
     args.requesterEmail,

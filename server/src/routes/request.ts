@@ -8,6 +8,6 @@ export default (app: Application) => {
   router.get("/id/:id", request.findByInstance_id);
   router.post("/create", request.create);
   router.post("/update/:id", request.updateRequest);
-
+  router.get("/email/:email", request.findByEmail);
   app.use("/api/request", router);
 };

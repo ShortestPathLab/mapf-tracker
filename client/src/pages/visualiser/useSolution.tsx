@@ -15,6 +15,7 @@ import {
   sumPositions,
 } from "validator";
 import { optimiseGridMap } from "./optimiseGridMap";
+import { useOngoingSubmissionByIdQuery } from "queries/useOngoingSubmissionQuery";
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);
@@ -104,6 +105,13 @@ export function useSolution({
     solutionId ?? last(head(history)?.solution_algos)?.submission_id,
     source
   );
+
+  // Only ongoing submissions have diagnostics
+  const { data: ongoingSubmission, isLoading: isDiagnosticsLoading } =
+    useOngoingSubmissionByIdQuery(
+      source === "ongoing" ? solutionId : undefined
+    );
+
   const { data: scenario, isLoading: isScenarioLoading } = useScenarioData(
     instance?.scen_id
   );
@@ -155,10 +163,12 @@ export function useSolution({
       isHistoryLoading ||
       isSolutionLoading ||
       isScenarioLoading ||
-      isMapDataLoading,
+      isMapDataLoading ||
+      isDiagnosticsLoading,
     map: map ?? [],
     optimisedMap: optimisedMap ?? [],
     result,
+    diagnostics: ongoingSubmission?.validation,
     ...getters,
   };
 }

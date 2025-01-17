@@ -1,4 +1,15 @@
-import { chain, each, isInteger, isNumber, max, min, now, once } from "lodash";
+import {
+  chain,
+  each,
+  isInteger,
+  isNumber,
+  join,
+  map,
+  max,
+  min,
+  now,
+  once,
+} from "lodash";
 import { context } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { Document, Types } from "mongoose";
@@ -88,7 +99,7 @@ async function getMeta(instanceId: Types.ObjectId) {
 
 async function saveResults(
   submission: OngoingSubmissionDocument,
-  errors: string[],
+  errors: { label: string; timesteps?: number[]; agents?: number[] }[],
   meta: { timeTaken: number }
 ) {
   log.info("Saving results");
@@ -143,7 +154,8 @@ async function validateGroup({
 
   const count = submission.solutions.length;
 
-  const errors: string[] = [];
+  const errors: { label: string; timesteps?: number[]; agents?: number[] }[] =
+    [];
   const errorAgents: number[][] = [];
 
   const [updateSolutionCost, , realCost] = createSolutionCostChecker();
@@ -162,8 +174,11 @@ async function validateGroup({
     onFinish: [checkGoalReached],
     goals: goals.slice(0, count),
     onError: (c) => {
-      errors.push(...c.errors);
-      errorAgents.push(c.errorAgents);
+      errors.push({
+        label: join(c.errors, "\n"),
+        timesteps: c.errorTimesteps,
+        agents: c.errorAgents,
+      });
       return true;
     },
   });
@@ -184,16 +199,16 @@ async function validateGroup({
 async function setSolutionCost(
   submission: OngoingSubmissionDocument,
   realCost: number,
-  errors: string[]
+  errors: { label: string }[]
 ) {
   // There's already an error, don't bother checking solution cost
   if (errors.length) return;
   if (isNumber(submission.cost)) {
     // Check if cost is correct
     if (submission.cost !== realCost) {
-      errors.push(
-        `Cost mismatch, expected ${realCost}, but submission listed its cost as ${submission.cost}`
-      );
+      errors.push({
+        label: `Cost mismatch, expected ${realCost}, but submission listed its cost as ${submission.cost}`,
+      });
       // Don't bother fixing lower bound cost
       return;
     }
@@ -213,12 +228,12 @@ async function setSolutionCost(
 }
 
 function logOutcome(
-  errors: string[],
+  errors: { label: string; timesteps?: number[]; agents?: number[] }[],
   errorAgents: number[][],
   mode?: SubmissionValidatorData[number]["mode"]
 ) {
   if (errors.length) {
-    log.warn("Did not pass validation", errors);
+    log.warn("Did not pass validation", map(errors, "label"));
     const a = chain(errorAgents)
       .map((as) => max(as))
       .min()
@@ -240,7 +255,9 @@ const parseMapMemo = memoize(parseMap);
 const parseScenarioMemo = memoize(parseScenarioMeta);
 
 export async function skip(submission: OngoingSubmissionDocument) {
-  const errors = ["Skipped validation because skip_validation is set"];
+  const errors = [
+    { label: "Skipped validation because skip_validation is set" },
+  ];
   await submission
     .set(validationResultsKey, {
       isValidationRun: true,
@@ -255,7 +272,7 @@ export async function skip(submission: OngoingSubmissionDocument) {
 
 export async function run(data: SubmissionValidatorData[number]): Promise<{
   result: {
-    errors?: string[];
+    errors?: { label: string }[];
     outcome: Outcome;
   };
 }> {
@@ -298,7 +315,9 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     };
   } catch (e) {
     log.error("General error", e);
-    return { result: { outcome: "error", errors: ["General error"] } };
+    return {
+      result: { outcome: "error", errors: [{ label: "General error" }] },
+    };
   }
 }
 

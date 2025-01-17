@@ -37,6 +37,7 @@ const WORLD_UNIVERSITIES_API =
 export type SubmissionKeyRequestFormProps = Partial<FormikConfig<Request>> & {
   disabled?: boolean;
   onTouched?: () => void;
+  disabledValues?: { [K in keyof Request]?: boolean };
   submit?: (state: FormikProps<Request>) => ReactNode;
 };
 
@@ -44,6 +45,7 @@ export function SubmissionKeyRequestForm({
   submit = () => <></>,
   disabled,
   onTouched,
+  disabledValues,
   ...props
 }: SubmissionKeyRequestFormProps) {
   const touch = useMemo(() => once(() => onTouched?.()), []);
@@ -88,50 +90,51 @@ export function SubmissionKeyRequestForm({
       {(state) => (
         <Form onChangeCapture={touch}>
           <Stack gap={2}>
+            {renderLabel("Point of contact")}
+            <Field<Request>
+              name="requesterEmail"
+              disabled={disabled || disabledValues?.requesterEmail}
+              type="email"
+              label="Contact email"
+              placeholder="john.doe@example.com"
+              required
+            />
             {renderLabel("About you")}
             {renderRow(
               <Field<Request>
                 name="requesterName"
-                disabled={disabled}
+                disabled={disabled || disabledValues?.requesterName}
                 label="Name"
                 placeholder="John Doe"
                 required
               />,
-              <Field<Request>
-                name="requesterEmail"
-                disabled={disabled}
-                type="email"
-                label="Contact email"
-                placeholder="john.doe@example.com"
+              <Field<Request, typeof Autocomplete>
+                freeSolo
+                disabled={disabled || disabledValues?.requesterAffiliation}
+                as={Autocomplete}
+                autoCompleteProps={{
+                  defaultValue: state.initialValues?.requesterAffiliation,
+                  freeSolo: true,
+                  options,
+                  getOptionDisabled: (o) => o === DISABLED_OPTION,
+                  filterOptions: (o: string[], s) =>
+                    s.inputValue.length > 2
+                      ? filterOptions(o, s)
+                      : [DISABLED_OPTION],
+                  ListboxProps: { sx: paper(2) },
+                }}
+                name="requesterAffiliation"
+                getOptionDisabled={(o) => o === DISABLED_OPTION}
+                filterOptions={(o: string[], s) =>
+                  s.inputValue.length > 2
+                    ? filterOptions(o, s)
+                    : [DISABLED_OPTION]
+                }
+                label="Affiliation"
+                placeholder="Monash University"
                 required
               />
             )}
-            <Field<Request, typeof Autocomplete>
-              freeSolo
-              disabled={disabled}
-              as={Autocomplete}
-              autoCompleteProps={{
-                defaultValue: state.initialValues?.requesterAffiliation,
-                freeSolo: true,
-                options,
-                getOptionDisabled: (o) => o === DISABLED_OPTION,
-                filterOptions: (o: string[], s) =>
-                  s.inputValue.length > 2
-                    ? filterOptions(o, s)
-                    : [DISABLED_OPTION],
-                ListboxProps: { sx: paper(2) },
-              }}
-              name="requesterAffiliation"
-              getOptionDisabled={(o) => o === DISABLED_OPTION}
-              filterOptions={(o: string[], s) =>
-                s.inputValue.length > 2
-                  ? filterOptions(o, s)
-                  : [DISABLED_OPTION]
-              }
-              label="Affiliation"
-              placeholder="Monash University"
-              required
-            />
             {renderLabel(
               "About your algorithm",
               "Tell us about this algorithm you would like to submit results for."
@@ -139,14 +142,14 @@ export function SubmissionKeyRequestForm({
             {renderRow(
               <Field<Request>
                 name="algorithmName"
-                disabled={disabled}
+                disabled={disabled || disabledValues?.algorithmName}
                 label="Algorithm name"
                 placeholder="Constraint-based search"
                 required
               />,
               <Field<Request>
                 name="authorName"
-                disabled={disabled}
+                disabled={disabled || disabledValues?.authorName}
                 label="Authors"
                 placeholder="John Doe, Wei Zhang, Joe Smith"
                 required
@@ -154,7 +157,7 @@ export function SubmissionKeyRequestForm({
             )}
             <Field<Request>
               name="paperReference"
-              disabled={disabled}
+              disabled={disabled || disabledValues?.paperReference}
               label="Paper references"
               multiline
               placeholder="APA references to papers describing your algorithm, separate with a new line"
@@ -167,7 +170,7 @@ export function SubmissionKeyRequestForm({
             )}
             <Field<Request>
               name="googleScholar"
-              disabled={disabled}
+              disabled={disabled || disabledValues?.googleScholar}
               type="url"
               label="Google Scholar link"
             />
@@ -175,11 +178,11 @@ export function SubmissionKeyRequestForm({
               name="dblp"
               type="url"
               label="DBLP link"
-              disabled={disabled}
+              disabled={disabled || disabledValues?.dblp}
             />
             <Field<Request>
               name="githubLink"
-              disabled={disabled}
+              disabled={disabled || disabledValues?.githubLink}
               type="url"
               label="GitHub link"
             />
@@ -189,16 +192,15 @@ export function SubmissionKeyRequestForm({
             )}
             <Field<Request>
               multiline
-              disabled={disabled}
+              disabled={disabled || disabledValues?.justification}
               minRows={3}
               name="justification"
               label="Justification"
               placeholder="Why would you like to submit your algorithm to our tracker?"
-              required
             />
             <Field<Request>
               name="comments"
-              disabled={disabled}
+              disabled={disabled || disabledValues?.comments}
               label="Comments"
               fullWidth
               minRows={4}

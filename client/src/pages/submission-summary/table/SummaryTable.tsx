@@ -33,7 +33,7 @@ import {
 } from "components/tree-data-grid/TreeDataGrid";
 import { Instance, SummarySlice } from "core/types";
 import { useDialog } from "hooks/useDialog";
-import { identity, isNumber, join, sumBy, times } from "lodash";
+import { identity, isNumber, join, map, sumBy, times } from "lodash";
 import pluralize from "pluralize";
 import {
   deleteAll,
@@ -77,7 +77,10 @@ function getSubmissionInfoText(
     })();
 
     return capitalize(
-      [showErrors && join(errors, ", "), showImprovement && improvement]
+      [
+        showErrors && join(map(errors, "label"), ", "),
+        showImprovement && improvement,
+      ]
         .filter(identity)
         .join("\n")
     );

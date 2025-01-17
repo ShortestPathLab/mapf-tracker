@@ -1,4 +1,4 @@
-import { Text } from "@react-email/components";
+import { Link, Text } from "@react-email/components";
 import React from "react";
 import { ReactNode } from "react";
 
@@ -17,4 +17,12 @@ export const renderItem = (label: ReactNode, value: ReactNode) => (
     <br />
     <span className="text-black">{value}</span>
   </Text>
+);
+export const renderLink = (label: ReactNode, value: string) => (
+  <Link
+    href={value}
+    className="text-left text-[#1976d2] underline text-[14px] leading-[24px]"
+  >
+    {label}
+  </Link>
 );

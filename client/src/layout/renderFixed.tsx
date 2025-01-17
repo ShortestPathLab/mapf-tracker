@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
 
-export function renderFixed(sm: boolean) {
-  return ({ header, children }) => (
+export const RenderFixed = ({ header, children }) => {
+  const sm = useSm();
+  return (
     <>
       {children}
       {
@@ -19,4 +20,4 @@ export function renderFixed(sm: boolean) {
       }
     </>
   );
-}
+};

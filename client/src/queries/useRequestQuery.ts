@@ -3,6 +3,7 @@ import { APIConfig } from "core/config";
 import { map } from "lodash";
 import { InferType, object, string } from "yup";
 import { json } from "./query";
+import { RequestWithReviewOutcome } from "./useRequestsQuery";
 
 export type Request = InferType<typeof requestSchema> & { id?: string };
 
@@ -14,7 +15,7 @@ export const requestSchema = object({
   requesterAffiliation: string().required("Affiliation is required."),
   googleScholar: string().url("Please enter a valid URL."),
   dblp: string().url("Please enter a valid URL."),
-  justification: string().required("Justification is required."),
+  justification: string(),
   algorithmName: string().required("Algorithm name is required."),
   authorName: string().required("Author name is required."),
   paperReference: string().required("Paper reference is required."),
@@ -36,3 +37,15 @@ export const useRequestData = (key: string | number) =>
 
 export const useRequestsData = (keys: string[]) =>
   useQueries({ queries: map(keys, requestQuery) });
+
+export const requestByEmailQueryFn = (email: string) => async () =>
+  await json<RequestWithReviewOutcome[]>(
+    `${APIConfig.apiUrl}/request/email/${email}`
+  );
+
+export const useRequestByEmailData = (email: string) =>
+  useQuery({
+    queryKey: ["submissionRequestDetails", "email", email],
+    queryFn: requestByEmailQueryFn(email),
+    enabled: !!email,
+  });

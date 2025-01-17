@@ -66,6 +66,8 @@ function Hero({
   );
 }
 
+const RenderArticleLayout = ({ children }) => <>{children}</>;
+
 export function ArticleLayout({
   children,
   title,
@@ -89,7 +91,7 @@ export function ArticleLayout({
     <Layout
       title={title}
       width={1200}
-      render={({ children }) => <>{children}</>}
+      render={RenderArticleLayout}
       flat
       path={path}
       {...props}

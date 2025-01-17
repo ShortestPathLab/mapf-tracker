@@ -14,6 +14,7 @@ export function checkDomainCollision({
   if (point) {
     const [p, i] = point;
     return {
+      errorTimesteps: [timestep],
       errorAgents: [i],
       errors: [
         `agent ${i} collision with environment, at timestep ${timestep}, ${$(

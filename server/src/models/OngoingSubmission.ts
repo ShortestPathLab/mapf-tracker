@@ -20,7 +20,13 @@ const schema = createSchema(
     validation: {
       timeTaken: Number,
       isValidationRun: Schema.Types.Boolean,
-      errors: [String],
+      errors: [
+        {
+          label: String,
+          agents: { type: [Number], required: false },
+          timesteps: { type: [Number], required: false },
+        },
+      ],
       outcome: String,
     },
   },

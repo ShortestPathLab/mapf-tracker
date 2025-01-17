@@ -46,19 +46,22 @@ export function RequestAnAPIKeyContent({ onClose }: { onClose?: () => void }) {
   );
 }
 
-export default function Page() {
+const RenderStack = ({ header, children }) => {
   const sm = useSm();
+  return (
+    <Stack sx={{ gap: 4, py: sm ? 0 : 4 }}>
+      {header}
+      {children}
+    </Stack>
+  );
+};
+export default function Page() {
   return (
     <Layout
       flat
       width={960}
       title="New API key"
-      render={({ header, children }) => (
-        <Stack sx={{ gap: 4, py: sm ? 0 : 4 }}>
-          {header}
-          {children}
-        </Stack>
-      )}
+      render={RenderStack}
       path={[{ name: "Submit", url: "/submit" }]}
     >
       <RequestAnAPIKeyContent />

@@ -21,7 +21,7 @@ export const routes: Route[] = [
     content: <DirectoryPage labels={["Browse", "Make a submission", "Docs"]} />,
   },
   {
-    path: "/submit",
+    path: "/submit/:section?",
     content: <MakeASubmissionPage />,
     parent: "/",
   },

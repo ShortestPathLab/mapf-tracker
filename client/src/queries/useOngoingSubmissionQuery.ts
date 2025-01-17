@@ -3,6 +3,7 @@ import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { SummaryByApiKeyResult } from "core/types";
+import { head } from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
 
@@ -11,7 +12,7 @@ const REFETCH_MS = 1000;
 export type ValidationOutcome = {
   isValidationRun: boolean;
   outcome: string;
-  errors: string[];
+  errors: { label: string; agents: number[]; timesteps: number[] }[];
 };
 
 export type OngoingSubmission = {
@@ -54,6 +55,19 @@ export function useOngoingSubmissionQuery(key?: string | number) {
       ),
     enabled: !!key,
     refetchInterval: REFETCH_MS,
+  });
+}
+
+export function useOngoingSubmissionByIdQuery(id?: string | number) {
+  return useQuery({
+    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "id", id],
+    queryFn: async () =>
+      head(
+        await json<OngoingSubmission[]>(
+          `${APIConfig.apiUrl}/ongoing_submission/id/${id}`
+        )
+      ),
+    enabled: !!id,
   });
 }
 

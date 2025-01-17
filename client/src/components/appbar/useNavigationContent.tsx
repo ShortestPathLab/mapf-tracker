@@ -1,9 +1,9 @@
 import {
+  Add,
+  AddOutlined,
   Book,
   BookOutlined,
   CodeOutlined,
-  Create,
-  CreateOutlined,
   DarkModeOutlined,
   EmojiEvents,
   EmojiEventsOutlined,
@@ -75,16 +75,16 @@ export function useNavigationContent() {
       items: [
         {
           primary: true,
-          label: "Make a submission",
+          label: "New submission request",
           url: "/submit",
-          icon: <CreateOutlined />,
-          selectedIcon: <Create />,
+          icon: <AddOutlined />,
+          selectedIcon: <Add />,
           description:
             "If you want to contribute, start by requesting an API key",
         },
         {
           primary: true,
-          label: "My submissions",
+          label: "Manage submissions",
           url: "/track",
           icon: <FileUploadOutlined />,
           description:

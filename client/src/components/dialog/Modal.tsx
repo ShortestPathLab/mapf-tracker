@@ -183,12 +183,14 @@ export function ConfirmDialog({
   hintText = unsavedChangesHintText,
   closeLabel = "Continue editing",
   acceptLabel = "Close without saving",
+  acceptColor = "error",
   acceptProps,
 }: DialogContentProps & {
   onAccept?: () => void;
   hintText?: ReactNode;
   closeLabel?: ReactNode;
   acceptLabel?: ReactNode;
+  acceptColor?: string;
   acceptProps?: ButtonProps;
 }) {
   return (
@@ -206,7 +208,7 @@ export function ConfirmDialog({
         <Button
           onClick={() => onAccept?.()}
           variant="contained"
-          color="error"
+          color={acceptColor}
           sx={{ px: 2, py: 1 }}
           {...acceptProps}
         >

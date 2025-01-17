@@ -14,9 +14,21 @@ import React from "react";
 import { renderItem, renderText } from "./renderText";
 import { footerText } from "./footerText";
 
-export type Props = Infer<typeof Request>;
+export type Props = Partial<Infer<typeof Request>>;
 
 RequestConfirmation.PreviewProps = {} as Props;
+
+const description = (name: string) =>
+  `
+Dear ${name},
+
+We have received your request to submit data to MAPF Tracker.
+
+Your request will be reviewed by the MAPF Tracker team, and the outcome will be sent to you via email in a few days.
+
+Thank you for using MAPF Tracker.`
+    .split("\n")
+    .map((c) => renderText(c));
 
 export default function RequestConfirmation(args: Props) {
   return (
@@ -39,6 +51,7 @@ export default function RequestConfirmation(args: Props) {
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
               We have received your request
             </Heading>
+            {description(args.requesterName)}
             {entries(args)
               .filter(([, v]) => typeof v === "string")
               .map(([k, v]) =>

@@ -3,6 +3,7 @@ import Schema from './JSONSchema.mdx';
 import Faq from './faq.mdx';
 import ValidationRules from './validation-rules.md'
 import { Link } from "components/Link";
+import { CodeBlock } from "components/CodeBlock";
 
 Have an algorithm you'd like listed on the tracker? Here's how you can do it.
 
@@ -33,6 +34,8 @@ Once you've obtained an API key, you can enter it <Link href="/track">here</Link
 
 We'll automatically validate your submission and reject any invalid solutions. After you finalise your submission, your results will automatically be reflected in the benchmarks.
 
+See <Link href="/docs/solution-format">here</Link> for the accepted solution format.
+
 ##### File upload
 
 In the web console, click **Upload files**. In the dialog, open one or more valid files.
@@ -51,11 +54,35 @@ In the web console, click **REST API**. The dialog will show the endpoint to sub
 | YAML   | `application/yaml` |
 | CSV    | `text/csv`         |
 
-#### Solution format
+###### Submitting with cURL
 
-<Schema />
+Here's an example submitting a CSV with cURL.
 
-<Format />
+<CodeBlock language="bash">
+{`
+    curl -X POST <<ENDPOINT HERE>> \\
+       -H "Content-Type: text/csv" \\
+       --data-binary @solution.csv
+`.trim()}
+</CodeBlock>
+
+###### Submitting with Python
+
+Here's an example submitting a YAML file with Python.
+
+<CodeBlock language="python">
+{`
+    with open("solution.yaml, "r") as file:
+        csv_content = file.read()
+
+        # Make the POST request
+        requests.post(
+            "<<ENDPOINT HERE>>", 
+            data=csv_content, 
+            headers={ "Content-Type": "application/yaml" }
+        )
+`.trim()}
+</CodeBlock>
 
 #### Validation
 

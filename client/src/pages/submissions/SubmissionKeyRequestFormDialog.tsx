@@ -18,6 +18,9 @@ export function SubmissionKeyRequestFormDialog({
   return (
     <Stack sx={{ mt: -2 }}>
       <SubmissionKeyRequestForm
+        disabledValues={{
+          requesterEmail: true,
+        }}
         onTouched={() => onProps?.({ preventClose: true })}
         submit={({ isSubmitting, submitForm }) => (
           <Floating>

@@ -4,6 +4,14 @@ import Layout from "layout/Layout";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
+import { memoize } from "lodash";
+
+const render = memoize((showHeader: boolean) => ({ header, children }) => (
+  <>
+    {showHeader ? <IndexHeader in={showHeader} /> : header}
+    {children}
+  </>
+));
 
 export default function Page({ showHeader }: { showHeader?: boolean }) {
   return (
@@ -12,12 +20,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
       title={showHeader ? "Home" : "Benchmarks"}
       description="View all benchmarks and their results"
       path={showHeader ? [] : [{ name: "Home", url: "/" }]}
-      render={({ header, children }) => (
-        <>
-          {showHeader ? <IndexHeader in={showHeader} /> : header}
-          {children}
-        </>
-      )}
+      render={render(showHeader)}
     >
       <DataInspectorLayout
         data={<Table />}

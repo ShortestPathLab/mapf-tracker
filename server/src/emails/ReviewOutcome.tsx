@@ -11,7 +11,7 @@ import {
 } from "@react-email/components";
 import { startCase } from "lodash";
 import React from "react";
-import { renderItem, renderText } from "./renderText";
+import { renderItem, renderLink, renderText } from "./renderText";
 import { footerText } from "./footerText";
 
 export type Props = {
@@ -68,7 +68,11 @@ export default function ReviewOutcome({
             {status === "approved" &&
               renderItem(
                 "Your submission key",
-                <CodeInline>{apiKey}</CodeInline>
+                <>
+                  <CodeInline>{apiKey}</CodeInline>
+                  <br />
+                  {renderLink("Use your key", process.env.EMAIL_CALLBACK)}
+                </>
               )}
             {comments && renderItem("Comments", comments)}
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />

@@ -2,6 +2,7 @@ import {
   AnimationOutlined,
   BookOutlined,
   CampaignOutlined,
+  EmojiEventsOutlined,
   FileDownloadOutlined,
   FileUploadOutlined,
   ShapeLineOutlined,
@@ -14,6 +15,7 @@ import DatasetPage from "./docs-get-dataset.mdx";
 import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
 import MotivationsPage from "./docs-motivations.mdx";
 import ProblemDefinitionPage from "./docs-problem-definition.md";
+import SolutionFormatPage from "./docs-solution-format.mdx";
 
 export type Page = ReturnType<typeof pages>[number];
 
@@ -41,6 +43,13 @@ export const pages = () => [
     icon: <ShapeLineOutlined />,
     content: <ProblemDefinitionPage />,
     description: "What exactly is MAPF Tracker tracking?",
+  }),
+  createArticlePage({
+    key: "solution-format",
+    title: "Solution format",
+    icon: <EmojiEventsOutlined />,
+    content: <SolutionFormatPage />,
+    description: "How do I read or write a solution?",
   }),
   createArticlePage({
     key: "how-to-submit",

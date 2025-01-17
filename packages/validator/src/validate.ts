@@ -106,7 +106,7 @@ export function validate({
     const done = as.map((c) => c.done(i));
     for (const check of onTimestep) {
       const result = check({
-        timestep: i,
+        timestep: i + 1,
         prev,
         next,
         actions,

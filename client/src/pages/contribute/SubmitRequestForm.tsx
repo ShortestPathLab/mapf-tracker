@@ -5,7 +5,10 @@ import { Floating } from "components/Floating";
 import { useSnackbar } from "components/Snackbar";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { APIConfig } from "core/config";
-import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
+import {
+  SubmissionKeyRequestForm,
+  SubmissionKeyRequestFormProps,
+} from "forms/SubmissionKeyRequestForm";
 import { useDialog } from "hooks/useDialog";
 import { defer } from "lodash";
 import { post } from "queries/mutation";
@@ -17,10 +20,11 @@ const hintText = (algorithm: string, email: string) =>
 export function SubmitRequestForm({
   onClose,
   floatingSubmitButton,
+  ...props
 }: {
   floatingSubmitButton?: boolean;
   onClose?: () => void;
-}) {
+} & SubmissionKeyRequestFormProps) {
   const notify = useSnackbar();
 
   const { open, close, dialog } = useDialog(ConfirmDialog, {
@@ -40,9 +44,11 @@ export function SubmitRequestForm({
   return (
     <>
       <SubmissionKeyRequestForm
-        submit={({ isSubmitting, submitForm, values }) => (
+        validateOnMount
+        submit={({ isSubmitting, submitForm, values, isValid }) => (
           <ButtonPositioning>
             <Button
+              disabled={!isValid || isSubmitting}
               fullWidth
               sx={{ mt: 4 }}
               variant="contained"
@@ -64,23 +70,24 @@ export function SubmitRequestForm({
               }
               size="large"
               disableElevation
-              disabled={isSubmitting}
               startIcon={<CheckOutlined />}
             >
               {isSubmitting ? "Submitting request..." : "Submit request"}
             </Button>
           </ButtonPositioning>
         )}
-        onSubmit={async (values, { resetForm }) => {
+        {...props}
+        onSubmit={async (values, ctx) => {
           onClose?.();
           await submit(values, {
             onSuccess: () => {
               notify("Request submitted");
 
-              defer(resetForm);
+              defer(ctx.resetForm);
             },
             onError: () => notify("Something went wrong"),
           });
+          props.onSubmit?.(values, ctx);
         }}
       />
       {dialog}

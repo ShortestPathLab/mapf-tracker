@@ -36,6 +36,7 @@ export function checkEdgeCollision({
     const [p, i] = collision;
     const conflict = hashes[$(p)];
     return {
+      errorTimesteps: [timestep],
       errorAgents: [i],
       errors: [
         `agent-to-agent edge collision, agent ${i}, at timestep ${timestep}, from ${$(

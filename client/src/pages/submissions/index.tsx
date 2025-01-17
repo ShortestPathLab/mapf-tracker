@@ -17,7 +17,6 @@ import {
   useDataGridActions,
 } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
-import { useSm } from "components/dialog/useSmallDisplay";
 import { APIConfig } from "core/config";
 import { AddKeyForm } from "forms/AddKeyForm";
 import { useDialog } from "hooks/useDialog";
@@ -80,7 +79,6 @@ export function AddKey() {
 }
 
 export default function TrackSubmission() {
-  const sm = useSm();
   const navigate = useNavigate();
   const { open: showRequestDetails, dialog: requestDetails } = useDialog(
     SubmissionKeyRequestFormDialog,
@@ -183,21 +181,45 @@ export default function TrackSubmission() {
     actions,
   ];
   const header = [
-    <AddKey key="add-key" />,
-    <Typography variant="body2" color="text.secondary" key="no-key">
-      Don&apos;t have a submission (API) key? You need one to submit data.{" "}
-      <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/submit")}>
-        Request one here.
-      </Link>
+    <Typography key="title" variant="h5">
+      Add a key
     </Typography>,
+    <Typography key="header1" color="text.secondary">
+      Received your submission key? Enter it here to start submitting for your
+      algorithm.
+    </Typography>,
+    <AddKey key="add-key" />,
+    <Stack sx={{ gap: 1 }} key="description">
+      <Typography variant="body2" color="text.secondary">
+        An API key is a 32-character string of numbers 0-9 and lowercase letters
+        a-f.
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        Don&apos;t have a submission (API) key? You need one to submit data.{" "}
+        <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/submit")}>
+          Request one here.
+        </Link>
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        Something not right?{" "}
+        <Link
+          sx={{ cursor: "pointer" }}
+          onClick={() =>
+            open(
+              "https://github.com/ShortestPathLab/winter-project-mapf-tracker/issues",
+              "_blank"
+            )
+          }
+        >
+          Raise an issue on Github.
+        </Link>
+      </Typography>
+    </Stack>,
   ];
   return (
-    <Layout
-      slotProps={sm && { content: { sx: { bgcolor: "background.paper" } } }}
-      title="My submissions"
-      path={[{ name: "Home", url: "/" }]}
-    >
+    <Layout flat title="Manage submissions" path={[{ name: "Home", url: "/" }]}>
       <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
+      <Typography variant="h5">Previously used keys</Typography>
       <FlatCard>
         <DataGrid
           clickable

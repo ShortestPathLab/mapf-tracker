@@ -17,6 +17,7 @@ export function checkImmediateCollision({
     .value();
   const [p] = head(collision);
   return {
+    errorTimesteps: [timestep],
     errorAgents: collision.map(([, i]) => i),
     errors: [
       `agent-to-agent direct collision, agents ${collision
