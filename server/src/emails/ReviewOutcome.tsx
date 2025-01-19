@@ -55,7 +55,7 @@ export default function ReviewOutcome({
         <Body className="bg-white my-auto mx-auto font-sans px-2">
           <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Your submission key request has been reviewed
+              Your request for an API key has been reviewed
             </Heading>
             {renderText(`Hello ${name || "user"},`)}
             {renderText(
@@ -67,7 +67,7 @@ export default function ReviewOutcome({
             {renderItem("Outcome", startCase(status))}
             {status === "approved" &&
               renderItem(
-                "Your submission key",
+                "Your submission (API) key",
                 <>
                   <CodeInline>{apiKey}</CodeInline>
                   <br />

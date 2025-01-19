@@ -32,7 +32,7 @@ export default function index() {
       ]}
     >
       <Typography>
-        You&apos;ll receive a confirmation in your inbox, {contactEmail}.
+        You&apos;ll receive a confirmation email in your inbox, {contactEmail}.
       </Typography>
       <Stack>
         <Typography variant="overline" color="text.secondary">

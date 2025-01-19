@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  FileUploadOutlined,
-} from "@mui/icons-material";
+import { DeleteOutlined, FileUploadOutlined } from "@mui/icons-material";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -19,17 +15,15 @@ import {
 import { GridColDef } from "components/data-grid/DataGrid";
 import { APIConfig } from "core/config";
 import { AddKeyForm } from "forms/AddKeyForm";
-import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
-import { merge, zipWith } from "lodash";
+import { zipWith } from "lodash";
 import { Status } from "pages/submission-summary/Status";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
+import { object, string } from "yup";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
-import { SubmissionKeyRequestFormDialog } from "./SubmissionKeyRequestFormDialog";
 import { SubmissionLocationState } from "./SubmissionLocationState";
-import { handleRequestDetailUpdated } from "./handleRequestDetailUpdated";
 
 export function AddKey() {
   const navigate = useNavigate();
@@ -40,7 +34,6 @@ export function AddKey() {
   });
 
   const handleApiFormSubmit = async ({ key }, { resetForm }) => {
-    notify("Checking your key");
     const { ok } = await checkKey(key);
     if (ok) {
       resetForm();
@@ -62,16 +55,32 @@ export function AddKey() {
   }
   return (
     <AddKeyForm
+      validationSchema={object({
+        key: string()
+          .required("Key is required")
+          .notOneOf(keys, "Key already added")
+          .length(32, "Key must be 32 characters")
+          .test({
+            message: "Key must only contain characters 0-9, a-f",
+            test: (value) => /^[0-9a-f]+$/.test(value),
+          })
+          .test({
+            test: async (value) => {
+              const { ok } = await checkKey(value);
+              return ok;
+            },
+            message: "Invalid key",
+          }),
+      })}
       key="add-key"
-      keys={keys}
       onSubmit={handleApiFormSubmit}
-      submit={({ isValid }) => (
+      submit={({ isValid, isValidating }) => (
         <Button
           type="submit"
           variant="contained"
-          disabled={isChecking || !isValid}
+          disabled={isValidating || isChecking || !isValid}
         >
-          {isChecking ? "Checking key" : "Go"}
+          Go
         </Button>
       )}
     />
@@ -80,14 +89,6 @@ export function AddKey() {
 
 export default function TrackSubmission() {
   const navigate = useNavigate();
-  const { open: showRequestDetails, dialog: requestDetails } = useDialog(
-    SubmissionKeyRequestFormDialog,
-    {
-      slotProps: { modal: { width: 640, variant: "default" } },
-      padded: true,
-      title: "Edit request details",
-    }
-  );
 
   const [keys, { filter }] = useLocalStorageList<string>("submission-keys");
   const results = useRequestsData(keys);
@@ -107,21 +108,7 @@ export default function TrackSubmission() {
 
   // ─────────────────────────────────────────────────────────────────────
   const actions = useDataGridActions<Request & { id: string; key: string }>({
-    items: [
-      {
-        icon: <EditOutlined />,
-        name: "Edit request details",
-        action: (row) =>
-          showRequestDetails({
-            initialValues: row,
-            onSubmit: (values) => {
-              handleRequestDetailUpdated(merge(row, values));
-
-              notify("Saved successfully");
-            },
-          }),
-      },
-    ],
+    items: [],
     menuItems: [
       {
         icon: <DeleteOutlined />,
@@ -217,7 +204,11 @@ export default function TrackSubmission() {
     </Stack>,
   ];
   return (
-    <Layout flat title="Manage submissions" path={[{ name: "Home", url: "/" }]}>
+    <Layout
+      flat
+      title="Manage submissions and API keys"
+      path={[{ name: "Home", url: "/" }]}
+    >
       <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
       <Typography variant="h5">Previously used keys</Typography>
       <FlatCard>
@@ -228,7 +219,6 @@ export default function TrackSubmission() {
           onRowClick={({ row }) => navigateToDetails(row.key)}
         />
       </FlatCard>
-      {requestDetails}
     </Layout>
   );
 }

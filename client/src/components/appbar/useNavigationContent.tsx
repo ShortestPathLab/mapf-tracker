@@ -84,7 +84,7 @@ export function useNavigationContent() {
         },
         {
           primary: true,
-          label: "Manage submissions",
+          label: "Submissions and API keys",
           url: "/track",
           icon: <FileUploadOutlined />,
           description:

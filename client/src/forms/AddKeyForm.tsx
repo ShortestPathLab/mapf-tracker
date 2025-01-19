@@ -10,19 +10,17 @@ export type Key = {
 };
 
 export type AddKeyFormProps = {
-  keys: string[];
   submit: (state: FormikProps<Key>) => ReactNode;
 } & Partial<FormikConfig<Key>>;
 
 export function AddKeyForm({
-  keys,
   submit = () => <></>,
   ...props
 }: AddKeyFormProps) {
   return (
     <Formik<Key>
       validationSchema={object({
-        key: string().notOneOf(keys, "Key already added."),
+        key: string(),
       })}
       initialValues={{ key: "" }}
       onSubmit={noop}

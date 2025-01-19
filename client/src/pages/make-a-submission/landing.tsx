@@ -72,7 +72,7 @@ export default function index() {
                   </>
                 ),
                 content:
-                  "Before submitting solutions from your algorithm, you'll need a submission (API) key for it. This is a one-time use key that you can use to submit data to the tracker.",
+                  "Before submitting solutions from your algorithm, you'll need to submit a request to do so. This will provide you with a one-time use API key that you can use to submit data to the tracker.",
               },
               {
                 label: "The MAPF Tracker team replies with an API key",
@@ -91,7 +91,7 @@ export default function index() {
                     sx={{ px: 2, py: 1, minWidth: "max-content" }}
                     onClick={() => navigate("/track")}
                   >
-                    Manage submissions
+                    Enter your API key
                   </Button>
                 ),
               },

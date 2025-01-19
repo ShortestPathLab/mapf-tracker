@@ -21,18 +21,20 @@ export type ContactEmailState = {
 export default function index() {
   const navigate = useNavigate();
   const { contactEmail } = useLocationState<ContactEmailState>();
+  const xs = useXs();
   const { open, dialog } = useDialog(ConfirmDialog, {
     slotProps: { modal: { variant: "default" } },
-    title: "You already have a submission in review",
+    title: xs
+      ? "Submission in review"
+      : "You already have a submission in review",
     padded: true,
   });
   const [checking, setChecking] = useState(false);
-  const xs = useXs();
   return (
     <Layout
       disablePadding
       flat
-      title="Enter your email"
+      title="Your point of contact"
       render={RenderSection}
       path={[
         { name: "Home", url: "/" },
@@ -81,11 +83,13 @@ export default function index() {
                     )
                   )}
                   You&apos;ll receive an API key once they&apos;re approved.
-                  This usually takes 2-3 days. Are you sure you want to make
-                  another request?
+                  This usually takes 2-3 days. Do you want to continue to making
+                  a new request?
                 </Stack>
               ),
-              acceptLabel: "Continue making a new submission request",
+              acceptLabel: xs
+                ? "Continue"
+                : "Continue making a new submission request",
               closeLabel: "Cancel",
               acceptColor: "primary",
               onAccept: f,
