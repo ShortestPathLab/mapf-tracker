@@ -33,6 +33,10 @@ export function AddKey() {
     mutationKey: ["checkKey"],
   });
 
+  const navigateToDetails = (key: string | number) =>
+    navigate<SubmissionLocationState>("/submissionSummary", {
+      apiKey: key,
+    });
   const handleApiFormSubmit = async ({ key }, { resetForm }) => {
     const { ok } = await checkKey(key);
     if (ok) {
@@ -47,12 +51,6 @@ export function AddKey() {
   const [keys, { push }] = useLocalStorageList<string>("submission-keys");
 
   const notify = useSnackbar();
-
-  function navigateToDetails(key: string | number) {
-    navigate<SubmissionLocationState>("/submissionSummary", {
-      apiKey: key,
-    });
-  }
   return (
     <AddKeyForm
       validationSchema={object({
@@ -80,7 +78,7 @@ export function AddKey() {
           variant="contained"
           disabled={isValidating || isChecking || !isValid}
         >
-          Go
+          Use this key
         </Button>
       )}
     />
