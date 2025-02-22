@@ -89,10 +89,22 @@ const run = memoize(
           fill="var(--background)"
         />
         {bounds.map((bounds, i) => (
-          <rect key={i} {...bounds} fill="var(--obstacle)" />
+          <rect
+            key={i}
+            {...bounds}
+            fill="var(--obstacle)"
+            shapeRendering="optimizeSpeed"
+          />
         ))}
         {sources.map((source, i) => (
-          <rect key={i} {...source} width={1} height={1} fill="var(--agent)" />
+          <rect
+            key={i}
+            {...source}
+            width={1}
+            height={1}
+            fill="var(--agent)"
+            shapeRendering="optimizeSpeed"
+          />
         ))}
       </svg>
     );
