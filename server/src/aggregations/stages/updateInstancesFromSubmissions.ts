@@ -23,7 +23,7 @@ export const updateInstancesFromSubmissions = () =>
     {
       $addFields: {
         lower_cost: {
-          $min: "$submissions.lower_cost",
+          $max: "$submissions.lower_cost",
         },
         solution_cost: {
           $min: "$submissions.solution_cost",

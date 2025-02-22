@@ -5,19 +5,32 @@ import { PipelineStage } from "../pipeline";
 const SUBMISSIONS = "submissions";
 const ALGORITHM = "algorithm";
 
-const reduceHistory = (field: string): Expression.Reduce => ({
+const variants = {
+  min: { cond: "$lte", op: "$min", init: Number.MAX_SAFE_INTEGER },
+  max: { cond: "$gte", op: "$max", init: Number.MIN_SAFE_INTEGER },
+};
+
+const reduceHistory = (
+  field: string,
+  variant: (typeof variants)[keyof typeof variants]
+): Expression.Reduce => ({
   $reduce: {
     input: `$${SUBMISSIONS}`,
     initialValue: {
       current: [],
-      current_min: Number.MAX_SAFE_INTEGER,
+      current_best: variant.init,
     },
     in: {
       $cond: {
         if: {
           $and: [
             { $ne: [`$$this.${field}`, null] },
-            { $lte: [`$$this.${field}`, { $min: "$$value.current_min" }] },
+            {
+              [variant.cond]: [
+                `$$this.${field}`,
+                { [variant.op]: "$$value.current_best" },
+              ],
+            },
           ],
         },
         then: {
@@ -35,7 +48,7 @@ const reduceHistory = (field: string): Expression.Reduce => ({
               ],
             ],
           },
-          current_min: `$$this.${field}`,
+          current_best: `$$this.${field}`,
         },
         else: "$$value",
       },
@@ -66,7 +79,7 @@ export const updateInstancesSubmissionHistory = () =>
       },
       {
         $addFields: {
-          algo_name: { $arrayElemAt: [`$${ALGORITHM}.algo_name`, 0] },
+          algo_name: { $first: `$${ALGORITHM}.algo_name` },
         },
       },
       { $project: { [ALGORITHM]: 0 } },
@@ -74,6 +87,9 @@ export const updateInstancesSubmissionHistory = () =>
       {
         $group: {
           _id: "$instance_id",
+          map_id: { $first: "$map_id" },
+          scen_id: { $first: "$scen_id" },
+          agents: { $first: "$agents" },
           [SUBMISSIONS]: { $push: "$$ROOT" },
         },
       },
@@ -86,8 +102,8 @@ export const updateInstancesSubmissionHistory = () =>
       // Stage 3: Add fields for lower and solution algorithms
       {
         $addFields: {
-          lower_algos: reduceHistory("lower_cost"),
-          solution_algos: reduceHistory("solution_cost"),
+          lower_algos: reduceHistory("lower_cost", variants.min),
+          solution_algos: reduceHistory("solution_cost", variants.max),
         },
       },
       {
@@ -107,7 +123,7 @@ export const updateInstancesSubmissionHistory = () =>
         $merge: {
           into: "instances",
           whenMatched: "merge",
-          whenNotMatched: "fail",
+          whenNotMatched: "discard",
         },
       },
     ],
