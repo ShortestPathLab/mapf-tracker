@@ -93,8 +93,9 @@ export default function DataGrid<
             alignItems="center"
           >
             <TextField
-              variant="filled"
+              variant="outlined"
               label="Search items"
+              placeholder="Start typing here"
               value={input}
               onChange={setFromEvent(setInput)}
               sx={{ width: "100%" }}

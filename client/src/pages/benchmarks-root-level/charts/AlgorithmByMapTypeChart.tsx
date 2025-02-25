@@ -62,7 +62,10 @@ export function AlgorithmByMapTypeChart() {
         render={() => (
           <RadarChart>
             <Legend />
-            <PolarRadiusAxis domain={slice.domain as AxisDomain} />
+            <PolarRadiusAxis
+              domain={slice.domain as AxisDomain}
+              stroke={palette.text.primary}
+            />
             <PolarAngleAxis dataKey="map" />
             {map(
               filter(
@@ -79,8 +82,11 @@ export function AlgorithmByMapTypeChart() {
                 />
               )
             )}
-            <PolarGrid />
-            <Tooltip formatter={slice.formatter} />
+            <PolarGrid stroke={palette.text.secondary} />
+            <Tooltip
+              cursor={{ fill: palette.action.disabledBackground }}
+              formatter={slice.formatter}
+            />
           </RadarChart>
         )}
       />

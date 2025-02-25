@@ -14,11 +14,24 @@ import TrackSubmission from "./pages/submissions";
 import Summary from "./pages/summary/DashboardPage";
 import MakeASubmissionPage from "pages/make-a-submission";
 import Visualiser from "./pages/visualiser";
+import Hero from "pages/home/Hero";
 
 export const routes: Route[] = [
   {
     path: "/",
-    content: <DirectoryPage labels={["Browse", "Make a submission", "Docs"]} />,
+    content: (
+      <DirectoryPage
+        title="Home"
+        labels={["Browse", "Make a submission", "Docs"]}
+        render={({ header, children }) => (
+          <>
+            {header}
+            <Hero />
+            {children}
+          </>
+        )}
+      />
+    ),
   },
   {
     path: "/submit/:section?",

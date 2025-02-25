@@ -24,7 +24,7 @@ export default function Table() {
     navigate<VisualiserLocationState>("/visualization", {
       ...state,
       instanceId: row.id,
-      solutionId: undefined,
+      solutionId: row.solution_path_id,
       source: "submitted",
     });
 

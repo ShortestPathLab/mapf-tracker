@@ -19,7 +19,11 @@ export function MapLabel({ mapId, count }: { mapId: string; count?: number }) {
       )}
       <Item
         primary={startCase(map?.map_name ?? "-")}
-        secondary={isUndefined(count) ? "Map" : pluralize("item", count, true)}
+        secondary={
+          isUndefined(count)
+            ? `Map, ${map?.map_type}, ${map?.map_size}`
+            : pluralize("item", count, true)
+        }
       />
     </Stack>
   );

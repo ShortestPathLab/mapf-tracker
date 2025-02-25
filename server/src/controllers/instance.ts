@@ -39,6 +39,7 @@ export const findNonEmptyByScenId: RequestHandler = async (req, res) => {
         $project: {
           id: "$_id",
           agents: 1,
+          solution_path_id: 1,
           lower_algos: { $size: "$lower_algos" },
           lower_date: { $last: "$lower_algos.date" },
           lower_cost: { $last: "$lower_algos.value" },

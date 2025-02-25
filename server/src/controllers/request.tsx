@@ -33,7 +33,8 @@ export const findAll: RequestHandler = (req, res) => {
 
 export const findByKey: RequestHandler = async (req, res) => {
   const { key } = req.params;
-  const { request_id } = await SubmissionKey.findOne({ api_key: key });
+  const { request_id } = (await SubmissionKey.findOne({ api_key: key })) ?? {};
+  if (!request_id) return res.json(undefined);
   res.json(await Request.findById(request_id));
 };
 

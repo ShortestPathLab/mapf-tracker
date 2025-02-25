@@ -4,7 +4,7 @@ import { FlatCard } from "components/FlatCard";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useDialog } from "hooks/useDialog";
-import { useLocationState } from "hooks/useNavigation";
+import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { BentoLayout } from "layout/BentoLayout";
 import { sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
@@ -35,6 +35,7 @@ export default function SubmissionSummaryPage() {
     slotProps: { modal: { variant: "default" } },
     padded: true,
   });
+  const navigate = useNavigate();
 
   const keyStatus = parseApiKeyStatus(apiKeyData);
 
@@ -135,6 +136,7 @@ export default function SubmissionSummaryPage() {
           onAccept: () => {
             finalise();
             close();
+            navigate("/submissionSummary");
           },
           onClose: close,
         })

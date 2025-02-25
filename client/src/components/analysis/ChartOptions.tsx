@@ -20,7 +20,7 @@ export default function ChartOptions({
   metrics?: BaseMetric[];
 } & Partial<ReturnType<typeof useAlgorithmSelector>>) {
   return (
-    <Stack direction="row" sx={{ gap: 1 }}>
+    <Stack direction="row" sx={{ gap: 1, mb: 2 }}>
       {slices?.length > 1 && (
         <TextField
           select

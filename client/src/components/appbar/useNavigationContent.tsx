@@ -9,6 +9,8 @@ import {
   EmojiEventsOutlined,
   FileUploadOutlined,
   GitHub,
+  Home,
+  HomeOutlined,
   LightModeOutlined,
   MultilineChartOutlined,
   PersonOutlined,
@@ -54,6 +56,13 @@ export function useNavigationContent() {
     {
       label: "Browse",
       items: [
+        {
+          label: "Home",
+          url: "/",
+          icon: <HomeOutlined />,
+          selectedIcon: <Home />,
+          description: "",
+        },
         {
           label: "Browse",
           url: "/benchmarks",

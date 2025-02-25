@@ -1,5 +1,11 @@
-import { LinearProgress, Stack, Tooltip, Typography } from "@mui/material";
-import { round, floor, find, map, sumBy, head } from "lodash";
+import {
+  LinearProgress,
+  Stack,
+  StackProps,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { find, floor, head, map, merge, round, sumBy } from "lodash";
 import { ReactNode } from "react";
 
 export const formatValue = (v: number) =>
@@ -67,25 +73,33 @@ export const Bar = ({
   values,
   buffer,
   label,
+  renderLabel = (l, v) => `${l}: ${formatValue(v)}`,
+  ...props
 }: {
+  renderLabel?: (label: string, value: number) => ReactNode;
   values?: { color: string; value: number; label: string; primary?: boolean }[];
   buffer?: boolean;
   label?: ReactNode;
-}) => {
+} & StackProps) => {
   const primary = find(values, "primary") ?? head(values);
   const slack = 1 - sumBy(values, "value");
   return (
     <Stack
-      direction="row"
-      sx={{
-        width: "100%",
-        alignItems: "center",
-        gap: 1,
-      }}
+      {...merge(
+        {
+          direction: "row",
+          sx: {
+            width: "100%",
+            alignItems: "center",
+            gap: 1,
+          },
+        },
+        props
+      )}
     >
       <Stack direction="row" sx={{ flex: 1 }}>
         {map(values, ({ value, color, label }) => (
-          <Tooltip title={`${label}: ${formatValue(value)}`}>
+          <Tooltip title={renderLabel(label, value)}>
             <LinearProgress
               sx={{
                 bgcolor: "transparent",
@@ -111,17 +125,19 @@ export const Bar = ({
           />
         )}
       </Stack>
-      <Typography
-        variant="overline"
-        sx={{
-          width: 32,
-          textAlign: "right",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
-        {label ?? formatValue(primary?.value)}
-      </Typography>
+      {label && (
+        <Typography
+          variant="overline"
+          sx={{
+            width: 32,
+            textAlign: "right",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          {formatValue(primary?.value)}
+        </Typography>
+      )}
     </Stack>
   );
 };

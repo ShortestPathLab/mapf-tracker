@@ -11,6 +11,7 @@ import requestRoutes from "./routes/request";
 import submissionKeyRoutes from "./routes/submissionKey";
 import ongoingSubmissionRoutes from "./routes/ongoingSubmission";
 import pipelineRoutes from "./routes/pipeline";
+import { use as useQueries } from "./query/queries";
 import { Application } from "express";
 
 export const createRouters = (app: Application) => {
@@ -27,4 +28,5 @@ export const createRouters = (app: Application) => {
   submissionKeyRoutes(app);
   ongoingSubmissionRoutes(app);
   pipelineRoutes(app);
+  useQueries(app);
 };

@@ -1,9 +1,10 @@
 import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
+import { queryClient } from "query";
 const schema = createSchema({
-  map_id: { type: Schema.Types.ObjectId, ref: "map" },
+  map_id: { type: Schema.Types.ObjectId, ref: "map", index: true },
   scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
-  agents: Number,
+  agents: { type: Number, index: "asc" },
   lower_cost: Number,
   lower_algos: [
     {
@@ -22,9 +23,21 @@ const schema = createSchema({
       value: Number,
     },
   ],
-  solution_date: String,
+  /**
+   * @deprecated
+   */
+  solution_date: { index: 1, type: String },
+  /**
+   * @deprecated
+   */
   closed: Boolean,
-  empty: Boolean,
+  /**
+   * @deprecated
+   */
+  empty: { type: Boolean, index: true },
+  /**
+   * @deprecated
+   */
   solution_path_id: {
     type: Schema.Types.ObjectId,
     ref: "solution_path",
@@ -33,4 +46,14 @@ const schema = createSchema({
 
 schema.index({ map_id: 1, scen_id: 1, agents: 1 }, { unique: true });
 
+schema.index({ "solution_algos.date": 1 });
+
+schema.index({ "lower_algos.date": 1 });
+
+schema.index({ "solution_algos.0.date": 1 }, { sparse: true });
+
+schema.index({ "lower_algos.0.date": 1 }, { sparse: true });
+
 export const model = createModel("instance", schema);
+
+export const query = queryClient(model);

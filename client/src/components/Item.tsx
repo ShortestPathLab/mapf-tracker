@@ -7,11 +7,13 @@ export function Item({
   primary,
   secondary,
   invert,
+  disableMargin,
 }: {
   icon?: ReactNode;
   primary?: ReactNode;
   secondary?: ReactNode;
   invert?: boolean;
+  disableMargin?: boolean;
 }) {
   const sm = useSm();
   return (
@@ -24,12 +26,13 @@ export function Item({
     >
       {icon}
       <ListItemText
-        sx={
-          invert && {
+        sx={{
+          my: disableMargin ? 0 : undefined,
+          ...(invert && {
             display: "flex",
             flexDirection: "column-reverse",
-          }
-        }
+          }),
+        }}
         primary={primary && <Typography variant="body1">{primary}</Typography>}
         secondary={
           secondary && (

@@ -20,9 +20,10 @@ export const getKey = async (
 ) => {
   const key = await SubmissionKey.findOne({ api_key });
   if (!key) return fatal(ctx, "API key invalid");
-  if (key.status.type === "submitted")
+  if (key?.status?.type === "submitted")
     return fatal(ctx, "API key already submitted");
-  if (new Date() > key.expirationDate) return fatal(ctx, "API key expired");
+  if (new Date() > (key?.expirationDate ?? 0))
+    return fatal(ctx, "API key expired");
   return key;
 };
 
@@ -179,7 +180,7 @@ export async function run({
         description: "Does not match any schema.",
         attempts: handlers.map(({ name, schema }) => {
           const { error } = schema.safeParse(d);
-          return { name, error: error.format() };
+          return { name, error: error?.format?.() };
         }),
       },
     };

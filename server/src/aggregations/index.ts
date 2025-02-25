@@ -7,6 +7,7 @@ import { stage as updateSolutionPathsFromSubmissions } from "./stages/updateSolu
 import { stage as updateSubmissionsWithOngoingSubmissions } from "./stages/updateSubmissionsWithOngoingSubmissions";
 import { stage as updateInstancesSubmissionHistory } from "./stages/updateInstancesSubmissionHistory";
 import { stage as pruneOngoingSubmissions } from "./stages/pruneOngoingSubmissions";
+import { stage as updateSubmissionBestFlags } from "./stages/updateSubmissionBestFlags";
 import {
   mockStageA,
   mockStageB,
@@ -23,6 +24,7 @@ export const stages = {
   updateSubmissionsWithOngoingSubmissions,
   updateInstancesSubmissionHistory,
   pruneOngoingSubmissions,
+  updateSubmissionBestFlags,
   mockStageA,
   mockStageB,
   mockStageCExpectError,

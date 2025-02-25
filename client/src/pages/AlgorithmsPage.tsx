@@ -1,4 +1,4 @@
-import { IconCard } from "components/IconCard";
+import { Avatar } from "@mui/material";
 import { Item } from "components/Item";
 import { DataGrid, cellRendererBar } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
@@ -28,7 +28,11 @@ function Table() {
       flex: 1,
       renderCell: ({ value, row }) => (
         <Item
-          icon={<IconCard />}
+          icon={
+            <Avatar
+              src={`https://api.dicebear.com/9.x/identicon/svg?seed=${value}`}
+            />
+          }
           primary={startCase(value)}
           secondary={row.authors}
         />

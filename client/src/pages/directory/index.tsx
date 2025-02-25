@@ -2,7 +2,7 @@ import { Box, Card, CardActionArea, Stack, Typography } from "@mui/material";
 import { useNavigationContent } from "components/appbar/useNavigationContent";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid, Layout } from "layout";
-import { PageHeaderProps } from "layout/PageHeader";
+import { LayoutProps } from "layout/Layout";
 import { startsWith } from "lodash";
 import { paper } from "theme";
 
@@ -10,15 +10,14 @@ export default function Page({
   labels = [],
   title = "Home",
   path = [],
+  ...props
 }: {
   labels?: string[];
-  title?: string;
-  path?: PageHeaderProps["path"];
-}) {
+} & LayoutProps) {
   const navigate = useNavigate();
   const { groups, logInDialog, userDialog } = useNavigationContent();
   return (
-    <Layout flat title={title} path={path}>
+    <Layout flat title={title} path={path} {...props}>
       {groups
         .filter(({ label }) => labels.includes(label))
         .map(({ label, items }, _, { length }) => (

@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { useSm } from "components/dialog/useSmallDisplay";
 
 export const RenderFixed = ({ header, children }) => {
   const sm = useSm();

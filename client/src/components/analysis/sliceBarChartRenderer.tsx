@@ -3,6 +3,8 @@ import { map, filter } from "lodash";
 import { BarChart, Legend, Tooltip, YAxis, XAxis, Bar } from "recharts";
 import { AxisDomain } from "recharts/types/util/types";
 import { Slice } from "./useAlgorithmSelector";
+import { useTheme } from "@mui/material";
+import { paper } from "theme";
 
 export function sliceBarChartRenderer({
   slice,
@@ -17,23 +19,30 @@ export function sliceBarChartRenderer({
   selected: string[];
   mode: "light" | "dark";
 }) {
-  return () => (
-    <BarChart>
-      <Legend />
-      <Tooltip formatter={slice.formatter} />
-      <YAxis domain={slice.domain as AxisDomain} />
-      <XAxis dataKey={xAxisDataKey} />
-      {map(
-        filter(algorithms, (a) => !selected.length || selected.includes(a)),
-        (algorithm, i) => (
-          <Bar
-            fill={toneBy(mode, i)}
-            isAnimationActive={false}
-            dataKey={`${algorithm}.${slice.key}`}
-            name={algorithm}
-          />
-        )
-      )}
-    </BarChart>
-  );
+  return () => {
+    const theme = useTheme();
+    return (
+      <BarChart>
+        <Legend />
+        <Tooltip
+          formatter={slice.formatter}
+          contentStyle={{ border: paper(0).border(theme) }}
+          cursor={{ fill: theme.palette.action.disabledBackground }}
+        />
+        <YAxis domain={slice.domain as AxisDomain} />
+        <XAxis dataKey={xAxisDataKey} />
+        {map(
+          filter(algorithms, (a) => !selected.length || selected.includes(a)),
+          (algorithm, i) => (
+            <Bar
+              fill={toneBy(mode, i)}
+              isAnimationActive={false}
+              dataKey={`${algorithm}.${slice.key}`}
+              name={algorithm}
+            />
+          )
+        )}
+      </BarChart>
+    );
+  };
 }

@@ -2,13 +2,23 @@ import { Scenario } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateMaps } from "./updateMapsFromScenarios";
 
+export const isClosedCond = (solution: string, lower: string) => ({
+  $and: [
+    { $ne: [solution, null] },
+    {
+      $eq: [solution, lower],
+    },
+  ],
+});
+
+export const isSolvedCond = (solution: string) => ({ $ne: [solution, null] });
+
 /**
  * Updates the scenario documents with the number of closed and solved instances.
  * The result is written back to the Scenarios collection.
  *
  * @returns The update aggregation pipeline.
  */
-
 export const updateScenariosFromInstances = () =>
   Scenario.aggregate([
     {
@@ -26,14 +36,10 @@ export const updateScenariosFromInstances = () =>
             $filter: {
               input: "$instances",
               as: "instance",
-              cond: {
-                $and: [
-                  { $ne: ["$$instance.solution_cost", null] },
-                  {
-                    $eq: ["$$instance.solution_cost", "$$instance.lower_cost"],
-                  },
-                ],
-              },
+              cond: isClosedCond(
+                "$$instance.solution_cost",
+                "$$instance.lower_cost"
+              ),
             },
           },
         },
@@ -42,7 +48,7 @@ export const updateScenariosFromInstances = () =>
             $filter: {
               input: "$instances",
               as: "instance",
-              cond: { $ne: ["$$instance.solution_cost", null] },
+              cond: isSolvedCond("$$instance.solution_cost"),
             },
           },
         },

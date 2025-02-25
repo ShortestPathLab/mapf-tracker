@@ -1,5 +1,6 @@
-import { Request, RequestHandler, Response as Res } from "express";
-import { Document, FilterQuery, Model, PipelineStage } from "mongoose";
+import { Request, RequestHandler } from "express";
+import { AggregateBuilder } from "mongodb-aggregate-builder";
+import { Document, FilterQuery, Model } from "mongoose";
 import z from "zod";
 
 export const toJson = (r: Response) => r.json();
@@ -17,9 +18,10 @@ export const queryClient = <T>(model: Model<T>) => {
       f: (data: z.infer<V>) => Promise<U>
     ): RequestHandler<z.infer<V>> =>
     async (req, res) => {
-      const { success, data, error } = await validate.safeParseAsync(
-        req.params
-      );
+      const { success, data, error } = await validate.safeParseAsync({
+        ...req.params,
+        ...req.query,
+      });
       if (!success) return res.status(400).json(error.format());
       try {
         res.json(await f(data));
@@ -43,12 +45,15 @@ export const queryClient = <T>(model: Model<T>) => {
       }),
     aggregate: <V extends z.ZodType>(
       validate: V = z.any() as any,
-      agg: (b: z.infer<V>) => PipelineStage[] = () => [],
+      agg: (b: z.infer<V>, pipeline: AggregateBuilder) => AggregateBuilder = (
+        _,
+        p
+      ) => p,
       handler: (q: any) => Promise<any> = async (q) => q
     ): RequestHandler<z.infer<V>> =>
       createHandler(validate, async (data) => {
-        const q = agg(data);
-        const docs = await model.aggregate(q);
+        const q = agg(data, new AggregateBuilder());
+        const docs = await model.aggregate(q.build());
         return await handler(docs);
       }),
   };
@@ -65,7 +70,7 @@ export const route = <T extends z.ZodType, R>(
     if (!success) return res.status(400).json(error.format());
     try {
       const out = await f(data, req);
-      res.json(out);
+      res.json(out ?? undefined);
     } catch (e) {
       console.log(e);
       res.status(500).json({

@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "strict": true,
     "jsx": "react",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "esModuleInterop": true,
     "baseUrl": "src",
+    "exactOptionalPropertyTypes": true,
     "target": "esnext",
     "module": "preserve",
     "skipLibCheck": true /* Specify multiple folders that act like './node_modules/@types'. */,

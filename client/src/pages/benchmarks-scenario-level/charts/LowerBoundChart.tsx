@@ -27,7 +27,10 @@ export function LowerBoundChart({ scenario }: { scenario: string | number }) {
       }))}
       render={() => (
         <BarChart margin={{ bottom: 32, top: 32, left: 16, right: 16 }}>
-          <Tooltip formatter={formatPercentage} />
+          <Tooltip
+            formatter={formatPercentage}
+            cursor={{ fill: palette.action.disabledBackground }}
+          />
           <YAxis tickFormatter={formatPercentage} />
           <XAxis dataKey="agents">
             <Label value="Agent count" offset={-10} position="insideBottom" />

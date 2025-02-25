@@ -1,6 +1,7 @@
 import { Submission } from "models";
 import { Expression } from "mongoose";
 import { PipelineStage } from "../pipeline";
+import { stage as updateSubmissionBestFlags } from "./updateSubmissionBestFlags";
 
 const SUBMISSIONS = "submissions";
 const ALGORITHM = "algorithm";
@@ -112,6 +113,12 @@ export const updateInstancesSubmissionHistory = () =>
           solution_algos: `$solution_algos.current`,
         },
       },
+      {
+        $addFields: {
+          lower_date: { $first: "$lower_algos.date" },
+          solution_date: { $first: "$solution_algos.date" },
+        },
+      },
       // Stage 4: Project the result to remove the submissions array from the output
       {
         $project: {
@@ -135,7 +142,7 @@ export const stage: PipelineStage = {
   run: async () => ({
     result: await updateInstancesSubmissionHistory(),
   }),
-  dependents: [],
+  dependents: [updateSubmissionBestFlags],
   description: `
 This pipeline aggregates all submissions for each instance and updates the
 instance model with the following information:

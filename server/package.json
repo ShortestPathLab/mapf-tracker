@@ -47,6 +47,7 @@
     "memoizee": "^0.4.17",
     "mime-types": "^2.1.35",
     "mockingoose": "^2.16.2",
+    "mongodb-aggregate-builder": "^1.0.2",
     "mongoose": "7",
     "neat-csv": "^7.0.0",
     "object-sizeof": "^2.6.5",

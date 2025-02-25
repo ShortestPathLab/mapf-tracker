@@ -52,7 +52,7 @@ export const theme = (t: "light" | "dark") =>
           elevation:
             t === "dark"
               ? {
-                  backgroundColor: alpha("#4f5053", 0.1),
+                  backgroundColor: alpha("#111317", 1),
                 }
               : undefined,
           elevation1: { backdropFilter: "blur(16px)" },
@@ -87,33 +87,34 @@ export function useAcrylic(color?: string): SxProps<Theme> {
 
 const solid = (b: string) => `linear-gradient(to bottom, ${b}, ${b})`;
 
-export const paper = (elevation: number = 1) => ({
-  boxSizing: "border-box",
-  borderRadius: 1,
-  backdropFilter: "blur(16px)",
-  transition: ({ transitions }) =>
-    transitions.create(["background-color", "box-shadow"]),
-  boxShadow: ({ shadows, palette }) =>
-    palette.mode === "dark"
-      ? elevation
-        ? shadows[1]
-        : "none"
-      : shadows[Math.max(floor(elevation) - 1, 0)],
-  backgroundImage: ({ palette }) =>
-    `${solid(
+export const paper = (elevation: number = 1) =>
+  ({
+    boxSizing: "border-box",
+    borderRadius: 1,
+    backdropFilter: "blur(16px)",
+    transition: ({ transitions }) =>
+      transitions.create(["background-color", "box-shadow"]),
+    boxShadow: ({ shadows, palette }) =>
       palette.mode === "dark"
-        ? alpha(palette.action.disabledBackground, elevation * 0.02)
-        : palette.background.paper
-    )}, ${solid(
+        ? elevation
+          ? shadows[1]
+          : "none"
+        : shadows[Math.max(floor(elevation) - 1, 0)],
+    backgroundImage: ({ palette }) =>
+      `${solid(
+        palette.mode === "dark"
+          ? alpha(palette.action.disabledBackground, elevation * 0.02)
+          : palette.background.paper
+      )}, ${solid(
+        palette.mode === "dark"
+          ? alpha(palette.background.default, 0.5)
+          : palette.background.paper
+      )}`,
+    border: ({ palette }) =>
       palette.mode === "dark"
-        ? alpha(palette.background.default, 0.5)
-        : palette.background.paper
-    )}`,
-  border: ({ palette }) =>
-    palette.mode === "dark"
-      ? `1px solid ${alpha(palette.text.primary, 0.06 + elevation * 0.04)}`
-      : `1px solid ${alpha(palette.text.primary, 0.18 + elevation * 0.08)}`,
-});
+        ? `1px solid ${alpha(palette.text.primary, 0.06 + elevation * 0.04)}`
+        : `1px solid ${alpha(palette.text.primary, 0.18 + elevation * 0.08)}`,
+  } satisfies SxProps<Theme>);
 export function usePaper(): (e?: number) => SxProps<Theme> {
   return paper;
 }

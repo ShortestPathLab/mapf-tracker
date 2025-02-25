@@ -5,7 +5,7 @@ import { join } from "path";
 import memoize from "p-memoize";
 
 export const resourcesPath =
-  process.env.NODE_ENV === "development"
+  false && process.env.NODE_ENV === "development"
     ? resourcesDevPath
     : resourcesProductionPath;
 

@@ -2,33 +2,34 @@ import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
 import { RequestHandler } from "express";
-import { filter, find, map, pick, values } from "lodash";
+import { filter, map, pick, values } from "lodash";
 import { context } from "logging";
 import { Instance, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
+import { toString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
 import { queryClient, route } from "query";
 import { usingWorkerTask, usingWorkerTaskReusable } from "queue/usingWorker";
-import { createPool, ResultTicketStatus } from "utils/ticket";
+import { ResultTicketStatus, createPool } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import {
+  SubmissionRequestValidatorWorkerResult,
   apiKeySchema,
   apiKeyValidationSchema,
   getKey,
-  SubmissionRequestValidatorWorkerResult,
   path as validateSubmissionRequestWorkerPath,
 } from "validation/submissionRequestValidatorWorker";
 import { z } from "zod";
+import { estimateSizeAsync } from "./estimateSize.worker";
 import {
   SummaryByApiKeyResult,
   path as summaryByApiKeyWorkerPath,
 } from "./summaryByApiKey.worker";
-import { estimateSizeAsync } from "./estimateSize.worker";
 
 const log = context("Submission Controller");
 
 const { add } = await createSubmissionValidator({
-  workerCount: +process.env.VALIDATOR_QUEUE_COUNT || 8,
+  workerCount: +(process.env.VALIDATOR_QUEUE_COUNT || 8),
 });
 
 // ─── Query Handlers ──────────────────────────────────────────────────────────
@@ -85,24 +86,15 @@ const joinedData = "joinedData";
 
 export const findByScenario = aggregate(
   z.object({ apiKey: z.string(), scenario: z.string() }),
-  ({ apiKey, scenario }) => [
-    { $match: { apiKey: { $eq: apiKey } } },
-    {
-      $lookup: {
-        from: Instance.collection.collectionName,
-        localField: "instance",
-        foreignField: "_id",
-        as: joinedData,
-      },
-    },
-    {
-      $match: {
+  ({ apiKey, scenario }, p) =>
+    p
+      .match({ apiKey })
+      .lookup(Instance.collection.collectionName, "instance", "_id", joinedData)
+      .match({
         [`${joinedData}.scen_id`]: new Types.ObjectId(scenario),
-      },
-    },
-    { $addFields: { id: { $toString: "$_id" } } },
-    { $project: { [joinedData]: 0 } },
-  ],
+      })
+      .addFields({ ...toString("_id", "id") })
+      .project({ [joinedData]: 0 }),
   async (docs) => {
     return map(docs, (d) =>
       pick(d, [
@@ -206,6 +198,7 @@ export const status = route(
   async ({ ticket }) =>
     submissionTickets.pool.tickets[ticket] || { status: "unknown" }
 );
+
 export const statusByApiKey = route(
   z.object({ apiKey: z.string() }),
   async ({ apiKey }) =>
@@ -220,9 +213,9 @@ export const create = route(z.any(), async (d, req) => {
   const key = randomUUIDv7();
   submissionTickets.withTicket(
     key,
-    () => processSubmission(d, apiKey.api_key),
+    () => processSubmission(d, apiKey.api_key!),
     {
-      apiKey: apiKey.api_key,
+      apiKey: apiKey.api_key!,
       size: await estimateSizeAsync(d),
       label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
     }

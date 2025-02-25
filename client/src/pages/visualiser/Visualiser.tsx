@@ -3,9 +3,9 @@ import {
   ChevronLeftOutlined,
   ChevronRightOutlined,
   CloseOutlined,
-  FirstPageOutlined,
   PauseOutlined,
   PlayArrowOutlined,
+  RestartAltOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -448,13 +448,8 @@ export function Visualisation({
                         <Divider orientation="vertical" flexItem />
                       </>
                     )}
-                    {[
-                      {
-                        name: "Restart",
-                        icon: <FirstPageOutlined />,
-                        action: restart,
-                      },
-                      {
+                    {filter([
+                      !sm && {
                         name: "Step back",
                         icon: <ChevronLeftOutlined />,
                         action: backwards,
@@ -468,12 +463,17 @@ export function Visualisation({
                         ),
                         action: paused ? play : pause,
                       },
-                      {
+                      !sm && {
                         name: "Step forward",
                         icon: <ChevronRightOutlined />,
                         action: forwards,
                       },
-                    ].map(({ name, icon, action }) => (
+                      {
+                        name: "Restart",
+                        icon: <RestartAltOutlined />,
+                        action: restart,
+                      },
+                    ]).map(({ name, icon, action }) => (
                       <Tooltip title={name} key={name} placement="top">
                         <IconButton onClick={action}>{icon}</IconButton>
                       </Tooltip>

@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { split } from "lodash";
 import { OngoingSubmission, SolutionPath, Submission } from "models";
 import { z } from "zod";
 
@@ -10,7 +11,18 @@ export const getSolutionPath = async (
     source === "submitted"
       ? await Submission.findOne({ _id: id })
       : await OngoingSubmission.findOne({ _id: id });
-  return data?.solutions;
+  if (data?.solutions) {
+    return data.solutions;
+  } else {
+    // Legacy solution path storage handling
+    const path = (await SolutionPath.findOne({ _id: id }))?.solution_path;
+    if (path) {
+      return split(
+        path.replaceAll("u", "_").replaceAll("d", "u").replaceAll("_", "d"),
+        "\n"
+      );
+    }
+  }
 };
 
 export const findPath: RequestHandler = async (req, res) => {
