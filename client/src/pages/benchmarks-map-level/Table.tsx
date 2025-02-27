@@ -1,4 +1,7 @@
-import { FileDownloadOutlined, ShowChartOutlined } from "@mui/icons-material";
+import {
+  DownloadOutlined,
+  ShowChartOutlined,
+} from "@mui-symbols-material/w400";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
@@ -44,7 +47,7 @@ export default function Table() {
     menuItems: [
       {
         name: "Download scenario",
-        icon: <FileDownloadOutlined />,
+        icon: <DownloadOutlined />,
         action: notify(downloadScenario(mapName), {
           end: "Scenario downloaded",
         }),

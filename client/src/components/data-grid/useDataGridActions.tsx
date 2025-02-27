@@ -1,4 +1,4 @@
-import { MoreVertOutlined } from "@mui/icons-material";
+import { MoreVertOutlined } from "@mui-symbols-material/w400";
 import {
   Box,
   IconButton,

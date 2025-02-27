@@ -2,7 +2,7 @@ import {
   CancelOutlined,
   CheckCircleOutlined,
   PendingOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import {
   Box,
   CircularProgress,

@@ -1,4 +1,4 @@
-import { ExpandMoreOutlined } from "@mui/icons-material";
+import { ExpandOutlined } from "@mui-symbols-material/w400";
 import {
   AccordionDetails,
   AccordionProps as MuiAccordionProps,
@@ -27,7 +27,7 @@ export default function Accordion({
     <MuiAccordion elevation={0} {...props} slotProps={slotProps}>
       <AccordionSummary
         {...merge(
-          { expandIcon: <ExpandMoreOutlined />, sx: { px: 0, py: 2 } },
+          { expandIcon: <ExpandOutlined />, sx: { px: 0, py: 2 } },
           slotProps?.summary
         )}
       >

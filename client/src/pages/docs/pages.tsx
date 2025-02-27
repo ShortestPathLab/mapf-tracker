@@ -2,11 +2,11 @@ import {
   AnimationOutlined,
   BookOutlined,
   CampaignOutlined,
+  DownloadOutlined,
   EmojiEventsOutlined,
-  FileDownloadOutlined,
-  FileUploadOutlined,
   ShapeLineOutlined,
-} from "@mui/icons-material";
+  UploadFileOutlined,
+} from "@mui-symbols-material/w400";
 import { find } from "lodash";
 import AboutPage from "./about";
 import { createArticlePage } from "./createArticlePage";
@@ -54,7 +54,7 @@ export const pages = () => [
   createArticlePage({
     key: "how-to-submit",
     title: "Submitting data to MAPF Tracker",
-    icon: <FileUploadOutlined />,
+    icon: <UploadFileOutlined />,
     content: <SubmissionInstructionsPage />,
     description:
       "Quick-start guide on how to submit your results to the platform",
@@ -62,7 +62,7 @@ export const pages = () => [
   createArticlePage({
     key: "dataset",
     title: "Get the dataset",
-    icon: <FileDownloadOutlined />,
+    icon: <DownloadOutlined />,
     content: <DatasetPage />,
     description: "Learn how to download the dataset",
   }),

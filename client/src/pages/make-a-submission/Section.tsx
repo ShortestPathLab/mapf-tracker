@@ -1,4 +1,4 @@
-import { ArrowBackOutlined } from "@mui/icons-material";
+import { ArrowBackOutlined } from "@mui-symbols-material/w400";
 import {
   ButtonBase,
   IconButton,

@@ -1,9 +1,9 @@
 import {
   CheckCircleOutlined,
-  HighlightOffOutlined,
+  ErrorOutlined,
   PendingOutlined,
-  RemoveCircleOutlineOutlined,
-} from "@mui/icons-material";
+  RemoveOutlined,
+} from "@mui-symbols-material/w400";
 import {
   CircularProgress,
   ListItem,
@@ -14,8 +14,8 @@ import {
 import { format } from "date-fns";
 import { capitalize, find, startCase } from "lodash";
 import { usePipelineStatus } from "queries/usePipelineQuery";
-import { Counter } from "../../../components/Counter";
 import { DATE_TIME_FORMAT } from "utils/format";
+import { Counter } from "../../../components/Counter";
 
 const sentenceCase = (id: string) => capitalize(startCase(id));
 
@@ -31,7 +31,7 @@ export function StageStatus({
       <ListItemIcon sx={{ mr: -2 }}>
         {
           {
-            error: <HighlightOffOutlined color="error" />,
+            error: <ErrorOutlined color="error" />,
             pending: <PendingOutlined color="warning" />,
             running: (
               <CircularProgress
@@ -39,7 +39,7 @@ export function StageStatus({
                 color="warning"
               />
             ),
-            invalidated: <RemoveCircleOutlineOutlined color="disabled" />,
+            invalidated: <RemoveOutlined color="disabled" />,
             done: <CheckCircleOutlined color="success" />,
           }[type]
         }

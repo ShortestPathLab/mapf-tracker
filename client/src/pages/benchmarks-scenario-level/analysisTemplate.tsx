@@ -1,4 +1,4 @@
-import { ShowChartOutlined } from "@mui/icons-material";
+import { ShowChartOutlined } from "@mui-symbols-material/w400";
 import { capitalize } from "lodash";
 import {
   LowerBoundChart,

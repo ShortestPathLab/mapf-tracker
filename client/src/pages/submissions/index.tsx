@@ -1,4 +1,4 @@
-import { DeleteOutlined, FileUploadOutlined } from "@mui/icons-material";
+import { DeleteOutlined, UploadFileOutlined } from "@mui-symbols-material/w400";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -123,7 +123,7 @@ export default function TrackSubmission() {
     {
       field: "Icon",
       width: 48,
-      renderCell: () => <IconCard icon={<FileUploadOutlined />} />,
+      renderCell: () => <IconCard icon={<UploadFileOutlined />} />,
       flex: 0,
       fold: true,
     },

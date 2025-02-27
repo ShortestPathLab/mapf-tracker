@@ -2,7 +2,7 @@ import {
   CallReceivedOutlined,
   EditOutlined,
   SendOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import { Box } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";

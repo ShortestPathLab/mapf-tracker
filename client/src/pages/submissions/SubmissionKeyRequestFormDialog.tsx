@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@mui/icons-material";
+import { CheckOutlined } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useSnackbar } from "components/Snackbar";

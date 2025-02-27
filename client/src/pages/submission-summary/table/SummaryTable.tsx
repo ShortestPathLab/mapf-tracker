@@ -1,12 +1,12 @@
 import {
   CloseOutlined,
   DeleteOutlined,
-  DoneOutlined,
-  DoNotDisturbOutlined,
+  DoneOutlineOutlined,
+  DoNotDisturbOnOutlined,
   HourglassEmptyOutlined,
   PlayArrowOutlined,
   StopOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import {
   alpha,
   Box,
@@ -163,7 +163,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
       </Tooltip>
     ) : (
       <Tooltip title="All instances valid">
-        <DoneOutlined color="success" fontSize="small" />
+        <DoneOutlineOutlined color="success" fontSize="small" />
       </Tooltip>
     );
 
@@ -254,13 +254,16 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                     label={
                       {
                         valid: (
-                          <DoneOutlined color="success" fontSize="small" />
+                          <DoneOutlineOutlined
+                            color="success"
+                            fontSize="small"
+                          />
                         ),
                         invalid: (
                           <CloseOutlined color="error" fontSize="small" />
                         ),
                         outdated: (
-                          <DoNotDisturbOutlined
+                          <DoNotDisturbOnOutlined
                             color="disabled"
                             fontSize="small"
                           />
@@ -380,7 +383,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
               }}
               icon={
                 <Collapse in={selected} orientation="horizontal">
-                  <DoneOutlined
+                  <DoneOutlineOutlined
                     fontSize="small"
                     color={selected ? "primary" : undefined}
                   />

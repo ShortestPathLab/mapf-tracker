@@ -1,8 +1,8 @@
-import { ChevronRight } from "@mui/icons-material";
+import { ChevronRightOutlined } from "@mui-symbols-material/w400";
 
 export function Arrow({ open }: { open?: boolean }) {
   return (
-    <ChevronRight
+    <ChevronRightOutlined
       color="action"
       sx={{
         my: "auto",

@@ -1,4 +1,4 @@
-import { FolderOutlined } from "@mui/icons-material";
+import { FolderOutlined } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
 import { ReactNode } from "react";
 

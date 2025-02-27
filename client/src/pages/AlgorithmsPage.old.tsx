@@ -1,4 +1,4 @@
-import { CancelOutlined, FilterListOutlined } from "@mui/icons-material";
+import { CancelOutlined, FilterListOutlined } from "@mui-symbols-material/w400";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import { Button, Card, Stack } from "@mui/material";
 import Box from "@mui/material/Box";

@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@mui/icons-material";
+import { CheckOutlined } from "@mui-symbols-material/w400";
 import { Box, Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Floating } from "components/Floating";

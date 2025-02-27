@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "hooks/useNavigation";
 import { PageHeaderProps } from "./PageHeader";
-import { ArrowUpwardOutlined } from "@mui/icons-material";
+import { ArrowUpwardOutlined } from "@mui-symbols-material/w400";
 import { last } from "lodash";
 
 export const Crumbs = ({ path, current }: PageHeaderProps) => {

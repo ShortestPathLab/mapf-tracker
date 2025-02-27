@@ -1,8 +1,8 @@
 import {
-  FileDownloadOutlined,
+  DownloadOutlined,
   InfoOutlined,
   ShowChartOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import { Box, useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
@@ -66,7 +66,7 @@ export default function Table() {
     menuItems: [
       {
         name: "Download all scenarios (ZIP)",
-        icon: <FileDownloadOutlined />,
+        icon: <DownloadOutlined />,
         action: notify(downloadBenchmarks, { end: "File downloaded" }),
       },
       {

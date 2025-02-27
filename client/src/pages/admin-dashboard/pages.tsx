@@ -4,7 +4,7 @@ import {
   CallReceivedOutlined,
   SpaceDashboardOutlined,
   VpnKeyOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import { once } from "lodash";
 import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";

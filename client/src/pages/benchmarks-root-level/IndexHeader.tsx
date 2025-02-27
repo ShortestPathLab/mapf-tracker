@@ -1,4 +1,4 @@
-import { RouteOutlined } from "@mui/icons-material";
+import { RouteOutlined } from "@mui-symbols-material/w400";
 import {
   ButtonBase,
   Collapse,

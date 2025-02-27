@@ -1,4 +1,4 @@
-import { ExpandMoreOutlined, SendOutlined } from "@mui/icons-material";
+import { ExpandOutlined, SendOutlined } from "@mui-symbols-material/w400";
 import {
   Button,
   ButtonGroup,
@@ -91,7 +91,7 @@ export function ReviewRequestDialog({
                 title="More save options"
                 trigger={(onClick) => (
                   <Button {...{ onClick }} variant="contained" sx={{ px: 1 }}>
-                    <ExpandMoreOutlined />
+                    <ExpandOutlined />
                   </Button>
                 )}
                 slotProps={{

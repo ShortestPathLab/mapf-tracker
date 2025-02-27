@@ -2,7 +2,7 @@ import {
   ArrowBackOutlined,
   ArrowUpwardOutlined,
   ShareOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import {
   Avatar,
   Box,

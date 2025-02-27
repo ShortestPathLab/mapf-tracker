@@ -6,7 +6,7 @@ import {
   PauseOutlined,
   PlayArrowOutlined,
   RestartAltOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import {
   Box,
   Button,

@@ -1,4 +1,4 @@
-import { CloseOutlined as CloseIcon } from "@mui/icons-material";
+import { CloseOutlined as CloseIcon } from "@mui-symbols-material/w400";
 import { Button, IconButton, Snackbar } from "@mui/material";
 import { noop } from "lodash";
 import {

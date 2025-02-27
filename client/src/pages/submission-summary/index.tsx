@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@mui/icons-material";
+import { CheckOutlined } from "@mui-symbols-material/w400";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { ConfirmDialog } from "components/dialog/Modal";

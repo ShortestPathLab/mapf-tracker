@@ -1,11 +1,11 @@
 import {
   CheckOutlined,
-  CreateOutlined,
-  FileUploadOutlined,
+  EditOutlined,
+  UploadFileOutlined,
   HelpOutlined,
   PendingOutlined,
   TimerOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import {
   Button,
   Chip,
@@ -64,7 +64,7 @@ export default function index() {
           <Stepper activeStep={5} orientation="vertical">
             {[
               {
-                icon: <CreateOutlined />,
+                icon: <EditOutlined />,
                 label: (
                   <>
                     {"Make a new submission request"}{" "}
@@ -81,7 +81,7 @@ export default function index() {
                 icon: <TimerOutlined sx={{ color: "action.disabled" }} />,
               },
               {
-                icon: <FileUploadOutlined />,
+                icon: <UploadFileOutlined />,
                 label: "Submit data with your API key",
                 content:
                   "Once you have your API key, you can use it to submit data to the tracker. As long as you have your API key, you can submit from any machine.",

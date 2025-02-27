@@ -1,4 +1,4 @@
-import { ExpandMoreOutlined } from "@mui/icons-material";
+import { ExpandFilledOutlined } from "@mui-symbols-material/w400";
 import {
   Button,
   ListItemIcon,
@@ -63,7 +63,7 @@ export function AnalysisButton({
       onClick={onClick}
       variant="contained"
       sx={{ px: 2, py: 1, mr: 1, minWidth: "max-content" }}
-      endIcon={<ExpandMoreOutlined />}
+      endIcon={<ExpandFilledOutlined />}
     >
       Trends
     </Button>

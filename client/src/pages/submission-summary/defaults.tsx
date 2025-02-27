@@ -1,8 +1,8 @@
-import { FileDownloadOutlined, RefreshOutlined } from "@mui/icons-material";
+import { DownloadOutlined, RefreshOutlined } from "@mui-symbols-material/w400";
 import { Button, Chip } from "@mui/material";
 
 export const defaultExtras = [
-  <Button key="download" startIcon={<FileDownloadOutlined />}>
+  <Button key="download" startIcon={<DownloadOutlined />}>
     Download
   </Button>,
   <Button key="refresh" startIcon={<RefreshOutlined />}>

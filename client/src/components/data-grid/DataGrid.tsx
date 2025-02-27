@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@mui/icons-material";
+import { SearchOutlined } from "@mui-symbols-material/w400";
 import {
   Box,
   ButtonBase,

@@ -1,4 +1,4 @@
-import { RouteOutlined } from "@mui/icons-material";
+import { RouteOutlined } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
 import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";

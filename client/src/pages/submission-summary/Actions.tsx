@@ -1,10 +1,10 @@
 import {
   ContentPasteOutlined,
   DataObjectOutlined,
-  FileUploadOutlined,
+  UploadFileOutlined,
   HelpOutlined,
   TableChartOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import {
   Box,
   Button,
@@ -118,7 +118,7 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
             transition: (t) => t.transitions.create("border-color"),
           }}
         >
-          <FileUploadOutlined color={dragging ? "primary" : "disabled"} />
+          <UploadFileOutlined color={dragging ? "primary" : "disabled"} />
           <Typography color="text.secondary">
             {dragging
               ? "Drop files here"

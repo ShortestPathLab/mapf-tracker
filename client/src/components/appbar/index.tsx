@@ -1,4 +1,4 @@
-import { ChevronRightOutlined } from "@mui/icons-material";
+import { ChevronRightOutlined } from "@mui-symbols-material/w400";
 import {
   AppBar,
   AppBarProps,

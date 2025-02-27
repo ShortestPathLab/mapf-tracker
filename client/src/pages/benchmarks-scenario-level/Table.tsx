@@ -1,4 +1,4 @@
-import { FileDownloadOutlined } from "@mui/icons-material";
+import { DownloadOutlined } from "@mui-symbols-material/w400";
 import { Item } from "components/Item";
 import { useSnackbarAction } from "components/Snackbar";
 import { cellRendererText, useDataGridActions } from "components/data-grid";
@@ -33,7 +33,7 @@ export default function Table() {
     menuItems: [
       {
         name: "Download result (CSV)",
-        icon: <FileDownloadOutlined />,
+        icon: <DownloadOutlined />,
         action: notify(downloadRow, { end: "File downloaded" }),
       },
     ],

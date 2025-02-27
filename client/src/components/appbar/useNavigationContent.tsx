@@ -1,20 +1,19 @@
 import {
-  Add,
+  AddFilledOutlined,
   AddOutlined,
-  Book,
+  BookFilledOutlined,
   BookOutlined,
   CodeOutlined,
   DarkModeOutlined,
-  EmojiEvents,
+  EmojiEventsFilledOutlined,
   EmojiEventsOutlined,
-  FileUploadOutlined,
-  GitHub,
-  Home,
+  HomeFilledOutlined,
   HomeOutlined,
   LightModeOutlined,
   MultilineChartOutlined,
   PersonOutlined,
-} from "@mui/icons-material";
+  UploadFileOutlined,
+} from "@mui-symbols-material/w400";
 import { Avatar } from "@mui/material";
 import { useDialog } from "hooks/useDialog";
 import { ReactNode } from "react";
@@ -22,6 +21,7 @@ import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
+import { GitHub } from "@mui/icons-material";
 
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
@@ -60,7 +60,7 @@ export function useNavigationContent() {
           label: "Home",
           url: "/",
           icon: <HomeOutlined />,
-          selectedIcon: <Home />,
+          selectedIcon: <HomeFilledOutlined />,
           description: "",
         },
         {
@@ -74,7 +74,7 @@ export function useNavigationContent() {
           label: "Submissions",
           url: "/submissions",
           icon: <EmojiEventsOutlined />,
-          selectedIcon: <EmojiEvents />,
+          selectedIcon: <EmojiEventsFilledOutlined />,
           description: "View and compare submitted algorithms",
         },
       ],
@@ -87,7 +87,7 @@ export function useNavigationContent() {
           label: "New submission request",
           url: "/submit",
           icon: <AddOutlined />,
-          selectedIcon: <Add />,
+          selectedIcon: <AddFilledOutlined />,
           description:
             "If you want to contribute, start by requesting an API key",
         },
@@ -95,7 +95,7 @@ export function useNavigationContent() {
           primary: true,
           label: "Submissions and API keys",
           url: "/track",
-          icon: <FileUploadOutlined />,
+          icon: <UploadFileOutlined />,
           description:
             "If you have an API key, you can manage your submission here",
         },
@@ -109,7 +109,7 @@ export function useNavigationContent() {
           label: "Docs",
           url: "/docs",
           icon: <BookOutlined />,
-          selectedIcon: <Book />,
+          selectedIcon: <BookFilledOutlined />,
           description: "View the documentation",
         },
         {

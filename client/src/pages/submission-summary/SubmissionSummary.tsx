@@ -1,4 +1,4 @@
-import { ExpandMoreOutlined } from "@mui/icons-material";
+import { ExpandOutlined } from "@mui-symbols-material/w400";
 import {
   Accordion,
   AccordionDetails,
@@ -83,10 +83,7 @@ export default function SubmissionSummary({
                 boxShadow: "none",
               }}
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreOutlined />}
-                sx={{ py: 2 }}
-              >
+              <AccordionSummary expandIcon={<ExpandOutlined />} sx={{ py: 2 }}>
                 <Typography sx={{ fontWeight: 500 }}>{name}</Typography>
               </AccordionSummary>
               <AccordionDetails

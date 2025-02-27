@@ -1,14 +1,14 @@
 import {
   DarkModeOutlined,
-  ExpandMoreOutlined,
+  ExpandOutlined,
   LightModeOutlined,
   MenuOutlined,
   RouteOutlined,
   SortOutlined,
-} from "@mui/icons-material";
+} from "@mui-symbols-material/w400";
 import ArticleIcon from "@mui/icons-material/ArticleOutlined";
 import AssignmentIcon from "@mui/icons-material/AssignmentOutlined";
-import DownloadIcon from "@mui/icons-material/FileDownloadOutlined";
+import DownloadIcon from "@mui/icons-material/DownloadOutlined";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import MenuIcon from "@mui/icons-material/MenuOutlined";
@@ -477,7 +477,7 @@ function ResponsiveAppBar() {
                     sx={{ px: 0, py: 1 }}
                     variant="contained"
                   >
-                    <ExpandMoreOutlined />
+                    <ExpandOutlined />
                   </Button>
                   <Menu
                     {...bindMenu(state)}
