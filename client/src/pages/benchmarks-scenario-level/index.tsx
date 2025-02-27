@@ -4,7 +4,7 @@ import { useLocationState } from "hooks/useNavigation";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { startCase } from "lodash";
-import { useScenarioData } from "queries/useBenchmarksQuery";
+import { useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
@@ -13,7 +13,7 @@ export default function Page() {
   const state = useLocationState<ScenarioLevelLocationState>();
   const { mapName, scenType, scenTypeID, mapId, scenId } = state;
   const title = `${scenType}-${scenTypeID}`;
-  const { data: scenarioData } = useScenarioData(scenId);
+  const { data: scenarioData } = useScenarioDetailsData(scenId);
   return (
     <GalleryLayout
       title={startCase(title)}
@@ -47,7 +47,7 @@ export default function Page() {
       ]}
     >
       <DataInspectorLayout
-        analysisTabName={`Analyse this scenario`}
+        analysisTabName="Trends"
         data={<Table />}
         analysis={
           <Analysis

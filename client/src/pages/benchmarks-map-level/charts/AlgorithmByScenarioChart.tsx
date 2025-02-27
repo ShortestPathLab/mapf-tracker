@@ -1,14 +1,18 @@
-import { useTheme } from "@mui/material";
-import { capitalize, chain, keyBy } from "lodash";
-import { useScenarioData } from "queries/useScenarioQuery";
+import { useQueries } from "@tanstack/react-query";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
 import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { getAlgorithms } from "components/analysis/getAlgorithms";
+import { BaseMetric } from "core/metrics";
+import { flatMap, fromPairs, keys, map, startCase, uniq, zip } from "lodash";
+import { CategoryChart } from "pages/home/CompletionByAlgorithmChart";
+import {
+  AggregateAlgorithmQuery,
+  algorithmQuery,
+} from "queries/useAggregateQuery";
+import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 
 export const slices = [
   {
@@ -17,35 +21,54 @@ export const slices = [
   },
 ] satisfies Slice[];
 
-export function AlgorithmByScenarioChart({ map }: { map: string }) {
-  const { palette } = useTheme();
+export const metrics = [
+  { key: "closed", name: "Instances closed" },
+  { key: "solved", name: "Instances solved" },
+  { key: "best_lower", name: "Best lower-bound" },
+  { key: "best_solution", name: "Best solution" },
+] satisfies BaseMetric[];
+
+export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
   const algorithmSelectorState = useAlgorithmSelector(slices);
-  const { metric, slice, selected } = algorithmSelectorState;
-  const { data, isLoading } = useScenarioData(metric, map);
-  const algorithms = getAlgorithms(data, "solved_instances");
+  const { metric, selected } = algorithmSelectorState;
+  const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
+    useAlgorithmsData();
+
+  const queries = useQueries({
+    queries: algorithms.map(({ _id }) =>
+      algorithmQuery({
+        algorithm: _id,
+        map: mapId,
+        groupBy: "scenarioType",
+        filterBy: metric as AggregateAlgorithmQuery["filterBy"],
+      })
+    ),
+  });
+  const isLoading = queries.some((q) => q.isLoading) || isAlgorithmsLoading;
+  const data = zip(algorithms, queries)
+    .map(([a, q]) => ({
+      _id: a._id,
+      label: a.algo_name,
+      values: fromPairs(map(q.data, (v) => [v._id, v.result])),
+    }))
+    .filter(({ _id }) => (selected?.length ? selected.includes(_id) : true));
+  const series = uniq(flatMap(data, (d) => keys(d.values))).map((id) => ({
+    opacity: 1,
+    key: `values.${id}`,
+    name: startCase(id),
+  }));
   return (
     <>
       <ChartOptions
         {...algorithmSelectorState}
+        metrics={metrics}
         slices={slices}
-        algorithms={algorithms}
       />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}
-        data={chain(data)
-          .map((c) => ({
-            name: capitalize(`${c.scen_type}-${c.type_id}`),
-            ...keyBy(c.solved_instances, "algo_name"),
-          }))
-          .sortBy("name")
-          .value()}
-        render={sliceBarChartRenderer({
-          slice,
-          algorithms,
-          selected,
-          mode: palette.mode,
-        })}
+        data={data}
+        render={() => <CategoryChart series={series} showLabels />}
       />
     </>
   );

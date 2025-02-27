@@ -3,7 +3,7 @@ import { Algorithm, Submission } from "models";
 import { Types } from "mongoose";
 
 export const findAll: RequestHandler = (req, res) => {
-  Algorithm.find({}, { _id: 0, algo_name: 1 })
+  Algorithm.find({}, { _id: 1, algo_name: 1 })
     .then((data) => {
       res.send(data);
     })

@@ -4,7 +4,7 @@ import {
 } from "aggregations/stages/updateScenariosFromInstances";
 import { Application, Router } from "express";
 import { isUndefined, omitBy } from "lodash";
-import { Instance, algorithms, instances, submissions } from "models";
+import { Instance, Scenario, algorithms, instances, submissions } from "models";
 import { AggregateBuilder, dateToString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
 import { z } from "zod";
@@ -30,6 +30,8 @@ const aggregateOptions = {
   map: z.string().optional(),
   // Scenario id, undefined assumed to be all
   scenario: z.string().optional(),
+  // Scenario id, undefined assumed to be all
+  scenarioType: z.string().optional(),
   // Agent count, undefined assumed to be all
   agents: z.number().int().nonnegative().optional(),
 
@@ -39,7 +41,9 @@ const aggregateOptions = {
 
   // ─── Group By ────────────────────────────────────────────────────────
 
-  groupBy: z.enum(["scenario", "map", "agents", "all"]).default("all"),
+  groupBy: z
+    .enum(["scenario", "map", "agents", "scenarioType", "all"])
+    .default("all"),
   //
 };
 
@@ -66,10 +70,33 @@ const createAggregateBase =
     groupBySelectors: Record<U["groupBy"], string | null>
   ) =>
   (
-    { map, scenario, agents, groupBy, operation: o, value: v, filterBy: f }: U,
+    {
+      map,
+      scenario,
+      agents,
+      scenarioType,
+      groupBy,
+      operation: o,
+      value: v,
+      filterBy: f,
+    }: U,
     p: AggregateBuilder = new AggregateBuilder()
   ) =>
     p
+      .mergeAggregationWithCurrent([
+        scenarioType
+          ? new AggregateBuilder()
+              .lookup(
+                Scenario.collection.collectionName,
+                "scen_id",
+                "_id",
+                "scenario"
+              )
+              .match({ "scenarios.scen_type": scenarioType })
+              .project({ scenarios: 0 })
+              .build()
+          : [],
+      ])
       .match(
         omitBy(
           {
@@ -80,6 +107,19 @@ const createAggregateBase =
           isUndefined
         )
       )
+      .mergeAggregationWithCurrent([
+        groupBy === "scenarioType"
+          ? new AggregateBuilder()
+              .lookup(
+                Scenario.collection.collectionName,
+                "scen_id",
+                "_id",
+                "scenario"
+              )
+              .addFields({ scenario: { $first: "$scenario" } })
+              .build()
+          : [],
+      ])
       .group({
         _id: groupBySelectors[groupBy],
         all: operations[o](undefined, `$${v}`),
@@ -131,6 +171,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
               all: () => undefined,
             },
             {
+              scenarioType: "$scenario.scen_type",
               scenario: "$scen_id",
               map: "$map_id",
               agents: "$agents",
@@ -176,6 +217,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
                     all: () => undefined,
                   },
                   {
+                    scenarioType: "$scenario.scen_type",
                     scenario: "$scen_id",
                     map: "$map_id",
                     agents: "$agents",

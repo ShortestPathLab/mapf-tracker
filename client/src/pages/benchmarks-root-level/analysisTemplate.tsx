@@ -6,7 +6,7 @@ import { MapProportionChart } from "./charts/MapProportionChart";
 
 export const analysisTemplate = [
   {
-    name: "Dataset analysis",
+    name: undefined,
     icon: <ShowChartOutlined />,
     variants: [
       {

@@ -2,6 +2,9 @@ import { Request, RequestHandler } from "express";
 import { AggregateBuilder } from "mongodb-aggregate-builder";
 import { Document, FilterQuery, Model } from "mongoose";
 import z from "zod";
+import memo from "p-memoize";
+import hash from "object-hash";
+import QuickLRU from "quick-lru";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -12,25 +15,28 @@ export const text = (p: string) => fetch(p).then(toText);
 export const blob = (p: string) => fetch(p).then(toBlob);
 
 export const queryClient = <T>(model: Model<T>) => {
-  const createHandler =
-    <V extends z.ZodType, U>(
-      validate: V = z.any() as any,
-      f: (data: z.infer<V>) => Promise<U>
-    ): RequestHandler<z.infer<V>> =>
-    async (req, res) => {
+  const createHandler = <V extends z.ZodType, U>(
+    validate: V = z.any() as any,
+    f: (data: z.infer<V>) => Promise<U>
+  ): RequestHandler<z.infer<V>> => {
+    const cache = new QuickLRU<string, Awaited<U>>({ maxSize: 1000 });
+    const g = memo(f, { cache, cacheKey: ([a]) => hash(a) });
+    model.watch().on("change", () => cache.clear());
+    return async (req, res) => {
       const { success, data, error } = await validate.safeParseAsync({
         ...req.params,
         ...req.query,
       });
       if (!success) return res.status(400).json(error.format());
       try {
-        res.json(await f(data));
+        res.json(await g(data));
       } catch (e) {
         res.status(500).json({
           error: `Error occurred in ${model.modelName} query handler: ${e}`,
         });
       }
     };
+  };
 
   return {
     query: <V extends z.ZodType>(

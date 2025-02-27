@@ -11,21 +11,21 @@ import { startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
-import { useInstanceCollectionsData } from "queries/useBenchmarksQuery";
+import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import { downloadInstance, downloadMap, downloadScenario } from "./download";
 
 export default function Table() {
   const state = useLocationState<MapLevelLocationState>();
   const { mapId, mapName } = state;
-  const { data, isLoading } = useInstanceCollectionsData(mapId);
+  const { data, isLoading } = useInstanceScenarioData(mapId);
   const navigate = useNavigate();
   const notify = useSnackbarAction();
 
   const actions = useDataGridActions<InstanceCollection>({
     items: [
       {
-        name: "Analyse this dataset",
+        name: "Trends",
         icon: <ShowChartOutlined />,
         render: (row, trigger) => (
           <AnalysisButton

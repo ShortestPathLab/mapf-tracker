@@ -64,7 +64,7 @@ export function useNavigationContent() {
           description: "",
         },
         {
-          label: "Browse",
+          label: "Benchmarks",
           url: "/benchmarks",
           icon: <MultilineChartOutlined />,
           description:

@@ -21,7 +21,7 @@ export function GalleryLayout({
         sm
           ? undefined
           : ({ header, children }) => (
-              <Stack direction="row" sx={{ gap: 6 }}>
+              <Stack direction="row" sx={{ gap: 8 }}>
                 <Stack
                   sx={{
                     width: 320,

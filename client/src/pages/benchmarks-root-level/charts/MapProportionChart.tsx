@@ -1,5 +1,9 @@
-import { useTheme } from "@mui/material";
-import { accentColors, tone } from "utils/colors";
+import { alpha, useTheme } from "@mui/material";
+import { Chart } from "components/analysis/Chart";
+import {
+  aggregateInstances,
+  getInstanceAggregateProportions,
+} from "components/analysis/reducers";
 import { capitalize, chain, head, map } from "lodash";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import {
@@ -11,12 +15,8 @@ import {
   Radar,
   RadarChart,
 } from "recharts";
-import { Chart } from "components/analysis/Chart";
+import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
-import {
-  aggregateInstances,
-  getInstanceAggregateProportions,
-} from "components/analysis/reducers";
 
 export function MapProportionChart() {
   const { palette } = useTheme();
@@ -43,19 +43,19 @@ export function MapProportionChart() {
           {map(
             [
               {
-                color: accentColors.lime,
+                color: alpha(tone(palette.mode, accentColors.deepPurple), 0.5),
                 key: "proportionSolved",
                 name: "Solved",
               },
               {
-                color: accentColors.green,
+                color: tone(palette.mode, accentColors.deepPurple),
                 key: "proportionClosed",
                 name: "Closed",
               },
             ],
             ({ key, color, name }) => (
               <Radar
-                fill={tone(palette.mode, color)}
+                fill={color}
                 isAnimationActive={false}
                 dataKey={key}
                 opacity={0.8}
@@ -64,7 +64,12 @@ export function MapProportionChart() {
             )
           )}
           <PolarGrid />
-          <PolarRadiusAxis stroke={palette.text.primary} domain={[0, 1]} />
+          <PolarRadiusAxis
+            stroke={palette.text.primary}
+            angle={90}
+            tickFormatter={(v) => formatPercentage(v, 0)}
+            domain={[0, 1]}
+          />
           <PolarAngleAxis dataKey="name" />
           <ChartTooltip formatter={formatPercentage} />
         </RadarChart>

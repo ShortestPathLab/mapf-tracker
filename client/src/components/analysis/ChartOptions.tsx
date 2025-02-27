@@ -3,10 +3,10 @@ import { map } from "lodash";
 import { setFromEvent } from "utils/set";
 import { Slice, useAlgorithmSelector } from "./useAlgorithmSelector";
 import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
+import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 
 export default function ChartOptions({
   slices,
-  algorithms,
   setSlice,
   slice,
   setMetric,
@@ -16,9 +16,9 @@ export default function ChartOptions({
   metrics = defaultMetrics,
 }: {
   slices?: Slice[];
-  algorithms?: string[];
   metrics?: BaseMetric[];
 } & Partial<ReturnType<typeof useAlgorithmSelector>>) {
+  const { data: algorithms = [] } = useAlgorithmsData();
   return (
     <Stack direction="row" sx={{ gap: 1, mb: 2 }}>
       {slices?.length > 1 && (
@@ -55,11 +55,11 @@ export default function ChartOptions({
           multiple: true,
           renderValue: (selected: string[]) => (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {map(selected, (value) => (
+              {map(selected, (value, i) => (
                 <Chip
                   sx={{ height: 22 }}
                   key={value}
-                  label={value}
+                  label={algorithms[i].algo_name}
                   size="small"
                 />
               ))}
@@ -77,8 +77,8 @@ export default function ChartOptions({
         }
       >
         {algorithms.map((a) => (
-          <MenuItem key={a} value={a}>
-            {a}
+          <MenuItem key={a._id} value={a._id}>
+            {a.algo_name}
           </MenuItem>
         ))}
       </TextField>

@@ -43,6 +43,7 @@ export type Instance = {
 };
 
 export type AlgorithmCollection = {
+  _id: string;
   algo_name: string;
 };
 

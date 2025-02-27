@@ -1,22 +1,20 @@
-import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import {
   aggregateInstances,
   getInstanceAggregateProportions,
 } from "components/analysis/reducers";
-import { successRateBarChartRenderer } from "components/analysis/successRateBarChartRenderer";
-import { capitalize, chain, identity } from "lodash";
-import { useScenarioSuccessRateByAgentCountData } from "queries/useAlgorithmQuery";
-import { useInstanceCollectionsData } from "queries/useBenchmarksQuery";
+import { capitalize, chain } from "lodash";
+import { CompletionByAgentCountChart } from "pages/home/CompletionByAgentCountChart";
+import { CategoryChart } from "pages/home/CompletionByAlgorithmChart";
+import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
 
 export function SuccessRateChart({ map }: { map: string }) {
-  const { palette } = useTheme();
-  const { data, isLoading } = useInstanceCollectionsData(map);
+  const { data, isLoading } = useInstanceScenarioData(map);
   return (
     <Chart
       isLoading={isLoading}
       data={chain(data)
-        .groupBy((c) => `${c.scen_type}-${c.type_id}`)
+        .groupBy((c) => `${c.scen_type}`)
         .mapValues(aggregateInstances)
         .mapValues(getInstanceAggregateProportions)
         .mapValues((c) => ({
@@ -28,29 +26,15 @@ export function SuccessRateChart({ map }: { map: string }) {
         .map(([k, v]) => ({
           ...v,
           key: k,
-          name: capitalize(k),
+          label: capitalize(k),
         }))
         .sortBy(["type", "proportionClosed"])
         .value()}
-      render={successRateBarChartRenderer({ mode: palette.mode })}
+      render={() => <CategoryChart showLabels />}
     />
   );
 }
 
 export function SuccessRateOnAgentsChart({ map }: { map: string }) {
-  const { palette } = useTheme();
-  const { data, isLoading } = useScenarioSuccessRateByAgentCountData(map);
-  return (
-    <Chart
-      isLoading={isLoading}
-      data={data}
-      render={successRateBarChartRenderer({
-        mode: palette.mode,
-        xAxisDataKey: "name",
-        proportionClosedKey: "Closed",
-        proportionSolvedKey: "Solved",
-        formatter: identity,
-      })}
-    />
-  );
+  return <CompletionByAgentCountChart partialQuery={{ map }} />;
 }

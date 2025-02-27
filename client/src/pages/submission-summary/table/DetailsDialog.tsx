@@ -3,7 +3,7 @@ import { Item } from "components/Item";
 import { DialogContentProps, useDialog } from "hooks/useDialog";
 import { SolutionVisualisation } from "pages/visualiser/Visualiser";
 import pluralize from "pluralize";
-import { useScenarioData } from "queries/useBenchmarksQuery";
+import { useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import GenericDetailsList from "../GenericDetailsList";
 import { MapLabel } from "./MapLabel";
 import { ScenarioLabel } from "./ScenarioLabel";
@@ -47,7 +47,7 @@ export function DetailsDialog({
   apiKey,
   slice,
 }: SubmissionInstanceProps & DialogContentProps) {
-  const { data: scenario } = useScenarioData(scenarioId);
+  const { data: scenario } = useScenarioDetailsData(scenarioId);
   const { dialog, open } = useDialog(VisualisationDialog, {
     title: "Visualise solution",
     slotProps: {

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { head, last, memoize, pick } from "lodash";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
-import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
+import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import { useSolutionData } from "queries/useSolutionQuery";
 import { useMemo } from "react";
@@ -112,9 +112,8 @@ export function useSolution({
       source === "ongoing" ? solutionId : undefined
     );
 
-  const { data: scenario, isLoading: isScenarioLoading } = useScenarioData(
-    instance?.scen_id
-  );
+  const { data: scenario, isLoading: isScenarioLoading } =
+    useScenarioDetailsData(instance?.scen_id);
   const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(
     instance?.map_id
   );

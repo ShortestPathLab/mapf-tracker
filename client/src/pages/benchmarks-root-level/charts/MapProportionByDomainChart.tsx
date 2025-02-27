@@ -32,7 +32,10 @@ export function MapProportionByDomainChart() {
         }))
         .sortBy(["type", "proportionClosed"])
         .value()}
-      render={successRateBarChartRenderer({ mode: palette.mode })}
+      render={successRateBarChartRenderer({
+        stacked: true,
+        mode: palette.mode,
+      })}
     />
   );
 }

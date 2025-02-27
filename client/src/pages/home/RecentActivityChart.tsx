@@ -18,7 +18,7 @@ export function RecentActivityChart(
   const total = sum(map(data, "count"));
   return (
     <GridChartCard
-      primaryLabel="Recent activity"
+      primaryLabel="Activity"
       secondaryLabel={`${total} solved in the past 3 years`}
       {...props}
       content={
@@ -36,6 +36,15 @@ export function RecentActivityChart(
             ))}
           </Stack>
           <Bar
+            sx={{
+              "> div": {
+                gap: "1%",
+                "> *": {
+                  borderRadius: 0.5,
+                  height: 48,
+                },
+              },
+            }}
             label={null}
             renderLabel={(label) => label}
             values={map(data, ({ _id, count }) => ({

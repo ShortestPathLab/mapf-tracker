@@ -1,14 +1,12 @@
-import { useTheme } from "@mui/material";
-import { capitalize, chain, keyBy } from "lodash";
-import { useMapData } from "queries/useAlgorithmQuery";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
+import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
 import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
-import { getAlgorithms } from "components/analysis/getAlgorithms";
+import { capitalize, chain, keyBy } from "lodash";
+import { useMapData } from "queries/useAlgorithmQuery";
 
 export const slices = [
   {
@@ -18,18 +16,12 @@ export const slices = [
 ] satisfies Slice[];
 
 export function AlgorithmByMapChart() {
-  const { palette } = useTheme();
   const algorithmSelectorState = useAlgorithmSelector(slices);
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useMapData(metric);
-  const algorithms = getAlgorithms(data, "solved_instances");
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        slices={slices}
-        algorithms={algorithms}
-      />
+      <ChartOptions {...algorithmSelectorState} slices={slices} />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}
@@ -43,9 +35,8 @@ export function AlgorithmByMapChart() {
         render={sliceBarChartRenderer({
           xAxisDataKey: "map",
           slice,
-          algorithms,
           selected,
-          mode: palette.mode,
+          keyType: "name",
         })}
       />
     </>

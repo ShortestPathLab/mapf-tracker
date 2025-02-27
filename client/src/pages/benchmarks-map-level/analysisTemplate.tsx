@@ -9,24 +9,24 @@ import {
 export function analysisTemplate(mapName: string, mapId: string) {
   return [
     {
-      name: `Analysis of ${mapName}`,
+      name: `Trends in ${mapName}`,
       icon: <ShowChartOutlined />,
       variants: [
         {
-          name: "By scenario",
-          render: () => <SuccessRateChart map={mapId} />,
-        },
-        {
-          name: "By agent count",
-          render: () => <SuccessRateOnAgentsChart map={mapId} />,
-        },
-        {
-          name: "Algorithms by scenario",
+          name: "Completion per algorithm",
           render: () => <AlgorithmByScenarioChart map={mapId} />,
         },
         {
-          name: "Algorithms by agent count",
+          name: "Completion by agent count per algorithm",
           render: () => <AlgorithmByAgentChart map={mapId} />,
+        },
+        {
+          name: "Completion by scenario type",
+          render: () => <SuccessRateChart map={mapId} />,
+        },
+        {
+          name: "Completion by agent count",
+          render: () => <SuccessRateOnAgentsChart map={mapId} />,
         },
       ],
     },

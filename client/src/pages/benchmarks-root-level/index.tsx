@@ -18,7 +18,6 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
     <Layout
       flat
       title={showHeader ? "Home" : "Benchmarks"}
-      description="View all benchmarks and their results"
       path={showHeader ? [] : [{ name: "Home", url: "/" }]}
       render={render(showHeader)}
     >

@@ -9,7 +9,7 @@ import { TabBar } from "./TabBar";
 export function DataInspectorLayout({
   data: dataContent,
   dataTabName = "Browse solutions",
-  analysisTabName = "Analyse",
+  analysisTabName = "Trends",
   analysis: analysisContent,
 }: {
   dataTabName?: ReactNode;

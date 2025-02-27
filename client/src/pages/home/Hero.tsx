@@ -14,12 +14,12 @@ import { Grid } from "layout";
 import { map } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import Table from "pages/benchmarks-root-level/Table";
-import { AlgorithmByMapChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapChart";
-import { MapProportionByDomainChart } from "pages/benchmarks-root-level/charts/MapProportionByDomainChart";
 import { MapProportionChart } from "pages/benchmarks-root-level/charts/MapProportionChart";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { CompletionByAgentCountChartCard } from "./CompletionByAgentCountChart";
+import { CompletionByAlgorithmChartCard } from "./CompletionByAlgorithmChart";
 import { GridChartCard } from "./GridChartCard";
 import { RecentActivityChart } from "./RecentActivityChart";
 import { TotalSolvedClosedChart } from "./TotalSolvedClosedChart";
@@ -116,43 +116,35 @@ export default function Hero() {
             m: -1,
           }}
         >
-          <RecentActivityChart columns={2} height={130} />
-          <TotalSolvedClosedChart columns={1} height={130} />
+          <RecentActivityChart columns={2} height={170} />
+          <TotalSolvedClosedChart columns={1} height={170} />
         </Grid>
         <Grid
-          width={380}
+          width={420}
           sx={{
             "> *": { m: 1 },
             m: -1,
           }}
         >
-          {[
-            {
-              columns: 2,
-              height: 540,
-              primaryLabel: "Completion by algorithm/map",
-              secondaryLabel:
-                "Compare instances closed and solved across algorithms, per map",
-              content: <AlgorithmByMapChart />,
-            },
-            {
-              columns: 1,
-              height: 540,
-              primaryLabel: "Completion by map type",
-              secondaryLabel:
-                "Compare instances closed and solved across map types, per algorithm",
-              content: <MapProportionChart />,
-            },
-            {
-              columns: 1,
-              height: 540,
-              primaryLabel: "Completion by map",
-              secondaryLabel: "Compare completion across maps",
-              content: <MapProportionByDomainChart />,
-            },
-          ].map((props, i) => (
-            <GridChartCard key={i} {...props} />
-          ))}
+          <CompletionByAgentCountChartCard
+            columns={1}
+            height={540}
+            primaryLabel="Completion by agent count"
+            secondaryLabel="Instances solved and closed across agent count"
+          />
+          <CompletionByAlgorithmChartCard
+            primaryLabel="Completion by algorithm"
+            columns={1}
+            height={540}
+            secondaryLabel="Compare instances closed and solved across algorithms"
+          />
+          <GridChartCard
+            columns={1}
+            height={540}
+            primaryLabel="Completion by map type"
+            content={<MapProportionChart />}
+            secondaryLabel="Instances closed and solved across map types"
+          />
         </Grid>
       </Stack>
       <Stack sx={{ gap: 2, my: 1 }}>

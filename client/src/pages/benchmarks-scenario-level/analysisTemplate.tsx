@@ -14,7 +14,7 @@ export function analysisTemplate(
 ) {
   return [
     {
-      name: `Analysis of ${capitalize(
+      name: `Trends in ${capitalize(
         `${scenType}-${scenTypeID}`
       )} in ${mapName}`,
       icon: <ShowChartOutlined />,

@@ -55,7 +55,7 @@ export default function Page() {
       ]}
     >
       <DataInspectorLayout
-        analysisTabName={`Analyse this map`}
+        analysisTabName="Trends"
         data={<Table />}
         analysis={<Analysis template={analysisTemplate(mapName, mapId)} />}
       />

@@ -27,7 +27,7 @@ export const useBenchmarksData = () =>
       ),
   });
 
-export const useInstanceCollectionsData = (id: number | string) =>
+export const useInstanceScenarioData = (id: number | string) =>
   useQuery({
     queryKey: ["instanceCollections", id],
     queryFn: async () =>
@@ -40,7 +40,7 @@ export const useInstanceCollectionsData = (id: number | string) =>
     enabled: !!id,
   });
 
-export const useScenarioData = (id: number | string) =>
+export const useScenarioDetailsData = (id: number | string) =>
   useQuery({
     queryKey: ["scenario", id],
     queryFn: () =>

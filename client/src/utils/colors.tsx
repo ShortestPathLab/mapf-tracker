@@ -8,7 +8,7 @@ export const tone = (
   mode: "light" | "dark" = "light",
   color: (typeof accentColors)[keyof typeof accentColors]
 ) => {
-  return color[mode === "dark" ? "400" : "700"];
+  return color[mode === "dark" ? "300" : "500"];
 };
 
 export const toneBy = (mode: "light" | "dark" = "light", index: number = 0) => {

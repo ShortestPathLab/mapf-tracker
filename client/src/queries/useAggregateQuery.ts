@@ -10,14 +10,15 @@ type Result = {
   result: number;
 };
 
-type AggregateQuery = {
+export type AggregateQuery = {
   operation?: "count" | "sum" | "max" | "min" | "avg";
   value?: "solution_cost" | "lower_cost";
   map?: string;
   scenario?: string;
+  scenarioType?: string;
   agents?: number;
   filterBy?: "closed" | "solved" | "all";
-  groupBy?: "scenario" | "map" | "agents";
+  groupBy?: "scenario" | "map" | "agents" | "scenarioType";
 };
 
 export const useAggregate = (params: AggregateQuery) => {
@@ -51,4 +52,30 @@ function aggregate(params: AggregateQuery) {
   return json<Result[]>(
     `${APIConfig.apiUrl}/queries/aggregate?${search.toString()}`
   );
+}
+
+export type AggregateAlgorithmQuery = Omit<
+  AggregateQuery,
+  "groupBy" | "filterBy"
+> & {
+  algorithm?: string;
+  groupBy?: AggregateQuery["groupBy"] | "algorithm";
+  filterBy?: AggregateQuery["filterBy"] | "best_lower" | "best_solution";
+};
+
+function aggregateAlgorithm(params: AggregateAlgorithmQuery) {
+  const search = new URLSearchParams(mapValues(params, toString));
+  return json<Result[]>(
+    `${APIConfig.apiUrl}/queries/aggregate/algorithm?${search.toString()}`
+  );
+}
+
+export const useAggregateAlgorithm = (params: AggregateAlgorithmQuery) => {
+  return useQuery(algorithmQuery(params));
+};
+export function algorithmQuery(params: AggregateAlgorithmQuery) {
+  return {
+    queryKey: ["queries/aggregate/algorithm", hash(params)],
+    queryFn: () => aggregateAlgorithm(params),
+  };
 }

@@ -40,13 +40,15 @@ export function Analysis({ template }: { template: Template[] }) {
             borderRadius: 1,
           }}
         >
-          <Typography
-            sx={{ p: 2, py: 1 }}
-            variant="overline"
-            color="text.secondary"
-          >
-            {name}
-          </Typography>
+          {name && (
+            <Typography
+              sx={{ p: 2, py: 1 }}
+              variant="overline"
+              color="text.secondary"
+            >
+              {name}
+            </Typography>
+          )}
           <Chart data={variants} />
         </Stack>
       ))}
@@ -63,7 +65,7 @@ export function AnalysisButton({
       sx={{ px: 2, py: 1, mr: 1, minWidth: "max-content" }}
       endIcon={<ExpandMoreOutlined />}
     >
-      Analyse
+      Trends
     </Button>
   ),
 }: {
@@ -135,7 +137,6 @@ export function AnalysisButton({
 function Chart({ data }: { data: Variant[] }) {
   const [tab, setTab] = useState(head(data)?.name);
   const current = find(data, { name: tab });
-  const lg = (width: number) => width > 960;
   const height = 720;
   return (
     <AutoSizer style={{ width: "100%", height }}>
@@ -144,12 +145,11 @@ function Chart({ data }: { data: Variant[] }) {
           sx={{
             height,
             width: w,
-            borderTop: (t) =>
-              lg(w) ? `1px solid ${t.palette.divider}` : "none",
+            borderTop: () => "none",
           }}
         >
           <Stack
-            direction={lg(w) ? "row" : "column"}
+            direction={"column"}
             sx={{
               height: "100%",
             }}
@@ -158,11 +158,9 @@ function Chart({ data }: { data: Variant[] }) {
               variant="scrollable"
               value={tab}
               onChange={(_, f) => setTab(f)}
-              orientation={lg(w) ? "vertical" : "horizontal"}
+              orientation={"horizontal"}
               sx={{
-                borderRight: lg(w)
-                  ? (t) => `1px solid ${t.palette.divider}`
-                  : "none",
+                borderRight: "none",
               }}
             >
               {map(data, ({ name }) => (
@@ -170,7 +168,7 @@ function Chart({ data }: { data: Variant[] }) {
                   key={name}
                   value={name}
                   label={name}
-                  sx={{ alignItems: "flex-start", px: lg(w) ? 3 : 2 }}
+                  sx={{ alignItems: "flex-start", px: 2 }}
                 />
               ))}
             </Tabs>

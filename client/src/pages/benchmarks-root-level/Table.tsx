@@ -48,7 +48,7 @@ export default function Table() {
   const actions = useDataGridActions<Benchmark>({
     items: [
       {
-        name: "Analyse this dataset",
+        name: "Trends",
         icon: <ShowChartOutlined />,
         render: (row, trigger) => (
           <AnalysisButton

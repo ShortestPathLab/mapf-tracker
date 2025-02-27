@@ -20,14 +20,14 @@ import Grid from "layout/Grid";
 import { capitalize, head } from "lodash";
 import pluralize from "pluralize";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
-import { useMapData, useScenarioData } from "queries/useBenchmarksQuery";
+import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import { formatDate } from "utils/format";
 
 export default function Details({ id }: { id?: string }) {
   const { data: history } = useAlgorithmForInstanceData(id);
   const { data: instance } = useInstanceData(id);
-  const { data: scenario } = useScenarioData(instance?.scen_id);
+  const { data: scenario } = useScenarioDetailsData(instance?.scen_id);
   const { data: map } = useMapData(instance?.map_id);
   return (
     <Stack sx={{ gap: 4 }}>

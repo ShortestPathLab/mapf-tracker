@@ -1,10 +1,10 @@
 export type BaseMetric = { key: string; name: string };
 
 export const metrics = [
-  { key: "closed", name: "Instances closed" },
   { key: "solved", name: "Instances solved" },
-  { key: "lower", name: "Best lower-bound" },
   { key: "solution", name: "Best solution" },
+  { key: "closed", name: "Instances closed" },
+  { key: "lower", name: "Best lower-bound" },
 ] satisfies BaseMetric[];
 
 export const scenarioMetrics = [
