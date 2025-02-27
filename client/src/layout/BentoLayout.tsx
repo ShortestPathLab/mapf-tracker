@@ -66,7 +66,7 @@ export function BentoLayout({
           <Stack
             direction="row"
             sx={{
-              bgcolor: "background.default",
+              bgcolor: "background.paper",
               height: "100%",
             }}
           >

@@ -373,7 +373,7 @@ export function Visualisation({
                     >
                       <Graphics
                         draw={$bg(
-                          theme.palette.background.default,
+                          theme.palette.background.paper,
                           size.width,
                           size.height
                         )}

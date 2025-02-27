@@ -212,7 +212,6 @@ export default function index(props: AppBarProps) {
                   sx={{
                     bgcolor: "background.default",
                     minWidth: "fit-content",
-                    borderRight: (t) => `1px solid ${t.palette.divider}`,
                   }}
                 >
                   {contents}

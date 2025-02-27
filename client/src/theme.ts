@@ -21,8 +21,8 @@ export const theme = (t: "light" | "dark") =>
       mode: t,
       background:
         t === "light"
-          ? { default: "#ffffff", paper: "#ffffff" }
-          : { default: "#111317", paper: "#17191d" },
+          ? { default: "#f0f4f9", paper: "#ffffff" }
+          : { default: "#17191d", paper: "#111317" },
     },
     shape: { borderRadius: 8 },
     shadows: ["", ...times(24, constant(shadow))] as unknown as Shadows,

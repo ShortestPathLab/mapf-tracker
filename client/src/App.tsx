@@ -42,7 +42,7 @@ export default function App() {
 
   const t = useMemo(() => theme(mode), [mode]);
 
-  useTitleBar(mode === "dark" ? "#17191d" : "#ffffff");
+  useTitleBar(mode === "dark" ? "#17191d" : "#f0f4f9");
   return (
     <QueryClientProvider client={queryClient}>
       <ModalContext.Provider value={modalProviderValue}>

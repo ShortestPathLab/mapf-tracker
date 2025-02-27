@@ -99,7 +99,7 @@ export default function Hero() {
           position: "sticky",
           top: 0,
           zIndex: 100,
-          bgcolor: "background.default",
+          bgcolor: "background.paper",
           py: 2,
           my: -2,
         }}

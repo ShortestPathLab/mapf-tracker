@@ -56,7 +56,6 @@ export default function Layout({
   slotProps,
   description,
   backBehaviour = "up",
-  flat,
   disablePadding,
 }: LayoutProps) {
   const lg = useSm();
@@ -75,7 +74,7 @@ export default function Layout({
       {...merge(
         {
           sx: {
-            bgcolor: "background.default",
+            bgcolor: "background.paper",
             gap: 4,
             px: disablePadding ? 0 : xs ? 2 : 3,
             py: disablePadding ? 0 : xs ? 2 : 3,
@@ -105,8 +104,7 @@ export default function Layout({
           >
             <Toolbar
               sx={{
-                bgcolor:
-                  flat && isTop ? "background.default" : "background.paper",
+                bgcolor: "background.paper",
               }}
             >
               <IconButton
@@ -133,12 +131,18 @@ export default function Layout({
           <Appbar
             sx={{
               transition: (t) => t.transitions.create("background-color"),
-              bgcolor:
-                flat && isTop ? "background.default" : "background.paper",
+              bgcolor: "background.paper",
             }}
           />
         ))}
-      <Stack sx={{ flex: 1, height: "100%", overflow: "hidden" }}>
+      <Stack
+        sx={{
+          flex: 1,
+          height: "100%",
+          overflow: "hidden",
+          bgcolor: "background.paper",
+        }}
+      >
         {lg && <Box sx={{ height: appbarHeight(lg) }} />}
         <Scroll y style={{ flex: 1 }} ref={setPanel}>
           {!lg && <Crumbs path={path} current={title} />}

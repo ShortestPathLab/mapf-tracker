@@ -27,7 +27,7 @@ export function TabBar({ children }: { children?: ReactNode }) {
         position: "sticky",
         top: 0,
         zIndex: 10,
-        bgcolor: top ? "background.default" : "background.paper",
+        bgcolor: top ? "background.paper" : "background.paper",
       }}
     >
       {children}

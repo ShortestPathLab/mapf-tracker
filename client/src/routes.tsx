@@ -21,7 +21,8 @@ export const routes: Route[] = [
     path: "/",
     content: (
       <DirectoryPage
-        title="Home"
+        title="MAPF Tracker"
+        description="The latest progress in multi-agent pathfinding"
         labels={["Browse", "Make a submission", "Docs"]}
         render={({ header, children }) => (
           <>

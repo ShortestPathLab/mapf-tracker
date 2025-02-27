@@ -1,4 +1,12 @@
-import { Stack, StackProps, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Stack,
+  StackProps,
+  Tab,
+  Tabs,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { head } from "lodash";
@@ -11,13 +19,13 @@ export function Sidebar(props: StackProps) {
   const match = matchPath("/dashboard/:section?/", pathname);
   const { section } = match?.params ?? {};
   const navigate = useNavigate();
+  const theme = useTheme();
   return (
     !lg && (
       <Stack
         {...props}
         sx={{
-          bgcolor: "background.default",
-          borderRight: (t) => `1px solid ${t.palette.divider}`,
+          bgcolor: alpha(theme.palette.background.paper, 0.5),
           ...props.sx,
         }}
       >

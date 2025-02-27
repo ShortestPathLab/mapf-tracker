@@ -82,7 +82,7 @@ export default function index() {
           <>
             <Box
               sx={{
-                bgcolor: "background.default",
+                bgcolor: "background.paper",
                 position: "absolute",
                 top: 0,
                 left: 0,

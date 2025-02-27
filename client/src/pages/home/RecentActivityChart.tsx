@@ -5,6 +5,7 @@ import { head, last, map, max, sum } from "lodash";
 import { useSeries } from "queries/useSeriesQuery";
 import { ComponentProps } from "react";
 import { GridChartCard } from "./GridChartCard";
+import { accentColors, tone } from "utils/colors";
 
 const formatDate = (s?: string) =>
   s ? format(parse(s, "yyyy-MM", new Date()), "MMM yyyy") : "";
@@ -38,7 +39,7 @@ export function RecentActivityChart(
           <Bar
             sx={{
               "> div": {
-                gap: "1%",
+                gap: "0.5%",
                 "> *": {
                   borderRadius: 0.5,
                   height: 48,
@@ -50,7 +51,7 @@ export function RecentActivityChart(
             values={map(data, ({ _id, count }) => ({
               value: 1 / data.length,
               color: alpha(
-                theme.palette.primary.main,
+                tone(theme.palette.mode, accentColors.teal),
                 max([0.1, count / peak])
               ),
               label: `${formatDate(_id)}: ${count} solved`,
