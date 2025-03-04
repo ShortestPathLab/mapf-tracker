@@ -1,11 +1,11 @@
 import {
-  BlurOffOutlined,
-  ChevronLeftOutlined,
-  ChevronRightOutlined,
-  CloseOutlined,
-  PauseOutlined,
-  PlayArrowOutlined,
-  RestartAltOutlined,
+  BlurOffRounded,
+  ChevronLeftRounded,
+  ChevronRightRounded,
+  CloseRounded,
+  PauseRounded,
+  PlayArrowRounded,
+  RestartAltRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -331,7 +331,7 @@ export function Visualisation({
             gap: 2,
           }}
         >
-          <BlurOffOutlined />
+          <BlurOffRounded />
           <Typography>No solution available</Typography>
           <Button
             variant="contained"
@@ -451,26 +451,26 @@ export function Visualisation({
                     {filter([
                       !sm && {
                         name: "Step back",
-                        icon: <ChevronLeftOutlined />,
+                        icon: <ChevronLeftRounded />,
                         action: backwards,
                       },
                       {
                         name: paused ? "Play" : "Pause",
                         icon: paused ? (
-                          <PlayArrowOutlined sx={{ color: "primary.main" }} />
+                          <PlayArrowRounded sx={{ color: "primary.main" }} />
                         ) : (
-                          <PauseOutlined sx={{ color: "primary.main" }} />
+                          <PauseRounded sx={{ color: "primary.main" }} />
                         ),
                         action: paused ? play : pause,
                       },
                       !sm && {
                         name: "Step forward",
-                        icon: <ChevronRightOutlined />,
+                        icon: <ChevronRightRounded />,
                         action: forwards,
                       },
                       {
                         name: "Restart",
-                        icon: <RestartAltOutlined />,
+                        icon: <RestartAltRounded />,
                         action: restart,
                       },
                     ]).map(({ name, icon, action }) => (
@@ -545,7 +545,7 @@ export function Visualisation({
                           edge="end"
                           onClick={() => setSelection({ show: false })}
                         >
-                          <CloseOutlined />
+                          <CloseRounded />
                         </IconButton>
                       </Stack>
                       <Stack sx={{ p: 2, minWidth: 180 }}>

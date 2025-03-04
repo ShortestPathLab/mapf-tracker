@@ -1,7 +1,7 @@
 import {
-  CallReceivedOutlined,
-  EditOutlined,
-  SendOutlined,
+  CallReceivedRounded,
+  EditRounded,
+  SendRounded,
 } from "@mui-symbols-material/w400";
 import { Box } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
@@ -42,12 +42,12 @@ export default function index() {
     items: [
       {
         name: "Review request",
-        icon: <EditOutlined />,
+        icon: <EditRounded />,
         action: (row) => showDetails({ data: row }),
       },
       {
         name: "Respond to request",
-        icon: <SendOutlined />,
+        icon: <SendRounded />,
         action: (row) => showConfirmation({ data: row }),
       },
     ],
@@ -57,7 +57,7 @@ export default function index() {
     {
       field: "Icon",
       width: 48,
-      renderCell: () => <IconCard icon={<CallReceivedOutlined />} />,
+      renderCell: () => <IconCard icon={<CallReceivedRounded />} />,
       flex: 0,
       fold: true,
     },

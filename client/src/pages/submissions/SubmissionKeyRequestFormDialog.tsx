@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@mui-symbols-material/w400";
+import { CheckRounded } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useSnackbar } from "components/Snackbar";
@@ -36,7 +36,7 @@ export function SubmissionKeyRequestFormDialog({
               variant="contained"
               size="large"
               disabled={isSubmitting}
-              startIcon={<CheckOutlined />}
+              startIcon={<CheckRounded />}
             >
               Save changes
             </Button>

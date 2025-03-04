@@ -1,4 +1,4 @@
-import { RouteOutlined } from "@mui-symbols-material/w400";
+import { RouteRounded } from "@mui-symbols-material/w400";
 import {
   ButtonBase,
   Collapse,
@@ -34,7 +34,7 @@ export function IndexHeader(props: CollapseProps) {
           </ButtonBase>
           /
           <Stack direction="row" gap={1} alignItems="center">
-            <RouteOutlined fontSize="small" />
+            <RouteRounded fontSize="small" />
             <Typography sx={{ fontWeight: 500 }}>MAPF Tracker</Typography>
           </Stack>
         </Stack>

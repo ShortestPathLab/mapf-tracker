@@ -1,8 +1,8 @@
 import {
-  CheckCircleOutlined,
-  ErrorOutlined,
-  PendingOutlined,
-  RemoveOutlined,
+  CheckCircleRounded,
+  ErrorRounded,
+  PendingRounded,
+  RemoveRounded,
 } from "@mui-symbols-material/w400";
 import {
   CircularProgress,
@@ -31,16 +31,16 @@ export function StageStatus({
       <ListItemIcon sx={{ mr: -2 }}>
         {
           {
-            error: <ErrorOutlined color="error" />,
-            pending: <PendingOutlined color="warning" />,
+            error: <ErrorRounded color="error" />,
+            pending: <PendingRounded color="warning" />,
             running: (
               <CircularProgress
                 sx={{ maxWidth: 24, maxHeight: 24 }}
                 color="warning"
               />
             ),
-            invalidated: <RemoveOutlined color="disabled" />,
-            done: <CheckCircleOutlined color="success" />,
+            invalidated: <RemoveRounded color="disabled" />,
+            done: <CheckCircleRounded color="success" />,
           }[type]
         }
       </ListItemIcon>

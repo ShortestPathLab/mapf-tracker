@@ -1,7 +1,4 @@
-import {
-  DownloadOutlined,
-  ShowChartOutlined,
-} from "@mui-symbols-material/w400";
+import { DownloadRounded, ShowChartRounded } from "@mui-symbols-material/w400";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
@@ -29,7 +26,7 @@ export default function Table() {
     items: [
       {
         name: "Trends",
-        icon: <ShowChartOutlined />,
+        icon: <ShowChartRounded />,
         render: (row, trigger) => (
           <AnalysisButton
             button={(onClick) => cloneElement(trigger, { onClick })}
@@ -47,7 +44,7 @@ export default function Table() {
     menuItems: [
       {
         name: "Download scenario",
-        icon: <DownloadOutlined />,
+        icon: <DownloadRounded />,
         action: notify(downloadScenario(mapName), {
           end: "Scenario downloaded",
         }),

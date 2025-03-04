@@ -1,4 +1,4 @@
-import { EditOutlined } from "@mui-symbols-material/w400";
+import { EditRounded } from "@mui-symbols-material/w400";
 import { Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
@@ -54,7 +54,7 @@ export const SubmissionRequestGlance = ({
         />
         <Button
           color="inherit"
-          startIcon={<EditOutlined />}
+          startIcon={<EditRounded />}
           sx={{ alignSelf: "flex-start", minWidth: "max-content" }}
           onClick={() =>
             showRequestDetails({

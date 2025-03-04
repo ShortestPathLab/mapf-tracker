@@ -1,4 +1,4 @@
-import { ShowChartOutlined } from "@mui-symbols-material/w400";
+import { ShowChartRounded } from "@mui-symbols-material/w400";
 import { capitalize } from "lodash";
 import {
   LowerBoundChart,
@@ -17,7 +17,7 @@ export function analysisTemplate(
       name: `Trends in ${capitalize(
         `${scenType}-${scenTypeID}`
       )} in ${mapName}`,
-      icon: <ShowChartOutlined />,
+      icon: <ShowChartRounded />,
       variants: [
         {
           name: "Percent suboptimality",

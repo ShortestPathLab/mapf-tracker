@@ -1,4 +1,4 @@
-import { MoreVertOutlined } from "@mui-symbols-material/w400";
+import { MoreVertRounded } from "@mui-symbols-material/w400";
 import {
   Box,
   IconButton,
@@ -79,7 +79,7 @@ export function useDataGridActions<T>({
               {(state) => (
                 <>
                   <IconButton {...bindTrigger(state)}>
-                    <MoreVertOutlined />
+                    <MoreVertRounded />
                   </IconButton>
                   <Menu
                     {...bindMenu(state)}

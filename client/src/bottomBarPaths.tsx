@@ -1,21 +1,21 @@
 import {
-  HomeFilledOutlined,
-  HomeOutlined,
-  SettingsFilledOutlined,
-  SettingsOutlined,
+  HomeFilledRounded,
+  HomeRounded,
+  SettingsFilledRounded,
+  SettingsRounded,
 } from "@mui-symbols-material/w400";
 
 export const bottomBarPaths = [
   {
     label: "Home",
     url: "/",
-    icon: <HomeOutlined />,
-    iconSelected: <HomeFilledOutlined />,
+    icon: <HomeRounded />,
+    iconSelected: <HomeFilledRounded />,
   },
   {
     label: "Settings",
     url: "/manage",
-    icon: <SettingsOutlined />,
-    iconSelected: <SettingsFilledOutlined />,
+    icon: <SettingsRounded />,
+    iconSelected: <SettingsFilledRounded />,
   },
 ];

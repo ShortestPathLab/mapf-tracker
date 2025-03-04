@@ -1,19 +1,21 @@
 import {
-  AddFilledOutlined,
-  AddOutlined,
-  BookFilledOutlined,
-  BookOutlined,
-  CodeOutlined,
-  DarkModeOutlined,
-  EmojiEventsFilledOutlined,
-  EmojiEventsOutlined,
-  HomeFilledOutlined,
-  HomeOutlined,
-  LightModeOutlined,
-  MultilineChartOutlined,
-  PersonOutlined,
-  UploadFileOutlined,
+  AddFilledRounded,
+  AddRounded,
+  BookFilledRounded,
+  BookRounded,
+  CodeRounded,
+  DarkModeRounded,
+  DatabaseFilledRounded,
+  DatabaseRounded,
+  EmojiEventsFilledRounded,
+  EmojiEventsRounded,
+  HomeFilledRounded,
+  HomeRounded,
+  LightModeRounded,
+  PersonRounded,
+  UploadRounded,
 } from "@mui-symbols-material/w400";
+import { GitHub } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { useDialog } from "hooks/useDialog";
 import { ReactNode } from "react";
@@ -21,7 +23,6 @@ import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
-import { GitHub } from "@mui/icons-material";
 
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
@@ -59,22 +60,23 @@ export function useNavigationContent() {
         {
           label: "Home",
           url: "/",
-          icon: <HomeOutlined />,
-          selectedIcon: <HomeFilledOutlined />,
+          icon: <HomeRounded />,
+          selectedIcon: <HomeFilledRounded />,
           description: "",
         },
         {
           label: "Benchmarks",
           url: "/benchmarks",
-          icon: <MultilineChartOutlined />,
+          icon: <DatabaseRounded />,
+          selectedIcon: <DatabaseFilledRounded />,
           description:
             "View all benchmarks and their top-performing submissions",
         },
         {
           label: "Submissions",
           url: "/submissions",
-          icon: <EmojiEventsOutlined />,
-          selectedIcon: <EmojiEventsFilledOutlined />,
+          icon: <EmojiEventsRounded />,
+          selectedIcon: <EmojiEventsFilledRounded />,
           description: "View and compare submitted algorithms",
         },
       ],
@@ -86,8 +88,8 @@ export function useNavigationContent() {
           primary: true,
           label: "New submission request",
           url: "/submit",
-          icon: <AddOutlined />,
-          selectedIcon: <AddFilledOutlined />,
+          icon: <AddRounded />,
+          selectedIcon: <AddFilledRounded />,
           description:
             "If you want to contribute, start by requesting an API key",
         },
@@ -95,7 +97,7 @@ export function useNavigationContent() {
           primary: true,
           label: "Submissions and API keys",
           url: "/track",
-          icon: <UploadFileOutlined />,
+          icon: <UploadRounded />,
           description:
             "If you have an API key, you can manage your submission here",
         },
@@ -108,8 +110,8 @@ export function useNavigationContent() {
         {
           label: "Docs",
           url: "/docs",
-          icon: <BookOutlined />,
-          selectedIcon: <BookFilledOutlined />,
+          icon: <BookRounded />,
+          selectedIcon: <BookFilledRounded />,
           description: "View the documentation",
         },
         {
@@ -129,7 +131,7 @@ export function useNavigationContent() {
         {
           iconButton: true,
           label: mode === "dark" ? "Light mode" : "Dark mode",
-          icon: mode === "dark" ? <LightModeOutlined /> : <DarkModeOutlined />,
+          icon: mode === "dark" ? <LightModeRounded /> : <DarkModeRounded />,
           action: toggleMode,
           last: true,
         },
@@ -138,7 +140,7 @@ export function useNavigationContent() {
               {
                 iconButton: true,
                 label: "Manage this platform",
-                icon: <CodeOutlined />,
+                icon: <CodeRounded />,
                 url: "/dashboard",
                 description:
                   "Review submission requests, issue submission keys, and run jobs",
@@ -160,7 +162,7 @@ export function useNavigationContent() {
                 iconButton: true,
                 label: "Management",
                 action: showLogIn,
-                icon: <PersonOutlined />,
+                icon: <PersonRounded />,
                 description: "Log in to manage this platform",
               },
             ]),

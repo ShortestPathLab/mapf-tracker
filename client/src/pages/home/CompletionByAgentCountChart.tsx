@@ -49,6 +49,7 @@ function RenderChart({
         cursor={{ fill: theme.palette.action.disabledBackground }}
       />
       <XAxis
+        type="number"
         tick={{ fill: theme.palette.text.secondary }}
         dataKey="_id"
         label={{
@@ -59,7 +60,6 @@ function RenderChart({
         }}
       />
       <YAxis
-        scale="sqrt"
         tick={{ fill: theme.palette.text.secondary }}
         domain={[0, peak]}
         label={

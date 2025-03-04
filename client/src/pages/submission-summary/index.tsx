@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@mui-symbols-material/w400";
+import { CheckRounded } from "@mui-symbols-material/w400";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { ConfirmDialog } from "components/dialog/Modal";
@@ -121,7 +121,7 @@ export default function SubmissionSummaryPage() {
   const contentBottom = [
     <Button
       key="submit"
-      startIcon={<CheckOutlined />}
+      startIcon={<CheckRounded />}
       disabled={keyStatus === "submitted" || keyStatus === "expired"}
       variant="contained"
       disableElevation

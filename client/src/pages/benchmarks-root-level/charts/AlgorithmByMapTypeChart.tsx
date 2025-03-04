@@ -1,7 +1,12 @@
 import { useTheme } from "@mui/material";
-import { toneBy } from "utils/colors";
+import { Chart } from "components/analysis/Chart";
+import ChartOptions from "components/analysis/ChartOptions";
+import {
+  Slice,
+  useAlgorithmSelector,
+} from "components/analysis/useAlgorithmSelector";
 import { capitalize, chain, filter, identity, keyBy, map } from "lodash";
-import { useMapTypeData } from "queries/useAlgorithmQuery";
+import { useAlgorithmsData, useMapTypeData } from "queries/useAlgorithmQuery";
 import {
   Legend,
   PolarAngleAxis,
@@ -12,14 +17,8 @@ import {
   Tooltip,
 } from "recharts";
 import { AxisDomain } from "recharts/types/util/types";
-import { Chart } from "components/analysis/Chart";
-import ChartOptions from "components/analysis/ChartOptions";
-import {
-  Slice,
-  useAlgorithmSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { toneBy } from "utils/colors";
 import { formatPercentage } from "utils/format";
-import { getAlgorithms } from "components/analysis/getAlgorithms";
 
 export const slices = [
   {
@@ -38,17 +37,13 @@ export const slices = [
 
 export function AlgorithmByMapTypeChart() {
   const { palette } = useTheme();
+  const { data: algorithms = [] } = useAlgorithmsData();
   const algorithmSelectorState = useAlgorithmSelector(slices);
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useMapTypeData(metric);
-  const algorithms = getAlgorithms(data, "results");
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        slices={slices}
-        algorithms={algorithms}
-      />
+      <ChartOptions {...algorithmSelectorState} slices={slices} />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}
@@ -70,15 +65,15 @@ export function AlgorithmByMapTypeChart() {
             {map(
               filter(
                 algorithms,
-                (a) => !selected.length || selected.includes(a)
+                (a) => !selected.length || selected.includes(a._id)
               ),
               (algorithm, i) => (
                 <Radar
                   fill={toneBy(palette.mode, i)}
                   isAnimationActive={false}
-                  dataKey={`${algorithm}.${slice.key}`}
+                  dataKey={`${algorithm.algo_name}.${slice.key}`}
                   opacity={0.6}
-                  name={algorithm}
+                  name={algorithm.algo_name}
                 />
               )
             )}

@@ -1,4 +1,4 @@
-import FilterListIcon from "@mui/icons-material/FilterListOutlined";
+import FilterListIcon from "@mui/icons-material/FilterListRounded";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";

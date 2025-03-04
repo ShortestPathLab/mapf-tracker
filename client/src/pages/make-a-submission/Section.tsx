@@ -1,4 +1,4 @@
-import { ArrowBackOutlined } from "@mui-symbols-material/w400";
+import { ArrowBackRounded } from "@mui-symbols-material/w400";
 import {
   ButtonBase,
   IconButton,
@@ -25,7 +25,7 @@ export function RenderSection({ children, header }) {
             onClick={() => navigate(-1)}
             sx={{ alignSelf: "flex-start" }}
           >
-            <ArrowBackOutlined />
+            <ArrowBackRounded />
           </IconButton>
         )}
         {header}

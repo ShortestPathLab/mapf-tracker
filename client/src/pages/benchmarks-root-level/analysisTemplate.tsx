@@ -1,4 +1,4 @@
-import { ShowChartOutlined } from "@mui-symbols-material/w400";
+import { ShowChartRounded } from "@mui-symbols-material/w400";
 import { AlgorithmByMapChart } from "./charts/AlgorithmByMapChart";
 import { AlgorithmByMapTypeChart } from "./charts/AlgorithmByMapTypeChart";
 import { MapProportionByDomainChart } from "./charts/MapProportionByDomainChart";
@@ -7,7 +7,7 @@ import { MapProportionChart } from "./charts/MapProportionChart";
 export const analysisTemplate = [
   {
     name: undefined,
-    icon: <ShowChartOutlined />,
+    icon: <ShowChartRounded />,
     variants: [
       {
         name: "By map type",

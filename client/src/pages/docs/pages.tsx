@@ -1,11 +1,11 @@
 import {
-  AnimationOutlined,
-  BookOutlined,
-  CampaignOutlined,
-  DownloadOutlined,
-  EmojiEventsOutlined,
-  ShapeLineOutlined,
-  UploadFileOutlined,
+  AnimationRounded,
+  BookRounded,
+  CampaignRounded,
+  DownloadRounded,
+  EmojiEventsRounded,
+  ShapeLineRounded,
+  UploadFileRounded,
 } from "@mui-symbols-material/w400";
 import { find } from "lodash";
 import AboutPage from "./about";
@@ -26,35 +26,35 @@ export const pages = () => [
   createArticlePage({
     key: "system-demo",
     title: "Watch our system demo",
-    icon: <AnimationOutlined />,
+    icon: <AnimationRounded />,
     content: <DemoPage />,
     description: "Take 5 minutes to watch our ICAPS 2023 system demonstration",
   }),
   createArticlePage({
     key: "motivations",
     title: "Call for submissions",
-    icon: <CampaignOutlined />,
+    icon: <CampaignRounded />,
     content: <MotivationsPage />,
     description: "Calling for all MAPF researchers to share your work with us",
   }),
   createArticlePage({
     key: "problem-definition",
     title: "Problem definition",
-    icon: <ShapeLineOutlined />,
+    icon: <ShapeLineRounded />,
     content: <ProblemDefinitionPage />,
     description: "What exactly is MAPF Tracker tracking?",
   }),
   createArticlePage({
     key: "solution-format",
     title: "Solution format",
-    icon: <EmojiEventsOutlined />,
+    icon: <EmojiEventsRounded />,
     content: <SolutionFormatPage />,
     description: "How do I read or write a solution?",
   }),
   createArticlePage({
     key: "how-to-submit",
     title: "Submitting data to MAPF Tracker",
-    icon: <UploadFileOutlined />,
+    icon: <UploadFileRounded />,
     content: <SubmissionInstructionsPage />,
     description:
       "Quick-start guide on how to submit your results to the platform",
@@ -62,14 +62,14 @@ export const pages = () => [
   createArticlePage({
     key: "dataset",
     title: "Get the dataset",
-    icon: <DownloadOutlined />,
+    icon: <DownloadRounded />,
     content: <DatasetPage />,
     description: "Learn how to download the dataset",
   }),
   {
     label: "About",
     value: "about",
-    icon: <BookOutlined />,
+    icon: <BookRounded />,
     content: <AboutPage />,
     description: "About this project",
   },

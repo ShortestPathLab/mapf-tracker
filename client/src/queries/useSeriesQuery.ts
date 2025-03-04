@@ -12,7 +12,7 @@ export type Result = {
   count: number;
 };
 
-type Trend = "lower_algos" | "solution_algos";
+export type Trend = "lower_algos" | "solution_algos";
 
 async function series(trend: Trend, months: number) {
   const result = await json<Result[]>(

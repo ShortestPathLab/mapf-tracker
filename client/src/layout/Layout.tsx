@@ -1,4 +1,4 @@
-import { ArrowBackOutlined } from "@mui-symbols-material/w400";
+import { ArrowBackRounded } from "@mui-symbols-material/w400";
 import {
   Box,
   Fade,
@@ -118,7 +118,7 @@ export default function Layout({
                   }
                 }}
               >
-                <ArrowBackOutlined />
+                <ArrowBackRounded />
               </IconButton>
               <Fade in={!isTop || !collapse}>
                 <Typography variant="h6" sx={{ ml: 1 }}>

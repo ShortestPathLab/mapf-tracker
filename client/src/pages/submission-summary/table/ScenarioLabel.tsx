@@ -1,4 +1,4 @@
-import { RouteOutlined } from "@mui-symbols-material/w400";
+import { RouteRounded } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
 import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";
@@ -17,7 +17,7 @@ export function ScenarioLabel({
   return (
     <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
       <Stack sx={{ width: 48, alignItems: "center" }}>
-        <IconCard icon={<RouteOutlined />} />
+        <IconCard icon={<RouteRounded />} />
       </Stack>
       <Item
         primary={`${startCase(data?.scen_type ?? "-")}-${data?.type_id ?? "-"}`}

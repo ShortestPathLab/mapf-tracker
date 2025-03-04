@@ -1,7 +1,7 @@
 import {
-  DownloadOutlined,
-  InfoOutlined,
-  ShowChartOutlined,
+  DownloadRounded,
+  InfoRounded,
+  ShowChartRounded,
 } from "@mui-symbols-material/w400";
 import { Box, useTheme } from "@mui/material";
 import { Item } from "components/Item";
@@ -49,7 +49,7 @@ export default function Table() {
     items: [
       {
         name: "Trends",
-        icon: <ShowChartOutlined />,
+        icon: <ShowChartRounded />,
         render: (row, trigger) => (
           <AnalysisButton
             button={(onClick) => cloneElement(trigger, { onClick })}
@@ -59,14 +59,14 @@ export default function Table() {
       },
       {
         name: "Details",
-        icon: <InfoOutlined />,
+        icon: <InfoRounded />,
         action: (row) => open({ mapName: row.map_name }),
       },
     ],
     menuItems: [
       {
         name: "Download all scenarios (ZIP)",
-        icon: <DownloadOutlined />,
+        icon: <DownloadRounded />,
         action: notify(downloadBenchmarks, { end: "File downloaded" }),
       },
       {

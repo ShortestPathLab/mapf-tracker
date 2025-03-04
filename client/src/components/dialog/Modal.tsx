@@ -1,4 +1,4 @@
-import { ArrowBackOutlined } from "@mui-symbols-material/w400";
+import { ArrowBackRounded } from "@mui-symbols-material/w400";
 import {
   alpha,
   AppBar,
@@ -129,7 +129,7 @@ export function ModalAppBar({
           edge="start"
           onClick={() => onClose()}
         >
-          <ArrowBackOutlined />
+          <ArrowBackRounded />
         </IconButton>
 
         {children && (

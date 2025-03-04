@@ -21,7 +21,7 @@ export function TotalSolvedClosedChart(
   return (
     <GridChartCard
       primaryLabel="Total completion"
-      secondaryLabel={`${solved} solved, ${closed} closed, of ${total}`}
+      secondaryLabel={`${solved.toLocaleString()} solved / ${closed.toLocaleString()} closed / ${total.toLocaleString()} total`}
       {...props}
       content={
         <Bar

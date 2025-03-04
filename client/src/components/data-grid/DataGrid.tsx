@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@mui-symbols-material/w400";
+import { SearchRounded } from "@mui-symbols-material/w400";
 import {
   Box,
   ButtonBase,
@@ -102,7 +102,7 @@ export default function DataGrid<
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchOutlined />
+                    <SearchRounded />
                   </InputAdornment>
                 ),
               }}

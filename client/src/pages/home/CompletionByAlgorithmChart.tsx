@@ -51,7 +51,7 @@ export function CategoryChart({
   series = defaultSeries,
   ...props
 }: {
-  showLabels?;
+  showLabels?: boolean;
   series?: {
     opacity: number;
     key: string;
@@ -87,9 +87,11 @@ export function CategoryChart({
       />
       <YAxis
         type="category"
+        orientation="right"
         tick={{ fill: theme.palette.text.secondary }}
         dataKey="label"
-        width={180}
+        width={120}
+        mirror
       />
       <XAxis
         type="number"

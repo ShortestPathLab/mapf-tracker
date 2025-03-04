@@ -1,4 +1,4 @@
-import { ShowChartOutlined } from "@mui-symbols-material/w400";
+import { ShowChartRounded } from "@mui-symbols-material/w400";
 import { AlgorithmByAgentChart } from "./charts/AlgorithmByAgentChart";
 import { AlgorithmByScenarioChart } from "./charts/AlgorithmByScenarioChart";
 import {
@@ -10,7 +10,7 @@ export function analysisTemplate(mapName: string, mapId: string) {
   return [
     {
       name: `Trends in ${mapName}`,
-      icon: <ShowChartOutlined />,
+      icon: <ShowChartRounded />,
       variants: [
         {
           name: "Completion per algorithm",

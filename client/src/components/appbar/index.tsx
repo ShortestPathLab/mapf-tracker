@@ -1,4 +1,4 @@
-import { ChevronRightOutlined } from "@mui-symbols-material/w400";
+import { ChevronRightRounded } from "@mui-symbols-material/w400";
 import {
   AppBar,
   AppBarProps,
@@ -90,7 +90,7 @@ export default function index(props: AppBarProps) {
                                 edge="end"
                                 sx={{ color: "text.secondary" }}
                               >
-                                <ChevronRightOutlined
+                                <ChevronRightRounded
                                   fontSize="small"
                                   sx={{
                                     transition: (t) =>

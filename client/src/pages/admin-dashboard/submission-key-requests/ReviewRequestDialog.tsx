@@ -1,4 +1,4 @@
-import { ExpandOutlined, SendOutlined } from "@mui-symbols-material/w400";
+import { ExpandRounded, SendRounded } from "@mui-symbols-material/w400";
 import {
   Button,
   ButtonGroup,
@@ -91,7 +91,7 @@ export function ReviewRequestDialog({
                 title="More save options"
                 trigger={(onClick) => (
                   <Button {...{ onClick }} variant="contained" sx={{ px: 1 }}>
-                    <ExpandOutlined />
+                    <ExpandRounded />
                   </Button>
                 )}
                 slotProps={{
@@ -119,7 +119,7 @@ export function ReviewRequestDialog({
                     }}
                   >
                     <ListItemIcon>
-                      <SendOutlined />
+                      <SendRounded />
                     </ListItemIcon>
                     <ListItemText
                       primary={`Save and send a response to ${data?.requesterEmail}`}

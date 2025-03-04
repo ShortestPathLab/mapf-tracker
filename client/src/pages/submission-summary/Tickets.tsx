@@ -1,7 +1,7 @@
 import {
-  CancelOutlined,
-  CheckCircleOutlined,
-  PendingOutlined,
+  CancelRounded,
+  CheckCircleRounded,
+  PendingRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -36,9 +36,9 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
               <ListItem sx={{ gap: 2, ...paper(0) }}>
                 <ListItemIcon>
                   {{
-                    done: <CheckCircleOutlined color="success" />,
-                    error: <CancelOutlined color="error" />,
-                    pending: <PendingOutlined color="warning" />,
+                    done: <CheckCircleRounded color="success" />,
+                    error: <CancelRounded color="error" />,
+                    pending: <PendingRounded color="warning" />,
                   }[status] ?? <CircularProgress size={24} />}
                 </ListItemIcon>
                 <ListItemText

@@ -1,19 +1,19 @@
 import {
-  DarkModeOutlined,
-  ExpandOutlined,
-  LightModeOutlined,
-  MenuOutlined,
-  RouteOutlined,
-  SortOutlined,
+  DarkModeRounded,
+  ExpandRounded,
+  LightModeRounded,
+  MenuRounded,
+  RouteRounded,
+  SortRounded,
 } from "@mui-symbols-material/w400";
-import ArticleIcon from "@mui/icons-material/ArticleOutlined";
-import AssignmentIcon from "@mui/icons-material/AssignmentOutlined";
-import DownloadIcon from "@mui/icons-material/DownloadOutlined";
+import ArticleIcon from "@mui/icons-material/ArticleRounded";
+import AssignmentIcon from "@mui/icons-material/AssignmentRounded";
+import DownloadIcon from "@mui/icons-material/DownloadRounded";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import MenuIcon from "@mui/icons-material/MenuOutlined";
-import PeopleIcon from "@mui/icons-material/PeopleOutlined";
-import TableViewIcon from "@mui/icons-material/TableViewOutlined";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import MenuIcon from "@mui/icons-material/MenuRounded";
+import PeopleIcon from "@mui/icons-material/PeopleRounded";
+import TableViewIcon from "@mui/icons-material/TableViewRounded";
 import {
   ButtonBase,
   ButtonGroup,
@@ -191,7 +191,7 @@ function ResponsiveAppBar() {
         }}
       >
         <IconButton edge="start">
-          <MenuOutlined />
+          <MenuRounded />
         </IconButton>
         <Typography variant="h6">Tracker</Typography>
       </Toolbar>
@@ -215,7 +215,7 @@ function ResponsiveAppBar() {
         <Toolbar disableGutters>
           <ButtonBase sx={{ borderRadius: 1 }}>
             <Stack direction="row" alignItems="center" gap={1}>
-              <RouteOutlined />
+              <RouteRounded />
               <Typography
                 variant="h6"
                 noWrap
@@ -370,7 +370,7 @@ function ResponsiveAppBar() {
                 px: 2,
                 color: "text.primary",
               }}
-              startIcon={<SortOutlined />}
+              startIcon={<SortRounded />}
             >
               Benchmarks
             </Button>
@@ -450,7 +450,7 @@ function ResponsiveAppBar() {
                 color: "text.primary",
               }}
             >
-              {mode === "light" ? <DarkModeOutlined /> : <LightModeOutlined />}
+              {mode === "light" ? <DarkModeRounded /> : <LightModeRounded />}
             </IconButton>
           </Stack>
           <ButtonGroup
@@ -477,7 +477,7 @@ function ResponsiveAppBar() {
                     sx={{ px: 0, py: 1 }}
                     variant="contained"
                   >
-                    <ExpandOutlined />
+                    <ExpandRounded />
                   </Button>
                   <Menu
                     {...bindMenu(state)}
@@ -565,7 +565,7 @@ function ResponsiveAppBar() {
                   }}
                 >
                   <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                    <LockOutlinedIcon />
+                    <LockRoundedIcon />
                   </Avatar>
                   <Typography component="h1" variant="h5">
                     Sign in

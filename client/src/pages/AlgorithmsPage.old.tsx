@@ -1,5 +1,5 @@
-import { CancelOutlined, FilterListOutlined } from "@mui-symbols-material/w400";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
+import { CancelRounded, FilterListRounded } from "@mui-symbols-material/w400";
+import InfoIcon from "@mui/icons-material/InfoRounded";
 import { Button, Card, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -489,7 +489,7 @@ export default function Submissions() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <FilterListOutlined />
+                    <FilterListRounded />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -500,7 +500,7 @@ export default function Submissions() {
                           cancelSearch(searchVal.target.value)
                         }
                       >
-                        <CancelOutlined />
+                        <CancelRounded />
                       </IconButton>
                     )}
                   </InputAdornment>

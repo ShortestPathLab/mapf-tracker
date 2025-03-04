@@ -120,7 +120,7 @@ export default function Hero() {
           <TotalSolvedClosedChart columns={1} height={170} />
         </Grid>
         <Grid
-          width={420}
+          width={460}
           sx={{
             "> *": { m: 1 },
             m: -1,

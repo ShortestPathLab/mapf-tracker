@@ -1,9 +1,9 @@
 import {
-  ContentPasteOutlined,
-  DataObjectOutlined,
-  UploadFileOutlined,
-  HelpOutlined,
-  TableChartOutlined,
+  ContentPasteRounded,
+  DataObjectRounded,
+  UploadFileRounded,
+  HelpRounded,
+  TableChartRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -118,7 +118,7 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
             transition: (t) => t.transitions.create("border-color"),
           }}
         >
-          <UploadFileOutlined color={dragging ? "primary" : "disabled"} />
+          <UploadFileRounded color={dragging ? "primary" : "disabled"} />
           <Typography color="text.secondary">
             {dragging
               ? "Drop files here"
@@ -169,19 +169,19 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
         {[
           {
             label: "Upload files",
-            icon: <TableChartOutlined />,
+            icon: <TableChartRounded />,
             description: "Submit results as one or more CSV or JSON files",
             action: () => openSpreadSheetDialog({ apiKey }),
           },
           {
             label: "REST API",
-            icon: <DataObjectOutlined />,
+            icon: <DataObjectRounded />,
             description: "Programmatically submit results via the REST API",
             action: () => openRestApiDialog({ apiKey }),
           },
           {
             label: "Copy and paste",
-            icon: <ContentPasteOutlined />,
+            icon: <ContentPasteRounded />,
             description: "Submit results as CSV or JSON",
             action: () => openJsonApiDialog({ apiKey }),
           },
@@ -211,7 +211,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
       </Grid>
       <Button
         sx={{ alignSelf: "flex-start" }}
-        startIcon={<HelpOutlined />}
+        startIcon={<HelpRounded />}
         onClick={() => open("/docs/how-to-submit", "_blank")}
       >
         I need help submitting data

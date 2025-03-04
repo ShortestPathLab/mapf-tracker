@@ -98,6 +98,7 @@ function BottomBar() {
       showLabels
       value={selected}
       sx={{
+        bgcolor: "background.default",
         transition: (t) => t.transitions.create("transform"),
         transform: selected ? "translateY(0)" : "translateY(100%)",
         zIndex: (t) => t.zIndex.appBar + 1,

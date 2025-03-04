@@ -1,10 +1,10 @@
-import CancelIcon from "@mui/icons-material/CancelOutlined";
-import InfoIcon from "@mui/icons-material/InfoOutlined";
-import LibraryAddIcon from "@mui/icons-material/LibraryAddOutlined";
-import SearchIcon from "@mui/icons-material/SearchOutlined";
+import CancelIcon from "@mui/icons-material/CancelRounded";
+import InfoIcon from "@mui/icons-material/InfoRounded";
+import LibraryAddIcon from "@mui/icons-material/LibraryAddRounded";
+import SearchIcon from "@mui/icons-material/SearchRounded";
 import SendIcon from "@mui/icons-material/Send";
-import ZoomInMapIcon from "@mui/icons-material/ZoomInMapOutlined";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapOutlined";
+import ZoomInMapIcon from "@mui/icons-material/ZoomInMapRounded";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMapRounded";
 import { Card, DialogTitle, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";

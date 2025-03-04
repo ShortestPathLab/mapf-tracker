@@ -1,4 +1,4 @@
-import { ChevronRightOutlined } from "@mui-symbols-material/w400";
+import { ChevronRightRounded } from "@mui-symbols-material/w400";
 import {
   Button,
   Card,
@@ -91,7 +91,7 @@ export default function index() {
                 <ListItemButton onClick={() => navigate(`/dashboard/${value}`)}>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText primary={label} secondary={description} />
-                  <ChevronRightOutlined />
+                  <ChevronRightRounded />
                 </ListItemButton>
                 <Divider variant="inset" component="li" />
               </>

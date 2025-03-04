@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@mui-symbols-material/w400";
+import { CheckRounded } from "@mui-symbols-material/w400";
 import { Box, Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Floating } from "components/Floating";
@@ -70,7 +70,7 @@ export function SubmitRequestForm({
               }
               size="large"
               disableElevation
-              startIcon={<CheckOutlined />}
+              startIcon={<CheckRounded />}
             >
               {isSubmitting ? "Submitting request..." : "Submit request"}
             </Button>

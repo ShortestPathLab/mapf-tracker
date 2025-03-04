@@ -1,7 +1,7 @@
 import {
-  ArrowBackOutlined,
-  ArrowUpwardOutlined,
-  ShareOutlined,
+  ArrowBackRounded,
+  ArrowUpwardRounded,
+  ShareRounded,
 } from "@mui-symbols-material/w400";
 import {
   Avatar,
@@ -106,7 +106,7 @@ export function ArticleLayout({
               navigate(url, state);
             }}
           >
-            <ArrowBackOutlined />
+            <ArrowBackRounded />
           </IconButton>
         )}
         <Hero primary={title} secondary={subtitle} />
@@ -149,7 +149,7 @@ export function ArticleLayout({
             }}
           >
             <IconButton edge="start">
-              <ArrowUpwardOutlined />
+              <ArrowUpwardRounded />
             </IconButton>
             <Typography color="text.secondary">Back to top</Typography>
           </Stack>
@@ -193,7 +193,7 @@ export function ArticleLayout({
                 });
               }}
             >
-              <ShareOutlined sx={{ color: "text.secondary" }} />
+              <ShareRounded sx={{ color: "text.secondary" }} />
             </IconButton>
           </Stack>
         </Stack>

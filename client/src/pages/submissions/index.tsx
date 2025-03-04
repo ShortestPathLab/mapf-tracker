@@ -1,4 +1,4 @@
-import { DeleteOutlined, UploadFileOutlined } from "@mui-symbols-material/w400";
+import { DeleteRounded, UploadFileRounded } from "@mui-symbols-material/w400";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
@@ -109,7 +109,7 @@ export default function TrackSubmission() {
     items: [],
     menuItems: [
       {
-        icon: <DeleteOutlined />,
+        icon: <DeleteRounded />,
         name: "Remove key",
         action: (row) => {
           filter((k) => k !== row.key);
@@ -123,7 +123,7 @@ export default function TrackSubmission() {
     {
       field: "Icon",
       width: 48,
-      renderCell: () => <IconCard icon={<UploadFileOutlined />} />,
+      renderCell: () => <IconCard icon={<UploadFileRounded />} />,
       flex: 0,
       fold: true,
     },

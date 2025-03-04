@@ -1,11 +1,11 @@
 import {
-  CloseOutlined,
-  DeleteOutlined,
-  DoneOutlineOutlined,
-  DoNotDisturbOnOutlined,
-  HourglassEmptyOutlined,
-  PlayArrowOutlined,
-  StopOutlined,
+  CloseRounded,
+  DeleteRounded,
+  CheckRounded,
+  DoNotDisturbOnRounded,
+  HourglassEmptyRounded,
+  PlayArrowRounded,
+  StopRounded,
 } from "@mui-symbols-material/w400";
 import {
   alpha,
@@ -134,7 +134,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             fallback: () => true,
           }),
         name: "Delete",
-        icon: <DeleteOutlined />,
+        icon: <DeleteRounded />,
         action: (row) =>
           disambiguate(row, {
             scenario: (row) =>
@@ -159,11 +159,11 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           row
         )} invalid`}
       >
-        <CloseOutlined color="error" fontSize="small" />
+        <CloseRounded color="error" fontSize="small" />
       </Tooltip>
     ) : (
       <Tooltip title="All instances valid">
-        <DoneOutlineOutlined color="success" fontSize="small" />
+        <CheckRounded color="success" fontSize="small" />
       </Tooltip>
     );
 
@@ -254,16 +254,13 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                     label={
                       {
                         valid: (
-                          <DoneOutlineOutlined
-                            color="success"
-                            fontSize="small"
-                          />
+                          <CheckRounded color="success" fontSize="small" />
                         ),
                         invalid: (
-                          <CloseOutlined color="error" fontSize="small" />
+                          <CloseRounded color="error" fontSize="small" />
                         ),
                         outdated: (
-                          <DoNotDisturbOnOutlined
+                          <DoNotDisturbOnRounded
                             color="disabled"
                             fontSize="small"
                           />
@@ -274,7 +271,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                           </Stack>
                         ),
                       }[submission?.validation?.outcome] ?? (
-                        <HourglassEmptyOutlined
+                        <HourglassEmptyRounded
                           color="disabled"
                           fontSize="small"
                         />
@@ -383,7 +380,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
               }}
               icon={
                 <Collapse in={selected} orientation="horizontal">
-                  <DoneOutlineOutlined
+                  <CheckRounded
                     fontSize="small"
                     color={selected ? "primary" : undefined}
                   />
@@ -399,7 +396,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         <Button
           color="inherit"
           disabled
-          startIcon={<PlayArrowOutlined />}
+          startIcon={<PlayArrowRounded />}
           onClick={() => deleteSubmissions(deleteAll)}
         >
           Run validation
@@ -407,7 +404,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         <Button
           color="inherit"
           disabled
-          startIcon={<StopOutlined />}
+          startIcon={<StopRounded />}
           onClick={() => deleteSubmissions(deleteAll)}
         >
           Pause validation
@@ -421,7 +418,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             <Button
               disabled={!sumBy(data?.maps, "count.total")}
               color="error"
-              startIcon={<DeleteOutlined />}
+              startIcon={<DeleteRounded />}
               onClick={onClick}
             >
               Delete all

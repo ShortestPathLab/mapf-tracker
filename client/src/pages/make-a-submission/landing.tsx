@@ -1,10 +1,10 @@
 import {
-  CheckOutlined,
-  EditOutlined,
-  UploadFileOutlined,
-  HelpOutlined,
-  PendingOutlined,
-  TimerOutlined,
+  CheckRounded,
+  EditRounded,
+  UploadFileRounded,
+  HelpRounded,
+  PendingRounded,
+  TimerRounded,
 } from "@mui-symbols-material/w400";
 import {
   Button,
@@ -31,7 +31,7 @@ type BulletProps = {
 function Bullet({ icon }: BulletProps) {
   return (
     <Stack sx={{ width: 48 }}>
-      {icon ? icon : <PendingOutlined sx={{ color: "action.disabled" }} />}
+      {icon ? icon : <PendingRounded sx={{ color: "action.disabled" }} />}
     </Stack>
   );
 }
@@ -64,7 +64,7 @@ export default function index() {
           <Stepper activeStep={5} orientation="vertical">
             {[
               {
-                icon: <EditOutlined />,
+                icon: <EditRounded />,
                 label: (
                   <>
                     {"Make a new submission request"}{" "}
@@ -78,10 +78,10 @@ export default function index() {
                 label: "The MAPF Tracker team replies with an API key",
                 content:
                   "The team will review your request and get back to you in a few days. If approved, you will receive an API key in your contact email inbox.",
-                icon: <TimerOutlined sx={{ color: "action.disabled" }} />,
+                icon: <TimerRounded sx={{ color: "action.disabled" }} />,
               },
               {
-                icon: <UploadFileOutlined />,
+                icon: <UploadFileRounded />,
                 label: "Submit data with your API key",
                 content:
                   "Once you have your API key, you can use it to submit data to the tracker. As long as you have your API key, you can submit from any machine.",
@@ -99,7 +99,7 @@ export default function index() {
                 label: "All done!",
                 content:
                   "Once you finalise your submission, you should see your results listed on this platform in minutes.",
-                icon: <CheckOutlined sx={{ color: "action.disabled" }} />,
+                icon: <CheckRounded sx={{ color: "action.disabled" }} />,
               },
             ].map((step, i) => (
               <Step key={i}>
@@ -129,7 +129,7 @@ export default function index() {
           </Stepper>
           <Button
             sx={{ alignSelf: "flex-start" }}
-            startIcon={<HelpOutlined />}
+            startIcon={<HelpRounded />}
             onClick={() => open("/docs/how-to-submit", "_blank")}
           >
             I need help making a submission
