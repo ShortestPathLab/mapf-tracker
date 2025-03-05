@@ -4,8 +4,8 @@ import {
   getInstanceAggregateProportions,
 } from "components/analysis/reducers";
 import { capitalize, chain } from "lodash";
-import { CompletionByAgentCountChart } from "pages/home/CompletionByAgentCountChart";
-import { CategoryChart } from "pages/home/CompletionByAlgorithmChart";
+import { CompletionByAgentCountChart } from "components/charts/CompletionByAgentCountChart";
+import { CategoryChart } from "components/charts/CompletionByAlgorithmChart";
 import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
 
 export function SuccessRateChart({ map }: { map: string }) {

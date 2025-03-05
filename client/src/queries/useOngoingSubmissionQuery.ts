@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
-import { SummaryByApiKeyResult } from "core/types";
+import { SummaryResult } from "core/types";
 import { head } from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
@@ -94,7 +94,7 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary", key],
     queryFn: () =>
-      json<SummaryByApiKeyResult>(
+      json<SummaryResult>(
         `${APIConfig.apiUrl}/ongoing_submission/summary/${key}`
       ),
     enabled: !!key,

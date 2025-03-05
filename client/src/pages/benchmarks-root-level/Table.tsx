@@ -10,6 +10,7 @@ import { useSnackbarAction } from "components/Snackbar";
 import { AnalysisButton } from "components/analysis/Analysis";
 import {
   cellRendererBar,
+  cellRendererChip,
   cellRendererText,
   useDataGridActions,
 } from "components/data-grid";
@@ -100,9 +101,7 @@ export default function Table() {
             />
           }
           primary={startCase(value)}
-          secondary={`${row.scens ?? "?"} scenarios, ${
-            row.instances ?? "?"
-          } instances`}
+          secondary={`${row.instances ?? "?"} instances`}
         />
       ),
     },
@@ -111,6 +110,7 @@ export default function Table() {
       headerName: "Size",
       sortable: true,
       fold: true,
+      renderCell: cellRendererText,
     },
     {
       field: "map_type",
@@ -118,7 +118,7 @@ export default function Table() {
       sortable: true,
       valueFormatter: capitalize,
       fold: true,
-      renderCell: cellRendererText,
+      renderCell: cellRendererChip,
     },
     {
       field: "solved_percentage",
@@ -129,7 +129,7 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 300,
+      width: 200,
     },
     {
       field: "closed_percentage",
@@ -140,7 +140,7 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 300,
+      width: 200,
     },
     actions,
   ];

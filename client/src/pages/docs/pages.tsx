@@ -39,10 +39,10 @@ export const pages = () => [
   }),
   createArticlePage({
     key: "problem-definition",
-    title: "Problem definition",
+    title: "Problem model",
     icon: <ShapeLineRounded />,
     content: <ProblemDefinitionPage />,
-    description: "What exactly is MAPF Tracker tracking?",
+    description: "MAPF Tracker uses the classical MAPF problem model",
   }),
   createArticlePage({
     key: "solution-format",

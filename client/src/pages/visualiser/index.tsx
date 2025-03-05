@@ -5,9 +5,13 @@ import { useSm } from "components/dialog/useSmallDisplay";
 import { useLocationState } from "hooks/useNavigation";
 import { BentoLayout } from "layout/BentoLayout";
 import { topbarHeight } from "layout/topbarHeight";
-import { startCase } from "lodash";
+import { capitalize, startCase } from "lodash";
 import Details from "pages/benchmarks-scenario-level/Details";
 import pluralize from "pluralize";
+import {
+  useBenchmarkData,
+  useScenarioDetailsData,
+} from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import Visualiser from "./Visualiser";
 import { VisualiserLocationState } from "./VisualiserLocationState";
@@ -17,8 +21,12 @@ export { default as Visualiser } from "./Visualiser";
 export default function index() {
   const sm = useSm();
   const state = useLocationState<VisualiserLocationState>();
-  const scenarioString = startCase(`${state.scenType}-${state.scenTypeID}`);
   const { data: instanceData } = useInstanceData(state.instanceId);
+  const { data: scenarioData } = useScenarioDetailsData(instanceData?.scen_id);
+  const { data: mapData } = useBenchmarkData(instanceData?.map_id);
+  const scenarioString = startCase(
+    `${scenarioData?.scen_type}-${scenarioData?.type_id}`
+  );
   const title = pluralize("agent", instanceData?.agents ?? 0, true);
   return (
     <BentoLayout
@@ -27,7 +35,7 @@ export default function index() {
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
         {
-          name: startCase(state.mapName),
+          name: capitalize(mapData?.map_name),
           url: "/scenarios",
           state,
         },

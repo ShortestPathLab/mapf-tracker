@@ -1,11 +1,11 @@
 import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
-import ChartOptions from "components/analysis/ChartOptions";
+import ChartOptions, { stateOfTheArt } from "components/analysis/ChartOptions";
 import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { capitalize, chain, filter, identity, keyBy, map } from "lodash";
+import { capitalize, chain, filter, identity, keyBy, map, max } from "lodash";
 import { useAlgorithmsData, useMapTypeData } from "queries/useAlgorithmQuery";
 import {
   Legend,
@@ -35,19 +35,34 @@ export const slices = [
   },
 ] satisfies Slice[];
 
-export function AlgorithmByMapTypeChart() {
+export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
   const { palette } = useTheme();
   const { data: algorithms = [] } = useAlgorithmsData();
-  const algorithmSelectorState = useAlgorithmSelector(slices);
+  const algorithmSelectorState = useAlgorithmSelector(
+    slices,
+    undefined,
+    algorithm ? [stateOfTheArt._id, algorithm] : []
+  );
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useMapTypeData(metric);
+
   return (
     <>
-      <ChartOptions {...algorithmSelectorState} slices={slices} />
+      <ChartOptions {...algorithmSelectorState} slices={slices} stateOfTheArt />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}
         data={chain(data)
+          .map((c) => ({
+            map_type: c.map_type,
+            results: [
+              ...c.results,
+              {
+                ...stateOfTheArt,
+                count: max(map(c.results, "count")),
+              },
+            ],
+          }))
           .map((c) => ({
             map: capitalize(c.map_type),
             ...keyBy(c.results, "algo_name"),
@@ -57,19 +72,22 @@ export function AlgorithmByMapTypeChart() {
         render={() => (
           <RadarChart>
             <Legend />
-            <PolarRadiusAxis
-              domain={slice.domain as AxisDomain}
-              stroke={palette.text.primary}
-            />
-            <PolarAngleAxis dataKey="map" />
             {map(
               filter(
-                algorithms,
+                [stateOfTheArt, ...algorithms],
                 (a) => !selected.length || selected.includes(a._id)
               ),
               (algorithm, i) => (
                 <Radar
-                  fill={toneBy(palette.mode, i)}
+                  {...(algorithm === stateOfTheArt
+                    ? {
+                        fill: palette.primary.main,
+                        fillOpacity: 0.1,
+                        stroke: palette.primary.main,
+                      }
+                    : {
+                        fill: toneBy(palette.mode, i),
+                      })}
                   isAnimationActive={false}
                   dataKey={`${algorithm.algo_name}.${slice.key}`}
                   opacity={0.6}
@@ -77,6 +95,11 @@ export function AlgorithmByMapTypeChart() {
                 />
               )
             )}
+            <PolarRadiusAxis
+              domain={slice.domain as AxisDomain}
+              stroke={palette.text.primary}
+            />
+            <PolarAngleAxis dataKey="map" />
             <PolarGrid stroke={palette.text.secondary} />
             <Tooltip
               cursor={{ fill: palette.action.disabledBackground }}

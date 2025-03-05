@@ -3,14 +3,17 @@ import { Item } from "components/Item";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode } from "react";
 import Layout, { LayoutProps } from "./Layout";
+import { isNumber, isUndefined } from "lodash";
 
 export function GalleryLayout({
   cover,
   items,
+  sidebarWidth = 320,
   ...props
 }: LayoutProps & {
   cover?: ReactNode;
   items?: { value?: ReactNode; label?: ReactNode }[];
+  sidebarWidth?: number;
 }) {
   const sm = useSm();
   return (
@@ -19,12 +22,18 @@ export function GalleryLayout({
       flat
       render={
         sm
-          ? undefined
+          ? ({ header, children }) => (
+              <Stack sx={{ gap: 4 }}>
+                <Stack sx={{ width: 128, mb: -2 }}>{cover}</Stack>
+                {header}
+                {children}
+              </Stack>
+            )
           : ({ header, children }) => (
               <Stack direction="row" sx={{ gap: 8 }}>
                 <Stack
                   sx={{
-                    width: 320,
+                    width: sidebarWidth,
                     minWidth: 320,
                     gap: 4,
                     position: "sticky",
@@ -35,8 +44,6 @@ export function GalleryLayout({
                   <Stack
                     sx={{
                       width: "60%",
-                      borderRadius: 1,
-                      overflow: "hidden",
                       "> *": { width: "100%" },
                     }}
                   >
@@ -48,7 +55,13 @@ export function GalleryLayout({
                       <Item
                         invert
                         key={i}
-                        primary={value ?? "--"}
+                        primary={
+                          !isUndefined(value)
+                            ? isNumber(value)
+                              ? value.toLocaleString()
+                              : value
+                            : "--"
+                        }
                         secondary={label}
                       />
                     ))}

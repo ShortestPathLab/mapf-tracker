@@ -10,14 +10,16 @@ export function DataInspectorLayout({
   data: dataContent,
   dataTabName = "Browse solutions",
   analysisTabName = "Trends",
+  compareTabName = "Compare",
   analysis: analysisContent,
 }: {
   dataTabName?: ReactNode;
   analysisTabName?: ReactNode;
+  compareTabName?: ReactNode;
   data?: ReactNode;
   analysis?: ReactNode;
 }) {
-  const [tab, setTab] = useState<"data" | "analysis">("data");
+  const [tab, setTab] = useState<"data" | "analysis" | "compare">("data");
   const sm = useSm();
   return (
     <TabContext value={tab}>
@@ -27,6 +29,7 @@ export function DataInspectorLayout({
             {[
               { label: dataTabName, value: "data" },
               { label: analysisTabName, value: "analysis" },
+              { label: compareTabName, value: "compare" },
             ].map(({ label, value }) => (
               <Tab
                 sx={{ minWidth: 0, px: sm ? 2 : 0, mr: sm ? 0 : 4 }}
@@ -47,6 +50,10 @@ export function DataInspectorLayout({
             content: (
               <Box sx={{ px: sm ? 2 : 0, py: 3 }}>{analysisContent}</Box>
             ),
+          },
+          {
+            value: "compare",
+            content: <Box sx={{ px: sm ? 2 : 0, py: 3 }}>{}</Box>,
           },
         ].map(({ value, content }) => (
           <TabPanel sx={{ p: 0, pt: 2 }} value={value} key={value}>

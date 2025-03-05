@@ -9,6 +9,7 @@ export type DialogContentProps = {
   onProps?: (p: ComponentProps<typeof Dialog>) => void;
 };
 const pathname = () => new URL(location.href).pathname;
+
 export function useDialog<T>(
   C?: (props: T & DialogContentProps) => ReactNode,
   props?: ComponentProps<typeof Dialog>

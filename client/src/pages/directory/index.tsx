@@ -17,7 +17,7 @@ export default function Page({
   const navigate = useNavigate();
   const { groups, logInDialog, userDialog } = useNavigationContent();
   return (
-    <Layout flat title={title} path={path} {...props}>
+    <Layout flat title={title} path={path} root {...props}>
       {groups
         .filter(({ label }) => labels.includes(label))
         .map(({ label, items }, _, { length }) => (

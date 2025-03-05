@@ -209,14 +209,12 @@ export default function TrackSubmission() {
     >
       <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
       <Typography variant="h5">Previously used keys</Typography>
-      <FlatCard>
-        <DataGrid
-          clickable
-          columns={columns}
-          rows={rows}
-          onRowClick={({ row }) => navigateToDetails(row.key)}
-        />
-      </FlatCard>
+      <DataGrid
+        clickable
+        columns={columns}
+        rows={rows}
+        onRowClick={({ row }) => navigateToDetails(row.key)}
+      />
     </Layout>
   );
 }

@@ -1,4 +1,4 @@
-import { Link, useTheme } from "@mui/material";
+import { Divider, Link, Stack, useTheme } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
 import { useLocationState } from "hooks/useNavigation";
@@ -10,6 +10,7 @@ import { useMapData } from "queries/useBenchmarksQuery";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
+import { DownloadBar } from "components/DownloadBar";
 
 export default function Page() {
   const { mapName, mapId } = useLocationState<MapLevelLocationState>();
@@ -54,11 +55,15 @@ export default function Page() {
         },
       ]}
     >
-      <DataInspectorLayout
-        analysisTabName="Trends"
-        data={<Table />}
-        analysis={<Analysis template={analysisTemplate(mapName, mapId)} />}
-      />
+      <Stack sx={{ gap: 4 }}>
+        <DownloadBar />
+        <Divider />
+        <DataInspectorLayout
+          analysisTabName="Trends"
+          data={<Table />}
+          analysis={<Analysis template={analysisTemplate(mapName, mapId)} />}
+        />
+      </Stack>
     </GalleryLayout>
   );
 }

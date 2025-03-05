@@ -7,6 +7,7 @@ import {
   createTheme,
 } from "@mui/material";
 import { constant, floor, times } from "lodash";
+import { accentColors } from "utils/colors";
 
 const shadow = `
    rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px
@@ -18,6 +19,9 @@ export const fontFamily =
 export const theme = (t: "light" | "dark") =>
   createTheme({
     palette: {
+      primary: {
+        main: t === "light" ? accentColors.blue.A400 : accentColors.blue[200],
+      },
       mode: t,
       background:
         t === "light"

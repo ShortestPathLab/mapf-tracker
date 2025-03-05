@@ -37,6 +37,7 @@ export type LayoutProps = {
   slotProps?: {
     content?: StackProps;
   };
+  root?: boolean;
 };
 
 const DefaultLayout = ({ header, children }) => (
@@ -57,11 +58,14 @@ export default function Layout({
   description,
   backBehaviour = "up",
   disablePadding,
+  root,
 }: LayoutProps) {
   const lg = useSm();
   const xs = useXs();
   const { location, action } = useHistory();
-  const [, isTop, , panel, setPanel] = useScrollState(appbarHeight(lg));
+  const [, isTop, isAbsoluteTop, panel, setPanel] = useScrollState(
+    appbarHeight(lg)
+  );
   useEffect(() => {
     if (location.state?.session?.reason === "top" && action === "forward") {
       panel?.scrollTo?.({ top: 0, behavior: "smooth" });
@@ -97,14 +101,16 @@ export default function Layout({
   return (
     <>
       {lg &&
-        (path?.length > 0 ? (
+        (!root ? (
           <MuiAppBar
             position="fixed"
             sx={{ color: "text.primary", boxShadow: "none" }}
           >
             <Toolbar
               sx={{
-                bgcolor: "background.paper",
+                bgcolor: isAbsoluteTop
+                  ? "background.paper"
+                  : "background.default",
               }}
             >
               <IconButton
@@ -130,8 +136,9 @@ export default function Layout({
         ) : (
           <Appbar
             sx={{
-              transition: (t) => t.transitions.create("background-color"),
-              bgcolor: "background.paper",
+              bgcolor: isAbsoluteTop
+                ? "background.paper"
+                : "background.default",
             }}
           />
         ))}

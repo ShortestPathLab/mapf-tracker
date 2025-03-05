@@ -7,6 +7,7 @@ import {
   SubmissionInstanceContext,
   SubmissionInstanceProps,
 } from "./SubmissionInstanceContext";
+import { PreviewCard } from "components/PreviewCard";
 
 export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
   return (
@@ -21,7 +22,7 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
               alignItems: "center",
             }}
           >
-            <Box sx={{ width: 48 }} />
+            <PreviewCard instance={instance?.id} />
             <Item
               primary={
                 isLoading ? (

@@ -30,7 +30,7 @@ export function Sidebar(props: StackProps) {
         }}
       >
         <Stack sx={{ p: 3 }}>
-          <Typography variant="h6">Manage this platform</Typography>
+          <Typography variant="h6">Sudo</Typography>
         </Stack>
         <Tabs
           value={section ?? head(pages()).value}

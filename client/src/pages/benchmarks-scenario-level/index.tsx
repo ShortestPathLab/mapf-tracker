@@ -1,3 +1,5 @@
+import { Divider, Stack } from "@mui/material";
+import { DownloadBar } from "components/DownloadBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
 import { useLocationState } from "hooks/useNavigation";
@@ -46,21 +48,26 @@ export default function Page() {
         },
       ]}
     >
-      <DataInspectorLayout
-        analysisTabName="Trends"
-        data={<Table />}
-        analysis={
-          <Analysis
-            template={analysisTemplate(
-              scenType,
-              scenTypeID,
-              mapName,
-              scenId,
-              mapId
-            )}
-          />
-        }
-      />
+      <Stack gap={4}>
+        <DownloadBar />
+        <Divider />
+        <DataInspectorLayout
+          analysisTabName="Trends"
+          dataTabName="Browse instances"
+          data={<Table />}
+          analysis={
+            <Analysis
+              template={analysisTemplate(
+                scenType,
+                scenTypeID,
+                mapName,
+                scenId,
+                mapId
+              )}
+            />
+          }
+        />
+      </Stack>
     </GalleryLayout>
   );
 }

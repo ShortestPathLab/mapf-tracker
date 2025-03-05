@@ -9,9 +9,11 @@ const { query } = queryClient(Scenario);
 
 export const findById = query(
   z.object({ id: z.string() }),
-  ({ id }) => ({
-    _id: new Types.ObjectId(id),
-  }),
+  ({ id }) => [
+    {
+      _id: new Types.ObjectId(id),
+    },
+  ],
   first
 );
 

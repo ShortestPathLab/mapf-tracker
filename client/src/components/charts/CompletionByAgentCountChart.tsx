@@ -60,6 +60,7 @@ function RenderChart({
         }}
       />
       <YAxis
+        scale="sqrt"
         tick={{ fill: theme.palette.text.secondary }}
         domain={[0, peak]}
         label={

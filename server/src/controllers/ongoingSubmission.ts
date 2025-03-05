@@ -44,16 +44,18 @@ export const findAll = query();
 /**
  * Find a submission using id
  */
-export const findById = query(z.object({ id: z.string() }), ({ id }) => ({
-  _id: new Types.ObjectId(id),
-}));
+export const findById = query(z.object({ id: z.string() }), ({ id }) => [
+  {
+    _id: new Types.ObjectId(id),
+  },
+]);
 
 /**
  * Find all OngoingSubmission entries with a given api_key
  */
 export const findByApiKey = query(
   z.object({ apiKey: z.string() }),
-  ({ apiKey }) => ({ apiKey }),
+  ({ apiKey }) => [{ apiKey }],
   async (docs) =>
     map(docs, (d) =>
       pick(d.toJSON(), [

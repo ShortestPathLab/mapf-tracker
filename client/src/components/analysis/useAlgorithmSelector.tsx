@@ -13,10 +13,11 @@ export type Slice = {
 
 export function useAlgorithmSelector<T extends BaseMetric>(
   slices: Slice[],
-  m: BaseMetric[] = metrics
+  m: BaseMetric[] = metrics,
+  initialSelected: string[] = []
 ) {
   const [metric, setMetric] = useState<T["key"]>(head(m)?.key);
-  const [selected, modifySelected] = useList<string>();
+  const [selected, modifySelected] = useList<string>(initialSelected);
   const [slice, setSlice] = useState<(typeof slice)[number]["key"]>(
     head(slices)?.key
   );

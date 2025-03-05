@@ -1,13 +1,50 @@
 import { useQuery } from "@tanstack/react-query";
 import { APIConfig } from "core/config";
-import { json } from "./query";
-import { capitalize } from "lodash";
+import { Metric } from "core/metrics";
 import {
   AlgorithmCollection,
-  AlgorithmCollectionCount,
   AlgorithmCollectionAggregate,
+  AlgorithmCollectionCount,
+  AlgorithmDetails,
+  SummaryResult,
 } from "core/types";
-import { Metric } from "core/metrics";
+import { capitalize, find } from "lodash";
+import { json } from "./query";
+
+export function useAlgorithmSummaryQuery(algorithm?: string) {
+  return useQuery({
+    queryKey: ["algorithms", "summary", algorithm],
+    queryFn: () =>
+      json<SummaryResult>(
+        `${APIConfig.apiUrl}/submission/summary/${algorithm}`
+      ),
+    enabled: !!algorithm,
+  });
+}
+
+export type SubmissionInfo = {
+  _id: string;
+  agents: number;
+  date: string;
+  instance_id: string;
+  lower_cost: number;
+  solution_cost: number;
+  best_lower: boolean;
+  best_solution: boolean;
+};
+export function useAlgorithmScenarioQuery(
+  algorithm?: string,
+  scenario?: string
+) {
+  return useQuery({
+    queryKey: ["algorithms", algorithm, scenario],
+    queryFn: () =>
+      json<SubmissionInfo[]>(
+        `${APIConfig.apiUrl}/submission/${algorithm}/${scenario}`
+      ),
+    enabled: !!algorithm && !!scenario,
+  });
+}
 
 export const useAlgorithmsData = () => {
   return useQuery({
@@ -16,11 +53,20 @@ export const useAlgorithmsData = () => {
       json<AlgorithmCollection[]>(`${APIConfig.apiUrl}/algorithm/`),
   });
 };
+
 export const useAlgorithmDetailsData = () => {
   return useQuery({
     queryKey: ["algorithms-detailed"],
     queryFn: () =>
-      json<AlgorithmCollection[]>(`${APIConfig.apiUrl}/algorithm/all_detail`),
+      json<AlgorithmDetails[]>(`${APIConfig.apiUrl}/algorithm/all_detail`),
+  });
+};
+export const useAlgorithmDetailData = (id?: string) => {
+  const { data } = useAlgorithmDetailsData();
+  return useQuery({
+    queryKey: ["algorithms-detailed", id],
+    queryFn: () => find(data, { _id: id }),
+    enabled: !!id && !!data,
   });
 };
 

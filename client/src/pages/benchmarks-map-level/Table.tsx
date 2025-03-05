@@ -86,7 +86,7 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 300,
+      width: 200,
     },
     {
       field: "closed_percentage",
@@ -97,7 +97,7 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 300,
+      width: 200,
     },
     actions,
   ];

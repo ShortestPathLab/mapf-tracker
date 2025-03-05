@@ -14,9 +14,11 @@ const { query } = queryClient(Request);
 
 export const findByEmail = query(
   z.object({ email: z.string() }),
-  ({ email }) => ({
-    requesterEmail: email,
-  })
+  ({ email }) => [
+    {
+      requesterEmail: email,
+    },
+  ]
 );
 
 export const findAll: RequestHandler = (req, res) => {

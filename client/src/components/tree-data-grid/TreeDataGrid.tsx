@@ -6,8 +6,8 @@ import { useMemo, useState } from "react";
 
 export type BooleanMap = { [K in string]?: boolean };
 
-export function useBooleanMap() {
-  return useState<BooleanMap>({});
+export function useBooleanMap(defaultValue: BooleanMap = {}) {
+  return useState<BooleanMap>(defaultValue);
 }
 
 export const toggle = (expanded: BooleanMap, id: string | number) => ({
@@ -15,19 +15,21 @@ export const toggle = (expanded: BooleanMap, id: string | number) => ({
   [id]: !expanded[id],
 });
 
-const defaultExpanded = {};
+const defaultExpandedMap = {};
 const defaultExpandedChange = () => {};
 const defaultShouldIncludeItem = () => true;
 
 export function TreeDataGrid<T extends GridValidRowModel>({
   rows,
   getChildren,
-  expanded = defaultExpanded,
+  expanded: toggled = defaultExpandedMap,
   onExpandedChange = defaultExpandedChange,
   shouldIncludeItem = defaultShouldIncludeItem,
   onRowClick,
+  defaultExpanded,
   ...props
 }: DataGridProps<T> & {
+  defaultExpanded?: boolean;
   onExpandedChange?: (u: BooleanMap) => void;
   expanded?: BooleanMap;
   getChildren?: (row: T) => T[] | undefined;
@@ -40,12 +42,13 @@ export function TreeDataGrid<T extends GridValidRowModel>({
       // Is parent with 0 children
       if (children.length === 0) return [];
       // Is parent with children
-      if (expanded[row.id]) return [row, ...flatMap(children, (v) => f(v))];
+      if (defaultExpanded ? !toggled[row.id] : toggled[row.id])
+        return [row, ...flatMap(children, (v) => f(v))];
       // Should have exhausted all cases
       return [row];
     };
     return flatMap(rows, f);
-  }, [rows, expanded, getChildren, shouldIncludeItem]);
+  }, [rows, toggled, getChildren, shouldIncludeItem, defaultExpanded]);
   return (
     <DataGrid
       {...props}
@@ -54,8 +57,7 @@ export function TreeDataGrid<T extends GridValidRowModel>({
       shouldIncludeItem={defaultShouldIncludeItem}
       onRowClick={(props, e, d) => {
         const { row, id } = props;
-        if (getChildren?.(row)?.length)
-          onExpandedChange?.(toggle(expanded, id));
+        if (getChildren?.(row)?.length) onExpandedChange?.(toggle(toggled, id));
         onRowClick?.(props, e, d);
       }}
     />

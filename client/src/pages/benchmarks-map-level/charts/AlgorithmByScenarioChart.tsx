@@ -7,7 +7,7 @@ import {
 } from "components/analysis/useAlgorithmSelector";
 import { BaseMetric } from "core/metrics";
 import { flatMap, fromPairs, keys, map, startCase, uniq, zip } from "lodash";
-import { CategoryChart } from "pages/home/CompletionByAlgorithmChart";
+import { CategoryChart } from "components/charts/CompletionByAlgorithmChart";
 import {
   AggregateAlgorithmQuery,
   algorithmQuery,

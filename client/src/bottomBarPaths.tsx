@@ -1,8 +1,12 @@
 import {
+  ConversionPathFilledRounded,
+  ConversionPathRounded,
   HomeFilledRounded,
   HomeRounded,
-  SettingsFilledRounded,
-  SettingsRounded,
+  MoreHorizFilledRounded,
+  MoreHorizRounded,
+  SearchFilledRounded,
+  SearchRounded,
 } from "@mui-symbols-material/w400";
 
 export const bottomBarPaths = [
@@ -13,9 +17,21 @@ export const bottomBarPaths = [
     iconSelected: <HomeFilledRounded />,
   },
   {
-    label: "Settings",
+    label: "Benchmarks",
+    url: "/benchmarks",
+    icon: <SearchRounded />,
+    iconSelected: <SearchFilledRounded />,
+  },
+  {
+    label: "Submissions",
+    url: "/submissions",
+    icon: <ConversionPathRounded />,
+    iconSelected: <ConversionPathFilledRounded />,
+  },
+  {
+    label: "More",
     url: "/manage",
-    icon: <SettingsRounded />,
-    iconSelected: <SettingsFilledRounded />,
+    icon: <MoreHorizRounded />,
+    iconSelected: <MoreHorizFilledRounded />,
   },
 ];

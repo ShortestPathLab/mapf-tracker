@@ -5,6 +5,11 @@ import { Slice, useAlgorithmSelector } from "./useAlgorithmSelector";
 import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 
+export const stateOfTheArt = {
+  algo_name: "(State of the art)",
+  _id: "state-of-the-art",
+};
+
 export default function ChartOptions({
   slices,
   setSlice,
@@ -14,11 +19,16 @@ export default function ChartOptions({
   setSelected,
   selected,
   metrics = defaultMetrics,
+  stateOfTheArt: stateOfTheArt1,
 }: {
+  stateOfTheArt?: boolean;
   slices?: Slice[];
   metrics?: BaseMetric[];
 } & Partial<ReturnType<typeof useAlgorithmSelector>>) {
   const { data: algorithms = [] } = useAlgorithmsData();
+  const algorithms1 = stateOfTheArt1
+    ? [stateOfTheArt, ...algorithms]
+    : algorithms;
   return (
     <Stack direction="row" sx={{ gap: 1, mb: 2 }}>
       {slices?.length > 1 && (
@@ -59,7 +69,7 @@ export default function ChartOptions({
                 <Chip
                   sx={{ height: 22 }}
                   key={value}
-                  label={algorithms[i].algo_name}
+                  label={algorithms1[i]?.algo_name}
                   size="small"
                 />
               ))}
@@ -76,7 +86,7 @@ export default function ChartOptions({
           }) => void
         }
       >
-        {algorithms.map((a) => (
+        {algorithms1.map((a) => (
           <MenuItem key={a._id} value={a._id}>
             {a.algo_name}
           </MenuItem>

@@ -1,4 +1,5 @@
 import {
+  Chip,
   LinearProgress,
   Stack,
   StackProps,
@@ -27,6 +28,12 @@ export const cellRendererText = ({
     {formattedValue ?? "--"}
   </Typography>
 );
+
+export const cellRendererChip = ({
+  formattedValue,
+}: {
+  formattedValue?: ReactNode;
+}) => <Chip label={formattedValue} size="small" />;
 
 export const cellRendererBar = ({
   value,

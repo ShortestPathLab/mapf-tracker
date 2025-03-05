@@ -3,16 +3,16 @@ import {
   AddRounded,
   BookFilledRounded,
   BookRounded,
-  CodeRounded,
+  ConversionPathFilledRounded,
+  ConversionPathRounded,
   DarkModeRounded,
-  DatabaseFilledRounded,
-  DatabaseRounded,
-  EmojiEventsFilledRounded,
-  EmojiEventsRounded,
   HomeFilledRounded,
   HomeRounded,
   LightModeRounded,
-  PersonRounded,
+  LockOpenRounded,
+  LockRounded,
+  SearchFilledRounded,
+  SearchRounded,
   UploadRounded,
 } from "@mui-symbols-material/w400";
 import { GitHub } from "@mui/icons-material";
@@ -27,7 +27,7 @@ import { UserDialog, getAvatar } from "./UserDialog";
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
   const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
-    title: "Log in",
+    title: "Sudo",
     slotProps: { modal: { variant: "default" } },
     padded: true,
   });
@@ -67,16 +67,16 @@ export function useNavigationContent() {
         {
           label: "Benchmarks",
           url: "/benchmarks",
-          icon: <DatabaseRounded />,
-          selectedIcon: <DatabaseFilledRounded />,
+          icon: <SearchRounded />,
+          selectedIcon: <SearchFilledRounded />,
           description:
             "View all benchmarks and their top-performing submissions",
         },
         {
           label: "Submissions",
           url: "/submissions",
-          icon: <EmojiEventsRounded />,
-          selectedIcon: <EmojiEventsFilledRounded />,
+          icon: <ConversionPathRounded />,
+          selectedIcon: <ConversionPathFilledRounded />,
           description: "View and compare submitted algorithms",
         },
       ],
@@ -127,6 +127,7 @@ export function useNavigationContent() {
     {
       label: "Settings",
       grow: true,
+      defaultOpen: false,
       items: [
         {
           iconButton: true,
@@ -139,8 +140,8 @@ export function useNavigationContent() {
           ? [
               {
                 iconButton: true,
-                label: "Manage this platform",
-                icon: <CodeRounded />,
+                label: "Sudo",
+                icon: <LockOpenRounded />,
                 url: "/dashboard",
                 description:
                   "Review submission requests, issue submission keys, and run jobs",
@@ -160,9 +161,9 @@ export function useNavigationContent() {
           : [
               {
                 iconButton: true,
-                label: "Management",
+                label: "Sudo",
                 action: showLogIn,
-                icon: <PersonRounded />,
+                icon: <LockRounded />,
                 description: "Log in to manage this platform",
               },
             ]),

@@ -1,6 +1,6 @@
 import { Request, RequestHandler } from "express";
 import { AggregateBuilder } from "mongodb-aggregate-builder";
-import { Document, FilterQuery, Model } from "mongoose";
+import { Document, FilterQuery, Model, ProjectionType } from "mongoose";
 import z from "zod";
 import memo from "p-memoize";
 import hash from "object-hash";
@@ -13,6 +13,24 @@ export const toText = (r: Response) => r.text();
 export const json = <T>(p: string) => fetch(p).then(toJson) as Promise<T>;
 export const text = (p: string) => fetch(p).then(toText);
 export const blob = (p: string) => fetch(p).then(toBlob);
+
+export function cached<T, V extends z.ZodType, U>(
+  watch: Model<any>[],
+  validate: V = z.any() as any,
+  handler: (req: z.infer<V>) => Promise<any>,
+  source: "body" | "params" = "params"
+) {
+  const cache = new QuickLRU<string, Awaited<U>>({ maxSize: 1000 });
+  const g = memo(handler, { cache, cacheKey: ([a]) => hash(a) });
+  for (const w of watch) {
+    w.watch().on("change", () => cache.clear());
+  }
+  return (async (req, res) => {
+    const request = await validate.parseAsync(req[source]);
+    const out = await g(request);
+    return res.json(out);
+  }) as RequestHandler<unknown>;
+}
 
 export const queryClient = <T>(model: Model<T>) => {
   const createHandler = <V extends z.ZodType, U>(
@@ -41,12 +59,14 @@ export const queryClient = <T>(model: Model<T>) => {
   return {
     query: <V extends z.ZodType>(
       validate: V = z.any() as any,
-      query: (b: z.infer<V>) => FilterQuery<T> = () => ({}),
+      query: (
+        b: z.infer<V>
+      ) => [FilterQuery<T>] | [FilterQuery<T>, ProjectionType<T>] = () => [{}],
       handler: (q: (Document<T> & T)[]) => Promise<any> = async (q) => q
     ): RequestHandler<z.infer<V>> =>
       createHandler(validate, async (data) => {
-        const q = query(data);
-        const docs = await model.find(q);
+        const [q, p] = query(data);
+        const docs = await model.find(q, p);
         return await handler(docs as any);
       }),
     aggregate: <V extends z.ZodType>(

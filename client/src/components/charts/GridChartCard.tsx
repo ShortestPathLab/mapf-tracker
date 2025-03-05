@@ -1,6 +1,6 @@
 import { Box, Stack, StackProps } from "@mui/material";
 import { Item } from "components/Item";
-import { ReactNode } from "react";
+import { ComponentProps, ReactNode } from "react";
 import Size from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 
@@ -37,20 +37,22 @@ export const GridChartCard = ({
   secondaryLabel,
   extras,
   content,
+  ...props
 }: {
   columns?: number;
-  height?: number;
+  height?: string | number;
   primaryLabel?: string;
   secondaryLabel?: string;
   extras?: ReactNode;
   content?: ReactNode;
-}) => (
+} & Omit<ComponentProps<typeof ChartCard>, "content">) => (
   <ChartCard
-    sx={{ gridColumn: `span ${columns}`, height }}
     label={
       <Item disableMargin primary={primaryLabel} secondary={secondaryLabel} />
     }
     extras={extras}
     primary={content}
+    {...props}
+    sx={{ gridColumn: `span ${columns}`, height, ...props.sx }}
   />
 );

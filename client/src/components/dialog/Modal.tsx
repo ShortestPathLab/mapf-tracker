@@ -296,13 +296,14 @@ export default function Modal({
       }}
       PaperProps={{
         ref: (e: HTMLElement | null) => setTarget(e),
+        ...props.PaperProps,
         style: {
           ...(sm && {
             borderRadius: `${theme.shape.borderRadius * 2}px ${
               theme.shape.borderRadius * 2
             }px 0 0`,
           }),
-          background: theme.palette.background.paper,
+          background: theme.palette.background.default,
           overflow: "hidden",
           height:
             height && !sm
@@ -317,7 +318,6 @@ export default function Modal({
           marginTop: sm ? `${100 - mt}dvh` : 0,
           ...props.PaperProps?.style,
         },
-        ...props.PaperProps,
       }}
     >
       <Scroll
@@ -355,7 +355,7 @@ export default function Modal({
       <Scroll
         y
         style={{
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.background.paper,
           height: "100%",
           minWidth: 320,
           maxWidth: `min(90vw, ${width}px)`,

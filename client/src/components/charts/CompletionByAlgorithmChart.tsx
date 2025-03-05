@@ -1,17 +1,8 @@
 import { Box, alpha, useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import { Slice } from "components/analysis/useAlgorithmSelector";
-import {
-  chain as _,
-  find,
-  floor,
-  get,
-  map,
-  max,
-  round,
-  sortBy,
-  zip,
-} from "lodash";
+import { Scroll } from "components/dialog/Scrollbars";
+import { chain as _, find, get, map, max, round, sortBy, zip } from "lodash";
 import { useAggregateAlgorithm } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { ComponentProps, useMemo } from "react";
@@ -26,11 +17,6 @@ export const slices = [
     name: "Count",
   },
 ] satisfies Slice[];
-
-const sample =
-  (n: number) =>
-  <T,>(list: T[]) =>
-    list.filter((_, i, xs) => i % (floor(xs.length / n) || 1) === 0);
 
 const defaultSeries = [
   {
@@ -65,6 +51,7 @@ export function CategoryChart({
 
   return (
     <BarChart
+      onClick={(e, v) => console.log(e, v)}
       data={data}
       margin={{ bottom: 20 }}
       layout="vertical"
@@ -97,12 +84,7 @@ export function CategoryChart({
         type="number"
         domain={[0, peak * 2]}
         tickFormatter={formatLargeNumber}
-        label={{
-          fill: theme.palette.text.secondary,
-          value: "Instances solved",
-          position: "insideBottom",
-          offset: -8,
-        }}
+        opacity={0}
         width={50}
       />
       {map(series, ({ key, opacity, name }) => (
@@ -126,7 +108,7 @@ export function CategoryChart({
         >
           {data.map((entry, i) => (
             <Cell
-              key={`${entry._id}-${i}`}
+              key={`${entry?._id}-${i}`}
               fill={alpha(toneBy(theme.palette.mode, i), opacity)}
               fillOpacity={opacity}
             />
@@ -164,24 +146,28 @@ function CompletionByAlgorithmChart() {
       .map(([c, s], i) => ({
         i,
         _id: c._id,
-        label: find(algorithms, { _id: c._id })?.algo_name,
+        label: find(algorithms, { _id: c?._id })?.algo_name,
         all: c.all,
         solved: s.result,
         closed: c.result,
       }))
-      .thru(sample(50))
+      .orderBy(["solved"], ["desc"])
       .value();
     return {
       data,
     };
   }, [closed, solved, algorithms]);
   return (
-    <Chart
-      isLoading={isSolvedLoading || isClosedLoading || isAlgorithmsLoading}
-      style={{ flex: 1 }}
-      data={data}
-      render={() => <CategoryChart showLabels />}
-    />
+    <Scroll y>
+      <Box sx={{ height: 500 }}>
+        <Chart
+          isLoading={isSolvedLoading || isClosedLoading || isAlgorithmsLoading}
+          style={{ flex: 1 }}
+          data={data}
+          render={() => <CategoryChart showLabels />}
+        />
+      </Box>
+    </Scroll>
   );
 }
 

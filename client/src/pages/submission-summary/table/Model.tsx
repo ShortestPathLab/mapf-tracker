@@ -1,8 +1,8 @@
-import { SummaryByApiKeyResult } from "core/types";
+import { SummaryResult } from "core/types";
 
 export type Models = {
-  map: SummaryByApiKeyResult["maps"][0];
-  scenario: SummaryByApiKeyResult["maps"][0]["scenarios"][0];
+  map: SummaryResult["maps"][0];
+  scenario: SummaryResult["maps"][0]["scenarios"][0];
   instance: { id: string; scenario: string; index: number };
   fallback: { id: string };
 };

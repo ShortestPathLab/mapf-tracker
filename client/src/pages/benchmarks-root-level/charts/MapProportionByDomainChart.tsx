@@ -20,6 +20,7 @@ export function MapProportionByDomainChart() {
         .mapValues(getInstanceAggregateProportions)
         .mapValues((c) => ({
           ...c,
+          name: head(c.collection)?.map_name,
           type: head(c.collection)?.map_type,
           proportionSolved: c.proportionSolved - c.proportionClosed,
           proportionUnknown: 1 - c.proportionSolved,
@@ -30,7 +31,7 @@ export function MapProportionByDomainChart() {
           key: k,
           name: capitalize(k),
         }))
-        .sortBy(["type", "proportionClosed"])
+        .sortBy(["type", "proportionSolved"])
         .value()}
       render={successRateBarChartRenderer({
         stacked: true,

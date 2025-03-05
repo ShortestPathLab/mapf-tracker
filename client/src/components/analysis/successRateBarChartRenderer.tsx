@@ -6,6 +6,7 @@ import {
   AreaChart,
   Bar,
   BarChart,
+  Label,
   Legend,
   Line,
   LineChart,
@@ -21,6 +22,7 @@ export function successRateBarChartRenderer({
   xAxisDataKey = "name",
   proportionClosedKey = "proportionClosed",
   proportionSolvedKey = "proportionSolved",
+  proportionUnknownKey = "proportionUnknown",
   formatter = formatPercentage,
   type = "bar",
   yAxisDomain = [0, "auto"],
@@ -32,6 +34,7 @@ export function successRateBarChartRenderer({
   xAxisDataKey?: string;
   yAxisDomain?: [number | "auto", number | "auto"];
   proportionClosedKey?: string;
+  proportionUnknownKey?: string;
   proportionSolvedKey?: string;
   formatter?: (c: string | number) => string;
 }) {
@@ -45,25 +48,49 @@ export function successRateBarChartRenderer({
     const { chart: Chart, series: Series } = Charts;
 
     return (
-      <Chart>
-        <Legend />
+      <Chart margin={{ bottom: 20 }} barCategoryGap={0}>
+        <Legend height={40} verticalAlign="top" />
         <Tooltip
           formatter={formatter}
           contentStyle={{ border: paper(0).border(theme) }}
           cursor={{ fill: theme.palette.action.disabledBackground }}
         />
-        <XAxis dataKey={xAxisDataKey} />
-        <YAxis domain={yAxisDomain} />
+        <XAxis
+          dataKey={xAxisDataKey}
+          label={{
+            fill: theme.palette.text.secondary,
+            value: "Map",
+            position: "insideBottom",
+            offset: -8,
+          }}
+        />
+        <YAxis
+          domain={yAxisDomain}
+          label={
+            <Label
+              fill={theme.palette.text.secondary}
+              style={{ textAnchor: "middle" }}
+              value="Proportion"
+              angle={-90}
+              position="insideLeft"
+            />
+          }
+        />
         {map(
           [
             {
-              color: accentColors.lime,
+              color: accentColors.green,
+              key: proportionClosedKey,
+              name: "Closed",
+            },
+            {
+              color: accentColors.orange,
               key: proportionSolvedKey,
               name: "Solved",
             },
             {
-              color: accentColors.green,
-              key: proportionClosedKey,
+              color: accentColors.red,
+              key: proportionUnknownKey,
               name: "Closed",
             },
           ],

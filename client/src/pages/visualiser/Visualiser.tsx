@@ -5,7 +5,7 @@ import {
   CloseRounded,
   PauseRounded,
   PlayArrowRounded,
-  RestartAltRounded,
+  ReplayRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -470,12 +470,15 @@ export function Visualisation({
                       },
                       {
                         name: "Restart",
-                        icon: <RestartAltRounded />,
+                        icon: <ReplayRounded />,
                         action: restart,
+                        disabled: step === 0,
                       },
-                    ]).map(({ name, icon, action }) => (
+                    ]).map(({ name, icon, action, disabled }) => (
                       <Tooltip title={name} key={name} placement="top">
-                        <IconButton onClick={action}>{icon}</IconButton>
+                        <IconButton disabled={disabled} onClick={action}>
+                          {icon}
+                        </IconButton>
                       </Tooltip>
                     ))}
                     <Divider orientation="vertical" flexItem />

@@ -1,5 +1,6 @@
 import { ListItemText, Stack, Typography } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { isNull, isUndefined, isNaN } from "lodash";
 import { ReactNode } from "react";
 
 export function Item({
@@ -33,7 +34,15 @@ export function Item({
             flexDirection: "column-reverse",
           }),
         }}
-        primary={primary && <Typography variant="body1">{primary}</Typography>}
+        primary={
+          primary && (
+            <Typography variant="body1">
+              {isNull(primary) || isUndefined(primary) || isNaN(primary)
+                ? "-"
+                : primary}
+            </Typography>
+          )
+        }
         secondary={
           secondary && (
             <Typography

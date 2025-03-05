@@ -49,6 +49,7 @@ export type AlgorithmCollection = {
 
 export type AlgorithmDetails = AlgorithmCollection &
   CollectionWithInstanceCount & {
+    comments: string;
     authors: string;
     best_lower: number;
     best_solution: number;
@@ -81,7 +82,7 @@ export type SummarySlice = {
   total: number;
 };
 
-export type SummaryByApiKeyResult = {
+export type SummaryResult = {
   maps: {
     name: string;
     id: string;

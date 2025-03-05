@@ -21,6 +21,7 @@ import PopupState, { bindMenu } from "material-ui-popup-state";
 import { matchPath, useLocation } from "react-router-dom";
 import { useSm } from "../dialog/useSmallDisplay";
 import { useNavigationContent } from "./useNavigationContent";
+import { useCss } from "react-use";
 
 const drawerWidth = 320;
 
@@ -43,6 +44,7 @@ export default function index(props: AppBarProps) {
         action?.();
       }
     };
+  const c = useCss({});
   return (
     <>
       <PopupState variant="popover">
@@ -69,103 +71,112 @@ export default function index(props: AppBarProps) {
                           {!!i && grow && (
                             <Box sx={{ flexGrow: 1, minHeight: "10dvh" }} />
                           )}
-                          {label && (
-                            <Stack
-                              onClick={toggle}
-                              direction="row"
-                              sx={{
-                                px: md ? 2 : 3,
-                                py: 1,
-                                alignItems: "center",
-                              }}
-                            >
-                              <Typography
-                                sx={{ flexGrow: 1 }}
-                                color="text.secondary"
-                                variant="overline"
+                          <Stack
+                            sx={{
+                              [`& .${c}`]: { opacity: isOpen ? 0 : 1 },
+                              [`&:hover .${c}`]: { opacity: 1 },
+                            }}
+                          >
+                            {label && (
+                              <Stack
+                                onClick={toggle}
+                                direction="row"
+                                sx={{
+                                  cursor: "pointer",
+                                  px: md ? 2 : 3,
+                                  py: 1,
+                                  alignItems: "center",
+                                }}
                               >
-                                {label}
-                              </Typography>
-                              <IconButton
-                                edge="end"
-                                sx={{ color: "text.secondary" }}
-                              >
-                                <ChevronRightRounded
-                                  fontSize="small"
-                                  sx={{
-                                    transition: (t) =>
-                                      t.transitions.create("transform"),
-                                    transform: isOpen
-                                      ? "rotate(90deg)"
-                                      : "rotate(0deg)",
-                                  }}
-                                />
-                              </IconButton>
-                            </Stack>
-                          )}
-                          <Collapse in={isOpen}>
-                            <List sx={{ mt: label ? -1 : 0 }}>
-                              {items.map(
-                                ({
-                                  icon,
-                                  selectedIcon,
-                                  label,
-                                  url,
-                                  action,
-                                  avatar,
-                                }) => {
-                                  const selected =
-                                    url && !!matchPath(`${url}/*`, pathname);
-                                  return (
-                                    <ListItemButton
-                                      key={label}
-                                      selected={selected}
-                                      sx={{
-                                        borderRadius: 2,
-                                        mx: md ? 1 : 1.5,
-                                        color: selected && "primary.main",
-                                        px: md ? 1 : 1.5,
-                                        // Looks more comfortable when there's space on the right
-                                        pr: 3,
-                                        bgcolor: "transparent",
-                                      }}
-                                      onClick={clickHandler(
-                                        url,
-                                        action,
-                                        state.close
-                                      )}
-                                    >
-                                      <ListItemIcon
+                                <Typography
+                                  sx={{ flexGrow: 1 }}
+                                  color="text.secondary"
+                                  variant="overline"
+                                >
+                                  {label}
+                                </Typography>
+                                <IconButton
+                                  edge="end"
+                                  sx={{ color: "text.secondary" }}
+                                >
+                                  <ChevronRightRounded
+                                    className={c}
+                                    fontSize="small"
+                                    sx={{
+                                      transition: (t) =>
+                                        t.transitions.create("transform"),
+                                      transform: isOpen
+                                        ? "rotate(90deg)"
+                                        : "rotate(0deg)",
+                                    }}
+                                  />
+                                </IconButton>
+                              </Stack>
+                            )}
+                            <Collapse in={isOpen}>
+                              <List sx={{ mt: label ? -1 : 0 }}>
+                                {items.map(
+                                  ({
+                                    icon,
+                                    selectedIcon,
+                                    label,
+                                    url,
+                                    action,
+                                    avatar,
+                                  }) => {
+                                    const selected =
+                                      url && !!matchPath(`${url}/*`, pathname);
+                                    return (
+                                      <ListItemButton
+                                        key={label}
+                                        selected={selected}
                                         sx={{
+                                          borderRadius: 2,
+                                          mx: md ? 1 : 1.5,
                                           color: selected && "primary.main",
-                                          minWidth: 48,
+                                          px: md ? 1 : 1.5,
+                                          // Looks more comfortable when there's space on the right
+                                          pr: 3,
+                                          bgcolor: "transparent",
                                         }}
+                                        onClick={clickHandler(
+                                          url,
+                                          action,
+                                          state.close
+                                        )}
                                       >
-                                        {avatar ??
-                                          (selected
-                                            ? selectedIcon ?? icon
-                                            : icon)}
-                                      </ListItemIcon>
-                                      <ListItemText
-                                        primary={
-                                          <Box
-                                            component="span"
-                                            sx={{
-                                              fontWeight: 450,
-                                              fontSize: "0.95rem",
-                                              color: "text.primary",
-                                            }}
-                                          >
-                                            {label}
-                                          </Box>
-                                        }
-                                      />
-                                    </ListItemButton>
-                                  );
-                                }
-                              )}
-                            </List>
-                          </Collapse>
+                                        <ListItemIcon
+                                          sx={{
+                                            color: selected && "primary.main",
+                                            minWidth: 48,
+                                          }}
+                                        >
+                                          {avatar ??
+                                            (selected
+                                              ? selectedIcon ?? icon
+                                              : icon)}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                          primary={
+                                            <Box
+                                              component="span"
+                                              sx={{
+                                                fontWeight: 450,
+                                                fontSize: "0.95rem",
+                                                color: "text.primary",
+                                              }}
+                                            >
+                                              {label}
+                                            </Box>
+                                          }
+                                        />
+                                      </ListItemButton>
+                                    );
+                                  }
+                                )}
+                              </List>
+                            </Collapse>
+                          </Stack>
                         </>
                       );
                     }}

@@ -119,7 +119,10 @@ export default function DataGrid<
             "--DataGrid-containerBackground": "transparent",
             border: "none",
             "& .MuiDataGrid-cell:nth-child(2)": {
-              pl: 2,
+              pl: sm ? 2 : 0,
+            },
+            "& .MuiDataGrid-cell:last-child": {
+              pr: sm ? 2 : 0,
             },
             "& .MuiDataGrid-columnHeader:nth-child(2)": { pl: 2 },
             ...(sm && {
