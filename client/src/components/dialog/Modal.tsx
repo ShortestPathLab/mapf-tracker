@@ -303,7 +303,7 @@ export default function Modal({
               theme.shape.borderRadius * 2
             }px 0 0`,
           }),
-          background: theme.palette.background.default,
+          background: theme.palette.background.paper,
           overflow: "hidden",
           height:
             height && !sm

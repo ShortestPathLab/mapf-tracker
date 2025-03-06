@@ -21,6 +21,7 @@ export function TabBar({ children }: { children?: ReactNode }) {
   const xs = useXs();
   const sm = useSm();
   const ref = useRef<HTMLElement>(null);
+  const top = useTop(ref);
 
   return (
     <Box

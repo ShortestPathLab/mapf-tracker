@@ -9,6 +9,7 @@ import {
   HomeFilledRounded,
   HomeRounded,
   LightModeRounded,
+  LightOffRounded,
   LockOpenRounded,
   LockRounded,
   SearchFilledRounded,
@@ -23,6 +24,7 @@ import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
+import { noop } from "lodash";
 
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
@@ -136,11 +138,18 @@ export function useNavigationContent() {
           action: toggleMode,
           last: true,
         },
+        {
+          iconButton: true,
+          label: "Hide tips",
+          icon: <LightOffRounded />,
+          action: noop,
+          last: true,
+        },
         ...(credentials
           ? [
               {
                 iconButton: true,
-                label: "Sudo",
+                label: "Management",
                 icon: <LockOpenRounded />,
                 url: "/dashboard",
                 description:

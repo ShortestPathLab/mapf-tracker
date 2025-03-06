@@ -1,6 +1,6 @@
 import { Box, Link, List, ListItem, ListItemText } from "@mui/material";
 import Grid from "layout/Grid";
-import { useBenchmarkData } from "queries/useBenchmarksQuery";
+import { useMapDataByName } from "queries/useBenchmarksQuery";
 import { downloadBenchmarks } from "./download";
 
 export default function BenchmarkDetails({
@@ -8,7 +8,7 @@ export default function BenchmarkDetails({
 }: {
   benchmark?: string;
 }) {
-  const { data } = useBenchmarkData(benchmark);
+  const { data } = useMapDataByName(benchmark);
 
   const items = [
     { label: "Name", content: data?.map_name },

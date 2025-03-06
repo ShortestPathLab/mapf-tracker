@@ -24,7 +24,6 @@ export function GalleryLayout({
         sm
           ? ({ header, children }) => (
               <Stack sx={{ gap: 4 }}>
-                <Stack sx={{ width: 128, mb: -2 }}>{cover}</Stack>
                 {header}
                 {children}
               </Stack>

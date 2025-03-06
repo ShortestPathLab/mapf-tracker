@@ -1,15 +1,16 @@
-import { Avatar, Button, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { Item } from "components/Item";
+import { Tip } from "components/Tip";
+import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { DataGrid, cellRendererBar } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { flatMap, map, max, slice, startCase } from "lodash";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
-import { AlgorithmPreview } from "./algorithm";
-import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
-import { Tip } from "components/Tip";
+import { AlgorithmPreview } from "./AlgorithmPreview";
 
 const g = [
   "instances_solved",
@@ -73,6 +74,7 @@ function Table() {
 }
 
 export default function AlgorithmsPage() {
+  const sm = useSm();
   const { data: algorithms } = useAlgorithmDetailsData();
   const sample = slice(algorithms, 0, 16);
   return (
@@ -116,7 +118,9 @@ export default function AlgorithmsPage() {
           </>
         }
       />
-      <Table />
+      <Stack sx={{ mx: sm ? -2 : 0 }}>
+        <Table />
+      </Stack>
     </GalleryLayout>
   );
 }

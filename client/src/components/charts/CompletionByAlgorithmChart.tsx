@@ -126,7 +126,7 @@ export function formatScientific(n: number) {
 }
 
 export function formatLargeNumber(n: number) {
-  return n > 999 ? `${round(n / 1000, 1)}k` : `${n}`;
+  return n > 999 ? `${round(n / 1000, 1)?.toLocaleString?.()}k` : `${n}`;
 }
 
 function CompletionByAlgorithmChart() {

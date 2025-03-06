@@ -4,6 +4,7 @@ import { setFromEvent } from "utils/set";
 import { Slice, useAlgorithmSelector } from "./useAlgorithmSelector";
 import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 
 export const stateOfTheArt = {
   algo_name: "(State of the art)",
@@ -25,12 +26,13 @@ export default function ChartOptions({
   slices?: Slice[];
   metrics?: BaseMetric[];
 } & Partial<ReturnType<typeof useAlgorithmSelector>>) {
+  const xs = useXs();
   const { data: algorithms = [] } = useAlgorithmsData();
   const algorithms1 = stateOfTheArt1
     ? [stateOfTheArt, ...algorithms]
     : algorithms;
   return (
-    <Stack direction="row" sx={{ gap: 1, mb: 2 }}>
+    <Stack direction={xs ? "column" : "row"} sx={{ gap: 1, mb: 2 }}>
       {slices?.length > 1 && (
         <TextField
           select

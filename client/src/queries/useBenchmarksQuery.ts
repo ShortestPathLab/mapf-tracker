@@ -55,12 +55,12 @@ export const useInstanceCollectionData = (id: number | string) =>
     enabled: !!id,
   });
 
-export const useBenchmarkData = (id: string = "") => {
+export const useMapDataByName = (name: string = "") => {
   const { data } = useBenchmarksData();
   return useQuery({
-    queryKey: ["benchmarks", id],
-    queryFn: () => find(data, { map_name: id }) || null,
-    enabled: !!data,
+    queryKey: ["benchmarks", "name", name],
+    queryFn: () => find(data, { map_name: name }) || null,
+    enabled: !!data && !!name,
   });
 };
 
@@ -69,6 +69,6 @@ export const useMapData = (id: string = "") => {
   return useQuery({
     queryKey: ["benchmarks", id],
     queryFn: () => find(data, { id }) || null,
-    enabled: !!data,
+    enabled: !!data && !!id,
   });
 };

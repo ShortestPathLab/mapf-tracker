@@ -82,7 +82,7 @@ export default function index() {
           </Grid>
         </Stack>
         <Stack sx={{ gap: 2 }}>
-          <Typography variant={sm ? "h4" : "h3"}>Sudo</Typography>
+          <Typography variant={sm ? "h4" : "h3"}>Manage</Typography>
           <List sx={{ mx: -2 }}>
             {sections().map(({ label, icon, value, description }) => (
               <>

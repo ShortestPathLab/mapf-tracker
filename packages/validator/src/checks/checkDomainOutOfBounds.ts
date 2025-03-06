@@ -8,7 +8,6 @@ export const contains = (d: Domain, p: Point) =>
 
 export function checkDomainOutOfBounds({
   next,
-  prev,
   domain,
   timestep,
 }: CheckParameters): CheckResult {

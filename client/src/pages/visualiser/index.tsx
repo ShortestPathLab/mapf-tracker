@@ -8,10 +8,7 @@ import { topbarHeight } from "layout/topbarHeight";
 import { capitalize, startCase } from "lodash";
 import Details from "pages/benchmarks-scenario-level/Details";
 import pluralize from "pluralize";
-import {
-  useBenchmarkData,
-  useScenarioDetailsData,
-} from "queries/useBenchmarksQuery";
+import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import Visualiser from "./Visualiser";
 import { VisualiserLocationState } from "./VisualiserLocationState";
@@ -23,7 +20,7 @@ export default function index() {
   const state = useLocationState<VisualiserLocationState>();
   const { data: instanceData } = useInstanceData(state.instanceId);
   const { data: scenarioData } = useScenarioDetailsData(instanceData?.scen_id);
-  const { data: mapData } = useBenchmarkData(instanceData?.map_id);
+  const { data: mapData } = useMapData(instanceData?.map_id);
   const scenarioString = startCase(
     `${scenarioData?.scen_type}-${scenarioData?.type_id}`
   );
