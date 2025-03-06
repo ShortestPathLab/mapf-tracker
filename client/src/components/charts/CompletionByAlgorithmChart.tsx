@@ -159,7 +159,7 @@ function CompletionByAlgorithmChart() {
   }, [closed, solved, algorithms]);
   return (
     <Scroll y>
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: data.length * 80 }}>
         <Chart
           isLoading={isSolvedLoading || isClosedLoading || isAlgorithmsLoading}
           style={{ flex: 1 }}

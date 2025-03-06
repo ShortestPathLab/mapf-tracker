@@ -4,7 +4,7 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-import { alpha, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, alpha } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { bottomBarPaths } from "bottomBarPaths";
@@ -20,24 +20,22 @@ import { useNavigate } from "hooks/useNavigation";
 import { find } from "lodash";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
-import { useMemo, useReducer } from "react";
+import { useMemo } from "react";
 import { matchPath, useLocation } from "react-router-dom";
 import { routes } from "routes";
+import { OptionsContext, useOptionsState } from "utils/OptionsProvider";
 import "./App.css";
 import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
 import { theme } from "./theme";
-import { ThemeContext } from "./utils/ThemeProvider";
+import { ThemeContext, useThemeState } from "./utils/ThemeProvider";
 
 export const queryClient = new QueryClient();
 
 export default function App() {
-  const themeState = useReducer((prev) => {
-    const next = prev === "light" ? "dark" : "light";
-    localStorage.setItem("theme", next);
-    return next;
-  }, (localStorage.getItem("theme") || "dark") as "light" | "dark");
+  const themeState = useThemeState();
   const [mode] = themeState;
+  const optionsState = useOptionsState();
   const modalProviderValue = useModalProviderValue();
 
   const t = useMemo(() => theme(mode), [mode]);
@@ -48,12 +46,14 @@ export default function App() {
       <ModalContext.Provider value={modalProviderValue}>
         <ThemeContext.Provider value={themeState}>
           <ThemeProvider theme={t}>
-            <ConfirmProvider>
-              <SnackbarProvider>
-                <Content />
-                <ReactQueryDevtools />
-              </SnackbarProvider>
-            </ConfirmProvider>
+            <OptionsContext.Provider value={optionsState}>
+              <ConfirmProvider>
+                <SnackbarProvider>
+                  <Content />
+                  <ReactQueryDevtools />
+                </SnackbarProvider>
+              </ConfirmProvider>
+            </OptionsContext.Provider>
           </ThemeProvider>
         </ThemeContext.Provider>
       </ModalContext.Provider>

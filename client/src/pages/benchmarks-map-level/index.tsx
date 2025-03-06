@@ -13,13 +13,13 @@ import { analysisTemplate } from "./analysisTemplate";
 import { DownloadBar } from "components/DownloadBar";
 
 export default function Page() {
-  const { mapName, mapId } = useLocationState<MapLevelLocationState>();
+  const { mapId } = useLocationState<MapLevelLocationState>();
   const { data: mapData } = useMapData(mapId);
   const theme = useTheme();
   return (
     <GalleryLayout
-      title={startCase(mapName)}
-      description={`Problem instances on this map, grouped by scenario`}
+      title={mapData ? startCase(mapData.map_name) : "--"}
+      description="Problem instances on this map, grouped by scenario"
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
@@ -61,7 +61,7 @@ export default function Page() {
         <DataInspectorLayout
           analysisTabName="Trends"
           data={<Table />}
-          analysis={<Analysis template={analysisTemplate(mapName, mapId)} />}
+          analysis={<Analysis template={analysisTemplate(mapId)} />}
         />
       </Stack>
     </GalleryLayout>

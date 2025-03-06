@@ -62,6 +62,7 @@ export function sliceBarChartRenderer({
         />
         <YAxis
           domain={slice?.domain as AxisDomain}
+          tickFormatter={(v) => slice?.formatter?.(v) ?? v}
           label={
             <Label
               position="insideLeft"

@@ -17,11 +17,10 @@ export const handleRequestDetailUpdated = async ({
     });
 
     const data = await response.json();
-    if (response.ok) {
-      queryClient.invalidateQueries({
-        queryKey: ["submissionRequestDetails", key],
-      });
-    } else {
+    queryClient.invalidateQueries({
+      queryKey: ["submissionRequestDetails", key],
+    });
+    if (!response.ok) {
       console.error("Error updating request:", data);
     }
   } catch (error) {

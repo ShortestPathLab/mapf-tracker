@@ -5,11 +5,13 @@ import {
   SuccessRateChart,
   SuccessRateOnAgentsChart,
 } from "./charts/SuccessRateChart";
+import { useMapData } from "queries/useBenchmarksQuery";
 
-export function analysisTemplate(mapName: string, mapId: string) {
+export function analysisTemplate(mapId: string) {
+  const { data: mapData } = useMapData(mapId);
   return [
     {
-      name: `Trends in ${mapName}`,
+      name: `Trends in ${mapData?.map_name}`,
       icon: <ShowChartRounded />,
       variants: [
         {

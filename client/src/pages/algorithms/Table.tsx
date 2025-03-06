@@ -37,7 +37,7 @@ function placeholder(id: string) {
 }
 
 export function Table({ algorithm }: { algorithm?: string }) {
-  const [closed, setClosed] = useBooleanMap();
+  const [expanded, setExpanded] = useBooleanMap();
   const { data, isLoading } = useAlgorithmSummaryQuery(algorithm);
 
   const { dialog, open } = useDialog(InstanceDetails, {
@@ -52,8 +52,8 @@ export function Table({ algorithm }: { algorithm?: string }) {
       width: 48,
       renderCell: ({ row }) =>
         disambiguate(row, {
-          map: (row) => <Arrow open={!closed[row.id]} />,
-          scenario: (row) => <Arrow sx={{ ml: 2 }} open={!closed[row.id]} />,
+          map: (row) => <Arrow open={expanded[row.id]} />,
+          scenario: (row) => <Arrow sx={{ ml: 2 }} open={expanded[row.id]} />,
         }),
       flex: 0,
     },
@@ -148,20 +148,19 @@ export function Table({ algorithm }: { algorithm?: string }) {
   return (
     <>
       <TreeDataGrid
-        initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
+        initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         isLoading={isLoading}
         clickable
-        expanded={closed}
+        expanded={expanded}
         onRowClick={({ row }) =>
           disambiguate(row, {
             instance: ({ scenario, index }) =>
               open({ scenario, index, algorithm }),
           })
         }
-        onExpandedChange={setClosed}
+        onExpandedChange={setExpanded}
         rows={data?.maps}
         columns={columns}
-        defaultExpanded
         getChildren={(row) =>
           disambiguate(row, {
             map: (row) => arrayFallback(row.scenarios, placeholder(row.id)),

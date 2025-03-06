@@ -22,7 +22,6 @@ export function AlgorithmPage() {
 
   return (
     <GalleryLayout
-      sidebarWidth={420}
       cover={<AlgorithmPreview id={data?.id} />}
       title={data?.algo_name}
       description={data?.authors}

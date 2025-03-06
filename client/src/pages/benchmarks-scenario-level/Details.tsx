@@ -36,29 +36,29 @@ export default function Details({ id }: { id?: string }) {
         items={[
           {
             label: "Instance",
-            value: pluralize("agent", instance?.agents, true),
+            value: instance && pluralize("agent", instance.agents, true),
           },
           {
             label: "Scenario",
-            value: `${scenario?.scen_type}-${scenario?.type_id}`,
+            value: scenario && `${scenario.scen_type}-${scenario.type_id}`,
           },
-          { label: "Map", value: `${map?.map_name}` },
+          { label: "Map", value: map?.map_name },
           {
             label: "Status",
-            value: (
+            value: instance && (
               <>
                 <Dot
                   sx={{
-                    bgcolor: instance?.solution_cost
+                    bgcolor: instance.solution_cost
                       ? "success.main"
                       : "warning.main",
                   }}
                 />
                 {capitalize(
                   [
-                    instance?.solution_cost ? "solved" : "unsolved",
-                    instance?.solution_cost &&
-                    instance.solution_cost === instance?.lower_cost
+                    instance.solution_cost ? "solved" : "unsolved",
+                    instance.solution_cost &&
+                    instance.solution_cost === instance.lower_cost
                       ? "closed"
                       : "open",
                   ].join(", ")

@@ -116,19 +116,22 @@ export default function index(props: AppBarProps) {
                             <Collapse in={isOpen}>
                               <List sx={{ mt: label ? -1 : 0 }}>
                                 {items.map(
-                                  ({
-                                    icon,
-                                    selectedIcon,
-                                    label,
-                                    url,
-                                    action,
-                                    avatar,
-                                  }) => {
+                                  (
+                                    {
+                                      icon,
+                                      selectedIcon,
+                                      label,
+                                      url,
+                                      action,
+                                      avatar,
+                                    },
+                                    i
+                                  ) => {
                                     const selected =
                                       url && !!matchPath(`${url}/*`, pathname);
                                     return (
                                       <ListItemButton
-                                        key={label}
+                                        key={i}
                                         selected={selected}
                                         sx={{
                                           borderRadius: 2,

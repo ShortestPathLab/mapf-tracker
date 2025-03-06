@@ -1,4 +1,5 @@
 import { Stack, Typography } from "@mui/material";
+import { CompletionByAgentCountChartCard } from "components/charts/CompletionByAgentCountChart";
 import { CompletionByAlgorithmChartCard } from "components/charts/CompletionByAlgorithmChart";
 import { GridChartCard } from "components/charts/GridChartCard";
 import { RecentActivityChart } from "components/charts/RecentActivityChart";
@@ -29,19 +30,24 @@ export default function Hero() {
         <Stack
           direction={sm ? "column" : "row"}
           sx={{
+            flexWrap: "wrap",
             gap: 2,
-            "> *": { flex: 1 },
+            "> *": {
+              flex: "1 1 0",
+              minWidth: 420,
+              width: "100%",
+            },
           }}
         >
           <Stack
             sx={{
-              minHeight: "100%",
               gap: 2,
               "> *": { flex: 1 },
+              flex: 1,
             }}
           >
-            <TotalSolvedClosedChart columns={1} sx={{ minHeight: 130 }} />
-            <RecentActivityChart columns={1} sx={{ minHeight: 140 }} />
+            <TotalSolvedClosedChart sx={{ minHeight: 130 }} />
+            <RecentActivityChart sx={{ minHeight: 140 }} />
           </Stack>
           <CompletionByAlgorithmChartCard
             sx={{ minHeight: 380 }}
@@ -57,6 +63,13 @@ export default function Hero() {
             primaryLabel="Completion by map type"
             content={<MapProportionChart />}
             secondaryLabel="Instances closed and solved across map types"
+          />
+          <CompletionByAgentCountChartCard
+            sx={{ minHeight: 380 }}
+            columns={1}
+            height="100%"
+            primaryLabel="Completion by agent count"
+            secondaryLabel="Instances solved and closed across agent count"
           />
         </Stack>
       </Stack>

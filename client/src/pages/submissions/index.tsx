@@ -1,9 +1,11 @@
-import { DeleteRounded, UploadFileRounded } from "@mui-symbols-material/w400";
+import {
+  ArrowUploadProgressRounded,
+  DeleteRounded,
+} from "@mui-symbols-material/w400";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import { useMutation } from "@tanstack/react-query";
-import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";
 import { useSnackbar } from "components/Snackbar";
@@ -123,14 +125,14 @@ export default function TrackSubmission() {
     {
       field: "Icon",
       width: 48,
-      renderCell: () => <IconCard icon={<UploadFileRounded />} />,
+      renderCell: () => <IconCard icon={<ArrowUploadProgressRounded />} />,
       flex: 0,
       fold: true,
     },
     {
       field: "algorithmName",
       headerName: "Algorithm",
-      width: 180,
+      width: 260,
       renderCell: ({ row }) => (
         <Item secondary={row.key?.slice?.(-8)} primary={row.algorithmName} />
       ),

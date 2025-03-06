@@ -54,7 +54,7 @@ export default function Table() {
         render: (row, trigger) => (
           <AnalysisButton
             button={(onClick) => cloneElement(trigger, { onClick })}
-            template={analysisTemplate(row.map_name, row.id)}
+            template={analysisTemplate(row.id)}
           />
         ),
       },
@@ -156,7 +156,6 @@ export default function Table() {
         onRowClick={({ row }) => {
           navigate<MapLevelLocationState>("/scenarios", {
             mapId: row.id,
-            mapName: row.map_name,
           });
         }}
       />

@@ -21,8 +21,9 @@ export function SubmissionKeyRequestFormDialog({
         disabledValues={{
           requesterEmail: true,
         }}
+        validateOnMount
         onTouched={() => onProps?.({ preventClose: true })}
-        submit={({ isSubmitting, submitForm }) => (
+        submit={({ isSubmitting, submitForm, isValid }) => (
           <Floating>
             <Button
               fullWidth
@@ -35,7 +36,7 @@ export function SubmissionKeyRequestFormDialog({
               }}
               variant="contained"
               size="large"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isValid}
               startIcon={<CheckRounded />}
             >
               Save changes

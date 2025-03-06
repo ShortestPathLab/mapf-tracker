@@ -1,5 +1,5 @@
 import { EditRounded } from "@mui-symbols-material/w400";
-import { Button, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
 import { format, parseISO } from "date-fns";
@@ -32,7 +32,7 @@ export const SubmissionRequestGlance = ({
     <>
       <Stack direction="row" sx={{ gap: 2, justifyContent: "space-between" }}>
         <DetailsList
-          sx={{ m: -2, overflow: "hidden", lineBreak: "anywhere" }}
+          sx={{ m: -2, overflow: "hidden" }}
           items={[
             { label: "Algorithm", value: request?.algorithmName ?? "-" },
             { label: "API key", value: `${apiKey ?? "-"}` },
@@ -50,6 +50,23 @@ export const SubmissionRequestGlance = ({
               label: "Status",
               value: <Status apiKey={apiKey} />,
             },
+            {
+              label: "Comments",
+              value: request?.comments ? (
+                <Box
+                  sx={{
+                    overflowWrap: "break-word",
+                    hyphens: "auto",
+                    wordBreak: "break-word",
+                  }}
+                  component="span"
+                >
+                  {request.comments}
+                </Box>
+              ) : (
+                "(None)"
+              ),
+            },
           ]}
         />
         <Button
@@ -59,8 +76,8 @@ export const SubmissionRequestGlance = ({
           onClick={() =>
             showRequestDetails({
               initialValues: request,
-              onSubmit: (values) => {
-                handleRequestDetailUpdated({
+              onSubmit: async (values) => {
+                await handleRequestDetailUpdated({
                   id: "",
                   ...request,
                   ...values,

@@ -1,10 +1,35 @@
-import { Box, Chip, MenuItem, Stack, TextField } from "@mui/material";
-import { map } from "lodash";
+import {
+  Checkbox,
+  MenuItem,
+  MenuItemProps,
+  Stack,
+  TextField,
+} from "@mui/material";
+import { useXs } from "components/dialog/useSmallDisplay";
+import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
+import { find } from "lodash";
+import { renderSelectChip } from "components/analysis/renderSelectChip";
+import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { setFromEvent } from "utils/set";
 import { Slice, useAlgorithmSelector } from "./useAlgorithmSelector";
-import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
-import { useAlgorithmsData } from "queries/useAlgorithmQuery";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { ReactNode } from "react";
+
+export function CheckboxItem({ selected, children, ...props }: MenuItemProps) {
+  return (
+    <MenuItem {...props}>
+      <Checkbox
+        checked={selected}
+        sx={{
+          pointerEvents: "none",
+          p: 0,
+          py: 0.5,
+          pr: 2,
+        }}
+      />
+      {children}
+    </MenuItem>
+  );
+}
 
 export const stateOfTheArt = {
   algo_name: "(State of the art)",
@@ -20,15 +45,17 @@ export default function ChartOptions({
   setSelected,
   selected,
   metrics = defaultMetrics,
-  stateOfTheArt: stateOfTheArt1,
+  stateOfTheArt: stateOfTheArtEnabled,
+  extras,
 }: {
   stateOfTheArt?: boolean;
   slices?: Slice[];
   metrics?: BaseMetric[];
+  extras: ReactNode;
 } & Partial<ReturnType<typeof useAlgorithmSelector>>) {
   const xs = useXs();
   const { data: algorithms = [] } = useAlgorithmsData();
-  const algorithms1 = stateOfTheArt1
+  const algorithms1 = stateOfTheArtEnabled
     ? [stateOfTheArt, ...algorithms]
     : algorithms;
   return (
@@ -65,17 +92,8 @@ export default function ChartOptions({
         select
         SelectProps={{
           multiple: true,
-          renderValue: (selected: string[]) => (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {map(selected, (value, i) => (
-                <Chip
-                  sx={{ height: 22 }}
-                  key={value}
-                  label={algorithms1[i]?.algo_name}
-                  size="small"
-                />
-              ))}
-            </Box>
+          renderValue: renderSelectChip(
+            (id) => find(algorithms1, { _id: id })?.algo_name
           ),
         }}
         sx={{ minWidth: 180 }}
@@ -89,11 +107,12 @@ export default function ChartOptions({
         }
       >
         {algorithms1.map((a) => (
-          <MenuItem key={a._id} value={a._id}>
+          <CheckboxItem key={a._id} value={a._id}>
             {a.algo_name}
-          </MenuItem>
+          </CheckboxItem>
         ))}
       </TextField>
+      {extras}
     </Stack>
   );
 }

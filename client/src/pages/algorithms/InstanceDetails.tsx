@@ -15,6 +15,7 @@ import {
   SubmissionInstanceContext,
 } from "./SubmissionInstanceContextParams";
 import { InstanceLabel } from "./InstanceLabel";
+import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
 
 export function InstanceDetails({
   scenario,
@@ -116,8 +117,10 @@ export function InstanceDetails({
             <Button
               variant="contained"
               onClick={() =>
-                navigate("/visualization", {
+                navigate<VisualiserLocationState>("/visualization", {
                   instanceId: instance?.id,
+                  scenId: instance?.scen_id,
+                  mapId: instance?.map_id,
                   solutionId: instance?.solution_path_id,
                   source: "submitted",
                 })

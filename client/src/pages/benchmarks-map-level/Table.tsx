@@ -11,13 +11,17 @@ import { startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
-import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
+import {
+  useInstanceScenarioData,
+  useMapData,
+} from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import { downloadInstance, downloadMap, downloadScenario } from "./download";
 
 export default function Table() {
   const state = useLocationState<MapLevelLocationState>();
-  const { mapId, mapName } = state;
+  const { mapId } = state;
+  const { data: mapData } = useMapData(mapId);
   const { data, isLoading } = useInstanceScenarioData(mapId);
   const navigate = useNavigate();
   const notify = useSnackbarAction();
@@ -30,13 +34,7 @@ export default function Table() {
         render: (row, trigger) => (
           <AnalysisButton
             button={(onClick) => cloneElement(trigger, { onClick })}
-            template={analysisTemplate(
-              row.scen_type,
-              row.type_id,
-              mapName,
-              row.id,
-              mapId
-            )}
+            template={analysisTemplate(row.id, mapId)}
           />
         ),
       },
@@ -45,17 +43,19 @@ export default function Table() {
       {
         name: "Download scenario",
         icon: <DownloadRounded />,
-        action: notify(downloadScenario(mapName), {
+        action: notify(downloadScenario(mapData?.map_name), {
           end: "Scenario downloaded",
         }),
       },
       {
         name: "Download map",
-        action: notify(downloadMap(mapName), { end: "Map downloaded" }),
+        action: notify(downloadMap(mapData?.map_name), {
+          end: "Map downloaded",
+        }),
       },
       {
         name: "Download results (CSV)",
-        action: notify(downloadInstance(mapName), {
+        action: notify(downloadInstance(mapData?.map_name), {
           end: "CSV downloaded",
         }),
       },
@@ -113,8 +113,6 @@ export default function Table() {
         navigate<ScenarioLevelLocationState>("/instances", {
           ...state,
           scenId: row.id,
-          scenTypeID: row.type_id,
-          scenType: row.scen_type,
         });
       }}
     />

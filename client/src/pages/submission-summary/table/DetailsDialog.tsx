@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { Item } from "components/Item";
 import { DialogContentProps, useDialog } from "hooks/useDialog";
-import { SolutionVisualisation } from "pages/visualiser/Visualiser";
+import { SolutionVisualisation } from "pages/visualiser/SolutionVisualisation";
 import pluralize from "pluralize";
 import { useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import GenericDetailsList from "../GenericDetailsList";

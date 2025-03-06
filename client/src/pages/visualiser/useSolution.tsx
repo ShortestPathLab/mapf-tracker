@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { head, last, memoize, pick } from "lodash";
+import { entries, floor, head, last, memoize, min, pick, reduce } from "lodash";
+import memoizee from "memoizee";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
+import { useOngoingSubmissionByIdQuery } from "queries/useOngoingSubmissionQuery";
 import { useSolutionData } from "queries/useSolutionQuery";
 import { useMemo } from "react";
 import {
@@ -12,10 +14,11 @@ import {
   Seeker,
   createActionMap,
   createOffsetMap,
+  decode,
+  processAgentSimple,
   sumPositions,
 } from "validator";
 import { optimiseGridMap } from "./optimiseGridMap";
-import { useOngoingSubmissionByIdQuery } from "queries/useOngoingSubmissionQuery";
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);
@@ -52,22 +55,37 @@ const defaultOffsetMap = {
 
 function createAgentPositionGetter(
   sources: { x: number; y: number }[],
-  paths: string[]
+  paths: string[],
+  timespan: number
 ) {
-  const as = paths.map((c) => processAgent(c || "w"));
-  const getAgentPositions = memoize((t: number): { x: number; y: number }[] => {
-    if (t === 0) {
-      return sources;
-    } else {
-      // TODO: still using math origin! data in solution_paths has not been swapped over yet.
-      const offsets = createOffsetMap(
-        createActionMap(t - 1, as),
-        defaultOffsetMap
-      );
-      return sumPositions(getAgentPositions(t - 1), offsets);
+  const chunkSize = floor(min([5000, timespan / 100]));
+  const test = paths.map(decode);
+
+  const getAgentPositions = memoizee(
+    (t: number): { x: number; y: number }[] => {
+      if (t === 0) return sources;
+      const prev = Math.floor((t - 1) / chunkSize) * chunkSize;
+      const prevPos = getAgentPositions(prev);
+      return prevPos.map((source, i) => {
+        const countChar = (c: string) =>
+          test[i].slice(prev, t).match(new RegExp(c, "g"))?.length ?? 0;
+        const offsets = entries(defaultOffsetMap).map(([k, v]) => {
+          const count = countChar(k);
+          return { x: count * v.x, y: count * v.y };
+        });
+        return reduce(
+          offsets,
+          (a, b) => ({
+            x: a.x + b.x,
+            y: a.y + b.y,
+          }),
+          source
+        );
+      });
     }
-  });
-  const bs = paths.map((c) => processAgent(c || "w"));
+  );
+
+  const bs = paths.map((c) => processAgentSimple(c || "w"));
   const getAgentPosition = memoize(
     (n: number): { action?: string; x: number; y: number }[] => {
       let t = 0;
@@ -77,6 +95,7 @@ function createAgentPositionGetter(
           [pick(last(path), "x", "y")],
           createOffsetMap(createActionMap(t, [bs[n]]), defaultOffsetMap)
         );
+        if (!offset.x && !offset.y) continue;
         path.push({ ...offset, action: bs[n].seek(t) });
         t++;
       }
@@ -148,11 +167,11 @@ export function useSolution({
   });
 
   const { map, result, optimisedMap } = generalData ?? {};
-  const { sources, paths } = result ?? {};
+  const { sources, paths, timespan } = result ?? {};
 
   const getters = useMemo(
-    () => createAgentPositionGetter(sources ?? [], paths ?? []),
-    [sources, paths]
+    () => createAgentPositionGetter(sources ?? [], paths ?? [], timespan),
+    [sources, paths, timespan]
   );
 
   return {

@@ -4,19 +4,16 @@ import {
   LowerBoundChart,
   LowerBoundComparisonChart,
 } from "./charts/LowerBoundChart";
+import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 
-export function analysisTemplate(
-  scenType: string,
-  scenTypeID: number,
-  mapName: string,
-  scenId: string | number,
-  mapId: string
-) {
+export function analysisTemplate(scenId: string | number, mapId: string) {
+  const { data: mapData } = useMapData(mapId);
+  const { data: scenarioData } = useScenarioDetailsData(scenId);
   return [
     {
       name: `Trends in ${capitalize(
-        `${scenType}-${scenTypeID}`
-      )} in ${mapName}`,
+        `${scenarioData?.scen_type}-${scenarioData?.type_id}`
+      )} in ${mapData?.map_name}`,
       icon: <ShowChartRounded />,
       variants: [
         {

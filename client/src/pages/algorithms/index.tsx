@@ -7,10 +7,12 @@ import { GridColDef } from "components/data-grid/DataGrid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
+import { Prose } from "layout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { flatMap, map, max, slice, startCase } from "lodash";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
 import { AlgorithmPreview } from "./AlgorithmPreview";
+import Description from "./description.md";
 
 const g = [
   "instances_solved",
@@ -40,14 +42,14 @@ function Table() {
       ),
     },
     ...[
-      "instances_solved",
-      "instances_closed",
-      "best_lower",
-      "best_solution",
-    ].map((c) => ({
-      field: c,
+      { key: "instances_solved", name: "Instances solved" },
+      { key: "instances_closed", name: "Instances closed" },
+      { key: "best_lower", name: "Instances with best lower-bound" },
+      { key: "best_solution", name: "Instances with best solution" },
+    ].map(({ key, name }) => ({
+      field: key,
       flex: 1,
-      headerName: startCase(c),
+      headerName: name,
       sortable: true,
       type: "number" as const,
       align: "center" as const,
@@ -95,11 +97,9 @@ export default function AlgorithmsPage() {
       <Tip
         title={<>Browse submissions</>}
         description={
-          <>
-            Browse state-of-the-art solutions for grid-based multi-agent
-            pathfinding. Analyse trends, compare algorithms, or download the
-            dataset for your own use.
-          </>
+          <Prose sx={{ fontSize: (t) => t.typography.body2.fontSize, my: -2 }}>
+            <Description />
+          </Prose>
         }
         actions={
           <>
@@ -113,7 +113,7 @@ export default function AlgorithmsPage() {
               sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
               onClick={() => open("/docs/about", "_blank")}
             >
-              Make a submission
+              Make a submission instead
             </Button>
           </>
         }

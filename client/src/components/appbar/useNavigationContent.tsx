@@ -10,6 +10,7 @@ import {
   HomeRounded,
   LightModeRounded,
   LightOffRounded,
+  LightbulbRounded,
   LockOpenRounded,
   LockRounded,
   SearchFilledRounded,
@@ -20,14 +21,15 @@ import { GitHub } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { useDialog } from "hooks/useDialog";
 import { ReactNode } from "react";
+import { useOptions } from "utils/OptionsProvider";
 import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
 import { LogInDialog } from "./LogInDialog";
 import { UserDialog, getAvatar } from "./UserDialog";
-import { noop } from "lodash";
 
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
+  const [options, setOptions] = useOptions();
   const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
     title: "Sudo",
     slotProps: { modal: { variant: "default" } },
@@ -140,9 +142,9 @@ export function useNavigationContent() {
         },
         {
           iconButton: true,
-          label: "Hide tips",
-          icon: <LightOffRounded />,
-          action: noop,
+          label: options.hideTips ? "Show tips" : "Hide tips",
+          icon: options.hideTips ? <LightbulbRounded /> : <LightOffRounded />,
+          action: () => setOptions({ hideTips: !options.hideTips }),
           last: true,
         },
         ...(credentials
