@@ -2,13 +2,15 @@ import { DownloadRounded } from "@mui-symbols-material/w400";
 import { Stack, Typography, Button } from "@mui/material";
 import { useSm } from "./dialog/useSmallDisplay";
 import { Scroll } from "./dialog/Scrollbars";
+import { usePaper } from "theme";
 
 export function DownloadBar() {
   const sm = useSm();
+  const paper = usePaper();
   return (
     <Stack sx={{ gap: 2 }}>
       {!sm && (
-        <Typography color="text.secondary" variant="subtitle2">
+        <Typography color="text.secondary" variant="overline" sx={{ mt: -1 }}>
           Download this dataset
         </Typography>
       )}

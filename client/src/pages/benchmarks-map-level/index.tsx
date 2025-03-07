@@ -57,7 +57,6 @@ export default function Page() {
     >
       <Stack sx={{ gap: 4 }}>
         <DownloadBar />
-        <Divider />
         <DataInspectorLayout
           analysisTabName="Trends"
           data={<Table />}

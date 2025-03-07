@@ -1,6 +1,7 @@
 import { ExpandFilledRounded } from "@mui-symbols-material/w400";
 import {
   Button,
+  Divider,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -149,8 +150,9 @@ function Chart({ data }: { data: Variant[] }) {
           }}
         >
           <Stack
-            direction={"column"}
+            direction="column"
             sx={{
+              px: 2,
               height: "100%",
             }}
           >
@@ -172,6 +174,7 @@ function Chart({ data }: { data: Variant[] }) {
                 />
               ))}
             </Tabs>
+            <Divider flexItem />
             <Stack sx={{ p: 2, flex: 1, gap: 2 }}>{current?.render()}</Stack>
           </Stack>
         </Stack>

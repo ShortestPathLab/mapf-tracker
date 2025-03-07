@@ -62,13 +62,13 @@ function ChartCard({
       <Stack sx={{ p: 2, gap: 2, height: "100%", flex: 1 }}>
         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
           {label}
-          <Stack direction="row" sx={{ alignItems: "center" }}>
+          <Stack direction="row" sx={{ alignItems: "flex-start" }}>
             {extras}
             <Tooltip title="Show details">
               <IconButton
                 className={cls}
                 onClick={() => open({ label, extras, primary })}
-                sx={{ mr: -1, mt: -2 }}
+                sx={{ mr: -1, mt: -1 }}
               >
                 <ExpandContentRounded />
               </IconButton>

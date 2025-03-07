@@ -2,7 +2,7 @@ import { Stack, useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
 import { isUndefined, startCase } from "lodash";
-import { PreviewCollection } from "pages/benchmarks-root-level";
+import { PreviewCollection } from "components/PreviewCollection";
 import pluralize from "pluralize";
 import { useMapData } from "queries/useBenchmarksQuery";
 

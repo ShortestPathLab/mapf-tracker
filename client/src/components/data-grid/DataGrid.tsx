@@ -115,6 +115,12 @@ export default function DataGrid<
       ) : (
         <MuiDataGrid<T>
           rowSelection={false}
+          autoHeight
+          rowHeight={88}
+          slots={clickable && { row: ButtonRow }}
+          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+          pageSizeOptions={[10, 25, 50, 100]}
+          {...rest}
           sx={{
             "--DataGrid-containerBackground": "transparent",
             border: "none",
@@ -131,13 +137,8 @@ export default function DataGrid<
                 "--rowBorderColor": "transparent",
               },
             }),
+            ...rest.sx,
           }}
-          autoHeight
-          rowHeight={88}
-          slots={clickable && { row: ButtonRow }}
-          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-          pageSizeOptions={[10, 25, 50, 100]}
-          {...rest}
           columns={map(sm ? filter(columns, (c) => !c.fold) : columns, (c) => ({
             type: "string",
             field: "",

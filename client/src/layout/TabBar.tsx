@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { MutableRefObject, ReactNode, useRef, useState } from "react";
 import { useRafLoop } from "react-use";
@@ -40,6 +40,7 @@ export function TabBar({ children }: { children?: ReactNode }) {
       }}
     >
       {children}
+      {(!sm || top) && <Divider flexItem />}
     </Box>
   );
 }

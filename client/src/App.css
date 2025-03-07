@@ -73,4 +73,24 @@
     border-left: 0px solid transparent;
     background-color: color-mix(in srgb, currentColor 30%, transparent);
   }
+  *::-webkit-scrollbar-thumb:horizontal {
+    border-left: 0;
+    width: 14px;
+    min-width: 64px;
+    width: var(--scrollbar-size);
+    height: 2px;
+    border-top: 6px solid transparent;
+  }
+  *::-webkit-scrollbar-thumb:horizontal:hover {
+    border-top: 0px solid transparent;
+  }
+  *::-webkit-scrollbar-thumb:horizontal:active {
+    border-top: 0px solid transparent;
+  }
+}
+
+span.MuiTabs-indicator {
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  width: 100%;
 }

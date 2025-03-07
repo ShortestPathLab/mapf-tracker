@@ -1,4 +1,4 @@
-import { Divider, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { DownloadBar } from "components/DownloadBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
@@ -59,7 +59,6 @@ export default function Page() {
     >
       <Stack gap={4}>
         <DownloadBar />
-        <Divider />
         <DataInspectorLayout
           analysisTabName="Trends"
           dataTabName="Browse instances"

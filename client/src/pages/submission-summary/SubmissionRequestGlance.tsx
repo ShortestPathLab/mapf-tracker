@@ -1,5 +1,5 @@
 import { EditRounded } from "@mui-symbols-material/w400";
-import { Box, Button, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
 import { format, parseISO } from "date-fns";
@@ -52,20 +52,7 @@ export const SubmissionRequestGlance = ({
             },
             {
               label: "Comments",
-              value: request?.comments ? (
-                <Box
-                  sx={{
-                    overflowWrap: "break-word",
-                    hyphens: "auto",
-                    wordBreak: "break-word",
-                  }}
-                  component="span"
-                >
-                  {request.comments}
-                </Box>
-              ) : (
-                "(None)"
-              ),
+              value: request?.comments ? request.comments : "(None)",
             },
           ]}
         />

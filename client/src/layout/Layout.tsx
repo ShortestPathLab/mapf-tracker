@@ -20,6 +20,11 @@ import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 
+export type LayoutRenderProps = {
+  header?: ReactNode;
+  children?: ReactNode;
+};
+
 export type LayoutProps = {
   backBehaviour?: "back" | "up";
   disablePadding?: boolean;
@@ -27,10 +32,7 @@ export type LayoutProps = {
   collapse?: boolean;
   width?: string | number;
   children?: ReactNode;
-  render?: (components: {
-    header?: ReactNode;
-    children?: ReactNode;
-  }) => ReactNode;
+  render?: (components: LayoutRenderProps) => ReactNode;
   title?: string;
   description?: ReactNode;
   path?: PageHeaderProps["path"];
@@ -59,6 +61,7 @@ export default function Layout({
   backBehaviour = "up",
   disablePadding,
   root,
+  ...props
 }: LayoutProps) {
   const lg = useSm();
   const xs = useXs();
@@ -93,6 +96,7 @@ export default function Layout({
         render,
         {
           header: !lg || collapse ? header : undefined,
+          ...props,
         },
         children
       )}

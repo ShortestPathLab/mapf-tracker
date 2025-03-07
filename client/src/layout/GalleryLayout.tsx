@@ -1,75 +1,86 @@
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { Item } from "components/Item";
 import { useSm } from "components/dialog/useSmallDisplay";
-import { ReactNode } from "react";
-import Layout, { LayoutProps } from "./Layout";
 import { isNumber, isUndefined } from "lodash";
+import { ReactNode } from "react";
+import { useMeasure } from "react-use";
+import Layout, { LayoutProps, LayoutRenderProps } from "./Layout";
 
-export function GalleryLayout({
+const RenderSm = ({
+  header,
+  children,
+}: LayoutRenderProps & GalleryLayoutProps) => (
+  <Stack sx={{ gap: 4 }}>
+    {header}
+    {children}
+  </Stack>
+);
+
+const RenderLg = ({
+  header,
+  children,
   cover,
   items,
   sidebarWidth = 320,
-  ...props
-}: LayoutProps & {
+}: LayoutRenderProps & GalleryLayoutProps) => (
+  <Stack direction="row" sx={{ gap: 8 }}>
+    <Stack
+      sx={{
+        width: sidebarWidth,
+        minWidth: 320,
+        gap: 4,
+        position: "sticky",
+        height: "max-content",
+        top: (t) => t.spacing(3),
+      }}
+    >
+      <Stack
+        sx={{
+          width: "60%",
+          "> *": { width: "100%" },
+        }}
+      >
+        {cover}
+      </Stack>
+      {header}
+      <Stack>
+        {items?.map?.(({ label, value }, i) => (
+          <Item
+            invert
+            key={i}
+            primary={
+              !isUndefined(value)
+                ? isNumber(value)
+                  ? value.toLocaleString()
+                  : value
+                : "--"
+            }
+            secondary={label}
+          />
+        ))}
+      </Stack>
+    </Stack>
+    <Stack sx={{ gap: 4, flex: 1, minWidth: 0 }}>{children}</Stack>
+  </Stack>
+);
+
+type GalleryLayoutProps = {
   cover?: ReactNode;
-  items?: { value?: ReactNode; label?: ReactNode }[];
+  items?: {
+    value?: ReactNode;
+    label?: ReactNode;
+  }[];
   sidebarWidth?: number;
-}) {
-  const sm = useSm();
+};
+
+const minWidth = 1200;
+
+export function GalleryLayout(props: LayoutProps & GalleryLayoutProps) {
+  const [ref, { width }] = useMeasure();
+  const sm = useSm() || width < minWidth;
   return (
-    <Layout
-      {...props}
-      flat
-      render={
-        sm
-          ? ({ header, children }) => (
-              <Stack sx={{ gap: 4 }}>
-                {header}
-                {children}
-              </Stack>
-            )
-          : ({ header, children }) => (
-              <Stack direction="row" sx={{ gap: 8 }}>
-                <Stack
-                  sx={{
-                    width: sidebarWidth,
-                    minWidth: 320,
-                    gap: 4,
-                    position: "sticky",
-                    height: "max-content",
-                    top: (t) => t.spacing(3),
-                  }}
-                >
-                  <Stack
-                    sx={{
-                      width: "60%",
-                      "> *": { width: "100%" },
-                    }}
-                  >
-                    {cover}
-                  </Stack>
-                  {header}
-                  <Stack>
-                    {items?.map?.(({ label, value }, i) => (
-                      <Item
-                        invert
-                        key={i}
-                        primary={
-                          !isUndefined(value)
-                            ? isNumber(value)
-                              ? value.toLocaleString()
-                              : value
-                            : "--"
-                        }
-                        secondary={label}
-                      />
-                    ))}
-                  </Stack>
-                </Stack>
-                <Stack sx={{ gap: 4, flex: 1 }}>{children}</Stack>
-              </Stack>
-            )
-      }
-    />
+    <Box ref={ref} sx={{ width: "100%", height: "100%" }}>
+      <Layout {...props} flat render={sm ? RenderSm : RenderLg} />
+    </Box>
   );
 }

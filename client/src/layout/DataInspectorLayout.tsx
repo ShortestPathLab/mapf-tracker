@@ -32,7 +32,7 @@ export function DataInspectorLayout({
               { label: compareTabName, value: "compare" },
             ].map(({ label, value }) => (
               <Tab
-                sx={{ minWidth: 0, px: sm ? 2 : 0, mr: sm ? 0 : 4 }}
+                sx={{ minWidth: 0, px: 0, mx: sm ? 2 : 0, mr: sm ? 2 : 4 }}
                 label={label}
                 value={value}
                 key={value}

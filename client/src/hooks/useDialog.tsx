@@ -35,7 +35,16 @@ export function useDialog<T>(
           ComponentProps<typeof Dialog>,
           ComponentProps<typeof Dialog>
         >(
-          { slotProps: { modal: { open: isOpen, onClose: close } } },
+          {
+            slotProps: {
+              modal: {
+                open: isOpen,
+                onClose: close,
+                keepMounted: false,
+                TransitionProps: { mountOnEnter: true, unmountOnExit: true },
+              },
+            },
+          },
           props,
           modalProps
         )}

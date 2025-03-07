@@ -17,7 +17,7 @@ export function useMode() {
   return useContext(ThemeContext);
 }
 export function useThemeState() {
-  return usePersistentReducer<typeof key, () => void, "light" | "dark">(
+  return usePersistentReducer<typeof key, void, "light" | "dark">(
     key,
     (prev: "light" | "dark") => (prev === "light" ? "dark" : "light"),
     storedTheme
