@@ -22,6 +22,10 @@ export const theme = (t: "light" | "dark") =>
       primary: {
         main: t === "light" ? accentColors.blue.A400 : accentColors.blue[200],
       },
+      secondary: {
+        main: t === "light" ? accentColors.blue.A400 : "#a8c7fa",
+        contrastText: t === "light" ? "#ffffff" : "#062e6f",
+      },
       mode: t,
       background:
         t === "light"
@@ -39,11 +43,11 @@ export const theme = (t: "light" | "dark") =>
       },
       overline: { fontWeight: 550 },
       h1: { fontWeight: 550, fontSize: 42 },
-      h2: { fontWeight: 400, fontSize: 36 },
-      h3: { fontWeight: 400, fontSize: 24 },
-      h4: { fontWeight: 400, fontSize: 20 },
-      h5: { fontWeight: 400, fontSize: 19 },
-      h6: { fontWeight: 500, fontSize: 18 },
+      h2: { fontWeight: 550, fontSize: 36 },
+      h3: { fontWeight: 550, fontSize: 24 },
+      h4: { fontWeight: 500, fontSize: 20 },
+      h5: { fontWeight: 500, fontSize: 19 },
+      h6: { fontWeight: 550, fontSize: 18 },
       button: { textTransform: "none", fontWeight: 550 },
     },
     components: {

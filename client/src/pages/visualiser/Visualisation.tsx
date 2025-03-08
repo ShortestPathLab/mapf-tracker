@@ -379,7 +379,7 @@ export function Visualisation({
                     {!sm && (
                       <>
                         <Typography sx={{ px: 2 }}>
-                          {step} / {timespan}
+                          {step} / {timespan ?? "0"}
                         </Typography>
                         <Divider orientation="vertical" flexItem />
                       </>

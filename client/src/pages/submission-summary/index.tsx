@@ -1,6 +1,5 @@
 import { CheckRounded } from "@mui-symbols-material/w400";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { FlatCard } from "components/FlatCard";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useDialog } from "hooks/useDialog";
@@ -110,9 +109,7 @@ export default function SubmissionSummaryPage() {
       <Stack sx={{ gap: 2 }}>
         <Typography variant="h6">Details</Typography>
         {/* <DataGrid clickable columns={columns} rows={data} /> */}
-        <FlatCard>
-          <SummaryTable apiKey={apiKey} />
-        </FlatCard>
+        <SummaryTable apiKey={apiKey} />
       </Stack>
     </SubmissionSummary>,
     <Box key="gap" sx={{ height: 72 }} />,
@@ -124,9 +121,10 @@ export default function SubmissionSummaryPage() {
       startIcon={<CheckRounded />}
       disabled={keyStatus === "submitted" || keyStatus === "expired"}
       variant="contained"
+      color="secondary"
       disableElevation
       size="large"
-      sx={{ alignSelf: sm ? "stretch" : "flex-end", bgcolor: "text.primary" }}
+      sx={{ alignSelf: sm ? "stretch" : "flex-end", borderRadius: 2 }}
       onClick={() =>
         open({
           hintText,

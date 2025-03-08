@@ -20,7 +20,14 @@ import { useNavigate } from "hooks/useNavigation";
 import { find } from "lodash";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
-import { useMemo } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { matchPath, useLocation } from "react-router-dom";
 import { routes } from "routes";
 import { OptionsContext, useOptionsState } from "utils/OptionsProvider";
@@ -31,6 +38,27 @@ import { theme } from "./theme";
 import { ThemeContext, useThemeState } from "./utils/ThemeProvider";
 
 export const queryClient = new QueryClient();
+
+export const BottomBarContext = createContext<{
+  enabled: boolean;
+  setEnabled: (e: boolean) => void;
+}>({
+  enabled: true,
+  setEnabled: () => {},
+});
+
+export const useBottomBar = () => useContext(BottomBarContext);
+
+export const BottomBarProvider = ({ children }: { children: ReactNode }) => {
+  const [enabled, setEnabled] = useState(true);
+
+  const value = useMemo(() => ({ enabled, setEnabled }), [enabled, setEnabled]);
+  return (
+    <BottomBarContext.Provider value={value}>
+      {children}
+    </BottomBarContext.Provider>
+  );
+};
 
 export default function App() {
   const themeState = useThemeState();
@@ -46,14 +74,16 @@ export default function App() {
       <ModalContext.Provider value={modalProviderValue}>
         <ThemeContext.Provider value={themeState}>
           <ThemeProvider theme={t}>
-            <OptionsContext.Provider value={optionsState}>
-              <ConfirmProvider>
-                <SnackbarProvider>
-                  <Content />
-                  <ReactQueryDevtools />
-                </SnackbarProvider>
-              </ConfirmProvider>
-            </OptionsContext.Provider>
+            <BottomBarProvider>
+              <OptionsContext.Provider value={optionsState}>
+                <ConfirmProvider>
+                  <SnackbarProvider>
+                    <Content />
+                    <ReactQueryDevtools />
+                  </SnackbarProvider>
+                </ConfirmProvider>
+              </OptionsContext.Provider>
+            </BottomBarProvider>
           </ThemeProvider>
         </ThemeContext.Provider>
       </ModalContext.Provider>
@@ -87,12 +117,16 @@ export function Content() {
 }
 
 function BottomBar() {
+  const { setEnabled } = useBottomBar();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const selected = find(
     bottomBarPaths,
     (c) => !!matchPath(`${c?.url}/*`, pathname)
   )?.url;
+  useEffect(() => {
+    setEnabled?.(!!selected);
+  }, [setEnabled, selected]);
   return (
     <BottomNavigation
       showLabels

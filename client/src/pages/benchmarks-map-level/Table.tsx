@@ -65,7 +65,7 @@ export default function Table() {
   const columns: GridColDef<InstanceCollection>[] = [
     {
       field: "scen_type",
-      headerName: "",
+      headerName: "Scenario",
       sortable: true,
       width: 220,
       valueGetter: (_, row) => `${startCase(row.scen_type)} ${row.type_id}`,

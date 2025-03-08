@@ -13,7 +13,7 @@ export function StickyTitle({ children, ...props }: TypographyProps) {
       sx={{
         position: "sticky",
         top: 0,
-        zIndex: (t) => t.zIndex.appBar - 1,
+        zIndex: (t) => t.zIndex.fab - 1,
         py: 2,
         my: -2,
         px: 3,

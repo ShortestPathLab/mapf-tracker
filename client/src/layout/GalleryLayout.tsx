@@ -1,9 +1,8 @@
-import { Box, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { Item } from "components/Item";
-import { useSm } from "components/dialog/useSmallDisplay";
+import { useLg } from "components/dialog/useSmallDisplay";
 import { isNumber, isUndefined } from "lodash";
 import { ReactNode } from "react";
-import { useMeasure } from "react-use";
 import Layout, { LayoutProps, LayoutRenderProps } from "./Layout";
 
 const RenderSm = ({
@@ -16,14 +15,13 @@ const RenderSm = ({
   </Stack>
 );
 
-const RenderLg = ({
-  header,
-  children,
+function Sidebar({
   cover,
+  header,
   items,
-  sidebarWidth = 320,
-}: LayoutRenderProps & GalleryLayoutProps) => (
-  <Stack direction="row" sx={{ gap: 8 }}>
+  sidebarWidth,
+}: GalleryLayoutProps & LayoutRenderProps) {
+  return (
     <Stack
       sx={{
         width: sidebarWidth,
@@ -60,6 +58,23 @@ const RenderLg = ({
         ))}
       </Stack>
     </Stack>
+  );
+}
+
+const RenderLg = ({
+  header,
+  children,
+  cover,
+  items,
+  sidebarWidth = 320,
+}: LayoutRenderProps & GalleryLayoutProps) => (
+  <Stack direction="row" sx={{ gap: 8 }}>
+    <Sidebar
+      cover={cover}
+      header={header}
+      items={items}
+      sidebarWidth={sidebarWidth}
+    />
     <Stack sx={{ gap: 4, flex: 1, minWidth: 0 }}>{children}</Stack>
   </Stack>
 );
@@ -73,14 +88,7 @@ type GalleryLayoutProps = {
   sidebarWidth?: number;
 };
 
-const minWidth = 1200;
-
 export function GalleryLayout(props: LayoutProps & GalleryLayoutProps) {
-  const [ref, { width }] = useMeasure();
-  const sm = useSm() || width < minWidth;
-  return (
-    <Box ref={ref} sx={{ width: "100%", height: "100%" }}>
-      <Layout {...props} flat render={sm ? RenderSm : RenderLg} />
-    </Box>
-  );
+  const sm = useLg();
+  return <Layout {...props} flat render={sm ? RenderSm : RenderLg} />;
 }

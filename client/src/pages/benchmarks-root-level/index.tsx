@@ -33,7 +33,6 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
     <GalleryLayout
       root
       title={showHeader ? "Home" : "Benchmarks"}
-      description="All maps, scenarios, and instances in the MAPF benchmark dataset"
       path={showHeader ? [] : [{ name: "Home", url: "/" }]}
       render={render(showHeader)}
       items={[

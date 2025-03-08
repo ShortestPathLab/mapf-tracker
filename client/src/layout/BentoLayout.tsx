@@ -30,8 +30,17 @@ export function BentoLayout({
         <TabContext value={tab}>
           <TabBar>
             <TabList onChange={(e, v) => setTab(v)}>
-              <Tab label={labelLeft} value="left" />
-              <Tab label={labelRight} value="right" />
+              {[
+                { label: labelLeft, value: "left" },
+                { label: labelRight, value: "right" },
+              ].map(({ label, value }) => (
+                <Tab
+                  sx={{ minWidth: 0, px: 0, mx: sm ? 2 : 0, mr: sm ? 2 : 4 }}
+                  key={value}
+                  label={label}
+                  value={value}
+                />
+              ))}
             </TabList>
           </TabBar>
           <TabPanel

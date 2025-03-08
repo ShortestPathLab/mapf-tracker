@@ -1,5 +1,12 @@
 import { ExpandContentRounded } from "@mui-symbols-material/w400";
-import { Box, IconButton, Stack, StackProps, Tooltip } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Stack,
+  StackProps,
+  Tooltip,
+  useMediaQuery,
+} from "@mui/material";
 import { Item } from "components/Item";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { useDialog } from "hooks/useDialog";
@@ -37,6 +44,7 @@ function ChartCard({
   primary,
   ...props
 }: ChartCardProps & StackProps) {
+  const finePointer = useMediaQuery("(pointer: fine)");
   const { dialog, open } = useDialog(FullScreenCard, {
     title: "Chart details",
     slotProps: {
@@ -53,7 +61,7 @@ function ChartCard({
     <Stack
       {...props}
       sx={{
-        [`& .${cls}`]: { opacity: 0 },
+        [`& .${cls}`]: { opacity: finePointer ? 0 : 1 },
         [`&:hover .${cls}`]: { opacity: 1 },
         ...paper(0),
         ...props.sx,

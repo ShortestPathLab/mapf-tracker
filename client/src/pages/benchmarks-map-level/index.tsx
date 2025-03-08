@@ -1,4 +1,5 @@
-import { Divider, Link, Stack, useTheme } from "@mui/material";
+import { Link, Stack, useTheme } from "@mui/material";
+import { DownloadBar } from "components/DownloadBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
 import { useLocationState } from "hooks/useNavigation";
@@ -10,7 +11,6 @@ import { useMapData } from "queries/useBenchmarksQuery";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
-import { DownloadBar } from "components/DownloadBar";
 
 export default function Page() {
   const { mapId } = useLocationState<MapLevelLocationState>();
@@ -19,7 +19,6 @@ export default function Page() {
   return (
     <GalleryLayout
       title={mapData ? startCase(mapData.map_name) : "--"}
-      description="Problem instances on this map, grouped by scenario"
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
@@ -58,6 +57,7 @@ export default function Page() {
       <Stack sx={{ gap: 4 }}>
         <DownloadBar />
         <DataInspectorLayout
+          dataTabName="Browse scenarios"
           analysisTabName="Trends"
           data={<Table />}
           analysis={<Analysis template={analysisTemplate(mapId)} />}

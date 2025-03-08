@@ -1,5 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { entries, floor, head, last, memoize, min, pick, reduce } from "lodash";
+import {
+  clamp,
+  entries,
+  floor,
+  head,
+  last,
+  memoize,
+  pick,
+  reduce,
+} from "lodash";
 import memoizee from "memoizee";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
@@ -58,7 +67,7 @@ function createAgentPositionGetter(
   paths: string[],
   timespan: number
 ) {
-  const chunkSize = floor(min([5000, timespan / 100]));
+  const chunkSize = floor(clamp(timespan / 100, 1, 5000));
   const test = paths.map(decode);
 
   const getAgentPositions = memoizee(

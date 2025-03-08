@@ -42,7 +42,7 @@ export default function Table() {
   const columns: GridColDef<Instance>[] = [
     {
       field: "agents",
-      headerName: "",
+      headerName: "Agent count",
       type: "number",
       sortable: true,
       width: 200,

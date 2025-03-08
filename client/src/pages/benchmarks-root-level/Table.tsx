@@ -88,7 +88,6 @@ export default function Table() {
     {
       field: "map_name",
       headerName: "Map",
-      renderHeader: () => <></>,
       sortable: true,
       minWidth: 220,
       flex: 1,

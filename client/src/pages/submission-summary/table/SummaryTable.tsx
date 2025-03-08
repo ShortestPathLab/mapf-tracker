@@ -1,17 +1,15 @@
 import {
+  CheckRounded,
   CloseRounded,
   DeleteRounded,
-  CheckRounded,
   DoNotDisturbOnRounded,
   HourglassEmptyRounded,
   PlayArrowRounded,
   StopRounded,
 } from "@mui-symbols-material/w400";
 import {
-  alpha,
   Box,
   Button,
-  capitalize,
   Chip,
   CircularProgress,
   Collapse,
@@ -19,13 +17,16 @@ import {
   Stack,
   Tooltip,
   Typography,
+  alpha,
+  capitalize,
   useTheme,
 } from "@mui/material";
+import { Item } from "components/Item";
 import { Bar, formatValue, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
 import { ConfirmDialog } from "components/dialog/Modal";
-import { Item } from "components/Item";
+import { useSm } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import {
   TreeDataGrid,
@@ -36,8 +37,8 @@ import { useDialog } from "hooks/useDialog";
 import { identity, isNumber, join, map, sumBy, times } from "lodash";
 import pluralize from "pluralize";
 import {
-  deleteAll,
   OngoingSubmission,
+  deleteAll,
   useDeleteOngoingSubmissionMutation,
   useOngoingSubmissionSummaryQuery,
 } from "queries/useOngoingSubmissionQuery";
@@ -45,7 +46,7 @@ import { useState } from "react";
 import { Arrow } from "./Arrow";
 import { DetailsDialog } from "./DetailsDialog";
 import { MapLabel } from "./MapLabel";
-import { disambiguate, Model, Models } from "./Model";
+import { Model, Models, disambiguate } from "./Model";
 import { ScenarioLabel } from "./ScenarioLabel";
 import { SubmissionInstanceContext } from "./SubmissionInstanceContext";
 import { SubmissionInstanceLabel } from "./SubmissionInstanceLabel";
@@ -109,6 +110,7 @@ function renderPlaceholder() {
 }
 
 export default function Table({ apiKey }: { apiKey?: string | number }) {
+  const sm = useSm();
   const theme = useTheme();
   const { dialog, open } = useDialog(DetailsDialog, {
     title: "Submission details",
@@ -206,7 +208,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
       renderCell: ({ row }) =>
         disambiguate(row, {
           map: (row) => <Arrow open={expanded[row.id]} />,
-          scenario: (row) => <Arrow open={expanded[row.id]} />,
+          scenario: (row) => <Arrow open={expanded[row.id]} sx={{ pl: 2 }} />,
         }),
       flex: 0,
     },
@@ -221,15 +223,22 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             <MapLabel mapId={row.id} count={row.count[slice] ?? 0} />
           ),
           scenario: (row) => (
-            <ScenarioLabel scenarioId={row.id} count={row.count[slice] ?? 0} />
+            <Stack sx={{ pl: 2 }}>
+              <ScenarioLabel
+                scenarioId={row.id}
+                count={row.count[slice] ?? 0}
+              />
+            </Stack>
           ),
           instance: ({ scenario, index }) => (
-            <SubmissionInstanceLabel
-              apiKey={apiKey}
-              scenarioId={scenario}
-              index={index}
-              slice={slice}
-            />
+            <Stack sx={{ pl: 4 }}>
+              <SubmissionInstanceLabel
+                apiKey={apiKey}
+                scenarioId={scenario}
+                index={index}
+                slice={slice}
+              />
+            </Stack>
           ),
           fallback: renderPlaceholder,
         }),
@@ -356,7 +365,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   return (
     <>
       <Stack
-        sx={{ p: 2, gap: 1, alignItems: "center", flexWrap: "wrap" }}
+        sx={{ gap: 1, alignItems: "center", flexWrap: "wrap" }}
         direction="row"
       >
         {[
@@ -440,6 +449,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         </Dialog>
       </Stack>
       <TreeDataGrid
+        sx={{ px: sm ? -2 : 0 }}
         initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
         getChildren={(row) =>
           disambiguate(row, {

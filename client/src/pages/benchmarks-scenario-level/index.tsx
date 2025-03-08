@@ -21,11 +21,6 @@ export default function Page() {
   return (
     <GalleryLayout
       title={title ? startCase(title) : "--"}
-      description={
-        title && mapData
-          ? `Problem instances for ${title} on ${mapData?.map_name}`
-          : "--"
-      }
       path={[
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },

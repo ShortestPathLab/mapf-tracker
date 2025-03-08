@@ -130,7 +130,7 @@ export default function DataGrid<
             "& .MuiDataGrid-cell:last-child": {
               pr: sm ? 2 : 0,
             },
-            "& .MuiDataGrid-columnHeader:nth-child(2)": { pl: 2 },
+            "& .MuiDataGrid-columnHeader:nth-child(2)": { pl: sm ? 2 : 0 },
             ...(sm && {
               "&, [class^=MuiDataGrid]": {
                 "--DataGrid-rowBorderColor": "transparent",
