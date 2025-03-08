@@ -449,7 +449,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         </Dialog>
       </Stack>
       <TreeDataGrid
-        sx={{ px: sm ? -2 : 0 }}
+        sx={{ mx: sm ? -2 : 0 }}
         initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
         getChildren={(row) =>
           disambiguate(row, {
