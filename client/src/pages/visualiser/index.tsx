@@ -1,8 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
 import { Dialog } from "components/dialog";
-import { useSm } from "components/dialog/useSmallDisplay";
-import { useLocationState } from "hooks/useNavigation";
+import { useMd, useSm } from "components/dialog/useSmallDisplay";
 import { BentoLayout } from "layout/BentoLayout";
 import { topbarHeight } from "layout/topbarHeight";
 import { capitalize, startCase } from "lodash";
@@ -12,19 +11,23 @@ import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import Visualiser from "./Visualiser";
 import { VisualiserLocationState } from "./VisualiserLocationState";
+import { useStableLocationState } from "hooks/useStableLocationState";
 
 export { default as Visualiser } from "./Visualiser";
 
 export default function index() {
   const sm = useSm();
-  const state = useLocationState<VisualiserLocationState>();
+  const md = useMd();
+  const state = useStableLocationState<VisualiserLocationState>();
   const { data: instanceData } = useInstanceData(state.instanceId);
   const { data: scenarioData } = useScenarioDetailsData(instanceData?.scen_id);
   const { data: mapData } = useMapData(instanceData?.map_id);
   const scenarioString = startCase(
     `${scenarioData?.scen_type}-${scenarioData?.type_id}`
   );
-  const title = pluralize("agent", instanceData?.agents ?? 0, true);
+  const title = instanceData
+    ? pluralize("agent", instanceData?.agents ?? 0, true)
+    : "--";
   return (
     <BentoLayout
       title={title}
@@ -32,7 +35,7 @@ export default function index() {
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
         {
-          name: capitalize(mapData?.map_name),
+          name: startCase(mapData?.map_name),
           url: "/scenarios",
           state,
         },
@@ -62,7 +65,7 @@ export default function index() {
       }
       labelRight="Best solution"
       contentRight={
-        sm ? (
+        md ? (
           <Dialog
             slotProps={{ modal: { variant: "default", fullScreen: true } }}
             trigger={(onClick) => (
@@ -77,7 +80,7 @@ export default function index() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: `calc(100dvh - ${8}px)`,
+                height: `calc(100vh - ${8}px)`,
               }}
             >
               <Visualiser />
@@ -92,7 +95,7 @@ export default function index() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: `calc(100dvh - ${topbarHeight(sm) + 8}px)`,
+                height: `calc(100vh - ${topbarHeight(sm) + 8}px)`,
               }}
             >
               <Visualiser />

@@ -8,7 +8,7 @@ import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
 import { cellRendererText, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { Layout } from "layout";
 import {
   RequestWithReviewOutcome,
@@ -21,7 +21,7 @@ import { Item } from "components/Item";
 
 export default function index() {
   const { data: requests } = useRequestsQuery();
-  const { open: showDetails, dialog: detailsDialog } = useDialog(
+  const { open: showDetails, dialog: detailsDialog } = useSurface(
     ReviewRequestDialog,
     {
       title: "Review submission key request",
@@ -29,7 +29,7 @@ export default function index() {
       padded: true,
     }
   );
-  const { open: showConfirmation, dialog: confirmationDialog } = useDialog(
+  const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
     ConfirmNotifyDialog,
     {
       padded: true,
@@ -117,7 +117,10 @@ export default function index() {
     <Layout
       flat
       title="Submission key requests"
-      path={[{ name: "Manage", url: "/manage" }]}
+      path={[
+        { name: "Manage", url: "/manage" },
+        { name: "Dashboard", url: "/dashboard" },
+      ]}
     >
       <FlatCard>
         <DataGrid

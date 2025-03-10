@@ -8,7 +8,7 @@ import {
   TreeDataGrid,
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { capitalize, startCase, times } from "lodash";
 import { Arrow } from "pages/submission-summary/table/Arrow";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
@@ -40,7 +40,7 @@ export function Table({ algorithm }: { algorithm?: string }) {
   const [expanded, setExpanded] = useBooleanMap();
   const { data, isLoading } = useAlgorithmSummaryQuery(algorithm);
 
-  const { dialog, open } = useDialog(InstanceDetails, {
+  const { dialog, open } = useSurface(InstanceDetails, {
     padded: true,
     title: "Submission instance details",
   });

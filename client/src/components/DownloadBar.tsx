@@ -1,41 +1,50 @@
 import { DownloadRounded } from "@mui-symbols-material/w400";
-import { Button, Fab, Grow, Stack, Typography } from "@mui/material";
+import { Box, Button, Fab, Grow, Stack, Typography } from "@mui/material";
 import { useBottomBar } from "App";
-import { useDialog } from "hooks/useDialog";
 import { useTimeout } from "react-use";
 import { Scroll } from "./dialog/Scrollbars";
-import { useSm } from "./dialog/useSmallDisplay";
+import { useSm, useXs } from "./dialog/useSmallDisplay";
+import { useSurface } from "./surface";
 
 export function DownloadOptions() {
-  return <></>;
+  return <>Test test</>;
 }
 
 export function DownloadBar() {
-  const { dialog, open } = useDialog(DownloadOptions, {
+  "use no memo";
+  const { dialog, open } = useSurface(DownloadOptions, {
     title: "Download dataset",
   });
   const { enabled } = useBottomBar();
+  const xs = useXs();
   const sm = useSm();
   const [enter] = useTimeout(300);
-  return sm ? (
+  return xs ? (
     <>
-      <Grow in={enter()}>
-        <Fab
-          onClick={() => open()}
-          variant="extended"
-          color="secondary"
-          sx={{
-            transition: (t) => t.transitions.create("bottom"),
-            position: "fixed",
-            bottom: enabled ? 80 + 16 : 16,
-            right: 16,
-            px: 3,
-            borderRadius: 2,
-          }}
-        >
-          Download dataset
-        </Fab>
-      </Grow>
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+          zIndex: (t) => t.zIndex.fab,
+          transform: enabled ? "translateY(-80px)" : "translateY(0)",
+          transition: (t) => t.transitions.create(["transform"]),
+        }}
+      >
+        <Grow in={enter()}>
+          <Fab
+            onClick={() => open({})}
+            variant="extended"
+            color="secondary"
+            sx={{
+              px: 3,
+              borderRadius: 2,
+            }}
+          >
+            Download dataset
+          </Fab>
+        </Grow>
+      </Box>
       {dialog}
     </>
   ) : (
@@ -44,9 +53,11 @@ export function DownloadBar() {
         gap: 2,
       }}
     >
-      <Typography color="text.secondary" variant="overline" sx={{ mt: -1 }}>
-        Download this dataset
-      </Typography>
+      {!sm && (
+        <Typography color="text.secondary" variant="overline" sx={{ mt: -1 }}>
+          Download this dataset
+        </Typography>
+      )}
       <Scroll x>
         <Stack
           sx={{

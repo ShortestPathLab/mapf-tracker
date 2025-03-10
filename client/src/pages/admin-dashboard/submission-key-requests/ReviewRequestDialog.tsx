@@ -34,7 +34,7 @@ export function ReviewRequestDialog({
   const { transitions } = useTheme();
   const sm = useSm();
   const notify = useSnackbar();
-  const { open: showConfirmation, dialog: confirmationDialog } = useDialog(
+  const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
     ConfirmNotifyDialog,
     {
       padded: true,

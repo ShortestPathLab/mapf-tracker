@@ -5,7 +5,7 @@ import { useRafLoop } from "react-use";
 import { navbarHeight } from "./navbarHeight";
 
 export function useTop(ref: MutableRefObject<HTMLElement>) {
-  const sm = useSm();
+  const sm = useXs();
   const threshold = navbarHeight(sm);
   const [top, setTop] = useState(true);
   useRafLoop(() => {

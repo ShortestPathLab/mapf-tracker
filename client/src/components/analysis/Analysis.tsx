@@ -73,7 +73,7 @@ export function AnalysisButton({
   template: Template[];
   button?: (onClick: (e: SyntheticEvent<Element, Event>) => void) => ReactNode;
 }) {
-  const single = template.length == 1;
+  const single = template?.length == 1;
   return single ? (
     <Dialog
       slotProps={{

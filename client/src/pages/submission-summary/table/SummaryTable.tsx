@@ -33,7 +33,7 @@ import {
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { Instance, SummarySlice } from "core/types";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { identity, isNumber, join, map, sumBy, times } from "lodash";
 import pluralize from "pluralize";
 import {
@@ -112,7 +112,7 @@ function renderPlaceholder() {
 export default function Table({ apiKey }: { apiKey?: string | number }) {
   const sm = useSm();
   const theme = useTheme();
-  const { dialog, open } = useDialog(DetailsDialog, {
+  const { dialog, open } = useSurface(DetailsDialog, {
     title: "Submission details",
     padded: true,
   });

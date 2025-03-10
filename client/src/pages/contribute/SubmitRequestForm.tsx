@@ -9,7 +9,7 @@ import {
   SubmissionKeyRequestForm,
   SubmissionKeyRequestFormProps,
 } from "forms/SubmissionKeyRequestForm";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { defer } from "lodash";
 import { post } from "queries/mutation";
 import { Request } from "queries/useRequestQuery";
@@ -27,7 +27,7 @@ export function SubmitRequestForm({
 } & SubmissionKeyRequestFormProps) {
   const notify = useSnackbar();
 
-  const { open, close, dialog } = useDialog(ConfirmDialog, {
+  const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Submit request",
     slotProps: { modal: { variant: "default" } },
     padded: true,

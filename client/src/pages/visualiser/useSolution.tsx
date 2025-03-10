@@ -125,6 +125,7 @@ export function useSolution({
   solutionId,
   source,
 }: SolutionParameters) {
+  "use no memo";
   const { data: instance, isLoading: isInstanceLoading } =
     useInstanceData(instanceId);
   const { data: history, isLoading: isHistoryLoading } =

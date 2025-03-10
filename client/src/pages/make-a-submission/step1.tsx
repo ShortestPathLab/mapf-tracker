@@ -4,7 +4,7 @@ import { Item } from "components/Item";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { SubmitContactEmailForm } from "forms/SubmitContactEmailForm";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
 import { filter, map } from "lodash";
@@ -13,6 +13,7 @@ import { requestByEmailQueryFn } from "queries/useRequestQuery";
 import { paper } from "theme";
 import { RenderSection } from "./Section";
 import { useState } from "react";
+import { useStableLocationState } from "hooks/useStableLocationState";
 
 export type ContactEmailState = {
   contactEmail: string;
@@ -20,9 +21,9 @@ export type ContactEmailState = {
 
 export default function index() {
   const navigate = useNavigate();
-  const { contactEmail } = useLocationState<ContactEmailState>();
+  const { contactEmail } = useStableLocationState<ContactEmailState>();
   const xs = useXs();
-  const { open, dialog } = useDialog(ConfirmDialog, {
+  const { open, dialog } = useSurface(ConfirmDialog, {
     slotProps: { modal: { variant: "default" } },
     title: xs
       ? "Submission in review"

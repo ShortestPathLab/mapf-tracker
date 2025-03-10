@@ -3,7 +3,7 @@ import TouchRipple, {
   TouchRippleActions,
 } from "@mui/material/ButtonBase/TouchRipple";
 import { Handle, Position } from "@xyflow/react";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { SyntheticEvent, useRef } from "react";
 import { StageStatus } from "./StageStatus";
 import { StageStatusDialog } from "./StageStatusDialog";
@@ -35,7 +35,7 @@ export function PipelineStageNode({
 }: {
   data?: { stage?: string };
 }) {
-  const { dialog, open } = useDialog(StageStatusDialog, {
+  const { dialog, open } = useSurface(StageStatusDialog, {
     title: "Stage details",
     padded: true,
   });

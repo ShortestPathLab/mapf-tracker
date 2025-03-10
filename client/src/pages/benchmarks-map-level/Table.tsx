@@ -17,9 +17,10 @@ import {
 } from "queries/useBenchmarksQuery";
 import { cloneElement } from "react";
 import { downloadInstance, downloadMap, downloadScenario } from "./download";
+import { useStableLocationState } from "hooks/useStableLocationState";
 
 export default function Table() {
-  const state = useLocationState<MapLevelLocationState>();
+  const state = useStableLocationState<MapLevelLocationState>();
   const { mapId } = state;
   const { data: mapData } = useMapData(mapId);
   const { data, isLoading } = useInstanceScenarioData(mapId);
@@ -34,7 +35,7 @@ export default function Table() {
         render: (row, trigger) => (
           <AnalysisButton
             button={(onClick) => cloneElement(trigger, { onClick })}
-            template={analysisTemplate(row.id, mapId)}
+            // template={analysisTemplate(row.id, mapId)}
           />
         ),
       },
@@ -66,6 +67,13 @@ export default function Table() {
     {
       field: "scen_type",
       headerName: "Scenario",
+      sortComparator: (a, b, paramA, paramB) => {
+        return paramA.api.getRow(paramA.id).scen_type ===
+          paramB.api.getRow(paramB.id).scen_type
+          ? +paramA.api.getRow(paramA.id).type_id -
+              +paramB.api.getRow(paramB.id).type_id
+          : a.localeCompare(b);
+      },
       sortable: true,
       width: 220,
       valueGetter: (_, row) => `${startCase(row.scen_type)} ${row.type_id}`,

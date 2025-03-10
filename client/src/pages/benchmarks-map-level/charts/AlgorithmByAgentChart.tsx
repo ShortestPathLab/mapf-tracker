@@ -1,6 +1,6 @@
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
+import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
   useAlgorithmSelector,
@@ -32,12 +32,14 @@ export function AlgorithmByAgentChart({ map }: { map: string }) {
           }))
           .sortBy("name")
           .value()}
-        render={sliceBarChartRenderer({
-          slice,
-          selected,
-          type: "area",
-          keyType: "name",
-        })}
+        render={
+          <SliceChart
+            slice={slice}
+            selected={selected}
+            type="area"
+            keyType="name"
+          />
+        }
       />
     </>
   );

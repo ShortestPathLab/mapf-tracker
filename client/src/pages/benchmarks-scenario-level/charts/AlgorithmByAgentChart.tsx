@@ -1,8 +1,6 @@
-import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import { getAlgorithms } from "components/analysis/getAlgorithms";
-import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
+import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
   useAlgorithmSelector,
@@ -18,18 +16,12 @@ export const slices = [
 ] satisfies Slice[];
 
 export function AlgorithmByAgentChart({ map }: { map: string }) {
-  const { palette } = useTheme();
   const algorithmSelectorState = useAlgorithmSelector(slices);
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useScenarioOnAgentData(metric, map);
-  const algorithms = getAlgorithms(data, "solved_instances");
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        slices={slices}
-        algorithms={algorithms}
-      />
+      <ChartOptions {...algorithmSelectorState} slices={slices} />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}
@@ -40,12 +32,7 @@ export function AlgorithmByAgentChart({ map }: { map: string }) {
           }))
           .sortBy("name")
           .value()}
-        render={sliceBarChartRenderer({
-          slice,
-          algorithms,
-          selected,
-          mode: palette.mode,
-        })}
+        render={<SliceChart slice={slice} selected={selected} />}
       />
     </>
   );

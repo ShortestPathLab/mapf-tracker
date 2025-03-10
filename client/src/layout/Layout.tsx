@@ -9,10 +9,11 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import Appbar, { appbarHeight } from "components/appbar";
+import { appbarHeight } from "components/appbar";
+import Appbar from "components/appbar/index";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useScrollState } from "components/dialog/useScrollState";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useLg, useMd, useSm, useXs } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import { useHistory, useNavigate } from "hooks/useNavigation";
 import { last, merge } from "lodash";
@@ -63,7 +64,8 @@ export default function Layout({
   root,
   ...props
 }: LayoutProps) {
-  const lg = useSm();
+  const lg = useLg();
+  const md = useXs();
   const xs = useXs();
   const { location, action } = useHistory();
   const [, isTop, isAbsoluteTop, panel, setPanel] = useScrollState(
@@ -104,7 +106,7 @@ export default function Layout({
   );
   return (
     <>
-      {lg &&
+      {xs &&
         (!root ? (
           <MuiAppBar
             position="fixed"
@@ -154,17 +156,18 @@ export default function Layout({
           bgcolor: "background.paper",
         }}
       >
-        {lg && <Box sx={{ height: appbarHeight(lg) }} />}
+        {xs && <Box sx={{ height: appbarHeight(lg) }} />}
         <Scroll y style={{ flex: 1 }} ref={setPanel}>
-          {!lg && <Crumbs path={path} current={title} />}
-          {lg ? (
+          {!xs && <Crumbs path={path} current={title} />}
+          {md ? (
             content
           ) : (
             <Enter in distance={4}>
               {content}
             </Enter>
           )}
-          {lg && <Box sx={{ height: 72 }} />}
+          {md && <Box sx={{ height: 72 }} />}
+          <Box sx={{ height: "calc(100lvh - 100svh)" }} />
         </Scroll>
       </Stack>
     </>

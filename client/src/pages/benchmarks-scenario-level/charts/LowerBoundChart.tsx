@@ -1,8 +1,7 @@
 import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import { getAlgorithms } from "components/analysis/getAlgorithms";
-import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
+import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
   useAlgorithmSelector,
@@ -25,7 +24,7 @@ export function LowerBoundChart({ scenario }: { scenario: string | number }) {
         ...c,
         gap: c.solution_cost / c.lower_cost - 1,
       }))}
-      render={() => (
+      render={
         <BarChart margin={{ bottom: 32, top: 32, left: 16, right: 16 }}>
           <Tooltip
             formatter={formatPercentage}
@@ -43,7 +42,7 @@ export function LowerBoundChart({ scenario }: { scenario: string | number }) {
             name="Percent difference between best solution and lower-bound"
           />
         </BarChart>
-      )}
+      }
     />
   );
 }
@@ -62,18 +61,15 @@ export function LowerBoundComparisonChart({
   map: string;
   scenario: string | number;
 }) {
-  const { palette } = useTheme();
   const algorithmSelectorState = useAlgorithmSelector(slices, scenarioMetrics);
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useScenarioOnAgentGapData(metric, map, scenario);
-  const algorithms = getAlgorithms(data, "record");
   return (
     <>
       <ChartOptions
         {...algorithmSelectorState}
         metrics={scenarioMetrics}
         slices={slices}
-        algorithms={algorithms}
       />
       <Chart
         isLoading={isLoading}
@@ -84,13 +80,9 @@ export function LowerBoundComparisonChart({
           }))
           .sortBy("agents")
           .value()}
-        render={sliceBarChartRenderer({
-          xAxisDataKey: "agents",
-          slice,
-          algorithms,
-          selected,
-          mode: palette.mode,
-        })}
+        render={
+          <SliceChart xAxisDataKey="agents" slice={slice} selected={selected} />
+        }
       />
     </>
   );

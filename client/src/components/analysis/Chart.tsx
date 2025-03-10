@@ -6,12 +6,12 @@ import { fontFamily } from "theme";
 
 export function Chart<T>({
   data,
-  render = () => <Box />,
+  render = <Box />,
   isLoading,
   ...props
 }: {
   data: T;
-  render: (data: T) => ReactElement;
+  render: ReactElement;
   isLoading?: boolean;
 } & Partial<ResponsiveContainerProps>) {
   const { palette, shape } = useTheme();
@@ -25,7 +25,7 @@ export function Chart<T>({
     <CircularProgress sx={{ m: "auto" }} />
   ) : (
     <ResponsiveContainer width="100%" {...props}>
-      {cloneElement(render(data), {
+      {cloneElement(render, {
         data,
         className: cls,
         style: { fontFamily, fontSize: "0.875rem" },

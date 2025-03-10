@@ -51,7 +51,7 @@ export default function ChartOptions({
   stateOfTheArt?: boolean;
   slices?: Slice[];
   metrics?: BaseMetric[];
-  extras: ReactNode;
+  extras?: ReactNode;
 } & Partial<ReturnType<typeof useAlgorithmSelector>>) {
   const xs = useXs();
   const { data: algorithms = [] } = useAlgorithmsData();

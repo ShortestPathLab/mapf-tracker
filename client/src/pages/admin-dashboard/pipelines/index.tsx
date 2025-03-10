@@ -18,7 +18,10 @@ export default function index() {
       collapse={false}
       flat
       title="Pipelines"
-      path={[{ name: "Manage", url: "/manage" }]}
+      path={[
+        { name: "Manage", url: "/manage" },
+        { name: "Dashboard", url: "/dashboard" },
+      ]}
       render={RenderFixed}
     >
       <Stack
@@ -27,7 +30,7 @@ export default function index() {
           top: 0,
           left: 0,
           right: 0,
-          height: `calc(100dvh - ${topbarHeight(sm)}px)`,
+          height: `calc(100vh - ${topbarHeight(sm)}px)`,
         }}
       >
         {isLoading ? (

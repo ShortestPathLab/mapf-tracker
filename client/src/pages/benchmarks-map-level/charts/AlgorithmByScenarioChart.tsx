@@ -68,7 +68,7 @@ export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
         isLoading={isLoading}
         style={{ flex: 1 }}
         data={data}
-        render={() => <CategoryChart series={series} showLabels />}
+        render={<CategoryChart series={series} showLabels />}
       />
     </>
   );

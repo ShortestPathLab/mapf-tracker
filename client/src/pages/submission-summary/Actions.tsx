@@ -19,7 +19,7 @@ import { CodeBlock } from "components/CodeBlock";
 import { useSnackbar } from "components/Snackbar";
 import { url } from "core/config";
 import SubmitWithApiContent from "docs/submitWithApi.mdx";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { Grid, Prose } from "layout";
 import { find, findKey, some } from "lodash";
 import { ArticleCard } from "pages/docs/ArticleCard";
@@ -139,7 +139,7 @@ export function JsonApiDialog({ apiKey }: { apiKey?: string | number }) {
 }
 
 export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
-  const { open: openRestApiDialog, dialog: restApiDialog } = useDialog(
+  const { open: openRestApiDialog, dialog: restApiDialog } = useSurface(
     RestApiDialog,
     {
       padded: true,
@@ -147,7 +147,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
       slotProps: { modal: { width: 580, variant: "default" } },
     }
   );
-  const { open: openJsonApiDialog, dialog: jsonApiDialog } = useDialog(
+  const { open: openJsonApiDialog, dialog: jsonApiDialog } = useSurface(
     JsonApiDialog,
     {
       padded: true,
@@ -155,7 +155,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
       slotProps: { modal: { width: 720, variant: "default" } },
     }
   );
-  const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useDialog(
+  const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useSurface(
     FileUploadDialog,
     {
       padded: true,

@@ -54,7 +54,7 @@ export function RecentActivityChart(
             label={null}
             renderLabel={(label) => label}
             values={map(data, ({ _id, count }) => ({
-              value: 1 / data.length,
+              value: 1 / data?.length,
               color: alpha(
                 tone(theme.palette.mode, accentColors.teal),
                 max([0.1, count / peak])

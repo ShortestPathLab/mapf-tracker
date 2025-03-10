@@ -26,7 +26,7 @@ function VisualisationDialog({
       <Box
         sx={{
           position: "fixed",
-          height: `100dvh`,
+          height: `100vh`,
           top: 0,
           left: 0,
           bottom: 0,
@@ -36,7 +36,7 @@ function VisualisationDialog({
       >
         <SolutionVisualisation {...{ instanceId, solutionId, source }} />
       </Box>
-      <Box sx={{ height: "100dvh" }}></Box>
+      <Box sx={{ height: "100vh" }}></Box>
     </>
   );
 }
@@ -48,7 +48,7 @@ export function DetailsDialog({
   slice,
 }: SubmissionInstanceProps & DialogContentProps) {
   const { data: scenario } = useScenarioDetailsData(scenarioId);
-  const { dialog, open } = useDialog(VisualisationDialog, {
+  const { dialog, open } = useSurface(VisualisationDialog, {
     title: "Visualise solution",
     slotProps: {
       modal: {

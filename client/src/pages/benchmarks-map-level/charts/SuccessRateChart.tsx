@@ -30,7 +30,7 @@ export function SuccessRateChart({ map }: { map: string }) {
         }))
         .sortBy(["type", "proportionClosed"])
         .value()}
-      render={() => <CategoryChart showLabels />}
+      render={<CategoryChart showLabels />}
     />
   );
 }

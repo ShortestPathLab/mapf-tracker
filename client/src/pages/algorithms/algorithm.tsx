@@ -54,13 +54,15 @@ export function AlgorithmPage() {
           primaryLabel="Completion by map type"
           secondaryLabel="Instances closed and solved across map types"
           height={560}
-          content={<AlgorithmByMapTypeChart algorithm={data?.id} />}
+          content={
+            !!data?.id && <AlgorithmByMapTypeChart algorithm={data?.id} />
+          }
         />
         <GridChartCard
           primaryLabel="Completion by map"
           secondaryLabel="Instances closed and solved across maps"
           height={560}
-          content={<AlgorithmByMapChart algorithm={data?.id} />}
+          content={!!data?.id && <AlgorithmByMapChart algorithm={data?.id} />}
         />
       </Stack>
       <StickyTitle>Submitted instances</StickyTitle>

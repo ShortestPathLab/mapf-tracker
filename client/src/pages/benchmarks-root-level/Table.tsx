@@ -1,13 +1,8 @@
-import {
-  DownloadRounded,
-  InfoRounded,
-  ShowChartRounded,
-} from "@mui-symbols-material/w400";
-import { Box, useTheme } from "@mui/material";
+import { DownloadRounded } from "@mui-symbols-material/w400";
+import { useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
-import { AnalysisButton } from "components/analysis/Analysis";
 import {
   cellRendererBar,
   cellRendererChip,
@@ -16,54 +11,26 @@ import {
 } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { Benchmark } from "core/types";
-import { useDialog } from "hooks/useDialog";
 import { useNavigate } from "hooks/useNavigation";
 import { capitalize, startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
-import { analysisTemplate } from "pages/benchmarks-map-level/analysisTemplate";
 import { downloadMap } from "pages/benchmarks-map-level/download";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
-import { cloneElement } from "react";
-import BenchmarkDetails from "./BenchmarkDetails";
 import { downloadBenchmarks, downloadBenchmarksResultsCSV } from "./download";
 
-function Details({ mapName }: { mapName: string }) {
-  return (
-    <Box sx={{ m: -2 }}>
-      <BenchmarkDetails benchmark={mapName} />
-    </Box>
-  );
-}
+const parseSize = (s: string) => {
+  const [a, b] = s.split("x");
+  return +a * +b;
+};
 
 export default function Table() {
   const { data, isLoading } = useBenchmarksData();
   const navigate = useNavigate();
   const theme = useTheme();
   const notify = useSnackbarAction();
-  const { dialog, open } = useDialog(Details, {
-    slotProps: { modal: { width: 720 } },
-    padded: true,
-    title: "Benchmark details",
-  });
 
   const actions = useDataGridActions<Benchmark>({
-    items: [
-      {
-        name: "Trends",
-        icon: <ShowChartRounded />,
-        render: (row, trigger) => (
-          <AnalysisButton
-            button={(onClick) => cloneElement(trigger, { onClick })}
-            template={analysisTemplate(row.id)}
-          />
-        ),
-      },
-      {
-        name: "Details",
-        icon: <InfoRounded />,
-        action: (row) => open({ mapName: row.map_name }),
-      },
-    ],
+    items: [],
     menuItems: [
       {
         name: "Download all scenarios (ZIP)",
@@ -108,6 +75,7 @@ export default function Table() {
       field: "map_size",
       headerName: "Size",
       sortable: true,
+      sortComparator: (a, b) => parseSize(a) - parseSize(b),
       fold: true,
       renderCell: cellRendererText,
     },
@@ -158,7 +126,6 @@ export default function Table() {
           });
         }}
       />
-      {dialog}
     </>
   );
 }

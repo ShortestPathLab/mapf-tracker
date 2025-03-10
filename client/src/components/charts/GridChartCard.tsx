@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Item } from "components/Item";
 import { useXs } from "components/dialog/useSmallDisplay";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { ComponentProps, ReactNode } from "react";
 import { useCss } from "react-use";
 import Size from "react-virtualized-auto-sizer";
@@ -18,12 +18,12 @@ import { paper } from "theme";
 function FullScreenCard({ primary, label }: ChartCardProps) {
   const xs = useXs();
   return (
-    <Stack sx={{ height: `calc(100dvh - ${xs ? 56 : 64}px)` }}>
-      <Stack sx={{ px: xs ? 2 : 3, pt: 1, pb: 0 }}>{label}</Stack>
+    <Stack sx={{ height: `calc(100vh - ${xs ? 56 : 64}px)` }}>
+      <Stack sx={{ pb: 4 }}>{label}</Stack>
       <Stack
         sx={{
           flex: 1,
-          p: xs ? 2 : 3,
+          pb: 4,
         }}
       >
         {primary}
@@ -45,7 +45,7 @@ function ChartCard({
   ...props
 }: ChartCardProps & StackProps) {
   const finePointer = useMediaQuery("(pointer: fine)");
-  const { dialog, open } = useDialog(FullScreenCard, {
+  const { dialog, open } = useSurface(FullScreenCard, {
     title: "Chart details",
     slotProps: {
       modal: {

@@ -2,7 +2,7 @@ import { CheckRounded } from "@mui-symbols-material/w400";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useSm } from "components/dialog/useSmallDisplay";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { BentoLayout } from "layout/BentoLayout";
 import { sumBy } from "lodash";
@@ -19,17 +19,18 @@ import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
+import { useStableLocationState } from "hooks/useStableLocationState";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
 
 export default function SubmissionSummaryPage() {
-  const { apiKey } = useLocationState<SubmissionLocationState>();
+  const { apiKey } = useStableLocationState<SubmissionLocationState>();
   const { data } = useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
-  const { open, close, dialog } = useDialog(ConfirmDialog, {
+  const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Finish submission",
     slotProps: { modal: { variant: "default" } },
     padded: true,

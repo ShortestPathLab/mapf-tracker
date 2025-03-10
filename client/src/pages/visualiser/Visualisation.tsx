@@ -107,6 +107,7 @@ export function Visualisation({
   optimisedMap?: { x: number; y: number; width: number; height: number }[];
   diagnostics?: Diagnostic[];
 }) {
+  "use no memo";
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const sm = useSm();

@@ -146,7 +146,7 @@ export function CompletionByAgentCountChart({
       isLoading={isSolvedLoading || isClosedLoading}
       style={{ flex: 1 }}
       data={data}
-      render={() => <RenderChart />}
+      render={<RenderChart />}
     />
   );
 }

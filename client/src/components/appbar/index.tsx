@@ -1,7 +1,8 @@
-import { ChevronRightRounded } from "@mui-symbols-material/w400";
+import { ChevronRightRounded, MenuRounded } from "@mui-symbols-material/w400";
 import {
   AppBar,
   AppBarProps,
+  BottomNavigation,
   Box,
   Collapse,
   IconButton,
@@ -14,22 +15,25 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { BottomBarAction } from "BottomBar";
+import { bottomBarPaths } from "bottomBarPaths";
 import { Scroll } from "components/dialog/Scrollbars";
 import { appIconUrl, appName } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
+import { find, flatMap } from "lodash";
 import PopupState, { bindMenu } from "material-ui-popup-state";
 import { matchPath, useLocation } from "react-router-dom";
-import { useSm } from "../dialog/useSmallDisplay";
-import { useNavigationContent } from "./useNavigationContent";
 import { useCss } from "react-use";
+import { useMd, useSm, useXs } from "../dialog/useSmallDisplay";
+import { useNavigationContent } from "./useNavigationContent";
 
 const drawerWidth = 320;
 
 export const appbarHeight = (md?: boolean) => (md ? 56 : 64);
 
 export default function index(props: AppBarProps) {
-  const lg = useSm();
-  const md = useSm();
+  const sm = useXs();
+  const md = useMd();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -50,16 +54,16 @@ export default function index(props: AppBarProps) {
       <PopupState variant="popover">
         {(state) => {
           const contents = (
-            <Scroll y style={{ height: "100dvh" }}>
+            <Scroll y style={{ height: "100vh" }}>
               <Stack
                 sx={{
                   color: "text.primary",
-                  minHeight: "100dvh",
+                  minHeight: "100vh",
                   minWidth: 260,
                   "> *": { flexShrink: 0 },
                 }}
               >
-                <Stack sx={{ p: md ? 2 : 3 }}>
+                <Stack sx={{ p: sm ? 2 : 3 }}>
                   <Typography variant="h6">{appName}</Typography>
                 </Stack>
                 {groups.map(({ items, grow, label, defaultOpen = true }, i) => (
@@ -69,7 +73,7 @@ export default function index(props: AppBarProps) {
                       return (
                         <>
                           {!!i && grow && (
-                            <Box sx={{ flexGrow: 1, minHeight: "10dvh" }} />
+                            <Box sx={{ flexGrow: 1, minHeight: "10vh" }} />
                           )}
                           <Stack
                             sx={{
@@ -83,7 +87,7 @@ export default function index(props: AppBarProps) {
                                 direction="row"
                                 sx={{
                                   cursor: "pointer",
-                                  px: md ? 2 : 3,
+                                  px: sm ? 2 : 3,
                                   py: 1,
                                   alignItems: "center",
                                 }}
@@ -135,9 +139,9 @@ export default function index(props: AppBarProps) {
                                         selected={selected}
                                         sx={{
                                           borderRadius: 2,
-                                          mx: md ? 1 : 1.5,
+                                          mx: sm ? 1 : 1.5,
                                           color: selected && "primary.main",
-                                          px: md ? 1 : 1.5,
+                                          px: sm ? 1 : 1.5,
                                           // Looks more comfortable when there's space on the right
                                           pr: 3,
                                           bgcolor: "transparent",
@@ -188,9 +192,10 @@ export default function index(props: AppBarProps) {
               </Stack>
             </Scroll>
           );
+
           return (
             <>
-              {lg && (
+              {sm ? (
                 <Box>
                   <AppBar
                     {...props}
@@ -206,7 +211,7 @@ export default function index(props: AppBarProps) {
                     <Toolbar
                       sx={{
                         bgcolor: "transparent",
-                        height: appbarHeight(md),
+                        height: appbarHeight(sm),
                       }}
                     >
                       <Box
@@ -220,8 +225,56 @@ export default function index(props: AppBarProps) {
                     </Toolbar>
                   </AppBar>
                 </Box>
-              )}
-              {!lg && (
+              ) : md ? (
+                <Stack
+                  sx={{
+                    width: (t) => t.spacing(12),
+                    alignItems: "center",
+                    py: 2,
+                    gap: 4,
+                  }}
+                >
+                  <IconButton onClick={state.open}>
+                    <MenuRounded />
+                  </IconButton>
+                  <BottomNavigation
+                    value={
+                      find(
+                        bottomBarPaths,
+                        ({ url }) => url && !!matchPath(`${url}/*`, pathname)
+                      )?.label
+                    }
+                    showLabels
+                    sx={{
+                      height: "max-content",
+                      bgcolor: "transparent",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      gap: 3,
+                    }}
+                  >
+                    {bottomBarPaths.map(
+                      ({ icon, url, label, iconSelected }) => {
+                        const selected =
+                          url && !!matchPath(`${url}/*`, pathname);
+                        return (
+                          <BottomBarAction
+                            onClick={clickHandler(url, state.close)}
+                            label={label}
+                            key={label}
+                            icon={selected ? iconSelected ?? icon : icon}
+                            value={label}
+                            sx={{
+                              "::after": { top: (t) => t.spacing(-0.5) },
+                            }}
+                          />
+                        );
+                      }
+                    )}
+                  </BottomNavigation>
+                </Stack>
+              ) : (
                 <Box
                   sx={{
                     bgcolor: "background.default",
@@ -231,6 +284,7 @@ export default function index(props: AppBarProps) {
                   {contents}
                 </Box>
               )}
+
               <SwipeableDrawer
                 onOpen={() => state.open()}
                 {...bindMenu(state)}
@@ -238,14 +292,14 @@ export default function index(props: AppBarProps) {
                 variant="temporary"
                 ModalProps={{ keepMounted: true }}
                 sx={{
-                  display: lg ? "block" : "none",
+                  display: md ? "block" : "none",
                   "& .MuiDrawer-paper": {
                     borderRadius: (t) =>
                       `0 ${t.shape.borderRadius}px ${t.shape.borderRadius}px 0`,
                     boxSizing: "border-box",
                     width: drawerWidth,
                     maxWidth: "90vw",
-                    bgcolor: "background.paper",
+                    bgcolor: "background.default",
                     backgroundImage: "none",
                   },
                 }}

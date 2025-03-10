@@ -1,6 +1,7 @@
-import { alpha, Fade, Stack, Typography } from "@mui/material";
+import { alpha, Stack, Typography } from "@mui/material";
 import { ReactNode } from "react";
 import { useOptions } from "utils/OptionsProvider";
+import Enter from "./transitions/Enter";
 
 export function Tip({
   title,
@@ -12,10 +13,8 @@ export function Tip({
   actions: ReactNode;
 }) {
   const [{ hideTips }] = useOptions();
-  return hideTips ? (
-    <></>
-  ) : (
-    <Fade in>
+  return (
+    <Enter axis="x" mountOnEnter unmountOnExit in={!hideTips} appear={false}>
       <Stack
         sx={{
           borderRadius: 1,
@@ -32,6 +31,6 @@ export function Tip({
           {actions}
         </Stack>
       </Stack>
-    </Fade>
+    </Enter>
   );
 }

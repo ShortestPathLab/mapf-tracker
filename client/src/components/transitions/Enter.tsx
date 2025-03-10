@@ -183,6 +183,7 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
     >
       {(state: any, childProps: any) => {
         return React.cloneElement(children, {
+          ...childProps,
           style: {
             boxShadow: backdrop
               ? "0px -16px 0px 0px rgba(0,0,0,0.4)"
@@ -196,7 +197,6 @@ const Enter = React.forwardRef<any, any>((props, ref) => {
             ...children.props?.style,
           },
           ref: handleRef,
-          ...childProps,
         });
       }}
     </TransitionComponent>

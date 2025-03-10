@@ -164,7 +164,7 @@ function CompletionByAlgorithmChart() {
           isLoading={isSolvedLoading || isClosedLoading || isAlgorithmsLoading}
           style={{ flex: 1 }}
           data={data}
-          render={() => <CategoryChart showLabels />}
+          render={<CategoryChart showLabels />}
         />
       </Box>
     </Scroll>

@@ -37,7 +37,7 @@ export function MapProportionChart() {
           ...v,
         }))
         .value()}
-      render={() => (
+      render={
         <RadarChart>
           <Legend />
           {map(
@@ -73,7 +73,7 @@ export function MapProportionChart() {
           <PolarAngleAxis dataKey="name" />
           <ChartTooltip formatter={formatPercentage} />
         </RadarChart>
-      )}
+      }
     />
   );
 }

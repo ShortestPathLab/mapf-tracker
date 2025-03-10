@@ -3,7 +3,7 @@ import { Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
 import { format, parseISO } from "date-fns";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface/useSurface";
 import { SubmissionKeyRequestFormDialog } from "pages/submissions/SubmissionKeyRequestFormDialog";
 import { handleRequestDetailUpdated } from "pages/submissions/handleRequestDetailUpdated";
 import { useRequestData } from "queries/useRequestQuery";
@@ -17,7 +17,7 @@ export const SubmissionRequestGlance = ({
   apiKey?: string | number;
 }) => {
   const notify = useSnackbar();
-  const { open: showRequestDetails, dialog: requestDetails } = useDialog(
+  const { open: showRequestDetails, dialog: requestDetails } = useSurface(
     SubmissionKeyRequestFormDialog,
     {
       slotProps: { modal: { width: 640, variant: "default" } },

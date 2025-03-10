@@ -3,17 +3,30 @@ import { useNavigate } from "hooks/useNavigation";
 import { Grid, Layout } from "layout";
 import { pages } from "./pages";
 import { ArticleCard } from "./ArticleCard";
+import { useXs } from "components/dialog/useSmallDisplay";
 
 export default function index() {
   const navigate = useNavigate();
+  const xs = useXs();
   return (
     <Router
       routes={[
         {
-          path: "/docs/",
-          parent: "/",
+          path: xs ? "*" : "/docs/",
+          parent: "/manage",
           content: (
-            <Layout flat title="Docs" path={[{ name: "Home", url: "/" }]}>
+            <Layout
+              flat
+              title="Docs"
+              path={
+                xs
+                  ? [
+                      { name: "Home", url: "/" },
+                      { name: "More", url: "/manage" },
+                    ]
+                  : [{ name: "Home", url: "/" }]
+              }
+            >
               <Grid sx={{ gap: 2 }}>
                 {pages().map((page) => (
                   <ArticleCard

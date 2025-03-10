@@ -4,12 +4,10 @@ import { CompletionByAlgorithmChartCard } from "components/charts/CompletionByAl
 import { GridChartCard } from "components/charts/GridChartCard";
 import { RecentActivityChart } from "components/charts/RecentActivityChart";
 import { TotalSolvedClosedChart } from "components/charts/TotalSolvedClosedChart";
-import { useSm } from "components/dialog/useSmallDisplay";
 import { MapProportionChart } from "pages/benchmarks-root-level/charts/MapProportionChart";
 import { Tip } from "pages/home/Tip";
 
 export default function Hero() {
-  const sm = useSm();
   return (
     <Stack sx={{ gap: 4 }}>
       <Tip />
@@ -28,14 +26,14 @@ export default function Hero() {
       <Stack sx={{ gap: 2, my: 1 }}>
         <Typography color="text.secondary">Trends</Typography>
         <Stack
-          direction={sm ? "column" : "row"}
+          direction="row"
           sx={{
             flexWrap: "wrap",
             gap: 2,
             "> *": {
               flex: "1 1 0",
-              minWidth: 420,
               width: "100%",
+              minWidth: 340,
             },
           }}
         >

@@ -1,27 +1,27 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Divider, Stack, Tab, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { useSm } from "components/dialog/useSmallDisplay";
+import { useMd } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import Layout, { LayoutProps } from "./Layout";
-import { topbarHeight } from "./topbarHeight";
 import { TabBar } from "./TabBar";
+import { topbarHeight } from "./topbarHeight";
 
 export function BentoLayout({
   contentLeft,
   contentRight,
   labelLeft,
   labelRight,
-  widthLeft = 460,
+  widthLeft = "min(460px, 40%)",
   ...props
 }: LayoutProps & {
   labelLeft?: string;
   labelRight?: string;
   contentLeft?: ReactNode;
-  widthLeft?: number;
+  widthLeft?: string | number;
   contentRight?: ReactNode;
 }) {
-  const sm = useSm();
+  const sm = useMd();
   const [tab, setTab] = useState<"left" | "right">("left");
 
   return (
@@ -68,7 +68,7 @@ export function BentoLayout({
             position: "absolute",
             top: 0,
             left: 0,
-            height: `calc(100dvh - ${topbarHeight(sm)}px)`,
+            height: `calc(100vh - ${topbarHeight(sm)}px)`,
             right: 0,
           }}
         >

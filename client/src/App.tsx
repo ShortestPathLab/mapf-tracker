@@ -1,34 +1,19 @@
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-  Stack,
-} from "@mui/material";
-import { ThemeProvider, alpha } from "@mui/material/styles";
+import { Box, Stack } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { bottomBarPaths } from "bottomBarPaths";
+import { BottomBar } from "BottomBar";
 import { LostConnectionWarning } from "components/LostConnectionWarning";
 import { Router } from "components/Router";
-import AppBar from "components/appbar";
-import { useSm } from "components/dialog/useSmallDisplay";
+import AppBar from "components/appbar/index";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import {
   ModalContext,
   useModalProviderValue,
 } from "hooks/useModalProviderValue";
-import { useNavigate } from "hooks/useNavigation";
-import { find } from "lodash";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { matchPath, useLocation } from "react-router-dom";
+import { ReactNode, createContext, useContext, useMemo, useState } from "react";
 import { routes } from "routes";
 import { OptionsContext, useOptionsState } from "utils/OptionsProvider";
 import "./App.css";
@@ -51,8 +36,12 @@ export const useBottomBar = () => useContext(BottomBarContext);
 
 export const BottomBarProvider = ({ children }: { children: ReactNode }) => {
   const [enabled, setEnabled] = useState(true);
-
-  const value = useMemo(() => ({ enabled, setEnabled }), [enabled, setEnabled]);
+  const xs = useXs();
+  const enabled1 = xs && enabled;
+  const value = useMemo(
+    () => ({ enabled: enabled1, setEnabled }),
+    [enabled1, setEnabled]
+  );
   return (
     <BottomBarContext.Provider value={value}>
       {children}
@@ -92,92 +81,26 @@ export default function App() {
 }
 
 export function Content() {
-  const lg = useSm();
+  const xs = useXs();
   return (
     <>
       <Stack>
         <Stack
-          direction={lg ? "column" : "row"}
+          direction={xs ? "column" : "row"}
           sx={{
             height: "100%",
             width: "100%",
             bgcolor: "background.default",
           }}
         >
-          <AppBar />
+          {!xs && <AppBar />}
           <Box sx={{ flex: 1, overflowX: "hidden" }}>
             <Router fallback={<NotFoundPage />} routes={routes} />
           </Box>
         </Stack>
-        {lg && <BottomBar />}
+        {xs && <BottomBar />}
       </Stack>
       <LostConnectionWarning />
     </>
-  );
-}
-
-function BottomBar() {
-  const { setEnabled } = useBottomBar();
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const selected = find(
-    bottomBarPaths,
-    (c) => !!matchPath(`${c?.url}/*`, pathname)
-  )?.url;
-  useEffect(() => {
-    setEnabled?.(!!selected);
-  }, [setEnabled, selected]);
-  return (
-    <BottomNavigation
-      showLabels
-      value={selected}
-      sx={{
-        bgcolor: "background.default",
-        transition: (t) => t.transitions.create("transform"),
-        transform: selected ? "translateY(0)" : "translateY(100%)",
-        zIndex: (t) => t.zIndex.appBar + 1,
-        position: "fixed",
-        height: (t) => t.spacing(10),
-        left: 0,
-        right: 0,
-        bottom: 0,
-      }}
-    >
-      {bottomBarPaths.map(({ label, url, icon, iconSelected }) => (
-        <BottomNavigationAction
-          disableRipple
-          key={label}
-          sx={{
-            height: (t) => t.spacing(10),
-            display: "flex",
-            justifyContent: "center",
-            "> svg": { transform: "scale(0.9)", mb: 0.5 },
-            "> span": { fontWeight: 550, mt: 0.5 },
-            "&::after": {
-              opacity: 0,
-              content: "''",
-              display: "block",
-              width: (t) => t.spacing(8),
-              height: (t) => t.spacing(4),
-              borderRadius: 4,
-              position: "absolute",
-              top: (t) => t.spacing(1.6),
-              mx: "auto",
-              bgcolor: (t) => alpha(t.palette.primary.main, 0.1),
-              transition: (t) => t.transitions.create("opacity"),
-            },
-            "&.Mui-selected": {
-              "&::after": { opacity: 1 },
-              "> svg": { color: "text.primary" },
-              "> span": { fontSize: "0.75rem", color: "text.primary" },
-            },
-          }}
-          value={url}
-          label={label}
-          icon={selected === url ? iconSelected : icon}
-          onClick={() => navigate(url)}
-        />
-      ))}
-    </BottomNavigation>
   );
 }

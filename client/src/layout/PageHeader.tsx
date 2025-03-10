@@ -28,7 +28,7 @@ export default function PageHeader({
         variant="h2"
         sx={{
           fontSize: sm ? "2rem" : "2.25rem",
-          pt: sm ? 3 : 0,
+          pt: sm ? 0 : 0,
         }}
       >
         {current}

@@ -1,11 +1,11 @@
-import { MenuItem, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions, {
   CheckboxItem,
   stateOfTheArt,
 } from "components/analysis/ChartOptions";
 import { renderSelectChip } from "components/analysis/renderSelectChip";
-import { sliceBarChartRenderer } from "components/analysis/sliceBarChartRenderer";
+import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
   useAlgorithmSelector,
@@ -109,14 +109,16 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
           }))
           .sortBy("map")
           .value()}
-        render={sliceBarChartRenderer({
-          xAxisDataKey: "map",
-          stacked: false,
-          slice,
-          selected,
-          keyType: "name",
-          stateOfTheArt: true,
-        })}
+        render={
+          <SliceChart
+            xAxisDataKey="map"
+            stacked={false}
+            slice={slice}
+            selected={selected}
+            keyType="name"
+            stateOfTheArt={true}
+          />
+        }
       />
     </>
   );

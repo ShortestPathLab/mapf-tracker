@@ -69,7 +69,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
           }))
           .sortBy("map")
           .value()}
-        render={() => (
+        render={
           <RadarChart>
             <Legend />
             {map(
@@ -106,7 +106,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
               formatter={slice.formatter}
             />
           </RadarChart>
-        )}
+        }
       />
     </>
   );

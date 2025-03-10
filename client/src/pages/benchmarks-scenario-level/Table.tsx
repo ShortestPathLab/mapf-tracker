@@ -12,9 +12,10 @@ import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
 import { formatDate } from "utils/format";
 import { PreviewCard } from "../../components/PreviewCard";
 import { downloadRow } from "./download";
+import { useStableLocationState } from "hooks/useStableLocationState";
 
 export default function Table() {
-  const state = useLocationState<ScenarioLevelLocationState>();
+  const state = useStableLocationState<ScenarioLevelLocationState>();
   const { scenId } = state;
   const { data, isLoading } = useInstanceCollectionData(scenId);
   const navigate = useNavigate();

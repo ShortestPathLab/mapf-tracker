@@ -11,9 +11,10 @@ import { useMapData } from "queries/useBenchmarksQuery";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
+import { useStableLocationState } from "hooks/useStableLocationState";
 
 export default function Page() {
-  const { mapId } = useLocationState<MapLevelLocationState>();
+  const { mapId } = useStableLocationState<MapLevelLocationState>();
   const { data: mapData } = useMapData(mapId);
   const theme = useTheme();
   return (
@@ -60,7 +61,7 @@ export default function Page() {
           dataTabName="Browse scenarios"
           analysisTabName="Trends"
           data={<Table />}
-          analysis={<Analysis template={analysisTemplate(mapId)} />}
+          // analysis={<Analysis template={analysisTemplate(mapId)} />}
         />
       </Stack>
     </GalleryLayout>

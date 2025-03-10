@@ -1,21 +1,38 @@
 import { Route } from "components/Router";
+import { useMd, useXs } from "components/dialog/useSmallDisplay";
+import { useNavigate } from "hooks/useNavigation";
+import { defer } from "lodash";
+import { AlgorithmPage } from "pages/algorithms/algorithm";
 import BenchmarksMapLevelPage from "pages/benchmarks-map-level";
 import BenchmarksRootLevelPage from "pages/benchmarks-root-level";
 import BenchmarksScenarioLevelPage from "pages/benchmarks-scenario-level";
 import DirectoryPage from "pages/directory";
+import Hero from "pages/home/Hero";
+import MakeASubmissionPage from "pages/make-a-submission";
 import SubmissionSummaryPage from "pages/submission-summary";
-import Submissions from "./pages/algorithms";
 import UserMapPage from "./pages/UserMapPage";
 import AdminDashboard from "./pages/admin-dashboard";
 import AdminDashboardOld from "./pages/admin-dashboard/index.old";
+import Submissions from "./pages/algorithms";
 import ContributePage from "./pages/contribute";
 import DocsPage from "./pages/docs";
 import TrackSubmission from "./pages/submissions";
 import Summary from "./pages/summary/DashboardPage";
-import MakeASubmissionPage from "pages/make-a-submission";
 import Visualiser from "./pages/visualiser";
-import Hero from "pages/home/Hero";
-import { AlgorithmPage } from "pages/algorithms/algorithm";
+
+function ManagePage() {
+  const md = useMd();
+  const navigate = useNavigate();
+  if (!md) defer(() => navigate("/"));
+  return (
+    md && (
+      <DirectoryPage
+        labels={["Make a submission", "Docs", "Settings"]}
+        title="More"
+      />
+    )
+  );
+}
 
 export const routes: Route[] = [
   {
@@ -35,18 +52,13 @@ export const routes: Route[] = [
     ),
   },
   {
-    path: "/submit/:section?",
-    content: <MakeASubmissionPage />,
-    parent: "/",
+    path: "/manage",
+    content: <ManagePage />,
   },
   {
-    path: "/manage",
-    content: (
-      <DirectoryPage
-        labels={["Make a submission", "Docs", "Settings"]}
-        title="More"
-      />
-    ),
+    path: "/submit/:section?",
+    content: <MakeASubmissionPage />,
+    parent: "/manage",
   },
   {
     path: "/benchmarks",
@@ -70,11 +82,12 @@ export const routes: Route[] = [
     content: <AlgorithmPage />,
     parent: "/submissions",
   },
-  { path: "/contributes", content: <ContributePage />, parent: "submit" },
+  { path: "/contributes", content: <ContributePage />, parent: "/submit" },
   {
     path: "/track",
     content: <TrackSubmission />,
-    parent: "/",
+
+    parent: "/manage",
   },
   {
     path: "/submissionSummary",
@@ -84,11 +97,12 @@ export const routes: Route[] = [
   {
     path: "/dashboard/:section?",
     content: <AdminDashboard />,
+    parent: "/manage",
   },
   {
     path: "/docs/:article?",
     content: <DocsPage />,
-    parent: "/",
+    parent: "/manage",
   },
   {
     path: "/dashboard-old",

@@ -1,7 +1,7 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Stack, Tab } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
-import { useSm } from "components/dialog/useSmallDisplay";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
 import { TabBar } from "./TabBar";
@@ -20,7 +20,7 @@ export function DataInspectorLayout({
   analysis?: ReactNode;
 }) {
   const [tab, setTab] = useState<"data" | "analysis" | "compare">("data");
-  const sm = useSm();
+  const sm = useXs();
   return (
     <TabContext value={tab}>
       <Stack sx={{ px: sm ? 0 : 2 }}>
@@ -43,7 +43,7 @@ export function DataInspectorLayout({
         {[
           {
             value: "data",
-            content: <Box sx={{ py: sm ? 0 : 3 }}>{dataContent}</Box>,
+            content: <Box sx={{ py: 0 }}>{dataContent}</Box>,
           },
           {
             value: "analysis",

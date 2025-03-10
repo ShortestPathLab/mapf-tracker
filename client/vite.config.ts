@@ -3,6 +3,12 @@ import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import remarkGfm from "remark-gfm";
+
+const ReactCompilerConfig = {
+  /* ... */
+  target: "18",
+};
+
 export default defineConfig({
   // depending on your application, base can also be "/"
   base: "/",
@@ -14,7 +20,12 @@ export default defineConfig({
         remarkPlugins: [remarkGfm],
       }),
     },
-    react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
+    react({
+      include: /\.(jsx|js|mdx|md|tsx|ts)$/,
+      babel: {
+        plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
+      },
+    }),
   ],
   server: {
     // this ensures that the browser opens upon server start

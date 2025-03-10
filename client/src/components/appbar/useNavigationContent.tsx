@@ -19,7 +19,7 @@ import {
 } from "@mui-symbols-material/w400";
 import { GitHub } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
-import { useDialog } from "hooks/useDialog";
+import { useSurface } from "components/surface";
 import { ReactNode } from "react";
 import { useOptions } from "utils/OptionsProvider";
 import { useMode } from "utils/ThemeProvider";
@@ -30,15 +30,11 @@ import { UserDialog, getAvatar } from "./UserDialog";
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
   const [options, setOptions] = useOptions();
-  const { open: showLogIn, dialog: logInDialog } = useDialog(LogInDialog, {
+  const { open: showLogIn, dialog: logInDialog } = useSurface(LogInDialog, {
     title: "Sudo",
-    slotProps: { modal: { variant: "default" } },
-    padded: true,
   });
-  const { open: showUserDialog, dialog: userDialog } = useDialog(UserDialog, {
+  const { open: showUserDialog, dialog: userDialog } = useSurface(UserDialog, {
     title: "Account info",
-    slotProps: { modal: { variant: "default" } },
-    padded: true,
   });
   const { data: credentials } = useCredentials();
   const groups: {
@@ -49,17 +45,20 @@ export function useNavigationContent() {
       description?: string;
       primary?: boolean;
       iconButton?: boolean;
+      labelShort?: string;
       label?: string;
       avatar?: ReactNode;
       url?: string;
       icon?: ReactNode;
       selectedIcon?: ReactNode;
+      showAsIcon?: boolean;
       last?: boolean;
       action?: () => void;
     }[];
   }[] = [
     {
       label: "Browse",
+      defaultOpen: true,
       items: [
         {
           label: "Home",
@@ -67,6 +66,7 @@ export function useNavigationContent() {
           icon: <HomeRounded />,
           selectedIcon: <HomeFilledRounded />,
           description: "",
+          showAsIcon: true,
         },
         {
           label: "Benchmarks",
@@ -75,6 +75,7 @@ export function useNavigationContent() {
           selectedIcon: <SearchFilledRounded />,
           description:
             "View all benchmarks and their top-performing submissions",
+          showAsIcon: true,
         },
         {
           label: "Submissions",
@@ -82,17 +83,20 @@ export function useNavigationContent() {
           icon: <ConversionPathRounded />,
           selectedIcon: <ConversionPathFilledRounded />,
           description: "View and compare submitted algorithms",
+          showAsIcon: true,
         },
       ],
     },
     {
       label: "Make a submission",
+      defaultOpen: true,
       items: [
         {
           primary: true,
           label: "New submission request",
           url: "/submit",
           icon: <AddRounded />,
+          labelShort: "Request",
           selectedIcon: <AddFilledRounded />,
           description:
             "If you want to contribute, start by requesting an API key",
@@ -100,6 +104,7 @@ export function useNavigationContent() {
         {
           primary: true,
           label: "Submissions and API keys",
+          labelShort: "Keys",
           url: "/track",
           icon: <UploadRounded />,
           description:
