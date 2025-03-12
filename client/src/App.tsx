@@ -6,7 +6,7 @@ import { BottomBar } from "BottomBar";
 import { LostConnectionWarning } from "components/LostConnectionWarning";
 import { Router } from "components/Router";
 import AppBar from "components/appbar/index";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useXs } from "components/dialog/useSmallDisplay";
 import {
   ModalContext,
   useModalProviderValue,
@@ -68,7 +68,7 @@ export default function App() {
                 <ConfirmProvider>
                   <SnackbarProvider>
                     <Content />
-                    <ReactQueryDevtools />
+                    <ReactQueryDevtools buttonPosition="bottom-left" />
                   </SnackbarProvider>
                 </ConfirmProvider>
               </OptionsContext.Provider>

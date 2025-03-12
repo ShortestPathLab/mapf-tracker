@@ -120,6 +120,8 @@ function useDebouncedInput() {
   return { loading, input, queueInput };
 }
 
+const PAGE_SIZE = 100;
+
 export default function DataGrid<
   T extends GridValidRowModel = { [K: string | symbol]: unknown }
 >({
@@ -162,6 +164,10 @@ export default function DataGrid<
     },
   });
 
+  const allRows = filter(
+    input ? fuse.search(input).map((r) => r.item) : rows,
+    shouldIncludeItem
+  );
   return (
     <Stack>
       {search && (
@@ -219,9 +225,9 @@ export default function DataGrid<
               rowHeight={88}
               slots={clickable && { row: ButtonRow }}
               initialState={{
-                pagination: { paginationModel: { pageSize: 100 } },
+                pagination: { paginationModel: { pageSize: PAGE_SIZE } },
               }}
-              pageSizeOptions={[10, 25, 50, 100]}
+              pageSizeOptions={[PAGE_SIZE]}
               {...rest}
               sx={{
                 overflow: "visible",
@@ -243,6 +249,7 @@ export default function DataGrid<
                   },
                 }),
                 "& .MuiDataGrid-footerContainer": {
+                  display: allRows.length > PAGE_SIZE ? "block" : "none",
                   position: "sticky",
                   bottom: bottomBarEnabled ? 80 : 0,
                   py: 1,
@@ -250,7 +257,6 @@ export default function DataGrid<
                   borderTop: (t) => `1px solid ${t.palette.divider}`,
                   bgcolor: "background.paper",
                   "& .MuiToolbar-root": { px: 0 },
-                  "& .MuiTablePagination-spacer": { display: "none" },
                 },
                 ...rest.sx,
               }}
@@ -267,10 +273,7 @@ export default function DataGrid<
                   ...c,
                 })
               )}
-              rows={filter(
-                input ? fuse.search(input).map((r) => r.item) : rows,
-                shouldIncludeItem
-              )}
+              rows={allRows}
             />
           </DataGridContext.Provider>
         </>

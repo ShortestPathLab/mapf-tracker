@@ -45,7 +45,7 @@ export default function Hero() {
               "> *": {
                 flex: "1 1 0",
                 width: "100%",
-                minWidth: 380,
+                minWidth: "min(100%, 380px)",
               },
             }}
           >
