@@ -12,6 +12,13 @@ export async function downloadBenchmarks(item?: Benchmark) {
       `${item.map_name}.zip`
     );
 }
+export async function downloadMap(item?: Benchmark) {
+  if (item)
+    return download(
+      await fetch(`./assets/map/${item.map_name}.map`).then((r) => r.blob()),
+      `${item.map_name}.map`
+    );
+}
 
 export async function downloadBenchmarksResultsCSV(item?: Benchmark) {
   if (item) {

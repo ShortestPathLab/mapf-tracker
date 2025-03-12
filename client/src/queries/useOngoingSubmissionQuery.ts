@@ -13,6 +13,7 @@ export type ValidationOutcome = {
   isValidationRun: boolean;
   outcome: string;
   errors: { label: string; agents: number[]; timesteps: number[] }[];
+  timeTaken?: number;
 };
 
 export type OngoingSubmission = {

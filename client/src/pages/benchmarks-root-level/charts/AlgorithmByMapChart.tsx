@@ -1,27 +1,15 @@
-import { TextField } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
-import ChartOptions, {
-  CheckboxItem,
-  stateOfTheArt,
-} from "components/analysis/ChartOptions";
-import { renderSelectChip } from "components/analysis/renderSelectChip";
+import ChartOptions, { stateOfTheArt } from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
-import {
-  capitalize,
-  chain,
-  includes,
-  keyBy,
-  map,
-  maxBy,
-  startCase,
-} from "lodash";
+import { capitalize, chain, includes, keyBy, map, maxBy } from "lodash";
 import { useMapData } from "queries/useAlgorithmQuery";
 import { useList } from "react-use";
 import { formatPercentage } from "utils/format";
+import { MapPicker } from "./MapPicker";
 
 export const slices = [
   {
@@ -41,7 +29,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
     undefined,
     algorithm ? [stateOfTheArt._id, algorithm] : []
   );
-  const [maps, { set: setMaps }] = useList();
+  const [maps, { set: setMaps }] = useList<string>();
   const { metric, slice, selected } = algorithmSelectorState;
   const { data, isLoading } = useMapData(metric);
   return (
@@ -52,30 +40,11 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
         slices={slices}
         slice={slice}
         extras={
-          <TextField
+          <MapPicker
             disabled={isLoading}
-            label="Map"
-            select
             value={maps}
             onChange={(e) => setMaps(e.target.value as unknown as string[])}
-            sx={{ minWidth: 80 }}
-            SelectProps={{
-              multiple: true,
-              MenuProps: { slotProps: { paper: { sx: { maxHeight: 480 } } } },
-              renderValue: renderSelectChip(startCase),
-            }}
-            variant="filled"
-          >
-            {chain(data)
-              .map((c) => c.map_name)
-              .uniq()
-              .map((name) => (
-                <CheckboxItem value={name} key={name}>
-                  {startCase(name)}
-                </CheckboxItem>
-              ))
-              .value()}
-          </TextField>
+          />
         }
       />
       <Chart

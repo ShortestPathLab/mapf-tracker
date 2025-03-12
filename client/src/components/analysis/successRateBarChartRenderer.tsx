@@ -17,8 +17,7 @@ import {
 import { paper } from "theme";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
-
-export function successRateBarChartRenderer({
+export const SuccessRateBarChart = ({
   xAxisDataKey = "name",
   proportionClosedKey = "proportionClosed",
   proportionSolvedKey = "proportionSolved",
@@ -27,6 +26,7 @@ export function successRateBarChartRenderer({
   type = "bar",
   yAxisDomain = [0, "auto"],
   stacked,
+  ...props
 }: {
   stacked?: boolean;
   type?: "bar" | "area" | "line";
@@ -37,76 +37,74 @@ export function successRateBarChartRenderer({
   proportionUnknownKey?: string;
   proportionSolvedKey?: string;
   formatter?: (c: string | number) => string;
-}) {
-  return () => {
-    const theme = useTheme();
-    const Charts = {
-      bar: { chart: BarChart, series: Bar },
-      line: { chart: LineChart, series: Line },
-      area: { chart: AreaChart, series: Area },
-    }[type];
-    const { chart: Chart, series: Series } = Charts;
+}) => {
+  const theme = useTheme();
+  const Charts = {
+    bar: { chart: BarChart, series: Bar },
+    line: { chart: LineChart, series: Line },
+    area: { chart: AreaChart, series: Area },
+  }[type];
+  const { chart: Chart, series: Series } = Charts;
 
-    return (
-      <Chart margin={{ bottom: 20 }} barCategoryGap={0}>
-        <Legend height={40} verticalAlign="top" />
-        <Tooltip
-          formatter={formatter}
-          contentStyle={{ border: paper(0).border(theme) }}
-          cursor={{ fill: theme.palette.action.disabledBackground }}
-        />
-        <XAxis
-          dataKey={xAxisDataKey}
-          label={{
-            fill: theme.palette.text.secondary,
-            value: "Map",
-            position: "insideBottom",
-            offset: -8,
-          }}
-        />
-        <YAxis
-          domain={yAxisDomain}
-          label={
-            <Label
-              fill={theme.palette.text.secondary}
-              style={{ textAnchor: "middle" }}
-              value="Proportion"
-              angle={-90}
-              position="insideLeft"
-            />
-          }
-        />
-        {map(
-          [
-            {
-              color: accentColors.green,
-              key: proportionClosedKey,
-              name: "Closed",
-            },
-            {
-              color: accentColors.orange,
-              key: proportionSolvedKey,
-              name: "Solved",
-            },
-            {
-              color: accentColors.red,
-              key: proportionUnknownKey,
-              name: "Closed",
-            },
-          ],
-          ({ key, color, name }) =>
-            createElement(Series as ComponentClass<any, any>, {
-              type: "monotone",
-              isAnimationActive: false,
-              dataKey: key,
-              name,
-              stackId: stacked ? "1" : undefined,
-              opacity: 0.8,
-              stroke: tone(theme.palette.mode, color),
-              fill: tone(theme.palette.mode, color),
-            })
-        )}
-      </Chart>
-    );
-  };
-}
+  return (
+    <Chart margin={{ bottom: 20 }} barCategoryGap={0} {...props}>
+      <Legend height={40} verticalAlign="top" />
+      <Tooltip
+        formatter={formatter}
+        contentStyle={{ border: paper(0).border(theme) }}
+        cursor={{ fill: theme.palette.action.disabledBackground }}
+      />
+      <XAxis
+        dataKey={xAxisDataKey}
+        label={{
+          fill: theme.palette.text.secondary,
+          value: "Map",
+          position: "insideBottom",
+          offset: -8,
+        }}
+      />
+      <YAxis
+        domain={yAxisDomain}
+        label={
+          <Label
+            fill={theme.palette.text.secondary}
+            style={{ textAnchor: "middle" }}
+            value="Proportion"
+            angle={-90}
+            position="insideLeft"
+          />
+        }
+      />
+      {map(
+        [
+          {
+            color: accentColors.green,
+            key: proportionClosedKey,
+            name: "Closed",
+          },
+          {
+            color: accentColors.orange,
+            key: proportionSolvedKey,
+            name: "Solved",
+          },
+          {
+            color: accentColors.red,
+            key: proportionUnknownKey,
+            name: "Closed",
+          },
+        ],
+        ({ key, color, name }) =>
+          createElement(Series as ComponentClass<any, any>, {
+            type: "monotone",
+            isAnimationActive: false,
+            dataKey: key,
+            name,
+            stackId: stacked ? "1" : undefined,
+            opacity: 0.8,
+            stroke: tone(theme.palette.mode, color),
+            fill: tone(theme.palette.mode, color),
+          })
+      )}
+    </Chart>
+  );
+};

@@ -33,6 +33,7 @@ export function ArticleCard({ page, ...props }: { page?: Page } & CardProps) {
             alignItems: "center",
             justifyContent: "center",
             color: "text.secondary",
+            backgroundImage: page?.cover ? `url(${page.cover})` : undefined,
           }}
         >
           {page?.icon}

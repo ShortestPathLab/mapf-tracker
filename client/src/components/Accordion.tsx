@@ -1,11 +1,11 @@
-import { ExpandRounded } from "@mui-symbols-material/w400";
+import { KeyboardArrowDownRounded } from "@mui-symbols-material/w400";
 import {
   AccordionDetails,
-  AccordionProps as MuiAccordionProps,
   AccordionSummary,
-  Accordion as MuiAccordion,
-  Typography,
   AccordionSummaryProps,
+  Accordion as MuiAccordion,
+  AccordionProps as MuiAccordionProps,
+  Typography,
   TypographyProps,
 } from "@mui/material";
 import { merge } from "lodash";
@@ -27,7 +27,7 @@ export default function Accordion({
     <MuiAccordion elevation={0} {...props} slotProps={slotProps}>
       <AccordionSummary
         {...merge(
-          { expandIcon: <ExpandRounded />, sx: { px: 0, py: 2 } },
+          { expandIcon: <KeyboardArrowDownRounded />, sx: { px: 0, py: 2 } },
           slotProps?.summary
         )}
       >

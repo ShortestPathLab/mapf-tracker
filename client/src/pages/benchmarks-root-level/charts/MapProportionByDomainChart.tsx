@@ -6,7 +6,10 @@ import {
   aggregateInstances,
   getInstanceAggregateProportions,
 } from "components/analysis/reducers";
-import { successRateBarChartRenderer } from "components/analysis/successRateBarChartRenderer";
+import {
+  SuccessRateBarChart,
+  successRateBarChartRenderer,
+} from "components/analysis/successRateBarChartRenderer";
 
 export function MapProportionByDomainChart() {
   const { palette } = useTheme();
@@ -33,10 +36,7 @@ export function MapProportionByDomainChart() {
         }))
         .sortBy(["type", "proportionSolved"])
         .value()}
-      render={successRateBarChartRenderer({
-        stacked: true,
-        mode: palette.mode,
-      })}
+      render={<SuccessRateBarChart stacked={true} mode={palette.mode} />}
     />
   );
 }

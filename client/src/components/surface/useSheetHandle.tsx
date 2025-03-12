@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const VELOCITY_THRESHOLD = 1;
 
-export function useDrawerHandle(close?: () => void) {
+export function useSheetHandle(close?: () => void) {
   const theme = useTheme();
   const [paper, setPaper] = useState<HTMLDivElement | null>(null);
   const [scroll, setScroll] = useState<HTMLDivElement | null>(null);

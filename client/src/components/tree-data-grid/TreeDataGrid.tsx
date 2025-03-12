@@ -38,7 +38,7 @@ export function TreeDataGrid<T extends GridValidRowModel>({
     const f = (row: T): T[] => {
       const children = getChildren?.(row);
       // Is leaf
-      if (isUndefined(children) && shouldIncludeItem(row, row.id)) return [row];
+      if (isUndefined(children) && shouldIncludeItem(row)) return [row];
       // Is parent with 0 children
       if (children.length === 0) return [];
       // Is parent with children

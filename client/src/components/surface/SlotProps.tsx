@@ -7,7 +7,7 @@ import {
 import { ModalAppBarProps } from "./ModalAppBar";
 
 export type SlotProps = {
-  drawer?: Partial<SwipeableDrawerProps> & { gap?: number };
+  sheet?: Partial<SwipeableDrawerProps> & { gap?: number };
   appBar?: Partial<ModalAppBarProps>;
   popover?: Partial<PopoverProps>;
   paper?: Partial<BoxProps>;

@@ -30,7 +30,7 @@ export const bottomBarPaths = [
   },
   {
     label: "More",
-    url: "/manage",
+    url: "/more",
     icon: <MoreHorizRounded />,
     iconSelected: <MoreHorizFilledRounded />,
   },

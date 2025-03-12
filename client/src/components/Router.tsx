@@ -1,5 +1,5 @@
 import { Box, Stack } from "@mui/material";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useXs } from "components/dialog/useSmallDisplay";
 import { filter, map, some } from "lodash";
 import { Fragment, ReactElement, ReactNode } from "react";
 import { matchPath, useLocation } from "react-router-dom";
@@ -51,7 +51,7 @@ function Sheet({
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
+        height: "100dvh",
         ...styles[disableAnimation ? "enter" : stage],
         "&, & > div": {
           overflow: "hidden",
@@ -118,7 +118,8 @@ export function Router({
     <Stack
       sx={{
         bgcolor: "background.paper",
-        minHeight: "100vh",
+        minHeight: "100dvh",
+        width: "100%",
         color: "text.primary",
       }}
     >
@@ -130,8 +131,8 @@ export function Router({
                 <Box
                   sx={
                     sm
-                      ? { height: "100vh", display: "flex" }
-                      : { height: "100vh", width: "100%", display: "flex" }
+                      ? { height: "100dvh", display: "flex" }
+                      : { height: "100dvh", width: "100%", display: "flex" }
                   }
                 >
                   {r.content}

@@ -20,7 +20,8 @@ export const theme = (t: "light" | "dark") =>
   createTheme({
     palette: {
       primary: {
-        main: t === "light" ? accentColors.blue.A400 : accentColors.blue[200],
+        main: t === "light" ? accentColors.blue.A400 : "#a8c7fa",
+        contrastText: t === "light" ? "#ffffff" : "#062e6f",
       },
       secondary: {
         main: t === "light" ? accentColors.blue.A400 : "#a8c7fa",

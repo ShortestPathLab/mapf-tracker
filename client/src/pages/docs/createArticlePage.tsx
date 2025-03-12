@@ -31,5 +31,6 @@ export function createArticlePage({
       </ArticleLayout>
     ),
     description,
+    cover: undefined as string | undefined,
   };
 }

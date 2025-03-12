@@ -72,5 +72,6 @@ export const pages = () => [
     icon: <BookRounded />,
     content: <AboutPage />,
     description: "About this project",
+    cover: undefined,
   },
 ];

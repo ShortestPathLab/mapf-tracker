@@ -1,17 +1,18 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { PreviewCard } from "components/PreviewCard";
 import { Dialog } from "components/dialog";
 import { useMd, useSm } from "components/dialog/useSmallDisplay";
+import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
 import { topbarHeight } from "layout/topbarHeight";
-import { capitalize, startCase } from "lodash";
+import { startCase } from "lodash";
 import Details from "pages/benchmarks-scenario-level/Details";
 import pluralize from "pluralize";
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import Visualiser from "./Visualiser";
 import { VisualiserLocationState } from "./VisualiserLocationState";
-import { useStableLocationState } from "hooks/useStableLocationState";
+import { Surface } from "components/surface";
+import { bindTrigger } from "material-ui-popup-state";
 
 export { default as Visualiser } from "./Visualiser";
 
@@ -22,9 +23,9 @@ export default function index() {
   const { data: instanceData } = useInstanceData(state.instanceId);
   const { data: scenarioData } = useScenarioDetailsData(instanceData?.scen_id);
   const { data: mapData } = useMapData(instanceData?.map_id);
-  const scenarioString = startCase(
-    `${scenarioData?.scen_type}-${scenarioData?.type_id}`
-  );
+  const scenarioString = scenarioData
+    ? startCase(`${scenarioData?.scen_type}-${scenarioData?.type_id}`)
+    : "--";
   const title = instanceData
     ? pluralize("agent", instanceData?.agents ?? 0, true)
     : "--";
@@ -35,7 +36,7 @@ export default function index() {
         { name: "Home", url: "/" },
         { name: "Benchmarks", url: "/benchmarks" },
         {
-          name: startCase(mapData?.map_name),
+          name: mapData ? startCase(mapData?.map_name) : "--",
           url: "/scenarios",
           state,
         },
@@ -49,27 +50,23 @@ export default function index() {
       contentLeft={
         <Stack sx={{ gap: 4 }}>
           <Details id={state.instanceId} />
-          <Stack sx={{ gap: 2 }}>
-            <Typography variant="h6">Problem configuration</Typography>
-            <PreviewCard
-              instance={state.instanceId}
-              sx={{
-                width: "100%",
-                maxWidth: 480,
-                aspectRatio: 1,
-                height: "auto",
-              }}
-            />
-          </Stack>
         </Stack>
       }
       labelRight="Best solution"
       contentRight={
         md ? (
-          <Dialog
-            slotProps={{ modal: { variant: "default", fullScreen: true } }}
-            trigger={(onClick) => (
-              <Button {...{ onClick }} variant="contained">
+          <Surface
+            variant="fullscreen"
+            slotProps={{
+              appBar: {
+                sx: {
+                  background: "transparent",
+                  width: "fit-content",
+                },
+              },
+            }}
+            trigger={(state) => (
+              <Button {...bindTrigger(state)} variant="contained">
                 Open visualiser
               </Button>
             )}
@@ -85,7 +82,7 @@ export default function index() {
             >
               <Visualiser />
             </Box>
-          </Dialog>
+          </Surface>
         ) : (
           <>
             <Box

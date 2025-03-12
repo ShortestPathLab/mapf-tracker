@@ -1,8 +1,12 @@
 import { colors as muiColors } from "@mui/material";
-import { values } from "lodash";
+import convert from "color-convert";
+import { sortBy, values } from "lodash";
 
 export const { common, ...accentColors } = muiColors;
-export const colors = values(accentColors);
+export const colors = sortBy(
+  values(accentColors),
+  (c) => convert.hex.hsl(c[100])[0]
+);
 
 export const tone = (
   mode: "light" | "dark" = "light",
@@ -11,6 +15,11 @@ export const tone = (
   return color[mode === "dark" ? "300" : "500"];
 };
 
-export const toneBy = (mode: "light" | "dark" = "light", index: number = 0) => {
-  return tone(mode, colors[(index * 2) % colors.length]);
+export const toneBy = (
+  mode: "light" | "dark" = "light",
+  index: number = 0,
+  skip = 2,
+  rotate = 7
+) => {
+  return tone(mode, colors[(index * skip + rotate) % colors.length]);
 };

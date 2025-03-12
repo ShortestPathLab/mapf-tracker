@@ -4,8 +4,8 @@ import {
   SendRounded,
 } from "@mui-symbols-material/w400";
 import { Box } from "@mui/material";
-import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
+import { Item } from "components/Item";
 import { cellRendererText, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { useSurface } from "components/surface/useSurface";
@@ -17,7 +17,6 @@ import {
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
-import { Item } from "components/Item";
 
 export default function index() {
   const { data: requests } = useRequestsQuery();
@@ -25,15 +24,12 @@ export default function index() {
     ReviewRequestDialog,
     {
       title: "Review submission key request",
-      slotProps: { modal: { width: 1200, variant: "default" } },
-      padded: true,
+      slotProps: { paper: { sx: { maxWidth: "min(max(70vw, 640px), 100%)" } } },
     }
   );
   const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
     ConfirmNotifyDialog,
     {
-      padded: true,
-      slotProps: { modal: { variant: "default" } },
       title: "Respond to request",
     }
   );
@@ -118,18 +114,17 @@ export default function index() {
       flat
       title="Submission key requests"
       path={[
-        { name: "Manage", url: "/manage" },
+        { name: "More", url: "/more" },
         { name: "Dashboard", url: "/dashboard" },
       ]}
     >
-      <FlatCard>
-        <DataGrid
-          clickable
-          onRowClick={({ row }) => showDetails({ data: row })}
-          columns={columns}
-          rows={requests}
-        />
-      </FlatCard>
+      <DataGrid
+        search
+        clickable
+        onRowClick={({ row }) => showDetails({ data: row })}
+        columns={columns}
+        rows={requests}
+      />
       {detailsDialog}
       {confirmationDialog}
     </Layout>

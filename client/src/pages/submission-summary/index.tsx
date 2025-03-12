@@ -1,9 +1,11 @@
 import { CheckRounded } from "@mui-symbols-material/w400";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
+import { Title } from "components/StickyTitle";
 import { ConfirmDialog } from "components/dialog/Modal";
-import { useSm } from "components/dialog/useSmallDisplay";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface/useSurface";
-import { useLocationState, useNavigate } from "hooks/useNavigation";
+import { useNavigate } from "hooks/useNavigation";
+import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
 import { sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
@@ -19,7 +21,6 @@ import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
-import { useStableLocationState } from "hooks/useStableLocationState";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
@@ -32,14 +33,14 @@ export default function SubmissionSummaryPage() {
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Finish submission",
-    slotProps: { modal: { variant: "default" } },
-    padded: true,
+    variant: "modal",
   });
   const navigate = useNavigate();
 
   const keyStatus = parseApiKeyStatus(apiKeyData);
 
   const sm = useSm();
+  const xs = useXs();
 
   const contentLeft = [
     <SubmissionRequestGlance key="glance" apiKey={apiKey} />,
@@ -108,7 +109,7 @@ export default function SubmissionSummaryPage() {
       extras={[]}
     >
       <Stack sx={{ gap: 2 }}>
-        <Typography variant="h6">Details</Typography>
+        <Title>Details</Title>
         {/* <DataGrid clickable columns={columns} rows={data} /> */}
         <SummaryTable apiKey={apiKey} />
       </Stack>
@@ -125,12 +126,12 @@ export default function SubmissionSummaryPage() {
       color="secondary"
       disableElevation
       size="large"
-      sx={{ alignSelf: sm ? "stretch" : "flex-end", borderRadius: 2 }}
+      sx={{ alignSelf: xs ? "stretch" : "flex-end", borderRadius: 2 }}
       onClick={() =>
         open({
           hintText,
           acceptLabel: "Submit now",
-          acceptProps: { color: "primary" },
+          acceptProps: { color: "secondary" },
           closeLabel: "Cancel",
           onAccept: () => {
             finalise();

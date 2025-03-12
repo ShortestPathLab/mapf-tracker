@@ -26,6 +26,8 @@ import { Request, useRequestsData } from "queries/useRequestQuery";
 import { object, string } from "yup";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
 import { SubmissionLocationState } from "./SubmissionLocationState";
+import { useXs } from "components/dialog/useSmallDisplay";
+import { FlatCard } from "components/FlatCard";
 
 export function AddKey() {
   const navigate = useNavigate();
@@ -88,6 +90,7 @@ export function AddKey() {
 }
 
 export default function TrackSubmission() {
+  const xs = useXs();
   const navigate = useNavigate();
 
   const [keys, { filter }] = useLocalStorageList<string>("submission-keys");
@@ -125,6 +128,7 @@ export default function TrackSubmission() {
     {
       field: "Icon",
       width: 48,
+      maxWidth: 48,
       renderCell: () => <IconCard icon={<ArrowUploadProgressRounded />} />,
       flex: 0,
       fold: true,
@@ -132,7 +136,8 @@ export default function TrackSubmission() {
     {
       field: "algorithmName",
       headerName: "Algorithm",
-      width: 260,
+      flex: 1,
+      maxWidth: 260,
       renderCell: ({ row }) => (
         <Item secondary={row.key?.slice?.(-8)} primary={row.algorithmName} />
       ),
@@ -140,28 +145,32 @@ export default function TrackSubmission() {
     {
       field: "status",
       headerName: "Status",
-      width: 220,
+      flex: 1,
+      maxWidth: 220,
       renderCell: ({ row }) =>
         cellRendererText({ formattedValue: <Status apiKey={row.key} /> }),
     },
     {
       field: "requesterName",
       headerName: "Requester",
-      width: 160,
+      flex: 1,
+      maxWidth: 160,
       fold: true,
       renderCell: cellRendererText,
     },
     {
       field: "requesterEmail",
       headerName: "Email",
-      width: 200,
+      flex: 1,
+      maxWidth: 240,
       fold: true,
       renderCell: cellRendererText,
     },
     {
       field: "requesterAffiliation",
       headerName: "Affiliation",
-      width: 180,
+      flex: 1,
+      maxWidth: 260,
       fold: true,
       renderCell: cellRendererText,
     },
@@ -207,16 +216,25 @@ export default function TrackSubmission() {
     <Layout
       flat
       title="Manage submissions and API keys"
-      path={[{ name: "Home", url: "/" }]}
+      path={
+        xs
+          ? [
+              { name: "Home", url: "/" },
+              { name: "More", url: "/more" },
+            ]
+          : [{ name: "Home", url: "/" }]
+      }
     >
       <Stack sx={{ gap: 2, mb: 2 }}>{header}</Stack>
       <Typography variant="h5">Previously used keys</Typography>
-      <DataGrid
-        clickable
-        columns={columns}
-        rows={rows}
-        onRowClick={({ row }) => navigateToDetails(row.key)}
-      />
+      <FlatCard>
+        <DataGrid
+          clickable
+          columns={columns}
+          rows={rows}
+          onRowClick={({ row }) => navigateToDetails(row.key)}
+        />
+      </FlatCard>
     </Layout>
   );
 }

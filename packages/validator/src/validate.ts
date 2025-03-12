@@ -1,26 +1,21 @@
-import {
-  CheckParameters,
-  CheckResult,
-  FinalCheckParameters,
-} from "./core/Check";
+import type { Dictionary } from "lodash";
+import { range, zip } from "lodash";
+import { checkEdgeCollision } from "./checks/checkEdgeCollision";
 import { checkImmediateCollision } from "./checks/checkImmediateCollision";
+import { CheckParams, CheckResult } from "./core/Check";
 import { Domain } from "./core/Domain";
 import { Point } from "./core/Point";
 import { Reader } from "./core/Reader";
 import { Seeker } from "./core/Seeker";
-import { DoneException } from "./exceptions/DoneException";
-import type { Dictionary } from "lodash";
-import { some, zip } from "lodash";
-import { checkEdgeCollision } from "./checks/checkEdgeCollision";
 import { decode } from "./encode";
+import { DoneException } from "./exceptions/DoneException";
 
 type ValidationParameters = {
   paths: string[];
   domain: Domain;
   sources: Point[];
   goals?: Point[];
-  onTimestep?: ((args: CheckParameters) => CheckResult)[];
-  onFinish?: ((args: FinalCheckParameters) => CheckResult)[];
+  checks?: ((args: CheckParams) => CheckResult)[];
   /**
    * @returns Stops validation if return value is true, otherwise continue validation
    */
@@ -70,6 +65,7 @@ export const defaultOffsetMap = {
   d: { x: 0, y: 1 },
   l: { x: -1, y: 0 },
   r: { x: 1, y: 0 },
+  w: { x: 0, y: 0 },
 };
 
 export const createActionMap = (
@@ -88,44 +84,104 @@ export const sumPositions = (as: Point[], bs: Point[]) =>
     y: (a?.y ?? 0) + (b?.y ?? 0),
   }));
 
+function sumPositionsImperative(
+  prev: Point[],
+  out: Point[],
+  time: number,
+  actions: string[],
+  offsetMap = defaultOffsetMap
+) {
+  for (let i = 0; i < prev.length; i++) {
+    const action = actions[i][time];
+    out[i].x = prev[i].x + (offsetMap[action]?.x ?? 0);
+    out[i].y = prev[i].y + (offsetMap[action]?.y ?? 0);
+  }
+}
+
+const swap = (grids: { prev: Point[]; next: Point[] }) => {
+  const tmp = grids.prev;
+  grids.prev = grids.next;
+  grids.next = tmp;
+};
+
 export function validate({
   paths,
   domain,
   sources,
   goals = [],
-  onTimestep = [checkImmediateCollision, checkEdgeCollision],
-  onFinish = [],
+  checks = [checkEdgeCollision, checkImmediateCollision],
   onError = () => false,
 }: ValidationParameters) {
-  const as = paths.map(processAgentSimple);
+  const eachAgent = (f: (i: number) => void) => {
+    for (let i = 0; i < sources.length; i++) {
+      f(i);
+    }
+  };
+  const allPaths = paths.map(decode);
+  const timespan = Math.max(...allPaths.map((b) => b.length));
+  const agents = {
+    prev: structuredClone(sources),
+    next: structuredClone(sources),
+  };
+  // Initialise grid
+  const grid = range(domain.height).map(() =>
+    range(domain.width).map(() => new Set<number>())
+  );
+  eachAgent((i) => {
+    grid[agents.next[i].y]?.[agents.next[i].x]?.add?.(i);
+  });
+  //
   let i = 0;
-  let prev = sources;
-  while (some(as, (c) => !c.done(i))) {
-    const actions = createActionMap(i, as);
-    const next = sumPositions(prev, createOffsetMap(actions));
-    const done = as.map((c) => c.done(i));
-    for (const check of onTimestep) {
+  while (i <= timespan) {
+    // console.log(i);
+    sumPositionsImperative(agents.prev, agents.next, i, allPaths);
+    for (const check of checks) {
       const result = check({
         timestep: i + 1,
-        prev,
-        next,
-        actions,
+        prev: agents.prev,
+        next: agents.next,
         domain,
         sources,
         goals,
-        done,
+        paths: allPaths,
+        grid,
+        stage: "pre",
       });
       // Stop validation if onError returns true.
       if (result.errors?.length && onError(result)) return false;
     }
-    prev = next;
+    eachAgent((a) => {
+      // Current position could be out of bounds
+      grid[agents.prev[a].y]?.[agents.prev[a].x]?.delete?.(a);
+      // Could have went out of bounds
+      grid[agents.next[a].y]?.[agents.next[a].x]?.add?.(a);
+    });
+    for (const check of checks) {
+      const result = check({
+        timestep: i + 1,
+        prev: agents.prev,
+        next: agents.next,
+        domain,
+        paths: allPaths,
+        sources,
+        goals,
+        grid,
+        stage: "post",
+      });
+      // Stop validation if onError returns true.
+      if (result.errors?.length && onError(result)) return false;
+    }
+
+    swap(agents);
     i++;
   }
-  for (const check of onFinish) {
+  for (const check of checks) {
     const result = check({
+      stage: "final",
       timestep: i,
-      current: prev,
+      current: agents.prev,
       domain,
+      paths: allPaths,
       sources,
       goals,
     });

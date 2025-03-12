@@ -2,7 +2,8 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "downlevelIteration": true
   },
   "exclude": ["node_modules"]
 }

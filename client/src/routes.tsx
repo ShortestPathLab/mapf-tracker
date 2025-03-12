@@ -1,5 +1,6 @@
+import { Footer } from "Footer";
 import { Route } from "components/Router";
-import { useMd, useXs } from "components/dialog/useSmallDisplay";
+import { useMd } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { defer } from "lodash";
 import { AlgorithmPage } from "pages/algorithms/algorithm";
@@ -42,23 +43,23 @@ export const routes: Route[] = [
         title="Home"
         description="The latest progress in multi-agent pathfinding"
         labels={["Browse", "Make a submission", "Docs"]}
-        render={({ children }) => (
+        render={() => (
           <>
             <Hero />
-            {children}
+            <Footer />
           </>
         )}
       />
     ),
   },
   {
-    path: "/manage",
+    path: "/more",
     content: <ManagePage />,
   },
   {
     path: "/submit/:section?",
     content: <MakeASubmissionPage />,
-    parent: "/manage",
+    parent: "/more",
   },
   {
     path: "/benchmarks",
@@ -87,7 +88,7 @@ export const routes: Route[] = [
     path: "/track",
     content: <TrackSubmission />,
 
-    parent: "/manage",
+    parent: "/more",
   },
   {
     path: "/submissionSummary",
@@ -97,12 +98,12 @@ export const routes: Route[] = [
   {
     path: "/dashboard/:section?",
     content: <AdminDashboard />,
-    parent: "/manage",
+    parent: "/more",
   },
   {
     path: "/docs/:article?",
     content: <DocsPage />,
-    parent: "/manage",
+    parent: "/more",
   },
   {
     path: "/dashboard-old",

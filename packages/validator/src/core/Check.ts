@@ -6,15 +6,15 @@ export type CheckResult = {
   errorAgents?: number[];
   errorTimesteps?: number[];
 };
-export type CheckParameters = {
+export type TimestepCheckParameters = {
   prev: Point[];
   next: Point[];
-  actions: string[];
   domain: Domain;
   sources: Point[];
   timestep: number;
   goals?: Point[];
-  done?: boolean[];
+  grid?: Set<number>[][];
+  paths?: string[];
 };
 
 export type FinalCheckParameters = {
@@ -23,4 +23,16 @@ export type FinalCheckParameters = {
   sources: Point[];
   timestep: number;
   goals?: Point[];
+  paths?: string[];
 };
+
+export type CheckParams =
+  | ({
+      stage: "pre";
+    } & TimestepCheckParameters)
+  | ({
+      stage: "post";
+    } & TimestepCheckParameters)
+  | ({
+      stage: "final";
+    } & FinalCheckParameters);

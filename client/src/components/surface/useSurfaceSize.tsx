@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { SurfaceSizeContext } from "./DrawerSurface";
-import { drawerTitleHeight } from "./DrawerTitle";
+import { SurfaceSizeContext } from "./SheetSurface";
+import { sheetTitleHeight } from "./SheetTitle";
 import { isNumber } from "lodash";
 
 export function useSurfaceSize() {
@@ -17,7 +17,7 @@ export function useSurfaceAvailableCssSize() {
         width: size.width,
         height: `calc(${
           isNumber(size.height) ? `${size.height}px` : size.height
-        } - ${drawerTitleHeight}px)`,
+        } - ${sheetTitleHeight}px)`,
       }
     : { width: "100%", height: "100%" };
 }

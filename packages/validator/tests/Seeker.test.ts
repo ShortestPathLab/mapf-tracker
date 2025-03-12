@@ -1,7 +1,7 @@
-import { suite, it, expect } from "vitest";
-import { DoneException, Reader, Seeker } from "index";
+import { describe, it, expect } from "bun:test";
+import { DoneException, Reader, Seeker } from "../index";
 
-suite("Seeker", () => {
+describe("Seeker", () => {
   it("should seek an element correctly", () => {
     // dlll
     const input = "d3l";

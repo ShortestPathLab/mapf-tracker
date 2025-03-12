@@ -1,4 +1,4 @@
-import { Box, Divider } from "@mui/material";
+import { Box, BoxProps, Divider } from "@mui/material";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { MutableRefObject, ReactNode, useRef, useState } from "react";
 import { useRafLoop } from "react-use";
@@ -17,7 +17,7 @@ export function useTop(ref: MutableRefObject<HTMLElement>) {
   return top;
 }
 
-export function TabBar({ children }: { children?: ReactNode }) {
+export function TabBar({ children, ...props }: BoxProps) {
   const xs = useXs();
   const sm = useSm();
   const ref = useRef<HTMLElement>(null);
@@ -26,6 +26,7 @@ export function TabBar({ children }: { children?: ReactNode }) {
   return (
     <Box
       ref={ref}
+      {...props}
       sx={{
         borderBottom: 1,
         borderColor: "background.paper",
@@ -37,6 +38,7 @@ export function TabBar({ children }: { children?: ReactNode }) {
         top: 0,
         zIndex: 10,
         bgcolor: top ? "background.paper" : "background.default",
+        ...props.sx,
       }}
     >
       {children}

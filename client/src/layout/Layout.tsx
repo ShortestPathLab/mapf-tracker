@@ -13,7 +13,7 @@ import { appbarHeight } from "components/appbar";
 import Appbar from "components/appbar/index";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useScrollState } from "components/dialog/useScrollState";
-import { useLg, useMd, useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useLg, useXs } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
 import { useHistory, useNavigate } from "hooks/useNavigation";
 import { last, merge } from "lodash";
@@ -157,7 +157,11 @@ export default function Layout({
         }}
       >
         {xs && <Box sx={{ height: appbarHeight(lg) }} />}
-        <Scroll y style={{ flex: 1 }} ref={setPanel}>
+        <Scroll
+          y
+          style={{ flex: 1, overscrollBehavior: "contain" }}
+          ref={setPanel}
+        >
           {!xs && <Crumbs path={path} current={title} />}
           {md ? (
             content

@@ -25,7 +25,7 @@ export function Sidebar(props: StackProps) {
       <Stack
         {...props}
         sx={{
-          bgcolor: alpha(theme.palette.background.paper, 0.5),
+          bgcolor: alpha(theme.palette.background.default, 0.5),
           ...props.sx,
         }}
       >

@@ -15,7 +15,7 @@ export function Tip() {
       sx={{
         borderRadius: 1,
         p: sm ? 2 : 4,
-        bgcolor: (t) => alpha(t.palette.primary.main, 0.05),
+        bgcolor: (t) => alpha(t.palette.background.default, 1),
         gap: sm ? 2 : 4,
       }}
     >

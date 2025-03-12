@@ -8,7 +8,7 @@ import { SubmissionKeyRequestFormDialog } from "pages/submissions/SubmissionKeyR
 import { handleRequestDetailUpdated } from "pages/submissions/handleRequestDetailUpdated";
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
-import { DATE_TIME_FORMAT } from "utils/format";
+import { DATE_FORMAT } from "utils/format";
 import { Status } from "./Status";
 
 export const SubmissionRequestGlance = ({
@@ -20,8 +20,6 @@ export const SubmissionRequestGlance = ({
   const { open: showRequestDetails, dialog: requestDetails } = useSurface(
     SubmissionKeyRequestFormDialog,
     {
-      slotProps: { modal: { width: 640, variant: "default" } },
-      padded: true,
       title: "Edit request details",
     }
   );
@@ -40,10 +38,7 @@ export const SubmissionRequestGlance = ({
               label: "Expiry",
               value:
                 (apiKeyData?.expirationDate &&
-                  format(
-                    parseISO(apiKeyData?.expirationDate),
-                    DATE_TIME_FORMAT
-                  )) ??
+                  format(parseISO(apiKeyData?.expirationDate), DATE_FORMAT)) ??
                 "-",
             },
             {

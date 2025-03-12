@@ -1,53 +1,13 @@
-import { DownloadRounded } from "@mui-symbols-material/w400";
-import { Box, Button, Fab, Grow, Stack, Typography } from "@mui/material";
-import { useBottomBar } from "App";
-import { useTimeout } from "react-use";
+import { Button, Stack, Typography } from "@mui/material";
+import { ActionSheetProps } from "./ActionSheet";
 import { Scroll } from "./dialog/Scrollbars";
-import { useSm, useXs } from "./dialog/useSmallDisplay";
-import { useSurface } from "./surface";
+import { useSm } from "./dialog/useSmallDisplay";
 
-export function DownloadOptions() {
-  return <>Test test</>;
-}
-
-export function DownloadBar() {
+export function DownloadBar({ options }: ActionSheetProps) {
   "use no memo";
-  const { dialog, open } = useSurface(DownloadOptions, {
-    title: "Download dataset",
-  });
-  const { enabled } = useBottomBar();
-  const xs = useXs();
+
   const sm = useSm();
-  const [enter] = useTimeout(300);
-  return xs ? (
-    <>
-      <Box
-        sx={{
-          position: "fixed",
-          bottom: 16,
-          right: 16,
-          zIndex: (t) => t.zIndex.fab,
-          transform: enabled ? "translateY(-80px)" : "translateY(0)",
-          transition: (t) => t.transitions.create(["transform"]),
-        }}
-      >
-        <Grow in={enter()}>
-          <Fab
-            onClick={() => open({})}
-            variant="extended"
-            color="secondary"
-            sx={{
-              px: 3,
-              borderRadius: 2,
-            }}
-          >
-            Download dataset
-          </Fab>
-        </Grow>
-      </Box>
-      {dialog}
-    </>
-  ) : (
+  return (
     <Stack
       sx={{
         gap: 2,
@@ -71,15 +31,17 @@ export function DownloadBar() {
           }}
           direction="row"
         >
-          <Button variant="contained" startIcon={<DownloadRounded />}>
-            All instances
-          </Button>
-          <Button variant="outlined" startIcon={<DownloadRounded />}>
-            Map
-          </Button>
-          <Button variant="outlined" startIcon={<DownloadRounded />}>
-            Results (CSV)
-          </Button>
+          {options?.map?.(({ label, icon, action, primary }, i) => (
+            <Button
+              key={i}
+              startIcon={icon}
+              variant={primary ? "contained" : "outlined"}
+              color="primary"
+              onClick={action}
+            >
+              {label}
+            </Button>
+          ))}
         </Stack>
       </Scroll>
     </Stack>

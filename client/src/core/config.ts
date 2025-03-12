@@ -6,6 +6,8 @@ export const url = "http://118.138.234.90:8888/api";
 
 export const appName = "MAPF Tracker";
 
+export const publisher = "ShortestPathLab";
+
 export const appIconUrl = "/favicon.png";
 
 export const APIConfig = {

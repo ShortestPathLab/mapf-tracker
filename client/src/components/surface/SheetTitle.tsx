@@ -4,9 +4,9 @@ import { useSm } from "components/dialog/useSmallDisplay";
 import { ReactNode } from "react";
 import { AppBarTitle as Title } from "./AppBarTitle";
 
-export const drawerTitleHeight = 56;
+export const sheetTitleHeight = 56;
 
-export function DrawerTitle({
+export function SheetTitle({
   children,
   onClose,
 }: {

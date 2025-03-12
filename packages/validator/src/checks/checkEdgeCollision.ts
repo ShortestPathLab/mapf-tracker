@@ -1,49 +1,46 @@
-import { CheckParameters, CheckResult } from "../core/Check";
-import { serialisePoint as $, serialisePoint } from "../core/Point";
-import { chain as _, find } from "lodash";
+import { isEqual } from "lodash";
+import { CheckParams, CheckResult } from "../core/Check";
+import { serialisePoint as $ } from "../core/Point";
 
-export function checkEdgeCollision({
-  actions,
-  next,
-  prev,
-  timestep,
-}: CheckParameters): CheckResult {
-  const hashes = _(prev)
-    .map((c, i) => ({ agent: i, point: c, action: actions[i] }))
-    .keyBy(({ point }) => $(point))
-    .value();
-  const collision = find(
-    next.map((c, i) => [c, i] as const),
-    ([nextPosition, agent]) => {
-      // Check if the tile was previously occupied
-      if (
-        // Tile was previously occupied
-        $(nextPosition) in hashes &&
-        // Tile wasn't itself
-        hashes[$(nextPosition)].agent !== agent
-      ) {
-        // If the tile was previously occupied,
-        // the agent must not have moved backwards into the same tile.
-        const previousOccupant = hashes[$(nextPosition)];
-        return $(next[previousOccupant.agent]) === $(prev[agent]);
-      } else {
-        return false;
-      }
+export function checkEdgeCollision(params: CheckParams): CheckResult {
+  if (params.stage !== "pre") return {};
+  const { grid, next, prev, timestep, paths } = params;
+  const collision = next.findIndex((nextPosition, agent) => {
+    const target = grid[nextPosition.y]?.[nextPosition.x];
+    const action = paths[agent][timestep - 1];
+    // Check if the tile was previously occupied
+    if (
+      // Tile moved
+      action &&
+      action !== "w" &&
+      target &&
+      // Tile was previously occupied
+      target.size
+    ) {
+      const [first] = target;
+      // If the tile was previously occupied,
+      // the agent must not have moved backwards into the same tile.
+      return isEqual(next[first], prev[agent]);
+    } else {
+      return false;
     }
-  );
+  });
 
-  if (collision) {
-    const [p, i] = collision;
-    const conflict = hashes[$(p)];
+  if (collision !== -1) {
+    const conflict = {
+      agentA: collision,
+      point: next[collision],
+      agentB: grid[next[collision].y]?.[next[collision].x],
+    };
     return {
       errorTimesteps: [timestep],
-      errorAgents: [i],
+      errorAgents: [conflict.agentA, ...conflict.agentB],
       errors: [
-        `agent-to-agent edge collision, agent ${i}, at timestep ${timestep}, from ${$(
-          prev[i]
-        )} to ${$(p)}, with agent ${conflict.agent}, from ${$(
-          conflict.point
-        )} to ${$(next[conflict.agent])}`,
+        `agent-to-agent edge collision, agent ${
+          conflict.agentA
+        }, at timestep ${timestep}, at ${$(conflict.point)}, with agent ${[
+          ...conflict.agentB,
+        ]}`,
       ],
     };
   } else {

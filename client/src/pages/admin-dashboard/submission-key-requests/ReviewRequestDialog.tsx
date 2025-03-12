@@ -1,4 +1,7 @@
-import { ExpandRounded, SendRounded } from "@mui-symbols-material/w400";
+import {
+  KeyboardArrowDownRounded,
+  SendRounded,
+} from "@mui-symbols-material/w400";
 import {
   Button,
   ButtonGroup,
@@ -12,12 +15,13 @@ import {
 } from "@mui/material";
 import Accordion from "components/Accordion";
 import { useSnackbar } from "components/Snackbar";
-import { Dialog } from "components/dialog";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { Surface, useSurface } from "components/surface";
 import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
-import { DialogContentProps, useDialog } from "hooks/useDialog";
+import { DialogContentProps } from "hooks/useDialog";
 import { Grid } from "layout";
 import { delay } from "lodash";
+import { bindTrigger } from "material-ui-popup-state";
 import { paper } from "theme";
 import {
   RequestWithReviewOutcome,
@@ -37,14 +41,15 @@ export function ReviewRequestDialog({
   const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
     ConfirmNotifyDialog,
     {
-      padded: true,
-      slotProps: { modal: { variant: "default" } },
       title: "Respond to request",
     }
   );
   const { mutateAsync: updateRequest } = useRequestsUpdateMutation();
   return (
-    <Grid sx={{ gap: sm ? 4 : 3 }} width={420}>
+    <Stack
+      direction={sm ? "column" : "row"}
+      sx={{ gap: sm ? 4 : 3, "> *": { flex: 1 } }}
+    >
       <Stack>
         <Accordion
           sx={{ p: sm ? 2 : 3, ...paper(0) }}
@@ -86,26 +91,22 @@ export function ReviewRequestDialog({
               >
                 Save changes
               </Button>
-              <Dialog
-                popover
+              <Surface
+                variant="sheet"
                 title="More save options"
-                trigger={(onClick) => (
-                  <Button {...{ onClick }} variant="contained" sx={{ px: 1 }}>
-                    <ExpandRounded />
+                trigger={(state) => (
+                  <Button
+                    {...bindTrigger(state)}
+                    variant="contained"
+                    sx={{ px: 1 }}
+                  >
+                    <KeyboardArrowDownRounded />
                   </Button>
                 )}
-                slotProps={{
-                  paper: {
-                    sx: { width: "max-content" },
-                  },
-                  popover: {
-                    anchorOrigin: { horizontal: "right", vertical: "bottom" },
-                    transformOrigin: { horizontal: "right", vertical: "top" },
-                  },
-                }}
               >
-                <List>
+                <List disablePadding>
                   <ListItemButton
+                    disableGutters
                     onClick={async () => {
                       await submitForm();
                       showConfirmation({
@@ -118,7 +119,7 @@ export function ReviewRequestDialog({
                       });
                     }}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon sx={{ color: "primary.main" }}>
                       <SendRounded />
                     </ListItemIcon>
                     <ListItemText
@@ -126,12 +127,12 @@ export function ReviewRequestDialog({
                     />
                   </ListItemButton>
                 </List>
-              </Dialog>
+              </Surface>
             </ButtonGroup>
           )}
         />
       </Stack>
       {confirmationDialog}
-    </Grid>
+    </Stack>
   );
 }

@@ -18,7 +18,9 @@ import { paper } from "theme";
 function FullScreenCard({ primary, label }: ChartCardProps) {
   const xs = useXs();
   return (
-    <Stack sx={{ height: `calc(100vh - ${xs ? 56 : 64}px)` }}>
+    <Stack
+      sx={{ height: `calc(100dvh - ${xs ? 56 + 16 * 2 : 64 + 24 * 2}px)` }}
+    >
       <Stack sx={{ pb: 4 }}>{label}</Stack>
       <Stack
         sx={{
@@ -47,14 +49,7 @@ function ChartCard({
   const finePointer = useMediaQuery("(pointer: fine)");
   const { dialog, open } = useSurface(FullScreenCard, {
     title: "Chart details",
-    slotProps: {
-      modal: {
-        variant: "default",
-        fullScreen: true,
-        scrollable: false,
-        width: "100vw",
-      },
-    },
+    variant: "fullscreen",
   });
   const cls = useCss({});
   return (
@@ -72,7 +67,7 @@ function ChartCard({
           {label}
           <Stack direction="row" sx={{ alignItems: "flex-start" }}>
             {extras}
-            <Tooltip title="Show details">
+            <Tooltip title="Enlarge">
               <IconButton
                 className={cls}
                 onClick={() => open({ label, extras, primary })}

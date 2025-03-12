@@ -36,7 +36,7 @@ export function useDataGridActions<T>({
   const shownItems = sm ? [] : items;
   const storedItems = sm ? [...items, ...menuItems] : menuItems;
   return {
-    flex: 1,
+    flex: 0.5,
     field: "Actions",
     headerName: "",
     align: "right",

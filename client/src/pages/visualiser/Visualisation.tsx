@@ -9,7 +9,6 @@ import {
 } from "@mui-symbols-material/w400";
 import {
   Box,
-  Button,
   Card,
   CircularProgress,
   Divider,
@@ -51,7 +50,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
@@ -69,10 +67,10 @@ import {
   Arrow,
   getAngle,
 } from "./draw";
-import { usePlayback } from "./usePlayback";
 import { proportionOf } from "./proportionOf";
-import { within } from "./within";
+import { usePlayback } from "./usePlayback";
 import { useThrottleState } from "./useThrottleState";
+import { within } from "./within";
 
 export function Visualisation({
   goals,
@@ -111,7 +109,6 @@ export function Visualisation({
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
   const sm = useSm();
-  const navigate = useNavigate();
 
   // ─────────────────────────────────────────────────────────────────────
   const { step, backwards, forwards, play, pause, paused, restart, seek } =
@@ -270,13 +267,6 @@ export function Visualisation({
         >
           <BlurOffRounded />
           <Typography>No solution available</Typography>
-          <Button
-            variant="contained"
-            sx={{ py: 1, px: 2, mt: 2 }}
-            onClick={() => navigate(-1)}
-          >
-            Go back
-          </Button>
         </Stack>
       ) : (
         <AutoSize>

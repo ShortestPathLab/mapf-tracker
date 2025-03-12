@@ -20,6 +20,7 @@ export default function index() {
         direction="row"
         sx={{
           height: "100%",
+          width: "100%",
         }}
       >
         <Enter axis="X" in distance={-8}>

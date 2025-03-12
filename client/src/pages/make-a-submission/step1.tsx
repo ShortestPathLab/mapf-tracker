@@ -3,17 +3,17 @@ import { Floating } from "components/Floating";
 import { Item } from "components/Item";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useXs } from "components/dialog/useSmallDisplay";
-import { SubmitContactEmailForm } from "forms/SubmitContactEmailForm";
 import { useSurface } from "components/surface/useSurface";
-import { useLocationState, useNavigate } from "hooks/useNavigation";
+import { SubmitContactEmailForm } from "forms/SubmitContactEmailForm";
+import { useNavigate } from "hooks/useNavigation";
+import { useStableLocationState } from "hooks/useStableLocationState";
 import { Layout } from "layout";
 import { filter, map } from "lodash";
 import pluralize from "pluralize";
 import { requestByEmailQueryFn } from "queries/useRequestQuery";
+import { useState } from "react";
 import { paper } from "theme";
 import { RenderSection } from "./Section";
-import { useState } from "react";
-import { useStableLocationState } from "hooks/useStableLocationState";
 
 export type ContactEmailState = {
   contactEmail: string;
@@ -24,11 +24,10 @@ export default function index() {
   const { contactEmail } = useStableLocationState<ContactEmailState>();
   const xs = useXs();
   const { open, dialog } = useSurface(ConfirmDialog, {
-    slotProps: { modal: { variant: "default" } },
+    variant: "modal",
     title: xs
       ? "Submission in review"
       : "You already have a submission in review",
-    padded: true,
   });
   const [checking, setChecking] = useState(false);
   return (

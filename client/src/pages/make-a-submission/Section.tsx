@@ -7,7 +7,7 @@ import {
   useForkRef,
 } from "@mui/material";
 import { appbarHeight } from "components/appbar";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useMd, useSm, useXs } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { bottomBarHeight } from "layout/navbarHeight";
 import { ReactNode, useRef } from "react";
@@ -112,13 +112,14 @@ export function Section({
 export function SectionContent({ children }: { children?: ReactNode }) {
   const xs = useXs();
   const sm = useSm();
+  const md = useMd();
   return (
     <Stack
       sx={{
         width: 960,
         maxWidth: "100%",
         mx: "auto",
-        py: xs ? 4 : 6,
+        py: xs ? 2 : md ? 0 : 6,
         minHeight: `calc(100vh - ${
           appbarHeight(sm) + 68 * 2 + bottomBarHeight(sm)
         }px)`,

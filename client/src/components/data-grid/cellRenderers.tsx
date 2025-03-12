@@ -3,6 +3,7 @@ import {
   LinearProgress,
   Stack,
   StackProps,
+  Theme,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -84,7 +85,12 @@ export const Bar = ({
   ...props
 }: {
   renderLabel?: (label: string, value: number) => ReactNode;
-  values?: { color: string; value: number; label: string; primary?: boolean }[];
+  values?: {
+    color: string | ((t: Theme) => string);
+    value: number;
+    label: string;
+    primary?: boolean;
+  }[];
   buffer?: boolean;
   label?: ReactNode;
 } & StackProps) => {

@@ -1,22 +1,17 @@
-import { DownloadRounded } from "@mui-symbols-material/w400";
 import { useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
-import { useSnackbarAction } from "components/Snackbar";
 import {
   cellRendererBar,
   cellRendererChip,
   cellRendererText,
-  useDataGridActions,
 } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { Benchmark } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { capitalize, startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
-import { downloadMap } from "pages/benchmarks-map-level/download";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
-import { downloadBenchmarks, downloadBenchmarksResultsCSV } from "./download";
 
 const parseSize = (s: string) => {
   const [a, b] = s.split("x");
@@ -27,37 +22,14 @@ export default function Table() {
   const { data, isLoading } = useBenchmarksData();
   const navigate = useNavigate();
   const theme = useTheme();
-  const notify = useSnackbarAction();
-
-  const actions = useDataGridActions<Benchmark>({
-    items: [],
-    menuItems: [
-      {
-        name: "Download all scenarios (ZIP)",
-        icon: <DownloadRounded />,
-        action: notify(downloadBenchmarks, { end: "File downloaded" }),
-      },
-      {
-        name: "Download map",
-        action: (r) =>
-          notify(downloadMap(r.map_name), { end: "Map downloaded" })(),
-      },
-      {
-        name: "Download results (CSV)",
-        action: notify(downloadBenchmarksResultsCSV, {
-          end: "CSV downloaded",
-        }),
-      },
-    ],
-  });
 
   const columns: GridColDef<Benchmark>[] = [
     {
       field: "map_name",
       headerName: "Map",
       sortable: true,
-      minWidth: 220,
-      flex: 1,
+      minWidth: 80,
+      flex: 2,
       renderCell: ({ value, row }) => (
         <Item
           icon={
@@ -70,6 +42,7 @@ export default function Table() {
           secondary={`${row.instances ?? "?"} instances`}
         />
       ),
+      maxWidth: 260,
     },
     {
       field: "map_size",
@@ -78,6 +51,8 @@ export default function Table() {
       sortComparator: (a, b) => parseSize(a) - parseSize(b),
       fold: true,
       renderCell: cellRendererText,
+      flex: 1,
+      maxWidth: 120,
     },
     {
       field: "map_type",
@@ -86,6 +61,8 @@ export default function Table() {
       valueFormatter: capitalize,
       fold: true,
       renderCell: cellRendererChip,
+      flex: 1,
+      maxWidth: 120,
     },
     {
       field: "solved_percentage",
@@ -96,7 +73,8 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 200,
+      flex: 2,
+      maxWidth: 200,
     },
     {
       field: "closed_percentage",
@@ -106,10 +84,10 @@ export default function Table() {
       align: "center",
       headerAlign: "center",
       renderCell: cellRendererBar,
+      flex: 2,
       fold: true,
-      width: 200,
+      maxWidth: 200,
     },
-    actions,
   ];
 
   return (

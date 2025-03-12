@@ -1,8 +1,8 @@
 import { APIConfig } from "core/config";
+import { InstanceCollection } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
 import { text } from "queries/query";
-import { Benchmark, InstanceCollection } from "core/types";
 
 export const downloadScenario =
   (map: string) => async (item?: InstanceCollection) => {
@@ -17,15 +17,16 @@ export const downloadScenario =
 export const downloadMap = (map: string) => async () =>
   download(await text(`./assets/maps/${map}.map`), `${map}.map`);
 
-export const downloadInstance = (map: string) => async (item?: Benchmark) => {
-  if (item) {
-    return download(
-      json2csv(
-        await fetch(
-          `${APIConfig.apiUrl}/instance/DownloadInstance/${item.id}`
-        ).then((r) => r.json())
-      ),
-      `${map}-${item.scen_type}-${item.type_id}.csv`
-    );
-  }
-};
+export const downloadInstance =
+  (map: string) => async (item?: InstanceCollection) => {
+    if (item) {
+      return download(
+        json2csv(
+          await fetch(
+            `${APIConfig.apiUrl}/instance/DownloadInstance/${item.id}`
+          ).then((r) => r.json())
+        ),
+        `${map}-${item.scen_type}-${item.type_id}.csv`
+      );
+    }
+  };

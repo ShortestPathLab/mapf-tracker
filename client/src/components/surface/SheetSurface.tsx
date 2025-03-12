@@ -14,7 +14,7 @@ import { ReactNode, createContext } from "react";
 import { useMeasure } from "react-use";
 import { SlotProps } from "./SlotProps";
 import { stopPropagation } from "./stopPropagation";
-import { useDrawerHandle } from "./useDrawerHandle";
+import { useSheetHandle } from "./useSheetHandle";
 
 import { forwardRef } from "react";
 
@@ -55,27 +55,27 @@ export const SurfaceSizeContext = createContext<{
   height: number | string;
 } | null>(null);
 
-export function DrawerSurface({
+export function SheetSurface({
   state,
   slotProps,
   children,
 }: {
   state: State;
   children: ReactNode;
-  slotProps?: Pick<SlotProps, "drawer" | "paper" | "scroll">;
+  slotProps?: Pick<SlotProps, "sheet" | "paper" | "scroll">;
 }) {
   const maxDepth = state.isOpen ? 1 : 0;
   const depth = state.isOpen ? 1 : 0;
 
   // ─── Measurements ────────────────────────────────────────────────────
 
-  const gap = slotProps?.drawer?.gap ?? depth * 16 + 16;
+  const gap = slotProps?.sheet?.gap ?? depth * 16 + 16;
   const ratio = (maxDepth - depth) / maxDepth;
 
   // ─────────────────────────────────────────────────────────────────────
 
   const theme = useTheme();
-  const { setHandle, setPaper, setScroll } = useDrawerHandle(state.close);
+  const { setHandle, setPaper, setScroll } = useSheetHandle(state.close);
   const [ref, { width }] = useMeasure();
   const maxHeight = `calc(100dvh - ${gap + 32}px)`;
 
@@ -119,7 +119,7 @@ export function DrawerSurface({
               maxWidth: "min(640px, 100%)",
               mx: "auto",
               "--Paper-overlay": "none !important",
-              bgcolor: "background.default",
+              bgcolor: "background.paper",
               backgroundImage: "none",
               borderTopLeftRadius: (t) => t.shape.borderRadius * 3.5,
               borderTopRightRadius: (t) => t.shape.borderRadius * 3.5,
@@ -130,7 +130,7 @@ export function DrawerSurface({
           } as PaperProps,
         },
         { PaperProps: slotProps?.paper },
-        slotProps?.drawer
+        slotProps?.sheet
       )}
     >
       <Handle ref={setHandle} />

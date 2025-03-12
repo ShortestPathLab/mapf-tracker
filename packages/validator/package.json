@@ -1,25 +1,25 @@
 {
   "name": "validator",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "test": "bun test",
-    "build": "bun build index.ts --outdir lib"
-  },
   "author": "",
-  "license": "ISC",
+  "main": "index.ts",
   "dependencies": {
     "@types/lodash": "^4.17.12",
     "linked-list": "^3.1.0",
     "lodash": "^4.17.21",
     "typescript": "5.4.5"
   },
-  "type": "module",
   "exports": {
     ".": {
       "types": "./index.ts",
       "import": "./index.ts"
     }
-  }
+  },
+  "description": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "bun test",
+    "build": "bun build index.ts --outdir lib"
+  },
+  "type": "module"
 }

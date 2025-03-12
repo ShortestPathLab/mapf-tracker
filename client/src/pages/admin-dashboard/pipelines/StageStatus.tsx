@@ -14,7 +14,7 @@ import {
 import { format } from "date-fns";
 import { capitalize, find, startCase } from "lodash";
 import { usePipelineStatus } from "queries/usePipelineQuery";
-import { DATE_TIME_FORMAT } from "utils/format";
+import { DATE_FORMAT } from "utils/format";
 import { Counter } from "../../../components/Counter";
 
 const sentenceCase = (id: string) => capitalize(startCase(id));
@@ -54,7 +54,7 @@ export function StageStatus({
                 <Counter start={timestamp} />
               </>
             ) : (
-              `Last run: ${format(timestamp, DATE_TIME_FORMAT)}`
+              `Last run: ${format(timestamp, DATE_FORMAT)}`
             )
           ) : (
             "Never run"

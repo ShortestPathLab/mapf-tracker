@@ -89,7 +89,7 @@
   }
 }
 
-span.MuiTabs-indicator {
+.MuiTabs-root:not(.MuiTabs-vertical) span.MuiTabs-indicator {
   height: 3px;
   border-radius: 3px 3px 0 0;
   width: 100%;

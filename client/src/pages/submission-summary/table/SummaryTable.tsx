@@ -51,6 +51,8 @@ import { ScenarioLabel } from "./ScenarioLabel";
 import { SubmissionInstanceContext } from "./SubmissionInstanceContext";
 import { SubmissionInstanceLabel } from "./SubmissionInstanceLabel";
 import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
+import { Scroll } from "components/dialog/Scrollbars";
+import { getOutcomeDisplay } from "./getOutcomeDisplay";
 
 function getSubmissionInfoText(
   submission: OngoingSubmission,
@@ -114,7 +116,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   const theme = useTheme();
   const { dialog, open } = useSurface(DetailsDialog, {
     title: "Submission details",
-    padded: true,
+    slotProps: { paper: { sx: { maxWidth: "min(max(50vw, 720px), 100%)" } } },
   });
   const { data, isLoading } = useOngoingSubmissionSummaryQuery(apiKey);
   const { mutateAsync: deleteByScenarioIndex } =
@@ -208,14 +210,21 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
       renderCell: ({ row }) =>
         disambiguate(row, {
           map: (row) => <Arrow open={expanded[row.id]} />,
-          scenario: (row) => <Arrow open={expanded[row.id]} sx={{ pl: 2 }} />,
+          scenario: (row) => (
+            <Arrow
+              open={expanded[row.id]}
+              sx={{
+                translate: (t) => `${t.spacing(2)} 0`,
+              }}
+            />
+          ),
         }),
       flex: 0,
     },
     {
       field: "name",
       headerName: "Submission",
-      minWidth: 220,
+      maxWidth: 320,
       flex: 1,
       renderCell: ({ row }) =>
         disambiguate(row, {
@@ -288,32 +297,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                     }
                     buffer
                     values={[
-                      {
-                        valid: {
-                          color: "success.main",
-                          value: 1,
-                          label: "Valid",
-                        },
-                        invalid: {
-                          color: "error.main",
-                          value: 1,
-                          label: "Invalid",
-                        },
-                        queued: {
-                          color: alpha(theme.palette.primary.main, 0.4),
-                          value: 1,
-                          label: "Running",
-                        },
-                        outdated: {
-                          color: "action.disabled",
-                          value: 1,
-                          label: "Unused - duplicate",
-                        },
-                      }[submission?.validation?.outcome] ?? {
-                        color: "success.main",
-                        value: 0,
-                        label: "Pending",
-                      },
+                      getOutcomeDisplay(submission?.validation?.outcome),
                     ]}
                   />
                 )
@@ -322,7 +306,8 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           ),
         }),
       fold: true,
-      width: 300,
+      flex: 1,
+      maxWidth: 360,
     },
     {
       field: "info",
@@ -357,7 +342,8 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           ),
         }),
       fold: true,
-      width: 380,
+      flex: 1,
+      maxWidth: 380,
     },
     actions,
   ];
@@ -365,92 +351,105 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   return (
     <>
       <Stack
-        sx={{ gap: 1, alignItems: "center", flexWrap: "wrap" }}
+        sx={{ gap: 2, alignItems: "center", flexWrap: "wrap" }}
         direction="row"
       >
-        {[
-          { label: "Valid", key: "valid" },
-          { label: "Invalid", key: "invalid" },
-          { label: "Duplicate", key: "outdated" },
-          { label: "All", key: "total" },
-        ].map(({ label, key }) => {
-          const selected = key === slice;
-          return (
-            <Chip
-              key={key}
-              sx={{
-                pl: 0.25,
-                border: selected
-                  ? (t) => `1px ${alpha(t.palette.primary.main, 0.2)}`
-                  : (t) => `1px solid ${t.palette.divider}`,
-                bgcolor: selected
-                  ? (t) => alpha(t.palette.primary.main, 0.2)
-                  : undefined,
-              }}
-              icon={
-                <Collapse in={selected} orientation="horizontal">
-                  <CheckRounded
-                    fontSize="small"
-                    color={selected ? "primary" : undefined}
-                  />
-                </Collapse>
-              }
-              label={label}
-              variant="outlined"
-              onClick={() => setSlice(key as keyof SummarySlice)}
-            />
-          );
-        })}
+        <Scroll x style={{ width: "max-content" }}>
+          <Stack
+            sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }}
+            direction="row"
+          >
+            {[
+              { label: "Valid", key: "valid" },
+              { label: "Invalid", key: "invalid" },
+              { label: "Duplicate", key: "outdated" },
+              { label: "All", key: "total" },
+            ].map(({ label, key }) => {
+              const selected = key === slice;
+              return (
+                <Chip
+                  key={key}
+                  sx={{
+                    pl: 0.25,
+                    border: selected
+                      ? (t) => `1px ${alpha(t.palette.primary.main, 0.2)}`
+                      : (t) => `1px solid ${t.palette.divider}`,
+                    bgcolor: selected
+                      ? (t) => alpha(t.palette.primary.main, 0.2)
+                      : undefined,
+                  }}
+                  icon={
+                    <Collapse in={selected} orientation="horizontal">
+                      <CheckRounded
+                        fontSize="small"
+                        color={selected ? "primary" : undefined}
+                      />
+                    </Collapse>
+                  }
+                  label={label}
+                  variant="outlined"
+                  onClick={() => setSlice(key as keyof SummarySlice)}
+                />
+              );
+            })}
+          </Stack>
+        </Scroll>
         <Box sx={{ flex: 1 }} />
-        <Button
-          color="inherit"
-          disabled
-          startIcon={<PlayArrowRounded />}
-          onClick={() => deleteSubmissions(deleteAll)}
-        >
-          Run validation
-        </Button>
-        <Button
-          color="inherit"
-          disabled
-          startIcon={<StopRounded />}
-          onClick={() => deleteSubmissions(deleteAll)}
-        >
-          Pause validation
-        </Button>
-        <Divider orientation="vertical" flexItem />
-        <Dialog
-          title="Delete all submissions"
-          slotProps={{ modal: { variant: "default" } }}
-          padded
-          trigger={(onClick) => (
+        <Scroll x style={{ width: "max-content" }}>
+          <Stack
+            sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }}
+            direction="row"
+          >
             <Button
-              disabled={!sumBy(data?.maps, "count.total")}
-              color="error"
-              startIcon={<DeleteRounded />}
-              onClick={onClick}
+              color="inherit"
+              disabled
+              startIcon={<PlayArrowRounded />}
+              onClick={() => deleteSubmissions(deleteAll)}
             >
-              Delete all
+              Run validation
             </Button>
-          )}
-        >
-          {({ close }) => (
-            <ConfirmDialog
-              hintText="Are you sure you want to delete all submissions? This action cannot be undone."
-              acceptLabel="Delete all"
-              closeLabel="Cancel"
-              onClose={close}
-              onAccept={() => {
-                deleteSubmissions(deleteAll);
-                close();
-              }}
-            />
-          )}
-        </Dialog>
+            <Button
+              color="inherit"
+              disabled
+              startIcon={<StopRounded />}
+              onClick={() => deleteSubmissions(deleteAll)}
+            >
+              Pause validation
+            </Button>
+            <Divider orientation="vertical" flexItem />
+            <Dialog
+              title="Delete all submissions"
+              slotProps={{ modal: { variant: "default" } }}
+              padded
+              trigger={(onClick) => (
+                <Button
+                  disabled={!sumBy(data?.maps, "count.total")}
+                  color="error"
+                  startIcon={<DeleteRounded />}
+                  onClick={onClick}
+                >
+                  Delete all
+                </Button>
+              )}
+            >
+              {({ close }) => (
+                <ConfirmDialog
+                  hintText="Are you sure you want to delete all submissions? This action cannot be undone."
+                  acceptLabel="Delete all"
+                  closeLabel="Cancel"
+                  onClose={close}
+                  onAccept={() => {
+                    deleteSubmissions(deleteAll);
+                    close();
+                  }}
+                />
+              )}
+            </Dialog>
+          </Stack>
+        </Scroll>
       </Stack>
       <TreeDataGrid
         sx={{ mx: sm ? -2 : 0 }}
-        initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
         getChildren={(row) =>
           disambiguate(row, {
             map: (row) => arrayFallback(row.scenarios, placeholder(row.id)),

@@ -1,19 +1,30 @@
+import {
+  DownloadRounded,
+  MapRounded,
+  TableRounded,
+} from "@mui-symbols-material/w400";
 import { Link, Stack, useTheme } from "@mui/material";
 import { DownloadBar } from "components/DownloadBar";
 import { PreviewCard } from "components/PreviewCard";
-import { Analysis } from "components/analysis/Analysis";
-import { useLocationState } from "hooks/useNavigation";
+import { useSurface } from "components/surface";
+import { useStableLocationState } from "hooks/useStableLocationState";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { startCase } from "lodash";
-import { downloadBenchmarks } from "pages/benchmarks-root-level/download";
+import {
+  downloadBenchmarks,
+  downloadBenchmarksResultsCSV,
+  downloadMap,
+} from "pages/benchmarks-root-level/download";
 import { useMapData } from "queries/useBenchmarksQuery";
+import { DownloadOptions } from "./DownloadOptions";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import Table from "./Table";
-import { analysisTemplate } from "./analysisTemplate";
-import { useStableLocationState } from "hooks/useStableLocationState";
 
 export default function Page() {
+  const { open, dialog } = useSurface(DownloadOptions, {
+    title: "Download options",
+  });
   const { mapId } = useStableLocationState<MapLevelLocationState>();
   const { data: mapData } = useMapData(mapId);
   const theme = useTheme();
@@ -56,7 +67,31 @@ export default function Page() {
       ]}
     >
       <Stack sx={{ gap: 4 }}>
-        <DownloadBar />
+        {!!mapData && (
+          <DownloadBar
+            options={[
+              {
+                label: "Scenarios (.zip)",
+                icon: <DownloadRounded />,
+                primary: true,
+                action: () => downloadBenchmarks(mapData),
+                // open({
+                //   initialMaps: [mapData?.map_name],
+                // }),
+              },
+              {
+                label: "Map (.map)",
+                icon: <MapRounded />,
+                action: () => downloadMap(mapData),
+              },
+              {
+                label: "Results (.csv)",
+                icon: <TableRounded />,
+                action: () => downloadBenchmarksResultsCSV(mapData),
+              },
+            ]}
+          />
+        )}
         <DataInspectorLayout
           dataTabName="Browse scenarios"
           analysisTabName="Trends"
@@ -64,6 +99,7 @@ export default function Page() {
           // analysis={<Analysis template={analysisTemplate(mapId)} />}
         />
       </Stack>
+      {dialog}
     </GalleryLayout>
   );
 }

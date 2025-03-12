@@ -19,7 +19,7 @@ export default function index() {
       flat
       title="Pipelines"
       path={[
-        { name: "Manage", url: "/manage" },
+        { name: "More", url: "/more" },
         { name: "Dashboard", url: "/dashboard" },
       ]}
       render={RenderFixed}

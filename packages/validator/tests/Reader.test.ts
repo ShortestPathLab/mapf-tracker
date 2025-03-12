@@ -1,7 +1,7 @@
-import { suite, it, expect } from "vitest";
-import { DoneException, Reader } from "index";
+import { describe, it, expect } from "bun:test";
+import { DoneException, Reader } from "../index";
 
-suite("Reader", () => {
+describe("Reader", () => {
   it("should read a chunk correctly", () => {
     const input = "d3l";
     const reader = new Reader(input);

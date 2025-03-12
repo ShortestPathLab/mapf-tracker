@@ -1,6 +1,5 @@
 import {
   chain,
-  each,
   isInteger,
   isNumber,
   join,
@@ -9,6 +8,7 @@ import {
   min,
   now,
   once,
+  sum,
 } from "lodash";
 import { context } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
@@ -17,9 +17,8 @@ import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
 import { getMap, getScenario } from "resources";
 import {
-  CheckParameters,
+  CheckParams,
   CheckResult,
-  FinalCheckParameters,
   Point,
   checkDomainCollision,
   checkDomainOutOfBounds,
@@ -63,22 +62,19 @@ type OngoingSubmissionDocument = Document<
   OngoingSubmission;
 
 function createSolutionCostChecker(expected: number = 0) {
-  let actual: { current: number } = { current: 0 };
+  const actual = { value: 0 };
   return [
-    ({ done }: CheckParameters): CheckResult => {
-      each(done, (c) => {
-        actual.current += +!c;
-      });
-      return {};
-    },
-    ({}: FinalCheckParameters): CheckResult => {
-      if (actual.current !== expected) {
+    (params: CheckParams): CheckResult => {
+      if (params.stage !== "final") return {};
+      const { paths } = params;
+      const cost = sum(paths?.map?.((path) => path.length));
+      actual.value = cost;
+      if (expected && cost !== expected) {
         return {
-          errors: [
-            `agent cost incorrect, expected ${actual.current}, got ${expected}`,
-          ],
+          errors: [`agent cost incorrect, expected ${cost}, got ${expected}`],
         };
       }
+      return {};
     },
     actual,
   ] as const;
@@ -124,7 +120,6 @@ async function saveResults(
       ...meta,
     } satisfies OngoingSubmission[typeof validationResultsKey])
     .save();
-  log.info("Results saved");
 }
 
 async function validateGroup({
@@ -158,26 +153,26 @@ async function validateGroup({
     [];
   const errorAgents: number[][] = [];
 
-  const [updateSolutionCost, , realCost] = createSolutionCostChecker();
+  const [checkSolutionCost, realCost] = createSolutionCostChecker();
   const timeStart = now();
   validate({
     domain: { cells, width, height },
     paths: submission.solutions.map((s) => s || "w"),
     sources: sources.slice(0, count),
-    onTimestep: [
+    checks: [
       checkImmediateCollision,
       checkDomainOutOfBounds,
       checkDomainCollision,
       checkEdgeCollision,
-      updateSolutionCost,
+      checkSolutionCost,
+      checkGoalReached,
     ],
-    onFinish: [checkGoalReached],
     goals: goals.slice(0, count),
     onError: (c) => {
       errors.push({
         label: join(c.errors, "\n"),
-        timesteps: c.errorTimesteps,
-        agents: c.errorAgents,
+        timesteps: c.errorTimesteps ?? [],
+        agents: c.errorAgents ?? [],
       });
       return true;
     },
@@ -187,7 +182,7 @@ async function validateGroup({
 
   // Update solution cost based on validation results
   // TODO: Refactor for immutability
-  await setSolutionCost(submission, realCost.current, errors);
+  await setSolutionCost(submission, realCost.value, errors);
 
   logOutcome(errors, errorAgents, mode);
 
@@ -219,7 +214,7 @@ async function setSolutionCost(
   // At this point the submission's cost is correct
   const lowerBound = isNumber(submission.lowerBound)
     ? min([submission.lowerBound, realCost])
-    : realCost;
+    : 0;
   // Check if lower bound is correct
   // If incorrect, correct it with real cost
   if (lowerBound !== submission.lowerBound) {
@@ -283,6 +278,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
 
     // Can error if submission doesn't exist, this is allowed.
     const submission = await OngoingSubmission.findById(submissionId);
+    if (!submission) throw new Error("Error: submission not found");
 
     if (submission.options?.skipValidation) return await skip(submission);
 

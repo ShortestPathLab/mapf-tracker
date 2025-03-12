@@ -1,13 +1,13 @@
 import { Box, Skeleton, Stack } from "@mui/material";
 import { Item } from "components/Item";
+import { PreviewCard } from "components/PreviewCard";
 import Enter from "components/transitions/Enter";
-import { format, parseISO } from "date-fns";
 import pluralize from "pluralize";
+import { DATE_TIME_FORMAT, formatDate } from "utils/format";
 import {
   SubmissionInstanceContext,
   SubmissionInstanceProps,
 } from "./SubmissionInstanceContext";
-import { PreviewCard } from "components/PreviewCard";
 
 export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
   return (
@@ -43,7 +43,7 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
               }
               secondary={
                 !isSubmissionLoading && submission?.createdAt ? (
-                  format(parseISO(submission?.createdAt), "MMM dd HH:mm aaa")
+                  formatDate(submission?.createdAt, DATE_TIME_FORMAT)
                 ) : (
                   <Skeleton sx={{ width: 80 }} />
                 )

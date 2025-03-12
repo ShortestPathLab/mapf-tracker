@@ -1,3 +1,4 @@
+import { ConversionPathRounded } from "@mui-symbols-material/w400";
 import {
   Timeline,
   TimelineConnector,
@@ -16,6 +17,8 @@ import {
 } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { Dot } from "components/Dot";
+import { DownloadBar } from "components/DownloadBar";
+import { useSnackbarAction } from "components/Snackbar";
 import Grid from "layout/Grid";
 import { capitalize, head } from "lodash";
 import pluralize from "pluralize";
@@ -23,8 +26,10 @@ import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import { formatDate } from "utils/format";
+import { downloadRow } from "./download";
 
 export default function Details({ id }: { id?: string }) {
+  const notify = useSnackbarAction();
   const { data: history } = useAlgorithmForInstanceData(id);
   const { data: instance } = useInstanceData(id);
   const { data: scenario } = useScenarioDetailsData(instance?.scen_id);
@@ -65,6 +70,18 @@ export default function Details({ id }: { id?: string }) {
                 )}
               </>
             ),
+          },
+        ]}
+      />
+      <DownloadBar
+        options={[
+          {
+            label: "Download solution (.csv)",
+            primary: true,
+            icon: <ConversionPathRounded />,
+            action: notify(() => downloadRow(instance), {
+              end: "File downloaded",
+            }),
           },
         ]}
       />

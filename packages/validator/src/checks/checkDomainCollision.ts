@@ -1,24 +1,18 @@
-import { CheckParameters, CheckResult } from "../core/Check";
-import { find } from "lodash";
+import { CheckParams, CheckResult } from "../core/Check";
 import { serialisePoint as $ } from "../core/Point";
 
-export function checkDomainCollision({
-  next,
-  domain,
-  timestep,
-}: CheckParameters): CheckResult {
-  const point = find(
-    next.map((c, i) => [c, i] as const),
-    ([{ x, y }]) => domain.cells[y][x]
-  );
-  if (point) {
-    const [p, i] = point;
+export function checkDomainCollision(params: CheckParams): CheckResult {
+  if (params.stage !== "post") return {};
+
+  const { prev, domain, timestep } = params;
+  const agent = prev.findIndex(({ x, y }) => domain.cells[y][x]);
+  if (agent !== -1) {
     return {
       errorTimesteps: [timestep],
-      errorAgents: [i],
+      errorAgents: [agent],
       errors: [
-        `agent ${i} collision with environment, at timestep ${timestep}, ${$(
-          p
+        `agent ${agent} collision with environment, at timestep ${timestep}, ${$(
+          prev[agent]
         )}`,
       ],
     };

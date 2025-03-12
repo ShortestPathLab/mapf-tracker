@@ -41,7 +41,6 @@ export function Table({ algorithm }: { algorithm?: string }) {
   const { data, isLoading } = useAlgorithmSummaryQuery(algorithm);
 
   const { dialog, open } = useSurface(InstanceDetails, {
-    padded: true,
     title: "Submission instance details",
   });
 
@@ -53,7 +52,14 @@ export function Table({ algorithm }: { algorithm?: string }) {
       renderCell: ({ row }) =>
         disambiguate(row, {
           map: (row) => <Arrow open={expanded[row.id]} />,
-          scenario: (row) => <Arrow sx={{ ml: 2 }} open={expanded[row.id]} />,
+          scenario: (row) => (
+            <Arrow
+              open={expanded[row.id]}
+              sx={{
+                translate: (t) => `${t.spacing(2)} 0`,
+              }}
+            />
+          ),
         }),
       flex: 0,
     },
@@ -148,7 +154,6 @@ export function Table({ algorithm }: { algorithm?: string }) {
   return (
     <>
       <TreeDataGrid
-        initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         isLoading={isLoading}
         clickable
         expanded={expanded}

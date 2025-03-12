@@ -7,7 +7,7 @@ export default function index() {
       flat
       title="Statistics"
       path={[
-        { name: "Manage", url: "/manage" },
+        { name: "More", url: "/more" },
         { name: "Dashboard", url: "/dashboard" },
       ]}
     >

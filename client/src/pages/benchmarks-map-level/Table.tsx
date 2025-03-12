@@ -1,71 +1,24 @@
-import { DownloadRounded, ShowChartRounded } from "@mui-symbols-material/w400";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
-import { useSnackbarAction } from "components/Snackbar";
-import { AnalysisButton } from "components/analysis/Analysis";
-import { cellRendererBar, useDataGridActions } from "components/data-grid";
+import { cellRendererBar, cellRendererChip } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { InstanceCollection } from "core/types";
-import { useLocationState, useNavigate } from "hooks/useNavigation";
+import { useNavigate } from "hooks/useNavigation";
+import { useStableLocationState } from "hooks/useStableLocationState";
 import { startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
-import { analysisTemplate } from "pages/benchmarks-scenario-level/analysisTemplate";
-import {
-  useInstanceScenarioData,
-  useMapData,
-} from "queries/useBenchmarksQuery";
-import { cloneElement } from "react";
-import { downloadInstance, downloadMap, downloadScenario } from "./download";
-import { useStableLocationState } from "hooks/useStableLocationState";
+import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
 
 export default function Table() {
   const state = useStableLocationState<MapLevelLocationState>();
   const { mapId } = state;
-  const { data: mapData } = useMapData(mapId);
   const { data, isLoading } = useInstanceScenarioData(mapId);
   const navigate = useNavigate();
-  const notify = useSnackbarAction();
-
-  const actions = useDataGridActions<InstanceCollection>({
-    items: [
-      {
-        name: "Trends",
-        icon: <ShowChartRounded />,
-        render: (row, trigger) => (
-          <AnalysisButton
-            button={(onClick) => cloneElement(trigger, { onClick })}
-            // template={analysisTemplate(row.id, mapId)}
-          />
-        ),
-      },
-    ],
-    menuItems: [
-      {
-        name: "Download scenario",
-        icon: <DownloadRounded />,
-        action: notify(downloadScenario(mapData?.map_name), {
-          end: "Scenario downloaded",
-        }),
-      },
-      {
-        name: "Download map",
-        action: notify(downloadMap(mapData?.map_name), {
-          end: "Map downloaded",
-        }),
-      },
-      {
-        name: "Download results (CSV)",
-        action: notify(downloadInstance(mapData?.map_name), {
-          end: "CSV downloaded",
-        }),
-      },
-    ],
-  });
 
   const columns: GridColDef<InstanceCollection>[] = [
     {
-      field: "scen_type",
+      field: "type_id",
       headerName: "Scenario",
       sortComparator: (a, b, paramA, paramB) => {
         return paramA.api.getRow(paramA.id).scen_type ===
@@ -75,7 +28,8 @@ export default function Table() {
           : a.localeCompare(b);
       },
       sortable: true,
-      width: 220,
+      maxWidth: 260,
+      flex: 2,
       valueGetter: (_, row) => `${startCase(row.scen_type)} ${row.type_id}`,
       renderCell: ({ value, row }) => (
         <Item
@@ -86,6 +40,16 @@ export default function Table() {
       ),
     },
     {
+      field: "scen_type",
+      headerName: "Type",
+      sortable: true,
+      renderCell: cellRendererChip,
+      valueFormatter: startCase,
+      fold: true,
+      maxWidth: 120,
+      flex: 1,
+    },
+    {
       field: "solved_percentage",
       headerName: "Instances solved",
       sortable: true,
@@ -94,7 +58,8 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 200,
+      maxWidth: 200,
+      flex: 2,
     },
     {
       field: "closed_percentage",
@@ -105,9 +70,9 @@ export default function Table() {
       headerAlign: "center",
       renderCell: cellRendererBar,
       fold: true,
-      width: 200,
+      maxWidth: 200,
+      flex: 2,
     },
-    actions,
   ];
 
   return (

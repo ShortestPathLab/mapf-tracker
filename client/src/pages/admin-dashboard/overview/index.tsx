@@ -34,7 +34,7 @@ export default function index() {
       flat
       title="Dashboard"
       description="Review submission requests, issue submission keys, and run jobs"
-      path={[{ name: "Manage", url: "/manage" }]}
+      path={[{ name: "More", url: "/more" }]}
     >
       <Stack gap={6}>
         <Stack sx={{ gap: 3 }}>

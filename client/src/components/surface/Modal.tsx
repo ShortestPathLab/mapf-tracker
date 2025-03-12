@@ -1,8 +1,8 @@
 import { Box, Dialog, useTheme } from "@mui/material";
-import { useSm } from "components/dialog/useSmallDisplay";
-import { ComponentProps, ReactNode } from "react";
 import { Scroll } from "components/dialog/Scrollbars";
-import Swipe from "./Swipe";
+import { useSm } from "components/dialog/useSmallDisplay";
+import Show from "components/transitions/Show";
+import { ComponentProps, ReactNode } from "react";
 import { useCache } from "./useCache";
 import { useModalOverflow } from "./useModalOverflow";
 
@@ -29,9 +29,6 @@ export function Modal({
 
   const content = useCache<ReactNode | undefined>(children);
 
-  const depth = 1;
-  const mt = 95 - 5 * depth;
-
   const {
     overflow,
     contentHeight,
@@ -45,9 +42,9 @@ export function Modal({
     <Dialog
       fullScreen={sm}
       {...props}
-      open={sm ? props.open && !!depth : props.open}
+      open={props.open}
       keepMounted={false}
-      TransitionComponent={sm ? Swipe : undefined}
+      TransitionComponent={Show}
       TransitionProps={{
         unmountOnExit: true,
         mountOnEnter: true,
@@ -60,46 +57,48 @@ export function Modal({
       }}
       PaperProps={{
         ref: (e: HTMLElement | null) => setTarget(e),
+        ...props.PaperProps,
         sx: {
-          ...(sm && {
-            borderRadius: `${theme.shape.borderRadius * 2}px ${
-              theme.shape.borderRadius * 2
-            }px 0 0`,
-          }),
+          borderRadius: 3,
           background: theme.palette.background.paper,
           overflow: "hidden",
-          height:
-            height && !sm
-              ? height
-              : sm
-              ? `${mt}dvh`
-              : overflow
-              ? "100%"
-              : contentHeight || "fit-content",
+          height: height
+            ? height
+            : overflow
+            ? "100%"
+            : contentHeight || "fit-content",
           position: "relative",
           maxWidth: "none",
-          marginTop: sm ? `${100 - mt}dvh` : 0,
-          ...props.PaperProps?.style,
+          mx: 2,
+          marginTop: 0,
+          ...props.PaperProps?.sx,
         },
-        ...props.PaperProps,
       }}
     >
-      <Scroll
-        y
-        style={{
-          height: "100%",
-          width: sm ? undefined : width,
-          maxWidth: "100%",
-          overflow: scrollable ? undefined : "hidden",
-        }}
-      >
+      {scrollable ? (
+        <Scroll
+          y
+          style={{
+            height: "100%",
+            width: width,
+            maxWidth: "100%",
+          }}
+        >
+          <Box
+            ref={(e: HTMLDivElement) => setContent(e)}
+            sx={{ width: "100%", height: sm ? "100%" : undefined }}
+          >
+            {content}
+          </Box>
+        </Scroll>
+      ) : (
         <Box
           ref={(e: HTMLDivElement) => setContent(e)}
-          sx={{ width: "100%", height: sm ? "100%" : undefined }}
+          sx={{ width, maxWidth: "100%", height: sm ? "100%" : undefined }}
         >
           {content}
         </Box>
-      </Scroll>
+      )}
       {actions}
     </Dialog>
   );

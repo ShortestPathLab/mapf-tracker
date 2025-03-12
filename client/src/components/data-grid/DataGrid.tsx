@@ -16,10 +16,10 @@ import {
   GridColDef as MuiGridColDef,
 } from "@mui/x-data-grid";
 import { useScroll } from "components/dialog/Scrollbars";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useXs } from "components/dialog/useSmallDisplay";
 import Fuse from "fuse.js";
 import { useTop } from "layout/TabBar";
-import { debounce, filter, find, get, join, map } from "lodash";
+import { debounce, filter, find, get, join, map, throttle } from "lodash";
 import {
   ReactNode,
   useContext,
@@ -31,6 +31,7 @@ import {
 import { useCss } from "react-use";
 import { setFromEvent } from "utils/set";
 
+import { useBottomBar } from "App";
 import { createContext } from "react";
 
 export const DataGridContext = createContext<HTMLDivElement | null>(null);
@@ -41,7 +42,9 @@ export type GridColDef<T extends GridValidRowModel> = MuiGridColDef<T> & {
   fold?: boolean;
 };
 
-function B(props: GridRowProps) {
+const padding = 88 * 6;
+
+function ButtonRowBase(props: GridRowProps) {
   return (
     <ButtonBase sx={{ "& .MuiDataGrid-cell": { outline: "none !important" } }}>
       <GridRow {...props} />
@@ -56,22 +59,22 @@ function ButtonRow(props: GridRowProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!root || !dataGrid) return;
+    if (!dataGrid) return;
 
     const controller = new AbortController();
-    const listener = debounce(() => {
+    const listener = throttle(() => {
       const rootOffset = dataGrid.getBoundingClientRect().top;
       const offset = props.offsetTop + rootOffset;
-      console.log(offset);
       setVisible(
-        offset + props.dimensions.rowHeight > 0 && offset < window.innerHeight
+        offset + props.dimensions.rowHeight + padding > 0 &&
+          offset - padding < window.innerHeight
       );
-    }, 1000 / 24);
+    }, 150);
     addEventListener("resize", listener, {
       passive: true,
       signal: controller.signal,
     });
-    root.addEventListener("scroll", listener, {
+    root?.addEventListener?.("scroll", listener, {
       passive: true,
       signal: controller.signal,
     });
@@ -84,7 +87,7 @@ function ButtonRow(props: GridRowProps) {
   }, [root, props.index, props.rowHeight, setVisible, dataGrid]);
   return (
     <Box ref={ref} sx={{ height: props.rowHeight, width: "100%" }}>
-      {visible && <B {...props} />}
+      {visible && <ButtonRowBase {...props} />}
     </Box>
   );
 }
@@ -129,6 +132,7 @@ export default function DataGrid<
   isLoading,
   ...rest
 }: DataGridProps<T>) {
+  const { enabled: bottomBarEnabled } = useBottomBar();
   const ref = useRef<HTMLDivElement>(null);
   const top = useTop(ref);
 
@@ -165,7 +169,6 @@ export default function DataGrid<
           ref={ref}
           sx={{
             py: xs ? 2 : 3,
-            mb: 2,
             gap: 2,
             px: sm ? 2 : 0,
             height: "max-content",
@@ -216,11 +219,12 @@ export default function DataGrid<
               rowHeight={88}
               slots={clickable && { row: ButtonRow }}
               initialState={{
-                pagination: { paginationModel: { pageSize: 10 } },
+                pagination: { paginationModel: { pageSize: 100 } },
               }}
               pageSizeOptions={[10, 25, 50, 100]}
               {...rest}
               sx={{
+                overflow: "visible",
                 opacity: loading ? 0.5 : 1,
                 transition: (t) => t.transitions.create("opacity"),
                 "--DataGrid-containerBackground": "transparent",
@@ -238,6 +242,16 @@ export default function DataGrid<
                     "--rowBorderColor": "transparent",
                   },
                 }),
+                "& .MuiDataGrid-footerContainer": {
+                  position: "sticky",
+                  bottom: bottomBarEnabled ? 80 : 0,
+                  py: 1,
+                  px: xs ? 2 : 0,
+                  borderTop: (t) => `1px solid ${t.palette.divider}`,
+                  bgcolor: "background.paper",
+                  "& .MuiToolbar-root": { px: 0 },
+                  "& .MuiTablePagination-spacer": { display: "none" },
+                },
                 ...rest.sx,
               }}
               columns={map(

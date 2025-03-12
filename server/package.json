@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
+    "start": "NODE_ENV=development bun src/server.ts | pino-pretty",
     "dev": "NODE_ENV=development bun --watch src/server.ts | pino-pretty",
     "installClient": "cd client; npm i",
     "installServer": "npm i",
@@ -48,6 +49,7 @@
     "memoizee": "^0.4.17",
     "mime-types": "^2.1.35",
     "mockingoose": "^2.16.2",
+    "mongodb": "^6.14.2",
     "mongodb-aggregate-builder": "^1.0.2",
     "mongoose": "7",
     "neat-csv": "^7.0.0",

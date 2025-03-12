@@ -84,13 +84,15 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
                         fill: palette.primary.main,
                         fillOpacity: 0.1,
                         stroke: palette.primary.main,
+                        strokeOpacity: 1,
                       }
                     : {
                         fill: toneBy(palette.mode, i),
+                        fillOpacity: 0.4,
                       })}
                   isAnimationActive={false}
                   dataKey={`${algorithm.algo_name}.${slice.key}`}
-                  opacity={0.6}
+                  opacity={1}
                   name={algorithm.algo_name}
                 />
               )

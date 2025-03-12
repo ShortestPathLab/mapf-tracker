@@ -13,7 +13,7 @@ export default function index() {
       routes={[
         {
           path: xs ? "*" : "/docs/",
-          parent: "/manage",
+          parent: "/more",
           content: (
             <Layout
               flat
@@ -22,7 +22,7 @@ export default function index() {
                 xs
                   ? [
                       { name: "Home", url: "/" },
-                      { name: "More", url: "/manage" },
+                      { name: "More", url: "/more" },
                     ]
                   : [{ name: "Home", url: "/" }]
               }

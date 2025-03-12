@@ -5,8 +5,8 @@ import {
   checkDomainOutOfBounds,
   checkEdgeCollision,
   checkGoalReached,
-} from "index";
-import { expect, it, suite, vitest } from "vitest";
+} from "../index";
+import { expect, it, describe, mock } from "bun:test";
 
 const T = true;
 const _ = false;
@@ -19,11 +19,11 @@ const domain = {
   ],
 };
 
-suite("validate (simple)", () => {
+describe("validate (simple)", () => {
   it("should validate a single agent without any checks", () => {
-    const input = ["d3l"];
+    const input = ["d2r"];
 
-    const onError = vitest.fn(() => false);
+    const onError = mock(() => false);
 
     validate({
       paths: input,
@@ -38,7 +38,7 @@ suite("validate (simple)", () => {
   it("should error given a mock always-error check", () => {
     const input = ["d3l"];
 
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
 
     validate({
       paths: input,
@@ -52,9 +52,9 @@ suite("validate (simple)", () => {
   });
 });
 
-suite("validate (collisions)", () => {
+describe("validate (collisions)", () => {
   it("should detect simple collision", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
 
     validate({
       paths: ["u", "r"],
@@ -70,14 +70,14 @@ suite("validate (collisions)", () => {
     expect(onError).toBeCalled();
   });
   it("should not error on valid paths (direct collision)", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
 
     validate({
       paths: ["u", "u"],
       domain,
       sources: [
         { x: 1, y: 1 },
-        { x: 0, y: 0 },
+        { x: 0, y: 1 },
       ],
       checks: [checkImmediateCollision],
       onError: onError,
@@ -86,23 +86,23 @@ suite("validate (collisions)", () => {
     expect(onError).toBeCalledTimes(0);
   });
   it("should detect edge collision", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
 
     validate({
-      paths: ["u", "r"],
+      paths: ["u", "d"],
       domain,
       sources: [
         { x: 0, y: 1 },
         { x: 0, y: 0 },
       ],
       checks: [checkEdgeCollision],
-      onError: onError,
+      onError,
     });
 
     expect(onError).toBeCalled();
   });
-  it("should not error on valid paths (edge collision)", () => {
-    const onError = vitest.fn(() => true);
+  it("should not error on valid paths - edge collision", () => {
+    const onError = mock(() => true);
 
     validate({
       paths: ["u", "u"],
@@ -119,9 +119,9 @@ suite("validate (collisions)", () => {
   });
 });
 
-suite("validate (domain)", () => {
+describe("validate (domain)", () => {
   it("should detect domain collision", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
     validate({
       paths: ["u"],
       domain,
@@ -132,7 +132,7 @@ suite("validate (domain)", () => {
     expect(onError).toBeCalled();
   });
   it("should not error on non-collision", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
     validate({
       paths: ["u"],
       domain,
@@ -143,7 +143,7 @@ suite("validate (domain)", () => {
     expect(onError).toBeCalledTimes(0);
   });
   it("should detect out of bounds", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
     validate({
       paths: ["2u"],
       domain,
@@ -154,7 +154,7 @@ suite("validate (domain)", () => {
     expect(onError).toBeCalled();
   });
   it("should not error on non-collision", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
     validate({
       paths: ["u"],
       domain,
@@ -166,29 +166,27 @@ suite("validate (domain)", () => {
   });
 });
 
-suite("validate (goal)", () => {
+describe("validate (goal)", () => {
   it("should error on goal not reached", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
     validate({
       paths: ["2r"],
       domain,
       sources: [{ x: 0, y: 0 }],
       goals: [{ x: 1, y: 1 }],
-      checks: [],
-      finalChecks: [checkGoalReached],
+      checks: [checkGoalReached],
       onError,
     });
     expect(onError).toBeCalled();
   });
   it("should not error on goal reached", () => {
-    const onError = vitest.fn(() => true);
+    const onError = mock(() => true);
     validate({
       paths: ["rd"],
       domain,
       sources: [{ x: 0, y: 0 }],
       goals: [{ x: 1, y: 1 }],
-      checks: [],
-      finalChecks: [checkGoalReached],
+      checks: [checkGoalReached],
       onError,
     });
     expect(onError).toBeCalledTimes(0);

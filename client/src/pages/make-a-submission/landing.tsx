@@ -51,7 +51,14 @@ export default function index() {
       flat
       disablePadding
       title="New submission request"
-      path={[{ name: "Home", url: "/" }]}
+      path={
+        xs
+          ? [
+              { name: "Home", url: "/" },
+              { name: "More", url: "/more" },
+            ]
+          : [{ name: "Home", url: "/" }]
+      }
       render={RenderChildrenOnly}
     >
       <SectionContent>

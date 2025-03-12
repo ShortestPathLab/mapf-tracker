@@ -13,6 +13,9 @@ import { PreviewCollection } from "../../components/PreviewCollection";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
 import { analysisTemplate } from "./analysisTemplate";
+import { useSurface } from "components/surface";
+import { DownloadRounded } from "@mui-symbols-material/w400";
+import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
 
 const render = memoize((showHeader: boolean) => ({ header, children }) => (
   <>
@@ -22,6 +25,10 @@ const render = memoize((showHeader: boolean) => ({ header, children }) => (
 ));
 
 export default function Page({ showHeader }: { showHeader?: boolean }) {
+  const { open: openDialog, dialog } = useSurface(DownloadOptions, {
+    title: "Bulk export",
+  });
+
   const { data: maps } = useBenchmarksData();
   const instanceCount = sum(map(maps, (m) => m.instances));
   const scenarioCount = sum(map(maps, (m) => m.scens));
@@ -79,13 +86,23 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
         }
       />
       <Stack sx={{ gap: 4 }}>
-        <DownloadBar />
+        <DownloadBar
+          options={[
+            {
+              label: "Bulk export",
+              action: () => openDialog(),
+              icon: <DownloadRounded />,
+              primary: true,
+            },
+          ]}
+        />
         <DataInspectorLayout
           dataTabName="Browse maps"
           data={<Table />}
           analysis={<Analysis template={analysisTemplate} />}
         />
       </Stack>
+      {dialog}
     </GalleryLayout>
   );
 }

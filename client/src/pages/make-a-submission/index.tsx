@@ -5,7 +5,6 @@ import Step2Page from "./step2";
 import Step3Page from "./step3";
 
 const pages = () => [
-  { value: "", content: <Landing /> },
   {
     value: 1,
     content: <Step1Page />,
@@ -26,11 +25,18 @@ const pages = () => [
 export default function MakeASubmissionPage() {
   return (
     <Router
-      routes={pages().map(({ content, value, parent }) => ({
-        content,
-        path: `/submit/${value}`,
-        parent: `/submit/${parent}`,
-      }))}
+      routes={[
+        {
+          path: "/submit/",
+          parent: "/more",
+          content: <Landing />,
+        },
+        ...pages().map(({ content, value, parent }) => ({
+          content,
+          path: `/submit/${value}`,
+          parent: `/submit/${parent}`,
+        })),
+      ]}
     />
   );
 }

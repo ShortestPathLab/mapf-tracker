@@ -9,7 +9,7 @@ import { AlgorithmByMapTypeChart } from "pages/benchmarks-root-level/charts/Algo
 import { useAlgorithmDetailData } from "queries/useAlgorithmQuery";
 import { matchPath, redirect } from "react-router-dom";
 import { AlgorithmPreview } from "./AlgorithmPreview";
-import { StickyTitle } from "./StickyTitle";
+import { Title } from "../../components/StickyTitle";
 import { Table } from "./Table";
 
 export function AlgorithmPage() {
@@ -48,11 +48,11 @@ export function AlgorithmPage() {
     >
       <DownloadBar />
       <Divider />
-      <StickyTitle>Algorithm performance</StickyTitle>
+      <Title sticky>Algorithm performance</Title>
       <Stack sx={{ gap: 2 }}>
         <GridChartCard
-          primaryLabel="Completion by map type"
-          secondaryLabel="Instances closed and solved across map types"
+          primaryLabel="Completion by domain"
+          secondaryLabel="Instances closed and solved across domains"
           height={560}
           content={
             !!data?.id && <AlgorithmByMapTypeChart algorithm={data?.id} />
@@ -65,7 +65,7 @@ export function AlgorithmPage() {
           content={!!data?.id && <AlgorithmByMapChart algorithm={data?.id} />}
         />
       </Stack>
-      <StickyTitle>Submitted instances</StickyTitle>
+      <Title sticky>Submitted instances</Title>
       <Stack sx={{ mx: sm ? -2 : 0 }}>
         <Table algorithm={data?.id} />
       </Stack>

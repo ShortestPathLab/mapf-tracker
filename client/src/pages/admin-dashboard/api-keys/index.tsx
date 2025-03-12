@@ -7,7 +7,7 @@ export default function index() {
       width={960}
       title="API keys"
       path={[
-        { name: "Manage", url: "/manage" },
+        { name: "More", url: "/more" },
         { name: "Dashboard", url: "/dashboard" },
       ]}
     >

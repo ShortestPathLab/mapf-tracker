@@ -142,25 +142,19 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
   const { open: openRestApiDialog, dialog: restApiDialog } = useSurface(
     RestApiDialog,
     {
-      padded: true,
       title: "Submit via REST API",
-      slotProps: { modal: { width: 580, variant: "default" } },
     }
   );
   const { open: openJsonApiDialog, dialog: jsonApiDialog } = useSurface(
     JsonApiDialog,
     {
-      padded: true,
       title: "Submit via copy and paste",
-      slotProps: { modal: { width: 720, variant: "default" } },
     }
   );
   const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useSurface(
     FileUploadDialog,
     {
-      padded: true,
       title: "Submit via upload",
-      slotProps: { modal: { width: 720, variant: "default" } },
     }
   );
   return (
