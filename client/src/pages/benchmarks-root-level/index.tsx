@@ -12,7 +12,7 @@ import { formatPercentage } from "utils/format";
 import { PreviewCollection } from "../../components/PreviewCollection";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
-import { analysisTemplate } from "./analysisTemplate";
+import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import { useSurface } from "components/surface";
 import { DownloadRounded } from "@mui-symbols-material/w400";
 import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
@@ -100,6 +100,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
           dataTabName="Browse maps"
           data={<Table />}
           analysis={<Analysis template={analysisTemplate} />}
+          compare={<Analysis template={compareTemplate} />}
         />
       </Stack>
       {dialog}

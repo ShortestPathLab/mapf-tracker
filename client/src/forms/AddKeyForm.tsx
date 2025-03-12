@@ -1,5 +1,6 @@
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { Field } from "components/Field";
+import { useXs } from "components/dialog/useSmallDisplay";
 import { FormikProps, FormikConfig, Formik, Form } from "formik";
 import { noop } from "lodash";
 import { ReactNode } from "react";
@@ -17,6 +18,7 @@ export function AddKeyForm({
   submit = () => <></>,
   ...props
 }: AddKeyFormProps) {
+  const xs = useXs();
   return (
     <Formik<Key>
       validationSchema={object({
@@ -28,10 +30,10 @@ export function AddKeyForm({
     >
       {(state) => (
         <Form>
-          <Box
+          <Stack
+            direction={xs ? "column" : "row"}
             sx={{
-              display: "flex",
-              alignItems: "start",
+              alignItems: xs ? "stretch" : "start",
               gap: 2,
               "> *:first-child": { flex: 1 },
             }}
@@ -44,7 +46,7 @@ export function AddKeyForm({
               required
             />
             {submit(state)}
-          </Box>
+          </Stack>
         </Form>
       )}
     </Formik>

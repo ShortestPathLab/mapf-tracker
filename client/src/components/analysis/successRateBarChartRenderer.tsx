@@ -56,6 +56,9 @@ export const SuccessRateBarChart = ({
       />
       <XAxis
         dataKey={xAxisDataKey}
+        angle={-45}
+        textAnchor="end"
+        height={140}
         label={{
           fill: theme.palette.text.secondary,
           value: "Map",
@@ -90,7 +93,7 @@ export const SuccessRateBarChart = ({
           {
             color: accentColors.red,
             key: proportionUnknownKey,
-            name: "Closed",
+            name: "Open",
           },
         ],
         ({ key, color, name }) =>

@@ -180,7 +180,7 @@ const Swipe = React.forwardRef<any, any>((props, ref) => {
       {(state: any, childProps: any) => {
         return React.cloneElement(children, {
           style: {
-            transform: "translateY(100vh)",
+            transform: "translateY(100dvh)",
             opacity: 1,
             visibility: state === "exited" && !inProp ? "hidden" : undefined,
             ...styles[state],

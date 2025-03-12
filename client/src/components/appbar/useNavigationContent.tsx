@@ -148,6 +148,9 @@ export function useNavigationContent() {
         {
           iconButton: true,
           label: options.hideTips ? "Show tips" : "Hide tips",
+          description: options.hideTips
+            ? "See helpful messages as you navigate around the app"
+            : "Hide helpful messages",
           icon: options.hideTips ? <LightbulbRounded /> : <LightOffRounded />,
           action: () => setOptions({ hideTips: !options.hideTips }),
           last: true,

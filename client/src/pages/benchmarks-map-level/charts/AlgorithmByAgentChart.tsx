@@ -5,13 +5,14 @@ import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
+import { sample } from "components/charts/sample";
 import { chain, keyBy } from "lodash";
 import { useScenarioOnAgentData } from "queries/useScenarioQuery";
 
 export const slices = [
   {
     key: "count",
-    name: "Count",
+    name: "Instance count",
   },
 ] satisfies Slice[];
 
@@ -27,16 +28,18 @@ export function AlgorithmByAgentChart({ map }: { map: string }) {
         style={{ flex: 1 }}
         data={chain(data)
           .map((c, i) => ({
-            name: i + 1,
+            agentCount: i + 1,
             ...keyBy(c.solved_instances, "algo_name"),
           }))
-          .sortBy("name")
+          .thru(sample(50))
+          .sortBy("agentCount")
           .value()}
         render={
           <SliceChart
             slice={slice}
             selected={selected}
             type="area"
+            xAxisDataKey="agentCount"
             keyType="name"
           />
         }

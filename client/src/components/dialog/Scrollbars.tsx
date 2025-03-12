@@ -12,6 +12,7 @@ import {
   forwardRef,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { useCss } from "react-use";
@@ -22,6 +23,7 @@ type ScrollProps = {
   y?: boolean;
   px?: number;
   py?: number;
+  fadeX?: boolean;
 };
 
 const ScrollContext = createContext<HTMLDivElement | null>(null);
@@ -34,6 +36,7 @@ export const Scroll = forwardRef(
   (
     {
       children,
+      fadeX,
       x,
       y,
       px = 0,
@@ -67,22 +70,52 @@ export const Scroll = forwardRef(
     });
     const handleRef = useCallback(
       (instance: OverlayScrollbars) => {
-        if (ref) {
-          if (instance) {
-            const viewport = instance.elements().viewport;
-            if (viewport) {
+        if (instance) {
+          const viewport = instance.elements().viewport;
+          if (viewport) {
+            if (ref) {
               if (typeof ref === "function") {
                 ref?.(viewport as HTMLDivElement);
               } else {
                 ref.current = viewport as HTMLDivElement;
               }
-              setPanel(viewport as HTMLDivElement);
             }
+            setPanel(viewport as HTMLDivElement);
           }
         }
       },
-      [ref]
+      [ref, setPanel]
     );
+    useEffect(() => {
+      if (panel && fadeX) {
+        const controller = new AbortController();
+        const f = () => {
+          const gradient = (direction: string) =>
+            `linear-gradient(to ${direction}, transparent, black 8px)`;
+          const hasRight =
+            Math.abs(
+              panel.scrollWidth - panel.scrollLeft - panel.clientWidth
+            ) >= 1;
+          const hasLeft = !!panel.scrollLeft;
+          panel.style.maskImage =
+            hasLeft && hasRight
+              ? "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent 100%)"
+              : hasRight
+              ? gradient("left")
+              : hasLeft
+              ? gradient("right")
+              : "";
+        };
+        panel.addEventListener("scroll", f, {
+          passive: true,
+          signal: controller.signal,
+        });
+        f();
+        return () => {
+          controller.abort();
+        };
+      }
+    }, [panel, fadeX]);
     return (
       <ScrollContext.Provider value={panel}>
         <OverlayScrollbarsComponent

@@ -6,6 +6,7 @@ import {
 import { Link, Stack, useTheme } from "@mui/material";
 import { DownloadBar } from "components/DownloadBar";
 import { PreviewCard } from "components/PreviewCard";
+import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
@@ -20,6 +21,7 @@ import { useMapData } from "queries/useBenchmarksQuery";
 import { DownloadOptions } from "./DownloadOptions";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import Table from "./Table";
+import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 
 export default function Page() {
   const { open, dialog } = useSurface(DownloadOptions, {
@@ -71,7 +73,7 @@ export default function Page() {
           <DownloadBar
             options={[
               {
-                label: "Scenarios (.zip)",
+                label: "Scenario files (.zip)",
                 icon: <DownloadRounded />,
                 primary: true,
                 action: () => downloadBenchmarks(mapData),
@@ -96,7 +98,8 @@ export default function Page() {
           dataTabName="Browse scenarios"
           analysisTabName="Trends"
           data={<Table />}
-          // analysis={<Analysis template={analysisTemplate(mapId)} />}
+          analysis={<Analysis template={analysisTemplate(mapData)} />}
+          compare={<Analysis template={compareTemplate(mapData)} />}
         />
       </Stack>
       {dialog}

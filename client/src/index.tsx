@@ -9,7 +9,7 @@ const root = createRoot(rootElement);
 
 root.render(
   <BrowserRouter>
-    <Scroll y style={{ height: "100vh" }}>
+    <Scroll y style={{ height: "100dvh" }}>
       <App />
     </Scroll>
   </BrowserRouter>

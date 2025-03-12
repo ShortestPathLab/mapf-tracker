@@ -1,29 +1,52 @@
 import { ShowChartRounded } from "@mui-symbols-material/w400";
-import { capitalize } from "lodash";
+import { Benchmark, InstanceCollection } from "core/types";
 import {
   LowerBoundChart,
   LowerBoundComparisonChart,
 } from "./charts/LowerBoundChart";
-import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
+import { SuccessRateOnAgentsChart } from "pages/benchmarks-map-level/charts/SuccessRateChart";
 
-export function analysisTemplate(scenId: string | number, mapId: string) {
-  const { data: mapData } = useMapData(mapId);
-  const { data: scenarioData } = useScenarioDetailsData(scenId);
+export function analysisTemplate(scenarioData?: InstanceCollection) {
   return [
     {
-      name: `Trends in ${capitalize(
-        `${scenarioData?.scen_type}-${scenarioData?.type_id}`
-      )} in ${mapData?.map_name}`,
+      name: ``,
       icon: <ShowChartRounded />,
       variants: [
         {
-          name: "Percent suboptimality",
-          render: () => <LowerBoundChart scenario={scenId} />,
+          name: "Completion by agent count",
+          render: () => (
+            <SuccessRateOnAgentsChart
+              scenario={scenarioData?.id}
+              map={scenarioData?.map_id}
+            />
+          ),
         },
+        {
+          name: "Percent suboptimality",
+          description:
+            "Percent difference between best solution and lower-bound",
+          render: () => <LowerBoundChart scenario={scenarioData?.id} />,
+        },
+      ],
+    },
+  ];
+}
+export function compareTemplate(
+  scenarioData?: InstanceCollection,
+  mapData?: Benchmark
+) {
+  return [
+    {
+      name: ``,
+      icon: <ShowChartRounded />,
+      variants: [
         {
           name: "Per-algorithm analysis",
           render: () => (
-            <LowerBoundComparisonChart map={mapId} scenario={scenId} />
+            <LowerBoundComparisonChart
+              map={mapData?.id}
+              scenario={scenarioData?.id}
+            />
           ),
         },
       ],

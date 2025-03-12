@@ -28,6 +28,7 @@ import { useLocalStorageList } from "../../hooks/useLocalStorageList";
 import { SubmissionLocationState } from "./SubmissionLocationState";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { FlatCard } from "components/FlatCard";
+import { Tip } from "components/Tip";
 
 export function AddKey() {
   const navigate = useNavigate();
@@ -185,32 +186,35 @@ export default function TrackSubmission() {
       algorithm.
     </Typography>,
     <AddKey key="add-key" />,
-    <Stack sx={{ gap: 1 }} key="description">
-      <Typography variant="body2" color="text.secondary">
-        An API key is a 32-character string of numbers 0-9 and lowercase letters
-        a-f.
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Don&apos;t have a submission (API) key? You need one to submit data.{" "}
-        <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/submit")}>
-          Request one here.
-        </Link>
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Something not right?{" "}
-        <Link
-          sx={{ cursor: "pointer" }}
-          onClick={() =>
-            open(
-              "https://github.com/ShortestPathLab/winter-project-mapf-tracker/issues",
-              "_blank"
-            )
-          }
-        >
-          Raise an issue on Github.
-        </Link>
-      </Typography>
-    </Stack>,
+    <Tip
+      key="description"
+      title="API key"
+      actions={
+        <>
+          <Button
+            sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
+            onClick={() => navigate("/submit")}
+          >
+            New submission request
+          </Button>
+          <Button
+            sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
+            onClick={() => navigate("/docs/how-to-submit")}
+          >
+            Read the docs
+          </Button>
+        </>
+      }
+      description={
+        <Stack sx={{ gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            An API key is a 32-character string of numbers 0-9 and lowercase
+            letters a-f, used to submit data for your algorithm. You can obtain
+            one by making a submission request.
+          </Typography>
+        </Stack>
+      }
+    />,
   ];
   return (
     <Layout

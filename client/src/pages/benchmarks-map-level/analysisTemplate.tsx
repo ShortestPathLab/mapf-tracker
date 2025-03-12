@@ -1,34 +1,43 @@
 import { ShowChartRounded } from "@mui-symbols-material/w400";
+import { Benchmark } from "core/types";
 import { AlgorithmByAgentChart } from "./charts/AlgorithmByAgentChart";
 import { AlgorithmByScenarioChart } from "./charts/AlgorithmByScenarioChart";
 import {
   SuccessRateChart,
   SuccessRateOnAgentsChart,
 } from "./charts/SuccessRateChart";
-import { useMapData } from "queries/useBenchmarksQuery";
 
-export function analysisTemplate(mapId: string) {
-  const { data: mapData } = useMapData(mapId);
+export function compareTemplate(mapData: Benchmark) {
   return [
     {
-      name: `Trends in ${mapData?.map_name}`,
+      name: "",
       icon: <ShowChartRounded />,
       variants: [
         {
-          name: "Completion per algorithm",
-          render: () => <AlgorithmByScenarioChart map={mapId} />,
+          name: "Completion per algorithm, by scenario type",
+          render: () => <AlgorithmByScenarioChart map={mapData?.id} />,
         },
         {
-          name: "Completion by agent count per algorithm",
-          render: () => <AlgorithmByAgentChart map={mapId} />,
+          name: "Completion per algorithm, by agent count per algorithm",
+          render: () => <AlgorithmByAgentChart map={mapData?.id} />,
         },
+      ],
+    },
+  ];
+}
+export function analysisTemplate(mapData: Benchmark) {
+  return [
+    {
+      name: "",
+      icon: <ShowChartRounded />,
+      variants: [
         {
           name: "Completion by scenario type",
-          render: () => <SuccessRateChart map={mapId} />,
+          render: () => <SuccessRateChart map={mapData?.id} />,
         },
         {
           name: "Completion by agent count",
-          render: () => <SuccessRateOnAgentsChart map={mapId} />,
+          render: () => <SuccessRateOnAgentsChart map={mapData?.id} />,
         },
       ],
     },

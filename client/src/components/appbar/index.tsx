@@ -54,11 +54,11 @@ export default function index(props: AppBarProps) {
       <PopupState variant="popover">
         {(state) => {
           const contents = (
-            <Scroll y style={{ height: "100vh" }}>
+            <Scroll y style={{ height: "100dvh" }}>
               <Stack
                 sx={{
                   color: "text.primary",
-                  minHeight: "100vh",
+                  minHeight: "100dvh",
                   minWidth: 260,
                   "> *": { flexShrink: 0 },
                 }}

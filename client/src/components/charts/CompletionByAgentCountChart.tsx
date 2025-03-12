@@ -1,7 +1,7 @@
 import { alpha, useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import { Slice } from "components/analysis/useAlgorithmSelector";
-import { chain as _, floor, map, max, sortBy, zip } from "lodash";
+import { chain as _, map, max, sortBy, zip } from "lodash";
 import { AggregateQuery, useAggregate } from "queries/useAggregateQuery";
 import { ComponentProps, useMemo } from "react";
 import {
@@ -17,6 +17,7 @@ import { paper } from "theme";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
 import { GridChartCard } from "./GridChartCard";
+import { sample } from "./sample";
 
 export const slices = [
   {
@@ -24,11 +25,6 @@ export const slices = [
     name: "Count",
   },
 ] satisfies Slice[];
-
-const sample =
-  (n: number) =>
-  <T,>(list: T[]) =>
-    list.filter((_, i, xs) => i % (floor(xs.length / n) || 1) === 0);
 
 function RenderChart({
   data,

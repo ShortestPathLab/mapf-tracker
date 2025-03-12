@@ -17,6 +17,7 @@ import {
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
+import { FlatCard } from "components/FlatCard";
 
 export default function index() {
   const { data: requests } = useRequestsQuery();
@@ -118,13 +119,15 @@ export default function index() {
         { name: "Dashboard", url: "/dashboard" },
       ]}
     >
-      <DataGrid
-        search
-        clickable
-        onRowClick={({ row }) => showDetails({ data: row })}
-        columns={columns}
-        rows={requests}
-      />
+      <FlatCard>
+        <DataGrid
+          search
+          clickable
+          onRowClick={({ row }) => showDetails({ data: row })}
+          columns={columns}
+          rows={requests}
+        />
+      </FlatCard>
       {detailsDialog}
       {confirmationDialog}
     </Layout>

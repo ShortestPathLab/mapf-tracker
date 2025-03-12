@@ -12,7 +12,7 @@ export function Footer() {
         bgcolor: (t) => t.palette.background.default,
         width: "100%",
         py: 3,
-        mb: xs ? -1 : -3,
+        mb: xs ? -2 : -3,
         boxShadow: (t) => `0 32px 0 32px ${t.palette.background.default}`,
       }}
     >

@@ -4,7 +4,7 @@ import { CompletionByAlgorithmChartCard } from "components/charts/CompletionByAl
 import { GridChartCard } from "components/charts/GridChartCard";
 import { RecentActivityChart } from "components/charts/RecentActivityChart";
 import { TotalSolvedClosedChart } from "components/charts/TotalSolvedClosedChart";
-import { useMd } from "components/dialog/useSmallDisplay";
+import { useLg, useMd } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid } from "layout";
 import { find, map } from "lodash";
@@ -13,9 +13,12 @@ import { ArticleCard } from "pages/docs/ArticleCard";
 import { pages } from "pages/docs/pages";
 import { Tip } from "pages/home/Tip";
 
-export default function Hero() {
+const TEMP_HARDCODED_SOLUTION_PATH =
+  "/visualization?mapId=63761f265d814f08ecdbf3bf&reason=unknown&scenId=63761f275d814f08ecdbf99e&instanceId=63761f2c5d814f08ecded10c&solutionId=641131c4a77d7971655b98c0&source=submitted";
+export default function Hero({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const md = useMd();
+  const lg = useLg();
   return (
     <Stack sx={{ gap: 4 }}>
       <Tip />
@@ -33,7 +36,7 @@ export default function Hero() {
       </Stack> */}
       <Stack
         direction={md ? "column" : "row"}
-        sx={{ gap: 2, alignItems: "flex-start" }}
+        sx={{ gap: lg ? 2 : 6, mx: lg ? 0 : 4, alignItems: "flex-start" }}
       >
         <Stack sx={{ gap: 2, my: 1 }}>
           <Typography color="text.secondary">Trends</Typography>
@@ -88,13 +91,12 @@ export default function Hero() {
             my: 1,
             minWidth: 320,
             width: md ? "100%" : 0,
-            position: "sticky",
+            position: md ? "static" : "sticky",
             top: 16,
             height: "fit-content",
           }}
         >
-          <Typography color="text.secondary">Highlights</Typography>
-
+          <Typography color="text.secondary">Try these</Typography>
           <Grid width={420} gap={2}>
             {map(
               [
@@ -102,8 +104,7 @@ export default function Hero() {
                   label: "See a solution for ORZ Random 25",
                   description:
                     "Find out why multi-agent pathfinding is so difficult.",
-                  value:
-                    "/visualization?mapId=63761f265d814f08ecdbf3bf&reason=unknown&scenId=63761f275d814f08ecdbf99e&instanceId=63761f2c5d814f08ecded10c&solutionId=641131c4a77d7971655b98c0&source=submitted",
+                  value: TEMP_HARDCODED_SOLUTION_PATH,
                   icon: undefined,
                   content: undefined,
                   cover: "/assets/visualisation.png",
@@ -122,6 +123,16 @@ export default function Hero() {
             )}
           </Grid>
         </Stack>
+      </Stack>
+      <Stack
+        direction="column"
+        sx={{
+          gap: 2,
+          mb: 4,
+          mx: lg ? 0 : 4,
+        }}
+      >
+        {children}
       </Stack>
     </Stack>
   );

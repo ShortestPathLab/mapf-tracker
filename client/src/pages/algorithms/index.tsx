@@ -9,7 +9,7 @@ import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { Prose } from "layout";
 import { GalleryLayout } from "layout/GalleryLayout";
-import { flatMap, map, max, slice, startCase } from "lodash";
+import { flatMap, map, max, slice, startCase, sum } from "lodash";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import Description from "./description.md";
@@ -28,10 +28,9 @@ function Table() {
   const columns: GridColDef<AlgorithmDetails>[] = [
     {
       field: "algo_name",
-      headerName: "Algorithm",
-      renderHeader: () => <></>,
+      headerName: "Submission",
       sortable: true,
-      minWidth: 180,
+      maxWidth: 180,
       flex: 1,
       renderCell: ({ value, row }) => (
         <Item
@@ -61,7 +60,7 @@ function Table() {
           labelWidth: 36,
         }),
       fold: true,
-      width: 200,
+      maxWidth: 200,
     })),
   ];
   return (
@@ -83,7 +82,6 @@ export default function AlgorithmsPage() {
     <GalleryLayout
       root
       title="Submissions"
-      description="Explore the latest submissions from the community."
       cover={
         <Stack direction="row" sx={{ width: "100%", flexWrap: "wrap" }}>
           {map(sample, (row) => (
@@ -91,7 +89,15 @@ export default function AlgorithmsPage() {
           ))}
         </Stack>
       }
-      items={[{ value: algorithms?.length, label: "Submission count" }]}
+      items={[
+        { value: algorithms?.length, label: "Submission count" },
+        {
+          label: "Total instances submitted",
+          value: algorithms
+            ? sum(map(algorithms, "instances_solved"))
+            : undefined,
+        },
+      ]}
       path={[{ name: "Home", url: "/" }]}
     >
       <Tip

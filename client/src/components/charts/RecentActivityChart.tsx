@@ -29,6 +29,9 @@ export function RecentActivityChart(
       {...props}
       content={
         <Stack sx={{ gap: 1 }}>
+          <Typography color="text.secondary" sx={{ mb: 2 }}>
+            The activity panel is coming soon.
+          </Typography>
           <Stack direction="row" sx={{ justifyContent: "space-between" }}>
             {[head(data), last(data)].map((item, i) => (
               <Typography

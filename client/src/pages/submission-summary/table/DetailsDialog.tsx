@@ -1,15 +1,17 @@
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
+import { Dot } from "components/Dot";
 import { Item } from "components/Item";
 import { Title } from "components/StickyTitle";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface";
+import { formatDuration } from "date-fns";
 import { DialogContentProps } from "hooks/useDialog";
+import { capitalize, isNumber, map } from "lodash";
 import { SolutionVisualisation } from "pages/visualiser/SolutionVisualisation";
 import pluralize from "pluralize";
 import { useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { DATE_TIME_FORMAT, formatDate } from "utils/format";
-import GenericDetailsList from "../GenericDetailsList";
 import { MapLabel } from "./MapLabel";
 import { ScenarioLabel } from "./ScenarioLabel";
 import {
@@ -17,9 +19,6 @@ import {
   SubmissionInstanceProps,
 } from "./SubmissionInstanceContext";
 import { getOutcomeDisplay } from "./getOutcomeDisplay";
-import { Dot } from "components/Dot";
-import { capitalize, isNumber, map } from "lodash";
-import { formatDuration } from "date-fns";
 
 function VisualisationDialog({
   instanceId,
@@ -35,7 +34,7 @@ function VisualisationDialog({
       <Box
         sx={{
           position: "fixed",
-          height: `100vh`,
+          height: `100dvh`,
           top: 0,
           left: 0,
           bottom: 0,
@@ -45,7 +44,7 @@ function VisualisationDialog({
       >
         <SolutionVisualisation {...{ instanceId, solutionId, source }} />
       </Box>
-      <Box sx={{ height: "100vh" }}></Box>
+      <Box sx={{ height: "100dvh" }}></Box>
     </>
   );
 }
@@ -59,7 +58,6 @@ export function DetailsDialog({
   const sm = useSm();
   const { data: scenario } = useScenarioDetailsData(scenarioId);
   const { dialog, open } = useSurface(VisualisationDialog, {
-    title: "Visualise solution",
     variant: "fullscreen",
     slotProps: {
       appBar: {

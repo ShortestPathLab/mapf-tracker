@@ -68,7 +68,7 @@ export function BentoLayout({
             position: "absolute",
             top: 0,
             left: 0,
-            height: `calc(100vh - ${topbarHeight(sm)}px)`,
+            height: `calc(100dvh - ${topbarHeight(sm)}px)`,
             right: 0,
           }}
         >

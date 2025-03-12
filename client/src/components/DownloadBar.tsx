@@ -15,10 +15,10 @@ export function DownloadBar({ options }: ActionSheetProps) {
     >
       {!sm && (
         <Typography color="text.secondary" variant="overline" sx={{ mt: -1 }}>
-          Download this dataset
+          Export this dataset
         </Typography>
       )}
-      <Scroll x>
+      <Scroll x fadeX>
         <Stack
           sx={{
             gap: 1,

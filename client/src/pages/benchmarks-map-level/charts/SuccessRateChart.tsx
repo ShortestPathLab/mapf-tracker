@@ -35,6 +35,12 @@ export function SuccessRateChart({ map }: { map: string }) {
   );
 }
 
-export function SuccessRateOnAgentsChart({ map }: { map: string }) {
-  return <CompletionByAgentCountChart partialQuery={{ map }} />;
+export function SuccessRateOnAgentsChart({
+  map,
+  scenario,
+}: {
+  map: string;
+  scenario?: string;
+}) {
+  return <CompletionByAgentCountChart partialQuery={{ map, scenario }} />;
 }

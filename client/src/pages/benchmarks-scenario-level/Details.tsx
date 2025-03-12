@@ -76,7 +76,7 @@ export default function Details({ id }: { id?: string }) {
       <DownloadBar
         options={[
           {
-            label: "Download solution (.csv)",
+            label: "Solution paths (.csv)",
             primary: true,
             icon: <ConversionPathRounded />,
             action: notify(() => downloadRow(instance), {

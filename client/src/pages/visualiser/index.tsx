@@ -1,18 +1,17 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { Dialog } from "components/dialog";
 import { useMd, useSm } from "components/dialog/useSmallDisplay";
+import { Surface } from "components/surface";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
 import { topbarHeight } from "layout/topbarHeight";
 import { startCase } from "lodash";
+import { bindTrigger } from "material-ui-popup-state";
 import Details from "pages/benchmarks-scenario-level/Details";
 import pluralize from "pluralize";
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import Visualiser from "./Visualiser";
 import { VisualiserLocationState } from "./VisualiserLocationState";
-import { Surface } from "components/surface";
-import { bindTrigger } from "material-ui-popup-state";
 
 export { default as Visualiser } from "./Visualiser";
 
@@ -77,7 +76,7 @@ export default function index() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: `calc(100vh - ${8}px)`,
+                height: "100dvh",
               }}
             >
               <Visualiser />
@@ -92,7 +91,7 @@ export default function index() {
                 top: 0,
                 left: 0,
                 right: 0,
-                height: `calc(100vh - ${topbarHeight(sm) + 8}px)`,
+                height: `calc(100dvh - ${topbarHeight(sm) + 8}px)`,
               }}
             >
               <Visualiser />

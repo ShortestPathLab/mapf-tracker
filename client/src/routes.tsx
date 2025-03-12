@@ -43,9 +43,9 @@ export const routes: Route[] = [
         title="Home"
         description="The latest progress in multi-agent pathfinding"
         labels={["Browse", "Make a submission", "Docs"]}
-        render={() => (
+        render={({ children }) => (
           <>
-            <Hero />
+            <Hero>{children}</Hero>
             <Footer />
           </>
         )}

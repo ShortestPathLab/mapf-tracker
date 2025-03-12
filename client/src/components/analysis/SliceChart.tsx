@@ -1,5 +1,14 @@
 import { useTheme } from "@mui/material";
-import { filter, map } from "lodash";
+import {
+  capitalize,
+  filter,
+  get,
+  head,
+  isNumber,
+  map,
+  max,
+  startCase,
+} from "lodash";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import React from "react";
 import {
@@ -18,8 +27,8 @@ import {
 import { AxisDomain } from "recharts/types/util/types";
 import { paper } from "theme";
 import { toneBy } from "utils/colors";
-import { Slice } from "./useAlgorithmSelector";
 import { stateOfTheArt } from "./ChartOptions";
+import { Slice } from "./useAlgorithmSelector";
 
 const Charts = {
   bar: { chart: BarChart, series: Bar },
@@ -44,7 +53,7 @@ export const SliceChart = ({
   type?: "bar" | "area" | "line";
   stacked?: boolean;
   stateOfTheArt?: boolean;
-}) => {
+} & { data?: unknown[] }) => {
   const { data: algorithms = [] } = useAlgorithmsData();
   const algorithms1 = stateOfTheArtEnabled
     ? [stateOfTheArt, ...algorithms]
@@ -66,7 +75,7 @@ export const SliceChart = ({
         label={
           <Label
             position="insideLeft"
-            value="Instance count"
+            value={slice?.name ?? "Instance count"}
             angle={-90}
             style={{ textAnchor: "middle" }}
           />
@@ -74,10 +83,15 @@ export const SliceChart = ({
       />
       <XAxis
         dataKey={xAxisDataKey}
-        type="category"
+        type={
+          isNumber(get(head(props.data), xAxisDataKey)) ? "number" : "category"
+        }
+        label={capitalize(startCase(xAxisDataKey))}
         angle={-45}
         textAnchor="end"
-        height={140}
+        height={
+          max(map(props.data, (d) => `${get(d, xAxisDataKey)}`.length)) * 4 + 90
+        }
       />
       {map(
         filter(
@@ -95,6 +109,11 @@ export const SliceChart = ({
               : {
                   fill: toneBy(theme.palette.mode, i),
                   stroke: toneBy(theme.palette.mode, i),
+                  fillOpacity: {
+                    area: 0.25,
+                    line: 0,
+                    bar: 0.75,
+                  }[type],
                 })}
             isAnimationActive={false}
             dataKey={`${

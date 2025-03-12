@@ -120,7 +120,7 @@ export function SectionContent({ children }: { children?: ReactNode }) {
         maxWidth: "100%",
         mx: "auto",
         py: xs ? 2 : md ? 0 : 6,
-        minHeight: `calc(100vh - ${
+        minHeight: `calc(100dvh - ${
           appbarHeight(sm) + 68 * 2 + bottomBarHeight(sm)
         }px)`,
       }}

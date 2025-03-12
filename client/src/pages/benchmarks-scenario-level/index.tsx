@@ -19,6 +19,8 @@ import {
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
+import { Analysis } from "components/analysis/Analysis";
+import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 
 export default function Page() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
@@ -97,7 +99,10 @@ export default function Page() {
           analysisTabName="Trends"
           dataTabName="Browse instances"
           data={<Table />}
-          // analysis={<Analysis template={analysisTemplate(scenId, mapId)} />}
+          analysis={<Analysis template={analysisTemplate(scenarioData)} />}
+          compare={
+            <Analysis template={compareTemplate(scenarioData, mapData)} />
+          }
         />
       </Stack>
     </GalleryLayout>

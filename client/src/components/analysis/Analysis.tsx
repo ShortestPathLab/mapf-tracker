@@ -1,22 +1,20 @@
 import { ExpandFilledRounded } from "@mui-symbols-material/w400";
 import {
   Button,
-  Divider,
   ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
   MenuList,
   Stack,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
+import { FlatCard } from "components/FlatCard";
+import { GridChartCard } from "components/charts/GridChartCard";
 import { Dialog, Title } from "components/dialog";
-import { find, head, map } from "lodash";
+import { head, map } from "lodash";
 import PopupState, { bindMenu } from "material-ui-popup-state";
-import { ReactNode, SyntheticEvent, useState } from "react";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { ReactNode, SyntheticEvent } from "react";
 
 type Variant = {
   name: string;
@@ -34,13 +32,7 @@ export function Analysis({ template }: { template: Template[] }) {
   return (
     <Stack direction="column" sx={{ gap: 2 }}>
       {map(template, ({ variants, name }) => (
-        <Stack
-          direction="column"
-          sx={{
-            boxShadow: (t) => `inset 0px 0px 0px 1px ${t.palette.divider}`,
-            borderRadius: 1,
-          }}
-        >
+        <Stack direction="column">
           {name && (
             <Typography
               sx={{ p: 2, py: 1 }}
@@ -81,7 +73,7 @@ export function AnalysisButton({
           width: "100vw",
           variant: "default",
           fullScreen: true,
-          height: "100vh",
+          height: "100dvh",
         },
       }}
       appBar={{ children: <Title>{head(template).name}</Title> }}
@@ -136,49 +128,21 @@ export function AnalysisButton({
 }
 
 function Chart({ data }: { data: Variant[] }) {
-  const [tab, setTab] = useState(head(data)?.name);
-  const current = find(data, { name: tab });
-  const height = 720;
+  const height = "60dvh";
   return (
-    <AutoSizer style={{ width: "100%", height }}>
-      {({ width: w }) => (
-        <Stack
-          sx={{
-            height,
-            width: w,
-            borderTop: () => "none",
-          }}
-        >
-          <Stack
-            direction="column"
-            sx={{
-              px: 2,
-              height: "100%",
-            }}
-          >
-            <Tabs
-              variant="scrollable"
-              value={tab}
-              onChange={(_, f) => setTab(f)}
-              orientation={"horizontal"}
-              sx={{
-                borderRight: "none",
-              }}
-            >
-              {map(data, ({ name }) => (
-                <Tab
-                  key={name}
-                  value={name}
-                  label={name}
-                  sx={{ alignItems: "flex-start", px: 2 }}
-                />
-              ))}
-            </Tabs>
-            <Divider flexItem />
-            <Stack sx={{ p: 2, flex: 1, gap: 2 }}>{current?.render()}</Stack>
-          </Stack>
-        </Stack>
-      )}
-    </AutoSizer>
+    <FlatCard>
+      <Stack sx={{ gap: 2 }}>
+        {data?.map?.(({ name, render, description }, i) => (
+          <GridChartCard
+            key={i}
+            primaryLabel={name}
+            secondaryLabel={description}
+            columns={1}
+            height={height}
+            content={render?.()}
+          />
+        ))}
+      </Stack>
+    </FlatCard>
   );
 }

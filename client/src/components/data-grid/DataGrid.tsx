@@ -34,6 +34,38 @@ import { setFromEvent } from "utils/set";
 import { useBottomBar } from "App";
 import { createContext } from "react";
 
+function smoothScrollTo(
+  element: HTMLElement,
+  yPosition: number,
+  duration: number
+): void {
+  const startY = element.scrollTop;
+  const difference = yPosition - startY;
+  let startTime: number | null = null;
+
+  // The easing function for smooth scroll
+  const easeInOutQuad = (t: number) => {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  };
+
+  const animateScroll = (currentTime: number) => {
+    if (startTime === null) {
+      startTime = currentTime;
+    }
+    const timeElapsed = currentTime - startTime;
+    const progress = Math.min(timeElapsed / duration, 1);
+    const easeProgress = easeInOutQuad(progress);
+
+    element.scrollTop = startY + difference * easeProgress;
+
+    if (timeElapsed < duration) {
+      requestAnimationFrame(animateScroll);
+    }
+  };
+
+  requestAnimationFrame(animateScroll);
+}
+
 export const DataGridContext = createContext<HTMLDivElement | null>(null);
 
 const useDataGridContext = () => useContext(DataGridContext);
@@ -134,6 +166,7 @@ export default function DataGrid<
   isLoading,
   ...rest
 }: DataGridProps<T>) {
+  const scroll = useScroll();
   const { enabled: bottomBarEnabled } = useBottomBar();
   const ref = useRef<HTMLDivElement>(null);
   const top = useTop(ref);
@@ -191,11 +224,14 @@ export default function DataGrid<
           alignItems="center"
         >
           <TextField
-            onFocus={() => {
-              ref.current?.scrollIntoView?.({
-                behavior: "smooth",
-                block: "start",
-              });
+            onClick={() => {
+              if (scroll) {
+                // Need to use custom implementation because
+                // mobile keyboards conflict with the scrolling
+                smoothScrollTo(scroll, 1 + (ref.current?.offsetTop ?? 0), 300);
+              } else {
+                ref.current?.scrollIntoView?.({ block: "start" });
+              }
             }}
             variant="filled"
             label="Search items"
@@ -249,9 +285,11 @@ export default function DataGrid<
                   },
                 }),
                 "& .MuiDataGrid-footerContainer": {
-                  display: allRows.length > PAGE_SIZE ? "block" : "none",
                   position: "sticky",
-                  bottom: bottomBarEnabled ? 80 : 0,
+                  transition: (t) => t.transitions.create("bottom"),
+                  bottom: `calc(${bottomBarEnabled ? 80 : 0}px - ${
+                    allRows.length > PAGE_SIZE ? "0" : "100"
+                  }%)`,
                   py: 1,
                   px: xs ? 2 : 0,
                   borderTop: (t) => `1px solid ${t.palette.divider}`,

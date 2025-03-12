@@ -6,11 +6,20 @@ import {
   Slice,
   useAlgorithmSelector,
 } from "components/analysis/useAlgorithmSelector";
+import { sample } from "components/charts/sample";
 import { scenarioMetrics } from "core/metrics";
 import { chain, keyBy, map } from "lodash";
 import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
-import { Bar, BarChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  Label,
+  Legend,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
 
@@ -22,26 +31,27 @@ export function LowerBoundChart({ scenario }: { scenario: string | number }) {
       isLoading={isLoading}
       data={map(data, (c) => ({
         ...c,
-        gap: c.solution_cost / c.lower_cost - 1,
+        gap: (c.solution_cost - c.lower_cost) / c.solution_cost,
       }))}
       render={
-        <BarChart margin={{ bottom: 32, top: 32, left: 16, right: 16 }}>
+        <AreaChart margin={{ bottom: 32, top: 32, left: 16, right: 16 }}>
           <Tooltip
-            formatter={formatPercentage}
+            formatter={(c) => formatPercentage(c as number)}
             cursor={{ fill: palette.action.disabledBackground }}
           />
-          <YAxis tickFormatter={formatPercentage} />
+          <YAxis tickFormatter={(c) => formatPercentage(c)} />
           <XAxis dataKey="agents">
             <Label value="Agent count" offset={-10} position="insideBottom" />
           </XAxis>
           <Legend verticalAlign="top" />
-          <Bar
+          <Area
             fill={tone(palette.mode, accentColors.blue)}
+            fillOpacity={0.4}
             isAnimationActive={false}
             dataKey="gap"
-            name="Percent difference between best solution and lower-bound"
+            name="Percent difference"
           />
-        </BarChart>
+        </AreaChart>
       }
     />
   );
@@ -79,9 +89,16 @@ export function LowerBoundComparisonChart({
             ...keyBy(c.record, "algo_name"),
           }))
           .sortBy("agents")
+          .thru(sample(50))
           .value()}
         render={
-          <SliceChart xAxisDataKey="agents" slice={slice} selected={selected} />
+          <SliceChart
+            type="area"
+            xAxisDataKey="agents"
+            slice={slice}
+            selected={selected}
+            keyType="name"
+          />
         }
       />
     </>

@@ -17,18 +17,20 @@ function Sheet({
   in: state = false,
   top = true,
   disableAnimation = false,
+  root,
 }: {
   children?: ReactElement;
   in?: boolean;
   top?: boolean;
   disableAnimation?: boolean;
+  root?: boolean;
 }) {
   const { stage, shouldMount } = useTransition(state, 300);
   const { stage: topStage } = useTransition(top, 300);
   const active = disableAnimation || topStage === "enter";
   const styles = {
     from: {
-      transform: "translateX(16px)",
+      transform: root ? "translateX(-16px)" : "translateX(16px)",
       opacity: 0,
     },
     enter: {
@@ -38,7 +40,7 @@ function Sheet({
       },
     },
     leave: {
-      transform: "translateX(16px)",
+      transform: root ? "translateX(-16px)" : "translateX(16px)",
       opacity: 0,
     },
   };
@@ -101,6 +103,7 @@ export function Router({
   ) =>
     sm ? (
       <Sheet
+        root={root}
         in={visible}
         top={top}
         disableAnimation={

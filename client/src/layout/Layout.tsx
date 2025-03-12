@@ -20,6 +20,7 @@ import { last, merge } from "lodash";
 import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
+import { useBottomBar } from "App";
 
 export type LayoutRenderProps = {
   header?: ReactNode;
@@ -64,6 +65,7 @@ export default function Layout({
   root,
   ...props
 }: LayoutProps) {
+  const { enabled: bottomBar } = useBottomBar();
   const lg = useLg();
   const md = useXs();
   const xs = useXs();
@@ -154,14 +156,13 @@ export default function Layout({
           height: "100%",
           overflow: "hidden",
           bgcolor: "background.paper",
+          "& > div > div": {
+            overscrollBehaviorY: "contain",
+          },
         }}
       >
         {xs && <Box sx={{ height: appbarHeight(lg) }} />}
-        <Scroll
-          y
-          style={{ flex: 1, overscrollBehavior: "contain" }}
-          ref={setPanel}
-        >
+        <Scroll y style={{ flex: 1 }} ref={setPanel}>
           {!xs && <Crumbs path={path} current={title} />}
           {md ? (
             content
@@ -170,8 +171,7 @@ export default function Layout({
               {content}
             </Enter>
           )}
-          {md && <Box sx={{ height: 72 }} />}
-          <Box sx={{ height: "calc(100lvh - 100svh)" }} />
+          {bottomBar && <Box sx={{ height: 80 }} />}
         </Scroll>
       </Stack>
     </>

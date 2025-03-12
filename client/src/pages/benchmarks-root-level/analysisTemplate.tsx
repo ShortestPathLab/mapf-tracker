@@ -11,14 +11,28 @@ export const analysisTemplate = [
     icon: <ShowChartRounded />,
     variants: [
       {
-        name: "By map type",
+        name: "Completion by domain",
+        description: "Instances closed and solved across domains",
         render: () => <MapProportionChart />,
       },
-      { name: "By agent count", render: () => <CompletionByAgentCountChart /> },
       {
-        name: "Individual maps",
+        name: "Completion by agent count",
+        description: "Instances solved and closed across agent count",
+        render: () => <CompletionByAgentCountChart />,
+      },
+      {
+        name: "Completion by individual maps",
+        description: "Instances solved, closed, and open across maps",
         render: () => <MapProportionByDomainChart />,
       },
+    ],
+  },
+];
+export const compareTemplate = [
+  {
+    name: undefined,
+    icon: <ShowChartRounded />,
+    variants: [
       {
         name: "Algorithm by map type",
         render: () => <AlgorithmByMapTypeChart />,

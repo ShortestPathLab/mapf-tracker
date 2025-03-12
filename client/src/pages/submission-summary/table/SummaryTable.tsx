@@ -395,7 +395,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           </Stack>
         </Scroll>
         <Box sx={{ flex: 1 }} />
-        <Scroll x style={{ width: "max-content" }}>
+        <Scroll fadeX x style={{ width: "max-content" }}>
           <Stack
             sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }}
             direction="row"
