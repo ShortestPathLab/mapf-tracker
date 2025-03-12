@@ -32,14 +32,16 @@ function Sidebar({
         top: (t) => t.spacing(3),
       }}
     >
-      <Stack
-        sx={{
-          width: "60%",
-          "> *": { width: "100%" },
-        }}
-      >
-        {cover}
-      </Stack>
+      {!!cover && (
+        <Stack
+          sx={{
+            width: "60%",
+            "> *": { width: "100%" },
+          }}
+        >
+          {cover}
+        </Stack>
+      )}
       {header}
       <Stack>
         {items?.map?.(({ label, value }, i) => (

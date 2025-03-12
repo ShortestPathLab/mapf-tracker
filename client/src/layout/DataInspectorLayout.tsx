@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Stack, Tab } from "@mui/material";
+import { Box, Stack, Tab, Typography } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
@@ -29,17 +29,27 @@ export function DataInspectorLayout({
         <TabBar sx={{ mx: sm ? -2 : -1, mb: sm ? 2 : 0 }}>
           <TabList onChange={setFromParam(setTab)}>
             {[
-              { label: dataTabName, value: "data" },
-              { label: analysisTabName, value: "analysis" },
-              { label: compareTabName, value: "compare" },
-            ].map(({ label, value }) => (
-              <Tab
-                sx={{ minWidth: 0, px: 0, mx: sm ? 2 : 0, mr: sm ? 2 : 4 }}
-                label={label}
-                value={value}
-                key={value}
-              />
-            ))}
+              { label: dataTabName, value: "data", content: dataContent },
+              {
+                label: analysisTabName,
+                value: "analysis",
+                content: analysisContent,
+              },
+              {
+                label: compareTabName,
+                value: "compare",
+                content: compareContent,
+              },
+            ]
+              .filter((c) => c.content)
+              .map(({ label, value }) => (
+                <Tab
+                  sx={{ minWidth: 0, px: 0, mx: sm ? 2 : 0, mr: sm ? 2 : 4 }}
+                  label={label}
+                  value={value}
+                  key={value}
+                />
+              ))}
           </TabList>
         </TabBar>
         <Stack>
@@ -51,13 +61,21 @@ export function DataInspectorLayout({
             {
               value: "analysis",
               content: (
-                <Box sx={{ px: sm ? 2 : 0, py: 3 }}>{analysisContent}</Box>
+                <Box sx={{ px: sm ? 2 : 0, py: 3 }}>
+                  {analysisContent ?? (
+                    <Typography color="text.secondary">No data</Typography>
+                  )}
+                </Box>
               ),
             },
             {
               value: "compare",
               content: (
-                <Box sx={{ px: sm ? 2 : 0, py: 3 }}>{compareContent}</Box>
+                <Box sx={{ px: sm ? 2 : 0, py: 3 }}>
+                  {compareContent ?? (
+                    <Typography color="text.secondary"> No data</Typography>
+                  )}
+                </Box>
               ),
             },
           ].map(({ value, content }) => (

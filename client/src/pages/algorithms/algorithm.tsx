@@ -11,6 +11,8 @@ import { matchPath, redirect } from "react-router-dom";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import { Title } from "../../components/StickyTitle";
 import { Table } from "./Table";
+import { TableRounded } from "@mui-symbols-material/w400";
+import { inferOptimality } from "./inferOptimality";
 
 export function AlgorithmPage() {
   const sm = useSm();
@@ -39,6 +41,10 @@ export function AlgorithmPage() {
             ]
           : []),
         { value: data?.papers, label: "Papers" },
+        {
+          value: data && inferOptimality(data) ? "Optimal" : "Suboptimal",
+          label: "Optimality",
+        },
         { value: data?.instances_solved, label: "Instances solved" },
         { value: data?.instances_closed, label: "Instances closed" },
         { value: data?.best_solution, label: "Best solution" },
@@ -46,7 +52,15 @@ export function AlgorithmPage() {
         { value: data?.comments, label: "Comments" },
       ]}
     >
-      <DownloadBar />
+      <DownloadBar
+        options={[
+          {
+            icon: <TableRounded />,
+            label: "Instances (.csv)",
+            primary: true,
+          },
+        ]}
+      />
       <Divider />
       <Title sticky>Algorithm performance</Title>
       <Stack sx={{ gap: 2 }}>

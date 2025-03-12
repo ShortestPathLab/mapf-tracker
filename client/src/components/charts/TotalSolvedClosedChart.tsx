@@ -31,7 +31,7 @@ export function TotalSolvedClosedChart(
             {
               label: "Solved but not closed",
               value: (solved - closed) / total,
-              color: alpha(theme.palette.success.main, 0.5),
+              color: alpha(theme.palette.success.main, 0.35),
             },
           ]}
         />

@@ -1,18 +1,22 @@
-import { Button, Stack } from "@mui/material";
+import { TableRounded } from "@mui-symbols-material/w400";
+import { Button, Stack, Typography, alpha, useTheme } from "@mui/material";
+import { DownloadBar } from "components/DownloadBar";
 import { Item } from "components/Item";
 import { Tip } from "components/Tip";
+import { Analysis } from "components/analysis/Analysis";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
-import { DataGrid, cellRendererBar } from "components/data-grid";
+import { Bar, DataGrid, cellRendererChip } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
-import { useSm } from "components/dialog/useSmallDisplay";
 import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
-import { Prose } from "layout";
+import { DataInspectorLayout, Prose } from "layout";
 import { GalleryLayout } from "layout/GalleryLayout";
-import { flatMap, map, max, slice, startCase, sum } from "lodash";
+import { capitalize, flatMap, map, max, maxBy, startCase, sum } from "lodash";
+import { compareTemplate } from "pages/benchmarks-root-level/analysisTemplate";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import Description from "./description.md";
+import { inferOptimality } from "./inferOptimality";
 
 const g = [
   "instances_solved",
@@ -23,6 +27,7 @@ const g = [
 
 function Table() {
   const { data: algorithms } = useAlgorithmDetailsData();
+  const theme = useTheme();
   const total = max(flatMap(g, (c) => map(algorithms, c) || 1)) * 1.5;
   const navigate = useNavigate();
   const columns: GridColDef<AlgorithmDetails>[] = [
@@ -30,7 +35,7 @@ function Table() {
       field: "algo_name",
       headerName: "Submission",
       sortable: true,
-      maxWidth: 180,
+      maxWidth: 240,
       flex: 1,
       renderCell: ({ value, row }) => (
         <Item
@@ -40,27 +45,64 @@ function Table() {
         />
       ),
     },
-    ...[
-      { key: "instances_solved", name: "Instances solved" },
-      { key: "instances_closed", name: "Instances closed" },
-      { key: "best_lower", name: "Instances with best lower-bound" },
-      { key: "best_solution", name: "Instances with best solution" },
-    ].map(({ key, name }) => ({
-      field: key,
+    {
+      field: "optimality",
+      headerName: "Optimality",
+      sortable: true,
+      maxWidth: 120,
       flex: 1,
-      headerName: name,
+      fold: true,
+      valueGetter: (_, row) =>
+        inferOptimality(row) ? "optimal" : "suboptimal",
+      renderCell: ({ formattedValue }) =>
+        cellRendererChip({ formattedValue: startCase(formattedValue) }),
+    },
+    ...[
+      {
+        color: theme.palette.success.main,
+        best: "instances_closed",
+        bestLabel: "closed",
+        total: "instances_solved",
+        totalLabel: "solved",
+      },
+      {
+        color: theme.palette.primary.main,
+        bestLabel: "best lower-bound",
+        best: "best_lower",
+        total: "best_solution",
+        totalLabel: "best solution",
+      },
+    ].map(({ best: closed, total: solved, color, bestLabel, totalLabel }) => ({
+      field: solved,
+      flex: 2,
+      maxWidth: 320,
+      headerName: `Instances ${bestLabel}/${totalLabel}`,
       sortable: true,
       type: "number" as const,
-      align: "center" as const,
-      headerAlign: "center" as const,
-      renderCell: ({ value = 0 }) =>
-        cellRendererBar({
-          value: value / total,
-          label: formatLargeNumber(value),
-          labelWidth: 36,
-        }),
+      renderCell: ({ row }) => (
+        <Stack sx={{ gap: 1, width: "100%" }}>
+          <Typography variant="body2" color="text.secondary">
+            {`${formatLargeNumber(
+              row[closed]
+            )} ${bestLabel} / ${formatLargeNumber(row[solved])} ${totalLabel}`}
+          </Typography>
+          <Bar
+            values={[
+              {
+                value: row[closed] / total,
+                label: capitalize(bestLabel),
+                color: color,
+              },
+              {
+                value: (row[solved] - row[closed]) / total,
+                label: capitalize(totalLabel),
+                color: alpha(color, 0.35),
+              },
+            ]}
+          />
+        </Stack>
+      ),
       fold: true,
-      maxWidth: 200,
     })),
   ];
   return (
@@ -75,26 +117,29 @@ function Table() {
 }
 
 export default function AlgorithmsPage() {
-  const sm = useSm();
   const { data: algorithms } = useAlgorithmDetailsData();
-  const sample = slice(algorithms, 0, 16);
   return (
     <GalleryLayout
       root
       title="Submissions"
-      cover={
-        <Stack direction="row" sx={{ width: "100%", flexWrap: "wrap" }}>
-          {map(sample, (row) => (
-            <AlgorithmPreview id={row.id} />
-          ))}
-        </Stack>
-      }
       items={[
         { value: algorithms?.length, label: "Submission count" },
         {
           label: "Total instances submitted",
           value: algorithms
             ? sum(map(algorithms, "instances_solved"))
+            : undefined,
+        },
+        {
+          label: "Most instances solved",
+          value: algorithms
+            ? maxBy(algorithms, "instances_solved")?.algo_name
+            : undefined,
+        },
+        {
+          label: "Most instances closed",
+          value: algorithms
+            ? maxBy(algorithms, "instances_closed")?.algo_name
             : undefined,
         },
       ]}
@@ -124,9 +169,20 @@ export default function AlgorithmsPage() {
           </>
         }
       />
-      <Stack sx={{ mx: sm ? -2 : 0 }}>
-        <Table />
-      </Stack>
+      <DownloadBar
+        options={[
+          {
+            icon: <TableRounded />,
+            label: "Summary (.csv)",
+            primary: true,
+          },
+        ]}
+      />
+      <DataInspectorLayout
+        dataTabName="Browse submissions"
+        data={<Table />}
+        analysis={<Analysis template={compareTemplate} />}
+      />
     </GalleryLayout>
   );
 }

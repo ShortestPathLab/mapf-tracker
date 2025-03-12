@@ -59,7 +59,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
               }}
             >
               <TotalSolvedClosedChart sx={{ minHeight: 130, flex: 1 }} />
-              <RecentActivityChart sx={{ minHeight: 140, flex: 2 }} />
+              <RecentActivityChart sx={{ minHeight: 200, flex: 2 }} />
             </Stack>
             <GridChartCard
               sx={{ minHeight: 420 }}
