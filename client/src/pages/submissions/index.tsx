@@ -206,13 +206,11 @@ export default function TrackSubmission() {
         </>
       }
       description={
-        <Stack sx={{ gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            An API key is a 32-character string of numbers 0-9 and lowercase
-            letters a-f, used to submit data for your algorithm. You can obtain
-            one by making a submission request.
-          </Typography>
-        </Stack>
+        <>
+          An API key is a 32-character string of numbers 0-9 and lowercase
+          letters a-f, used to submit data for your algorithm. You can obtain
+          one by making a submission request.
+        </>
       }
     />,
   ];
