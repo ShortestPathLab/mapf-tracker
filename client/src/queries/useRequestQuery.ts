@@ -39,7 +39,7 @@ export const useRequestsData = (keys: string[]) =>
   useQueries({ queries: map(keys, requestQuery) });
 
 export const requestByEmailQueryFn = (email: string) => async () =>
-  await json<RequestWithReviewOutcome[]>(
+  await json<Pick<RequestWithReviewOutcome, "requesterEmail">[]>(
     `${APIConfig.apiUrl}/request/email/${email}`
   );
 

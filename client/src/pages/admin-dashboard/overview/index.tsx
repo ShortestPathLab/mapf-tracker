@@ -32,7 +32,7 @@ export default function index() {
   return (
     <Layout
       flat
-      title="Dashboard"
+      title="Manage"
       description="Review submission requests, issue submission keys, and run jobs"
       path={[{ name: "More", url: "/more" }]}
     >

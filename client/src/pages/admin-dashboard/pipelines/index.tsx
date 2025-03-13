@@ -20,7 +20,7 @@ export default function index() {
       title="Pipelines"
       path={[
         { name: "More", url: "/more" },
-        { name: "Dashboard", url: "/dashboard" },
+        { name: "Manage", url: "/dashboard" },
       ]}
       render={RenderFixed}
     >

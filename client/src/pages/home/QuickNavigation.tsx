@@ -65,7 +65,7 @@ export function QuickNavigation() {
       )}
       renderInput={(props) => (
         <TextField
-          label="Go to a benchmark, algorithm, or map"
+          label="Go to a map or submission"
           variant="filled"
           fullWidth
           {...props}

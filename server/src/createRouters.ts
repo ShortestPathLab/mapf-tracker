@@ -1,18 +1,18 @@
-import mapRoutes from "./routes/map";
-import instanceRoutes from "./routes/instance";
-import submissionRoutes from "./routes/submission";
-import solutionSubmissionRoutes from "./routes/solutionSubmission";
-import scenarioRoutes from "./routes/scenario";
+import { use as useAuth } from "auth";
+import { Application } from "express";
+import { use as useQueries } from "./query/queries";
 import algorithmRoutes from "./routes/algorithm";
-import authRoutes from "./routes/auth";
-import userRoutes from "./routes/user";
-import solutionPathRoutes from "./routes/solutionPath";
-import requestRoutes from "./routes/request";
-import submissionKeyRoutes from "./routes/submissionKey";
+import instanceRoutes from "./routes/instance";
+import mapRoutes from "./routes/map";
 import ongoingSubmissionRoutes from "./routes/ongoingSubmission";
 import pipelineRoutes from "./routes/pipeline";
-import { use as useQueries } from "./query/queries";
-import { Application } from "express";
+import requestRoutes from "./routes/request";
+import scenarioRoutes from "./routes/scenario";
+import solutionPathRoutes from "./routes/solutionPath";
+import solutionSubmissionRoutes from "./routes/solutionSubmission";
+import submissionRoutes from "./routes/submission";
+import submissionKeyRoutes from "./routes/submissionKey";
+import userRoutes from "./routes/user";
 
 export const createRouters = (app: Application) => {
   mapRoutes(app);
@@ -21,12 +21,13 @@ export const createRouters = (app: Application) => {
   solutionSubmissionRoutes(app);
   scenarioRoutes(app);
   algorithmRoutes(app);
-  authRoutes(app);
   userRoutes(app);
   solutionPathRoutes(app);
   requestRoutes(app);
   submissionKeyRoutes(app);
   ongoingSubmissionRoutes(app);
   pipelineRoutes(app);
+  //
   useQueries(app);
+  useAuth(app);
 };

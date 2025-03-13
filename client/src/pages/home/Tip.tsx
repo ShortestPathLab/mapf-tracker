@@ -16,9 +16,9 @@ export function Tip() {
     <Stack
       sx={{
         borderRadius: 3,
-        p: xs ? 2 : sm ? 3 : 4,
+        p: xs ? 3 : sm ? 3 : 4,
         bgcolor: (t) => alpha(t.palette.background.default, 1),
-        gap: xs ? 2 : sm ? 3 : 4,
+        gap: xs ? 3 : sm ? 3 : 4,
       }}
     >
       <Stack sx={{ gap: 1 }}>

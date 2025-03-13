@@ -1,12 +1,23 @@
+export const getAuth = () => {
+  const user = localStorage.getItem("user");
+  if (user) {
+    const parsed = JSON.parse(user);
+    if ("token" in parsed) {
+      return { Authorization: `Bearer ${parsed.token}` };
+    }
+  }
+};
+
 export const request = <T = null>(
   p: string,
   body: T = undefined,
-  method = "post"
+  method = "post",
+  type = "application/json"
 ) =>
   fetch(p, {
     method,
-    body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
+    body: type === "application/json" ? JSON.stringify(body) : `${body}`,
+    headers: { "Content-Type": type, ...getAuth() },
   });
 
 export const post = <T = null>(p: string, t = null) => request<T>(p, t);

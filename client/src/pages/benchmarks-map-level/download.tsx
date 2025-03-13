@@ -2,7 +2,7 @@ import { APIConfig } from "core/config";
 import { InstanceCollection } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
-import { text } from "queries/query";
+import { json, text } from "queries/query";
 
 export const downloadScenario =
   (map: string) => async (item?: InstanceCollection) => {
@@ -22,9 +22,7 @@ export const downloadInstance =
     if (item) {
       return download(
         json2csv(
-          await fetch(
-            `${APIConfig.apiUrl}/instance/DownloadInstance/${item.id}`
-          ).then((r) => r.json())
+          await json(`${APIConfig.apiUrl}/instance/DownloadInstance/${item.id}`)
         ),
         `${map}-${item.scen_type}-${item.type_id}.csv`
       );

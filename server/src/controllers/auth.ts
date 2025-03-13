@@ -17,7 +17,7 @@ export const signin: RequestHandler = async (req, res) => {
     const passwordIsValid = req.body.password === user.password;
     if (!passwordIsValid) {
       return res.status(401).send({
-        accessToken: null,
+        token: null,
         message: "Invalid Password!",
       });
     }
@@ -28,7 +28,7 @@ export const signin: RequestHandler = async (req, res) => {
     res.status(200).send({
       id: user._id,
       username: user.username,
-      accessToken: token,
+      token: token,
     });
   } catch (err) {
     res.status(500).send({ message: err });

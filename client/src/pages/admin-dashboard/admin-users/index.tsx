@@ -9,15 +9,15 @@ export default function index() {
     <Layout
       flat
       width={960}
-      title="API keys"
+      title="Admin users"
       path={[
         { name: "More", url: "/more" },
         { name: "Manage", url: "/dashboard" },
       ]}
     >
       <Tip
-        title="API keys (coming soon)"
-        description="Create, revoke and manage API keys."
+        title="Admin users (coming soon)"
+        description="Manage users who can access management options. Create, edit, and delete users."
         actions={
           <>
             <Button sx={{ m: -1, mt: 0 }} onClick={() => navigate(-1)}>

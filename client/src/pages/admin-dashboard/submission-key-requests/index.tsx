@@ -116,7 +116,7 @@ export default function index() {
       title="Submission key requests"
       path={[
         { name: "More", url: "/more" },
-        { name: "Dashboard", url: "/dashboard" },
+        { name: "Manage", url: "/dashboard" },
       ]}
     >
       <FlatCard>

@@ -65,13 +65,6 @@ function Table() {
         total: "instances_solved",
         totalLabel: "solved",
       },
-      {
-        color: theme.palette.primary.main,
-        bestLabel: "best lower-bound",
-        best: "best_lower",
-        total: "best_solution",
-        totalLabel: "best solution",
-      },
     ].map(({ best: closed, total: solved, color, bestLabel, totalLabel }) => ({
       field: solved,
       flex: 2,
@@ -97,6 +90,40 @@ function Table() {
                 value: (row[solved] - row[closed]) / total,
                 label: capitalize(totalLabel),
                 color: alpha(color, 0.35),
+              },
+            ]}
+          />
+        </Stack>
+      ),
+      fold: true,
+    })),
+    ...[
+      {
+        key: "best_solution",
+        label: "best solution",
+      },
+      {
+        label: "best lower-bound",
+        key: "best_lower",
+      },
+    ].map(({ key, label }) => ({
+      field: key,
+      flex: 2,
+      maxWidth: 160,
+      headerName: `Instances ${label}`,
+      sortable: true,
+      type: "number" as const,
+      renderCell: ({ row }) => (
+        <Stack sx={{ gap: 1, width: "100%" }}>
+          <Typography variant="body2" color="text.secondary">
+            {`${formatLargeNumber(row[key])} ${label}`}
+          </Typography>
+          <Bar
+            values={[
+              {
+                value: row[key] / total,
+                label: capitalize(label),
+                color: "primary.main",
               },
             ]}
           />
@@ -173,7 +200,7 @@ export default function AlgorithmsPage() {
         options={[
           {
             icon: <TableRounded />,
-            label: "Summary (.csv)",
+            label: "Summary (.csv) (coming soon)",
             primary: true,
           },
         ]}

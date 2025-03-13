@@ -16,7 +16,7 @@ export { model as Scenario } from "./Scenario";
 export { model as SolutionPath } from "./SolutionPath";
 export { model as Submission, query as submissions } from "./Submission";
 export { model as SubmissionKey } from "./SubmissionKey";
-export { model as User } from "./User";
+export { model as User, query as users } from "./User";
 export { model as PipelineStatus } from "./PipelineStatus";
 
 export const url = config.url;

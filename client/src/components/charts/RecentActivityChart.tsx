@@ -1,38 +1,33 @@
-import { Stack, Typography, alpha, useTheme } from "@mui/material";
-import { Bar } from "components/data-grid";
-import { format, parse } from "date-fns";
-import { head, last, map, max, sum } from "lodash";
-import { Trend, useSeries } from "queries/useSeriesQuery";
+import { Stack, Typography } from "@mui/material";
 import { ComponentProps } from "react";
 import { GridChartCard } from "./GridChartCard";
-import { accentColors, tone } from "utils/colors";
 
-const formatDate = (s?: string) =>
-  s ? format(parse(s, "yyyy-MM", new Date()), "MMM yyyy") : "";
+// const formatDate = (s?: string) =>
+//   s ? format(parse(s, "yyyy-MM", new Date()), "MMM yyyy") : "";
 
-function useA(key: Trend) {
-  const { data } = useSeries(key, 36);
-  const peak = max(map(data, "count"));
-  const total = sum(map(data, "count"));
-  return { data, peak, total };
-}
+// function useA(key: Trend) {
+//   const { data } = useSeries(key, 36);
+//   const peak = max(map(data, "count"));
+//   const total = sum(map(data, "count"));
+//   return { data, peak, total };
+// }
 
 export function RecentActivityChart(
   props: ComponentProps<typeof GridChartCard>
 ) {
-  const theme = useTheme();
-  const { data, peak, total } = useA("solution_algos");
+  // const theme = useTheme();
+  // const { data, peak, total } = useA("solution_algos");
   return (
     <GridChartCard
       primaryLabel="Activity"
-      secondaryLabel={`${total.toLocaleString()} solved in the past 3 years`}
+      // secondaryLabel={`${total.toLocaleString()} solved in the past 3 years`}
       {...props}
       content={
         <Stack sx={{ gap: 1 }}>
           <Typography color="text.secondary" sx={{ mb: 2 }}>
             The activity panel is coming soon.
           </Typography>
-          <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+          {/* <Stack direction="row" sx={{ justifyContent: "space-between" }}>
             {[head(data), last(data)].map((item, i) => (
               <Typography
                 key={i}
@@ -64,7 +59,7 @@ export function RecentActivityChart(
               ),
               label: `${formatDate(_id)}: ${count} solved`,
             }))}
-          />
+          /> */}
         </Stack>
       }
     />

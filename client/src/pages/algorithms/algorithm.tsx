@@ -56,7 +56,7 @@ export function AlgorithmPage() {
         options={[
           {
             icon: <TableRounded />,
-            label: "Instances (.csv)",
+            label: "Instances (.csv) (coming soon)",
             primary: true,
           },
         ]}

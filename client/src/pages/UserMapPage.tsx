@@ -239,7 +239,7 @@ const refreshLeader = (callback, algo_id) => {
   const requestOptions = {
     method: "GET",
     headers: {
-      "x-access-token": JSON.parse(localStorage.getItem("user")).accessToken,
+      "x-access-token": JSON.parse(localStorage.getItem("user")).token,
     },
   };
 
@@ -708,7 +708,7 @@ export default function UserMapPage() {
               headers: {
                 "Content-Type": "application/json",
                 "x-access-token": JSON.parse(localStorage.getItem("user"))
-                  .accessToken,
+                  .token,
               },
               body: JSON.stringify(chunk_array),
             };
@@ -771,8 +771,7 @@ export default function UserMapPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "x-access-token": JSON.parse(localStorage.getItem("user"))
-            .accessToken,
+          "x-access-token": JSON.parse(localStorage.getItem("user")).token,
         },
         body: JSON.stringify({ map_name: selectedRow.map_name }),
       };
@@ -884,7 +883,7 @@ export default function UserMapPage() {
         current={`Submission ${location.state.algo_id.slice(0, 5)}`}
         path={[
           { name: "Home", url: "/" },
-          { name: "Dashboard", url: "/dashboard" },
+          { name: "Manage", url: "/dashboard" },
         ]}
       />
       <Card sx={{ width: "100%", mb: 2 }}>

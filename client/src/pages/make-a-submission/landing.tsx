@@ -1,10 +1,10 @@
 import {
   CheckRounded,
   EditRounded,
-  UploadFileRounded,
   HelpRounded,
   PendingRounded,
   TimerRounded,
+  UploadRounded,
 } from "@mui-symbols-material/w400";
 import {
   Button,
@@ -88,19 +88,10 @@ export default function index() {
                 icon: <TimerRounded sx={{ color: "action.disabled" }} />,
               },
               {
-                icon: <UploadFileRounded />,
+                icon: <UploadRounded />,
                 label: "Submit data with your API key",
                 content:
                   "Once you have your API key, you can use it to submit data to the tracker. As long as you have your API key, you can submit from any machine.",
-                action: (
-                  <Button
-                    variant="outlined"
-                    sx={{ px: 2, py: 1, minWidth: "max-content" }}
-                    onClick={() => navigate("/track")}
-                  >
-                    Enter your API key
-                  </Button>
-                ),
               },
               {
                 label: "All done!",
@@ -122,13 +113,6 @@ export default function index() {
                     }}
                   >
                     <Item primary={step.label} secondary={step.content} />
-                    {xs ? (
-                      step.action
-                    ) : (
-                      <Stack sx={{ minWidth: 160, alignItems: "flex-end" }}>
-                        {step.action}
-                      </Stack>
-                    )}
                   </Stack>
                 </StepLabel>
               </Step>

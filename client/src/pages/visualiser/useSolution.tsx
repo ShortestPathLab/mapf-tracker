@@ -28,6 +28,7 @@ import {
   sumPositions,
 } from "validator";
 import { optimiseGridMap } from "./optimiseGridMap";
+import { text } from "queries/query";
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);
@@ -151,12 +152,10 @@ export function useSolution({
     queryKey: ["solutionContextData", solutionId, source, instanceId],
     queryFn: async () => {
       const [mapData, scenarioData] = await Promise.all([
-        (await fetch(`/assets/maps/${mapMetaData.map_name}.map`)).text(),
-        (
-          await fetch(
-            `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
-          )
-        ).text(),
+        await text(`/assets/maps/${mapMetaData.map_name}.map`),
+        await text(
+          `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
+        ),
       ]);
       const parsedMap = parseMap(mapData);
       const parsedScenario = parseScenario(

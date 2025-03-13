@@ -17,7 +17,7 @@ export function useCredentials() {
     queryFn: () => {
       const user = JSON.parse(localStorage.getItem("user"));
       if (user) {
-        const decodedJwt = parseJwt(user.accessToken);
+        const decodedJwt = parseJwt(user.token);
         if (decodedJwt.exp * 1000 < Date.now()) {
           localStorage.removeItem("user");
           return null;
@@ -34,13 +34,13 @@ export function useLogInMutation() {
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["credentials"] }),
     mutationFn: async ({ username, password }: LogInFormData) => {
-      const result = await post(`${APIConfig.apiUrl}/auth/signin`, {
+      const result = await post(`${APIConfig.apiUrl}/auth/login`, {
         username,
         password,
       });
-      const { accessToken } = (await result?.json?.()) ?? {};
-      if (accessToken) {
-        localStorage.setItem("user", JSON.stringify({ accessToken, username }));
+      const { token } = (await result?.json?.()) ?? {};
+      if (token) {
+        localStorage.setItem("user", JSON.stringify({ token, username }));
         return true;
       }
       return false;
@@ -58,5 +58,5 @@ export function useLogInMutation() {
 }
 export type Credentials = {
   username: string;
-  accessToken: string;
+  token: string;
 };

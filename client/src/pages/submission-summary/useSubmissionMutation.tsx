@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "App";
 import { APIConfig } from "core/config";
 import { now } from "lodash";
+import { request } from "queries/mutation";
 import {
   ONGOING_SUBMISSION_QUERY_KEY,
   SubmissionTicket,
@@ -24,15 +25,13 @@ export function useSubmissionMutation({
       type: string;
       size?: number;
     }) =>
-      fetch(
+      request(
         `${APIConfig.apiUrl}/ongoing_submission/create/${apiKey}${
           label ? `/${encodeURIComponent(label)}` : ""
         }`,
-        {
-          method: "post",
-          body: content,
-          headers: { "Content-Type": type },
-        }
+        content,
+        "post",
+        type
       ),
     onMutate: async ({ label, size = 0 }) => {
       const optimistic = {

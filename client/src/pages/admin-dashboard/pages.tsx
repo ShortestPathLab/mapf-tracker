@@ -1,15 +1,15 @@
 import {
   AccountTreeRounded,
-  BarChartRounded,
   CallReceivedRounded,
+  PersonRounded,
   SpaceDashboardRounded,
   VpnKeyRounded,
 } from "@mui-symbols-material/w400";
 import { once } from "lodash";
+import AdminUsersPage from "./admin-users";
 import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";
 import PipelinesPage from "./pipelines";
-import StatisticsPage from "./statistics";
 import SubmissionKeyRequestsPage from "./submission-key-requests";
 
 export const pages = once(() => [
@@ -35,17 +35,24 @@ export const pages = once(() => [
     icon: <VpnKeyRounded />,
   },
   {
+    value: "admin-users",
+    label: "Admin users",
+    description: "Manage users who can access management options",
+    content: <AdminUsersPage />,
+    icon: <PersonRounded />,
+  },
+  {
     value: "pipelines",
     label: "Pipelines",
     description: "View and run data-processing jobs",
     content: <PipelinesPage />,
     icon: <AccountTreeRounded />,
   },
-  {
-    value: "statistics",
-    label: "Statistics",
-    description: "View statistics",
-    content: <StatisticsPage />,
-    icon: <BarChartRounded />,
-  },
+  // {
+  //   value: "statistics",
+  //   label: "Statistics",
+  //   description: "View statistics",
+  //   content: <StatisticsPage />,
+  //   icon: <BarChartRounded />,
+  // },
 ]);

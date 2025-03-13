@@ -12,9 +12,11 @@ import { MapProportionChart } from "pages/benchmarks-root-level/charts/MapPropor
 import { ArticleCard } from "pages/docs/ArticleCard";
 import { pages } from "pages/docs/pages";
 import { Tip } from "pages/home/Tip";
+import { QuickNavigation } from "./QuickNavigation";
+import { ReactNode } from "react";
 
 const TEMP_HARDCODED_SOLUTION_PATH =
-  "/visualization?mapId=63761f265d814f08ecdbf3bf&reason=unknown&scenId=63761f275d814f08ecdbf99e&instanceId=63761f2c5d814f08ecded10c&solutionId=641131c4a77d7971655b98c0&source=submitted";
+  "/visualization?mapId=63761f265d814f08ecdbf3bf&reason=unknown&scenId=63761f275d814f08ecdbf96d&instanceId=63761f275d814f08ecdc0a42&solutionId=64111c7aa77d79716559c10f&source=submitted";
 export default function Hero({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const md = useMd();
@@ -22,24 +24,27 @@ export default function Hero({ children }: { children?: ReactNode }) {
   return (
     <Stack sx={{ gap: 4 }}>
       <Tip />
-      {/* <Stack
-        sx={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          bgcolor: "background.paper",
-          py: 2,
-          my: -2,
-        }}
-      >
-        <QuickNavigationBar />
-      </Stack> */}
       <Stack
         direction={md ? "column" : "row"}
         sx={{ gap: lg ? 2 : 6, mx: lg ? 0 : 4, alignItems: "flex-start" }}
       >
         <Stack sx={{ gap: 2, my: 1 }}>
-          <Typography color="text.secondary">Trends</Typography>
+          <Typography color="text.secondary">Jump to</Typography>
+          <Stack
+            sx={{
+              position: "sticky",
+              top: 0,
+              zIndex: 100,
+              bgcolor: "background.paper",
+              py: 2,
+              my: -2,
+            }}
+          >
+            <QuickNavigation />
+          </Stack>
+          <Typography color="text.secondary" sx={{ pt: 2 }}>
+            Trends
+          </Typography>
           <Stack
             direction="row"
             sx={{
@@ -101,9 +106,9 @@ export default function Hero({ children }: { children?: ReactNode }) {
             {map(
               [
                 {
-                  label: "See a solution for ORZ Random 25",
+                  label: "See a solution for 4000 agents on ORZ 900 D",
                   description:
-                    "Find out why multi-agent pathfinding is so difficult.",
+                    "Multi-agent pathfinding is difficult. LaCAM solves this problem instance, yet you can clearly where there's room for improvement.",
                   value: TEMP_HARDCODED_SOLUTION_PATH,
                   icon: undefined,
                   content: undefined,

@@ -1,17 +1,15 @@
 import bodyParser from "body-parser";
+import { restore } from "controllers/ongoingSubmission";
 import cors from "cors";
-import express, { json, urlencoded } from "express";
-import { pick } from "lodash";
+import express, { urlencoded } from "express";
 import path from "path";
-import logger from "pino-http";
+import { csvParser, yamlParser } from "./body-parsers";
 import { connectToDatabase } from "./connection";
 import { createDevServer } from "./createDevServer";
 import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
-import { csvParser, yamlParser } from "./body-parsers";
-import { restore } from "controllers/ongoingSubmission";
 
 export const app = express();
 app.use(cors());
@@ -28,19 +26,6 @@ app.use(
   })
 );
 app.use(urlencoded({ extended: true }));
-// app.use(
-//   logger({
-//     customSuccessMessage: (req) => `[Server] ${req.method} ${req.url}`,
-//     serializers: {
-//       req(req) {
-//         return pick(req, "url", "method", "id", "body");
-//       },
-//       res(res) {
-//         return pick(res, "statusCode", "body");
-//       },
-//     },
-//   })
-// );
 
 await connectToDatabase();
 

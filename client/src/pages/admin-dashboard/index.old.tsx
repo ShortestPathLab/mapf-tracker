@@ -276,7 +276,7 @@ async function checkNameExist(id, name) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-access-token": JSON.parse(localStorage.getItem("user")).accessToken,
+      "x-access-token": JSON.parse(localStorage.getItem("user")).token,
     },
     body: JSON.stringify({
       algo_name: name,
@@ -296,7 +296,7 @@ const refreshAlgorithms = (callback) => {
   const requestOptions = {
     method: "GET",
     headers: {
-      "x-access-token": JSON.parse(localStorage.getItem("user")).accessToken,
+      "x-access-token": JSON.parse(localStorage.getItem("user")).token,
     },
   };
 
@@ -476,8 +476,7 @@ export default function Dashboard() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": JSON.parse(localStorage.getItem("user"))
-              .accessToken,
+            "x-access-token": JSON.parse(localStorage.getItem("user")).token,
           },
           body: JSON.stringify({
             algo_name: data.get("algoName"),
@@ -531,8 +530,7 @@ export default function Dashboard() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": JSON.parse(localStorage.getItem("user"))
-              .accessToken,
+            "x-access-token": JSON.parse(localStorage.getItem("user")).token,
           },
           body: JSON.stringify({
             algo_name: data.get("algoName"),
@@ -625,8 +623,7 @@ export default function Dashboard() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "x-access-token": JSON.parse(localStorage.getItem("user"))
-            .accessToken,
+          "x-access-token": JSON.parse(localStorage.getItem("user")).token,
         },
         body: JSON.stringify(values),
       });

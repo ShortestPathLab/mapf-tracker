@@ -84,7 +84,7 @@ function ResponsiveAppBar() {
     // }
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      const decodedJwt = parseJwt(user.accessToken);
+      const decodedJwt = parseJwt(user.token);
       if (decodedJwt.exp * 1000 < Date.now()) {
         localStorage.removeItem("user");
         setLogin(false);
@@ -160,7 +160,7 @@ function ResponsiveAppBar() {
     fetch(APIConfig.apiUrl + "/auth/signin", requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        if (data.accessToken) {
+        if (data.token) {
           localStorage.setItem("user", JSON.stringify(data));
           setOpen(false);
           setLogin(true);

@@ -7,7 +7,7 @@ import { log } from "logging";
 import { render } from "@react-email/components";
 import React from "react";
 import { mail } from "mail";
-import { queryClient } from "query";
+import { queryClient, route } from "query";
 import { z } from "zod";
 
 const { query } = queryClient(Request);
@@ -101,54 +101,36 @@ export const create = async (req, res) => {
   }
 };
 
-export const updateRequest = async (req, res) => {
-  const { id } = req.params;
-  const { reviewStatus, ...otherFields } = req.body;
-  try {
-    const request = await Request.findById(id);
-    /**/ if (!request) {
-      return res
-        .status(404)
-        .send({ message: `Request with id ${id} not found` });
-    }
-
-    const previousStatus = request.reviewStatus.status;
-
-    const updatedRequest = await Request.findByIdAndUpdate(
-      id,
-      { reviewStatus, ...otherFields },
-      { new: true }
-    );
-
-    // request was reviewed and approved
-    if (
-      previousStatus === "not-reviewed" &&
-      reviewStatus.status === "approved"
-    ) {
-      /**/ // generate new submission key api for the user
-      const apiKey = crypto.randomBytes(16).toString("hex");
-      const creationDate = new Date();
-      const expirationDate = new Date();
-      expirationDate.setMonth(expirationDate.getMonth() + 1); // API key valid for one month
-      const submission_key = new SubmissionKey({
-        request_id: id,
-        api_key: apiKey,
-        creationDate,
-        expirationDate,
-      });
-
-      submission_key.save().catch((err) => {
-        res.status(500).send({
-          message:
-            err.message ||
-            "Some error occurred while creating the submission key.",
-        });
-      });
-    }
-    res.send({ message: "Request updated successfully", updatedRequest });
-  } catch (err) {
-    res.status(500).send({
-      message: err.message || "Some error occurred while updating the request.",
-    });
-  }
+const requestSchema = {
+  id: z.string(),
+  requesterName: z.string(),
+  requesterEmail: z.string().email(),
+  requesterAffiliation: z.string(),
+  googleScholar: z.string().optional(),
+  dblp: z.string().optional(),
+  justification: z.string().optional(),
+  algorithmName: z.string(),
+  authorName: z.string(),
+  paperReference: z.string().optional(),
+  githubLink: z.string().optional(),
+  comments: z.string().optional(),
 };
+const handleRequestUpdate = async ({
+  id,
+  ...data
+}: z.infer<z.ZodObject<typeof requestSchema>>) => {
+  const request = Request.findById(id);
+  if (!request) throw new Error("Request not found");
+  await request.updateOne(data);
+  return { id };
+};
+
+export const updateRequest = route(
+  z.object(requestSchema),
+  handleRequestUpdate
+);
+
+export const updateRequestElevated = route(
+  z.object({ ...requestSchema, reviewStatus: z.any() }),
+  handleRequestUpdate
+);
