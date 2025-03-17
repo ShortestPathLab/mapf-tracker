@@ -4,7 +4,7 @@ import {
   TableRounded,
 } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
-import { DownloadBar } from "components/DownloadBar";
+import { ActionBar } from "components/ActionBar";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { useStableLocationState } from "hooks/useStableLocationState";
@@ -65,7 +65,7 @@ export default function Page() {
       ]}
     >
       <Stack gap={4}>
-        <DownloadBar
+        <ActionBar
           options={[
             {
               label: "Scenario file (.scen)",

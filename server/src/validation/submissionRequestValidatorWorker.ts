@@ -1,18 +1,21 @@
 import { connectToDatabase } from "connection";
-import { flatten } from "lodash";
+import { chain, flatten, now, values } from "lodash";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { encode } from "validator";
 import { RefinementCtx, z } from "zod";
-import {
-  Instance,
-  Map,
-  OngoingSubmission,
-  Scenario,
-  SubmissionKey,
-} from "../models";
+import { Map, OngoingSubmission, Scenario, SubmissionKey } from "../models";
 import { memoizeAsync } from "../utils/memoizeAsync";
 import { waitMap } from "../utils/waitMap";
 import { fatal } from "../validation/zod";
+import Validator, {
+  ValidationError,
+  ValidationSchema,
+} from "fastest-validator";
+import { context } from "logging";
+import { map } from "promise-tools";
+import { findInstance } from "./findInstance";
+
+const log = context("Schema Validator");
 
 export const getKey = async (
   api_key: string | undefined,
@@ -42,6 +45,8 @@ export const pathSchema = (newline: boolean = false) =>
       "Should only contain `l`, `r`, `u`, `d`, `w`"
     );
 
+const v = new Validator({ haltOnFirstError: true });
+
 export const submissionBaseSchema = z.object({
   skip_validation: z.boolean().default(false).optional(),
   // Instance identification
@@ -65,99 +70,131 @@ export const submissionBaseSchema = z.object({
     .optional(),
 });
 
-const findInstance = memoizeAsync((a) => Instance.findOne(a), {
-  cacheKey: JSON.stringify,
-});
-const findMap = memoizeAsync((a) => Map.findOne(a), {
-  cacheKey: JSON.stringify,
-});
-const findScenario = memoizeAsync((a) => Scenario.findOne(a), {
-  cacheKey: JSON.stringify,
-});
-
-export const submissionSchema = submissionBaseSchema
-  .transform(({ solution_plan, ...v }) => ({
-    ...v,
-    solution_plan:
-      typeof solution_plan === "string"
-        ? solution_plan.split(/\r\n|\r|\n/)
-        : solution_plan ?? [],
-  }))
-  .transform(({ agent_count, ...v }, ctx) => {
-    const inferredAgentCount = v.solution_plan.length;
-    if (agent_count && agent_count !== inferredAgentCount)
-      fatal(
-        ctx,
-        `Agent count mismatch, expected ${agent_count} got ${inferredAgentCount}`
-      );
-    return { ...v, agent_count: inferredAgentCount };
-  })
-  .transform(async ({ map_name, ...v }, ctx) => {
-    const map = await findMap({ map_name });
-    if (!map) return fatal(ctx, "Map name invalid");
-    const scenario = await findScenario({
-      map_id: map.id,
-      scen_type: v.scen_type,
-      type_id: v.type_id,
-    });
-    const instance = await findInstance({
-      agents: v.agent_count,
-      scen_id: scenario.id,
-      map_id: map.id,
-    });
-    if (!scenario) return fatal(ctx, "Scenario not found");
-    return { ...v, instance, scenario, map };
-  })
-  .transform(({ solution_plan, ...v }) => ({
-    ...v,
-    solution_plan: solution_plan.map(encode),
-  }))
-  .transform(async ({ solution_plan, flip_up_down, ...v }) => {
-    if (flip_up_down) {
-      return {
-        ...v,
-        solution_plan: solution_plan.map((s) =>
-          s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
-        ),
-      };
-    }
-    return { ...v, solution_plan };
-  });
-
-const submitOne = async (
-  apiKey: string,
-  data: z.infer<typeof submissionSchema>
-) => {
-  const id = { apiKey };
-  const doc = await new OngoingSubmission({
-    ...id,
-    instance: data.instance.id,
-    lowerBound: data.lower_cost,
-    cost: data.solution_cost,
-    solutions: data.solution_plan.map(encode),
-    options: { skipValidation: data.skip_validation },
-  }).save();
-
-  return [{ ...id, submissionId: doc.id }];
+type One = {
+  skip_validation: boolean;
+  map_name: string;
+  scen_type: string;
+  type_id: number;
+  lower_cost?: number;
+  solution_cost?: number;
+  agent_count?: number | undefined;
+  agents?: number;
+  flip_up_down?: boolean;
+  solution_plan: string | string[];
+  instance?: string;
 };
 
-const submitBatch = async (
-  apiKey: string,
-  data: z.infer<typeof submissionSchema>[]
-) => flatten(await waitMap(data, (d) => submitOne(apiKey, d)));
+const base = {
+  skip_validation: { type: "boolean", default: false, optional: true },
+  map_name: "string",
+  scen_type: "string",
+  type_id: { type: "number", int: true, nonnegative: true, optional: false },
+  lower_cost: { type: "number", nonnegative: true, optional: true },
+  solution_cost: { type: "number", nonnegative: true, optional: true },
+  agent_count: { type: "number", int: true, nonnegative: true, optional: true },
+  flip_up_down: { type: "boolean", default: false, optional: true },
+  solution_plan: [
+    {
+      type: "string",
+      optional: true,
+      default: "",
+      pattern: /^[lruwd0-9\r\n]*$/,
+    },
+    {
+      type: "array",
+      optional: true,
+      default: [],
+      items: { type: "string", pattern: /^[lruwd0-9]*$/ },
+    },
+  ],
+} satisfies ValidationSchema<One>;
+
+const findMap = memoizeAsync((a) => Map.findOne(a, { _id: 1 }), {
+  cacheKey: JSON.stringify,
+});
+const findScenario = memoizeAsync((a) => Scenario.findOne(a, { _id: 1 }), {
+  cacheKey: JSON.stringify,
+});
+
+export const transformOne = async (v: One) => {
+  // ─── Coerce Solution Plan ────────────────────────────────────────────
+  v.solution_plan =
+    typeof v.solution_plan === "string"
+      ? v.solution_plan.split(/\r\n|\r|\n/)
+      : v.solution_plan ?? [];
+  // ─── Coerce Agent Count ──────────────────────────────────────────────
+  v.agent_count ??= v.agents;
+  // ─── Coerce Agent Count ──────────────────────────────────────────────
+  const inferredAgentCount = v.solution_plan.length;
+  if (
+    v.agent_count &&
+    v.agent_count !== inferredAgentCount &&
+    !v.skip_validation
+  )
+    throw `Agent count mismatch, expected ${v.agent_count} got ${inferredAgentCount}`;
+  v.agent_count = v.agent_count ?? inferredAgentCount;
+  // ─── Validate Instance Existence ─────────────────────────────────────
+  const map = await findMap({ map_name: v.map_name });
+  if (!map) throw "Map name invalid";
+  const scenario = await findScenario({
+    map_id: map._id,
+    scen_type: v.scen_type,
+    type_id: v.type_id,
+  });
+  if (!scenario) throw "Scenario not found";
+  const instance = await findInstance({
+    agents: v.agent_count,
+    scen_id: scenario._id,
+  });
+  if (!instance) throw "Instance not found";
+  v.instance = instance._id.toString();
+  if (v.skip_validation) return v;
+  // ─── Coerce Solution Plan ────────────────────────────────────────────
+  v.solution_plan = v.solution_plan.map(encode);
+  v.solution_plan = v.solution_plan.map((s) =>
+    s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
+  );
+  return v;
+};
+
+const submitOne = async (apiKey: string, data: One | One[]) => {
+  const id = { apiKey };
+  const result = await OngoingSubmission.collection.insertMany(
+    (data instanceof Array ? data : [data]).map(
+      (data) =>
+        new OngoingSubmission({
+          ...id,
+          instance: data.instance,
+          lowerBound: data.lower_cost,
+          cost: data.solution_cost,
+          solutions: data.solution_plan,
+          options: { skipValidation: data.skip_validation },
+        })
+    )
+  );
+
+  return values(result.insertedIds).map((d) => ({
+    submissionId: d.toString(),
+    ...id,
+  }));
+};
 
 const handlers = [
   {
     name: "Single instance submission",
-    schema: submissionBaseSchema,
+    schema: v.compile(base),
     handler: submitOne,
-    transformer: submissionSchema,
+    transformer: transformOne,
   },
   {
     name: "Batch submission",
-    schema: submissionBaseSchema.array(),
-    handler: submitBatch,
-    transformer: submissionSchema.array(),
+    schema: v.compile({
+      $$root: true,
+      type: "array",
+      items: { type: "object", props: base },
+    }),
+    handler: submitOne,
+    transformer: (vs: One[]) => map(vs, transformOne),
   },
 ] as const;
 
@@ -168,19 +205,22 @@ export async function run({
   try {
     await connectToDatabase();
     for (const { schema, handler, transformer } of handlers) {
-      const { success, data } = schema.safeParse(d);
-      if (success) {
-        const transformed = await transformer.parseAsync(data);
+      const result = schema(d);
+      if (result === true) {
+        log.info("Schema validation complete");
+        const transformed = await transformer(d as One & One[]);
+        log.info("Transform complete");
         const output = await handler(apiKey, transformed as any);
-        return { ids: output };
+        log.info("Transform complete");
+        return { ids: output, error: undefined };
       }
     }
     return {
       error: {
         description: "Does not match any schema.",
         attempts: handlers.map(({ name, schema }) => {
-          const { error } = schema.safeParse(d);
-          return { name, error: error?.format?.() };
+          const error = schema(d);
+          return { name, error };
         }),
       },
     };

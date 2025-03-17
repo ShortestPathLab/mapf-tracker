@@ -133,13 +133,6 @@ export function DetailsDialog({
                         ]
                       : []),
                     {
-                      label: "Submission time",
-                      value: formatDate(
-                        submission?.createdAt,
-                        DATE_TIME_FORMAT
-                      ),
-                    },
-                    {
                       label: "Validation time taken",
                       value: isNumber(submission?.validation?.timeTaken)
                         ? formatDuration({
@@ -159,7 +152,7 @@ export function DetailsDialog({
                     {
                       label: "Submission time",
                       value: formatDate(
-                        submission?.createdAt,
+                        submission?.createdAt ?? submission?.updatedAt,
                         DATE_TIME_FORMAT
                       ),
                     },

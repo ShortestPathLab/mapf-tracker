@@ -1,5 +1,5 @@
 import { CheckRounded } from "@mui-symbols-material/w400";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { Title } from "components/StickyTitle";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
@@ -21,6 +21,8 @@ import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
+import { useEffect } from "react";
+import { useSnackbar } from "components/Snackbar";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
@@ -28,13 +30,14 @@ const hintText =
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
   const { data } = useOngoingSubmissionSummaryQuery(apiKey);
-  const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
+  const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Finish submission",
     variant: "modal",
   });
+  const notify = useSnackbar();
   const navigate = useNavigate();
 
   const keyStatus = parseApiKeyStatus(apiKeyData);
@@ -47,6 +50,42 @@ export default function SubmissionSummaryPage() {
     <Actions key="actions" apiKey={apiKey} />,
     <Tickets key="tickets" apiKey={apiKey} />,
     <Box key="gap" sx={{ height: 72 }} />,
+  ];
+
+  useEffect(() => {
+    if (!isLoading && error) {
+      notify(error.toString());
+      navigate("/track");
+    }
+  }, [isLoading, error]);
+
+  const contentBottom = [
+    <Button
+      key="submit"
+      startIcon={<CheckRounded />}
+      disabled={keyStatus === "submitted" || keyStatus === "expired"}
+      variant="contained"
+      color="secondary"
+      disableElevation
+      size="large"
+      sx={{ alignSelf: xs ? "stretch" : "flex-end", borderRadius: 2 }}
+      onClick={() =>
+        open({
+          hintText,
+          acceptLabel: "Submit now",
+          acceptProps: { color: "secondary" },
+          closeLabel: "Cancel",
+          onAccept: () => {
+            finalise();
+            close();
+            navigate("/submissionSummary");
+          },
+          onClose: close,
+        })
+      }
+    >
+      Finish submission
+    </Button>,
   ];
 
   const contentRight = [
@@ -108,70 +147,57 @@ export default function SubmissionSummaryPage() {
       detailStats={[]}
       extras={[]}
     >
-      <Stack sx={{ gap: 2 }}>
+      <Stack
+        sx={{
+          gap: 2,
+          "& .MuiDataGrid-footerContainer": {
+            bottom: "96px !important",
+          },
+        }}
+      >
         <Title>Details</Title>
         {/* <DataGrid clickable columns={columns} rows={data} /> */}
         <SummaryTable apiKey={apiKey} />
       </Stack>
     </SubmissionSummary>,
-    <Box key="gap" sx={{ height: 72 }} />,
-  ];
-
-  const contentBottom = [
-    <Button
-      key="submit"
-      startIcon={<CheckRounded />}
-      disabled={keyStatus === "submitted" || keyStatus === "expired"}
-      variant="contained"
-      color="secondary"
-      disableElevation
-      size="large"
-      sx={{ alignSelf: xs ? "stretch" : "flex-end", borderRadius: 2 }}
-      onClick={() =>
-        open({
-          hintText,
-          acceptLabel: "Submit now",
-          acceptProps: { color: "secondary" },
-          closeLabel: "Cancel",
-          onAccept: () => {
-            finalise();
-            close();
-            navigate("/submissionSummary");
-          },
-          onClose: close,
-        })
-      }
+    <Box key="gap" sx={{ height: "100dvh" }} />,
+    <Stack
+      key="bottom"
+      sx={{
+        alignItems: "flex-end",
+        justifyContent: "center",
+        height: 104,
+        position: "sticky",
+        bottom: 0,
+        bgcolor: "background.paper",
+      }}
     >
-      Finish submission
-    </Button>,
+      {contentBottom}
+    </Stack>,
   ];
 
-  return (
+  const props = {
+    flat: true,
+    title: requestData?.algorithmName ?? "Submit data",
+    path: [
+      { name: "Home", url: "/" },
+      { name: "My submissions", url: "/track" },
+    ],
+    contentLeft,
+    contentRight,
+    labelLeft: "Upload data",
+    labelRight: "Validation progress",
+  };
+
+  return isLoading ? (
+    <BentoLayout
+      {...props}
+      contentLeft={<CircularProgress />}
+      contentRight={<CircularProgress />}
+    />
+  ) : (
     <>
-      <BentoLayout
-        flat
-        title={requestData?.algorithmName ?? "Submit data"}
-        path={[
-          { name: "Home", url: "/" },
-          { name: "My submissions", url: "/track" },
-        ]}
-        contentLeft={contentLeft}
-        contentRight={contentRight}
-        labelLeft="Upload data"
-        labelRight="Validation progress"
-      />
-      <Stack
-        sx={{
-          overflow: "hidden",
-          position: "fixed",
-          right: 0,
-          left: sm ? 0 : "auto",
-          p: sm ? 2 : 3,
-          bottom: 0,
-        }}
-      >
-        {contentBottom}
-      </Stack>
+      <BentoLayout {...props} />
       {dialog}
     </>
   );

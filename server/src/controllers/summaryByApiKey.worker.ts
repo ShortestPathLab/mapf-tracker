@@ -1,16 +1,30 @@
 import { connectToDatabase } from "connection";
-import { chain, countBy, groupBy, head, mapValues, once } from "lodash";
-import { Infer, OngoingSubmission } from "models";
+import { chain, countBy, groupBy, head, keyBy, mapValues, once } from "lodash";
+import { Infer, Map, OngoingSubmission, Scenario } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { asyncMap } from "utils/waitMap";
 import { z } from "zod";
-import { findInstance, findScenario, findMap } from "./findMemo";
+import { findInstance } from "./findMemo";
 
 export const path = import.meta.path;
 
 const connect = once(connectToDatabase);
 
+const generateIndexes = once(async () => {
+  await connectToDatabase();
+  const maps = await Map.find({}, { _id: 1, map_name: 1 });
+  const scenarios = Scenario.find(
+    {},
+    { _id: 1, map_id: 1, type_id: 1, scen_type: 1 }
+  );
+  return {
+    maps: keyBy(maps, "_id"),
+    scenarios: keyBy(await scenarios, "_id"),
+  };
+});
+
 const run = async (params: unknown) => {
+  const indexes = await generateIndexes();
   const data = z.object({ apiKey: z.string() }).parse(params);
   const docs: Pick<
     Infer<typeof OngoingSubmission>,
@@ -27,8 +41,10 @@ const run = async (params: unknown) => {
   ]);
   const submissions = await asyncMap(docs, async (d) => {
     const instance = await findInstance(d.instance.toString());
-    const scenario = await findScenario(instance.scen_id.toString());
-    const map = await findMap(scenario.map_id.toString());
+    if (!instance) throw "Instance not found";
+    const scenario = indexes.scenarios[instance.scen_id!.toString()];
+    if (!scenario) throw "Scenario not found";
+    const map = indexes.maps[scenario.map_id!.toString()];
     return { submission: d, scenario, map, instance };
   });
   const novelty = (c: typeof submissions) =>

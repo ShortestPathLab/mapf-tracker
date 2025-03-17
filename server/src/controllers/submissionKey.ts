@@ -1,6 +1,9 @@
 import crypto from "crypto";
 import { RequestHandler } from "express";
 import { SubmissionKey } from "models";
+import { createSubmissionKey } from "./user";
+import { route } from "query";
+import { z } from "zod";
 
 export const findAll: RequestHandler = (req, res) => {
   SubmissionKey.find({})
@@ -56,31 +59,13 @@ export const findByApiKey: RequestHandler = (req, res) => {
     });
 };
 
-export const create = async (req, res) => {
-  if (!req.body.request_id) {
-    return res.status(400).send({ message: "Request id cannot be empty!" });
-  }
-  const apiKey = crypto.randomBytes(16).toString("hex");
-  const creationDate = new Date();
-  const expirationDate = new Date();
-  expirationDate.setMonth(expirationDate.getMonth() + 1); // API key valid for one month
-
-  const submission_key = new SubmissionKey({
-    request_id: req.body.request_id,
-    api_key: apiKey,
-    creationDate,
-    expirationDate,
-  });
-
-  submission_key
-    .save()
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Requester.",
-      });
-    });
-};
+export const create = route(
+  z.object({
+    request: z.string(),
+  }),
+  async ({ request }) => {
+    const key = await createSubmissionKey(request);
+    return { key };
+  },
+  { source: "params" }
+);

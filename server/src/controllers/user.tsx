@@ -66,16 +66,7 @@ export const createKeyAndSendMail: RequestHandler<
     requesterName,
     reviewStatus: { comments, status },
   } = await Request.findById(requestId);
-  log.info("Creating API key");
-  const apiKey = randomBytes(16).toString("hex");
-  const creationDate = new Date();
-  const expirationDate = addMonths(creationDate, 1);
-  await new SubmissionKey({
-    request_id: requestId,
-    creationDate,
-    expirationDate,
-    api_key: apiKey,
-  }).save();
+  const apiKey = await createSubmissionKey(requestId);
   log.info("Sending mail");
   await queueMail({
     apiKey,
@@ -628,3 +619,17 @@ export const submitData = async (req, res) => {
   }
   return res.status(200).send({ message: "Update successful" });
 };
+
+export async function createSubmissionKey(requestId: string) {
+  log.info("Creating API key");
+  const apiKey = randomBytes(16).toString("hex");
+  const creationDate = new Date();
+  const expirationDate = addMonths(creationDate, 1);
+  await new SubmissionKey({
+    request_id: requestId,
+    creationDate,
+    expirationDate,
+    api_key: apiKey,
+  }).save();
+  return apiKey;
+}

@@ -42,8 +42,12 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
                 )
               }
               secondary={
-                !isSubmissionLoading && submission?.createdAt ? (
-                  formatDate(submission?.createdAt, DATE_TIME_FORMAT)
+                !isSubmissionLoading &&
+                (submission?.createdAt || submission?.updatedAt) ? (
+                  formatDate(
+                    submission?.createdAt ?? submission?.updatedAt,
+                    DATE_TIME_FORMAT
+                  )
                 ) : (
                   <Skeleton sx={{ width: 80 }} />
                 )

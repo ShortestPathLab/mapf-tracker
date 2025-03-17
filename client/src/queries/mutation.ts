@@ -8,17 +8,24 @@ export const getAuth = () => {
   }
 };
 
-export const request = <T = null>(
+export const request = async <T = null>(
   p: string,
   body: T = undefined,
   method = "post",
   type = "application/json"
-) =>
-  fetch(p, {
+) => {
+  const req = await fetch(p, {
     method,
     body: type === "application/json" ? JSON.stringify(body) : `${body}`,
     headers: { "Content-Type": type, ...getAuth() },
   });
+  if (req.ok) {
+    return req;
+  } else {
+    const error = await req.json();
+    throw new Error("message" in error ? error.message : req.statusText);
+  }
+};
 
 export const post = <T = null>(p: string, t = null) => request<T>(p, t);
 export const get = <T = null>(p: string) => request<T>(p, undefined, "get");

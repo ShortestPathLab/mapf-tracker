@@ -59,6 +59,7 @@ export function Modal({
         ref: (e: HTMLElement | null) => setTarget(e),
         ...props.PaperProps,
         sx: {
+          maxWidth: width,
           borderRadius: 3,
           background: theme.palette.background.paper,
           overflow: "hidden",
@@ -68,7 +69,6 @@ export function Modal({
             ? "100%"
             : contentHeight || "fit-content",
           position: "relative",
-          maxWidth: "none",
           mx: 2,
           marginTop: 0,
           ...props.PaperProps?.sx,
@@ -80,8 +80,8 @@ export function Modal({
           y
           style={{
             height: "100%",
-            width: width,
-            maxWidth: "100%",
+            width: `min(${width}px, 100%)`,
+            maxWidth: width,
           }}
         >
           <Box
@@ -94,7 +94,11 @@ export function Modal({
       ) : (
         <Box
           ref={(e: HTMLDivElement) => setContent(e)}
-          sx={{ width, maxWidth: "100%", height: sm ? "100%" : undefined }}
+          sx={{
+            width: `min(${width}px, 100%)`,
+            maxWidth: width,
+            height: sm ? "100%" : undefined,
+          }}
         >
           {content}
         </Box>

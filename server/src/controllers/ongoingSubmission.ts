@@ -164,7 +164,7 @@ export const finalise = route(
   { source: "params" }
 );
 
-const validateSubmissionRequestAsync = usingWorkerTask<
+const validateSubmissionRequestAsync = usingWorkerTaskReusable<
   unknown,
   SubmissionRequestValidatorWorkerResult
 >(() => new Worker(validateSubmissionRequestWorkerPath));
@@ -184,7 +184,7 @@ const processSubmission = async (
       result: { count: result.ids.length },
     };
   } else {
-    log.info("Submission did not parse schema validation", result.error);
+    log.info("Submission did not pass schema validation", result.error);
     return { status: "error", error: result.error };
   }
 };

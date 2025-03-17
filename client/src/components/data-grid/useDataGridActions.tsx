@@ -82,6 +82,7 @@ export function useDataGridActions<T>({
                     <MoreVertRounded />
                   </IconButton>
                   <Menu
+                    keepMounted
                     {...bindMenu(state)}
                     anchorOrigin={{
                       vertical: "bottom",

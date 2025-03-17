@@ -1,6 +1,6 @@
 import { TableRounded } from "@mui-symbols-material/w400";
 import { Button, Stack, Typography, alpha, useTheme } from "@mui/material";
-import { DownloadBar } from "components/DownloadBar";
+import { ActionBar } from "components/ActionBar";
 import { Item } from "components/Item";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
@@ -196,7 +196,7 @@ export default function AlgorithmsPage() {
           </>
         }
       />
-      <DownloadBar
+      <ActionBar
         options={[
           {
             icon: <TableRounded />,

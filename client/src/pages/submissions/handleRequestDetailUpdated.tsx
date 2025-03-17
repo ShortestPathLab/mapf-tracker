@@ -5,12 +5,11 @@ import { Request } from "queries/useRequestQuery";
 
 export const handleRequestDetailUpdated = async ({
   key,
-  id,
   ...values
 }: Request & { id: string | number; key: string | number }) => {
   try {
     const response = await request(
-      `${APIConfig.apiUrl}/request/update/${id}`,
+      `${APIConfig.apiUrl}/request/update/${values?.id}`,
       values
     );
 

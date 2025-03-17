@@ -1,12 +1,16 @@
 import { mapValues } from "lodash";
 import csv from "neat-csv";
-import { usingTaskMessageHandler, usingWorkerTask } from "queue/usingWorker";
+import {
+  usingTaskMessageHandler,
+  usingWorkerTask,
+  usingWorkerTaskReusable,
+} from "queue/usingWorker";
 
 export type CsvParserWorkerParams = string;
 
 export type CsvParserWorkerResult = any;
 
-export const parseCsvAsync = usingWorkerTask(
+export const parseCsvAsync = usingWorkerTaskReusable(
   () => new Worker(import.meta.path)
 ) as <T = CsvParserWorkerResult>(d: CsvParserWorkerParams) => Promise<T>;
 
@@ -23,7 +27,7 @@ if (!Bun.isMainThread) {
           : v === "FALSE"
           ? false
           : // Coerce number
-          isNaN(+v)
+          isNaN(+v) || v === ""
           ? v
           : +v
       )

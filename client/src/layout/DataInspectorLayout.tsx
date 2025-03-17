@@ -56,7 +56,11 @@ export function DataInspectorLayout({
           {[
             {
               value: "data",
-              content: <FlatCard>{dataContent}</FlatCard>,
+              content: (
+                <Box sx={{ pt: 2 }}>
+                  <FlatCard>{dataContent}</FlatCard>
+                </Box>
+              ),
             },
             {
               value: "analysis",

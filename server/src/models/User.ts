@@ -2,11 +2,14 @@ import { model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 import { queryClient } from "query";
 
-const schema = createSchema({
-  username: { type: String, index: true, unique: true },
-  password: String,
-  hash: String,
-});
+const schema = createSchema(
+  {
+    username: { type: String, index: true, unique: true },
+    password: String,
+    hash: String,
+  },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+);
 
 export const model = createModel("User", schema);
 

@@ -33,6 +33,7 @@ import { setFromEvent } from "utils/set";
 
 import { useBottomBar } from "App";
 import { createContext } from "react";
+import { useLocationState } from "hooks/useNavigation";
 
 function smoothScrollTo(
   element: HTMLElement,
@@ -134,8 +135,8 @@ export type DataGridProps<T extends GridValidRowModel> = MuiDataGridProps<T> & {
   columns: GridColDef<T>[];
 };
 
-function useDebouncedInput() {
-  const [input, setInput] = useState("");
+function useDebouncedInput(defaultValue: string = "") {
+  const [input, setInput] = useState(defaultValue);
   const [loading, setLoading] = useState(false);
 
   const queueInput = useMemo(() => {
@@ -166,6 +167,7 @@ export default function DataGrid<
   isLoading,
   ...rest
 }: DataGridProps<T>) {
+  const { q } = useLocationState<{ q?: string }>();
   const scroll = useScroll();
   const { enabled: bottomBarEnabled } = useBottomBar();
   const ref = useRef<HTMLDivElement>(null);
@@ -176,9 +178,9 @@ export default function DataGrid<
   const xs = useXs();
   const sm = useXs();
   const center = useCss({ display: "flex", alignItems: "center" });
-  const { input, loading, queueInput } = useDebouncedInput();
+  const { input, loading, queueInput } = useDebouncedInput(q);
 
-  const fuse = new Fuse(rows, {
+  const fuse = new Fuse(rows ?? [], {
     useExtendedSearch: true,
     keys: columns?.map?.((c) => c.field),
     threshold: 0.1,
@@ -207,6 +209,7 @@ export default function DataGrid<
         <Stack
           ref={ref}
           sx={{
+            mt: xs ? -2 : -3,
             py: xs ? 2 : 3,
             gap: 2,
             px: sm ? 2 : 0,
@@ -294,7 +297,7 @@ export default function DataGrid<
                   px: xs ? 2 : 0,
                   borderTop: (t) => `1px solid ${t.palette.divider}`,
                   bgcolor: "background.paper",
-                  "& .MuiToolbar-root": { px: 0 },
+                  "& .MuiToolbar-root": { px: 0, mr: "auto" },
                 },
                 ...rest.sx,
               }}

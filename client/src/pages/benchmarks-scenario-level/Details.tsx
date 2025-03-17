@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { Dot } from "components/Dot";
-import { DownloadBar } from "components/DownloadBar";
+import { ActionBar } from "components/ActionBar";
 import { useSnackbarAction } from "components/Snackbar";
 import Grid from "layout/Grid";
 import { capitalize, head } from "lodash";
@@ -73,7 +73,7 @@ export default function Details({ id }: { id?: string }) {
           },
         ]}
       />
-      <DownloadBar
+      <ActionBar
         options={[
           {
             label: "Solution paths (.csv)",

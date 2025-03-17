@@ -21,11 +21,11 @@ import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
 import { DialogContentProps } from "hooks/useDialog";
 import { delay } from "lodash";
 import { bindTrigger } from "material-ui-popup-state";
-import { paper } from "theme";
 import {
   RequestWithReviewOutcome,
-  useRequestsUpdateMutation,
+  useRequestsUpdateElevatedMutation,
 } from "queries/useRequestsQuery";
+import { paper } from "theme";
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { SetReviewOutcomeForm } from "./SetReviewOutcomeForm";
 
@@ -43,7 +43,7 @@ export function ReviewRequestDialog({
       title: "Respond to request",
     }
   );
-  const { mutateAsync: updateRequest } = useRequestsUpdateMutation();
+  const { mutateAsync: updateRequest } = useRequestsUpdateElevatedMutation();
   return (
     <Stack
       direction={sm ? "column" : "row"}

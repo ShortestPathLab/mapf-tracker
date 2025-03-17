@@ -1,5 +1,6 @@
 import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
+import { queryClient } from "query";
 
 const schema = createSchema(
   {
@@ -22,3 +23,4 @@ const schema = createSchema(
 );
 
 export const model = createModel("submission_key", schema);
+export const query = queryClient(model);

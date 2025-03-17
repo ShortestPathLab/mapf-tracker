@@ -1,5 +1,5 @@
 import { Button, Stack, useTheme } from "@mui/material";
-import { DownloadBar } from "components/DownloadBar";
+import { ActionBar } from "components/ActionBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
@@ -86,7 +86,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
         }
       />
       <Stack sx={{ gap: 4 }}>
-        <DownloadBar
+        <ActionBar
           options={[
             {
               label: "Bulk export",

@@ -1,7 +1,7 @@
 import { Divider, Link, Stack } from "@mui/material";
 import { GridChartCard } from "components/charts/GridChartCard";
 import { useSm } from "components/dialog/useSmallDisplay";
-import { DownloadBar } from "components/DownloadBar";
+import { ActionBar } from "components/ActionBar";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { AlgorithmByMapChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapChart";
 import { AlgorithmByMapTypeChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapTypeChart";
@@ -52,7 +52,7 @@ export function AlgorithmPage() {
         { value: data?.comments, label: "Comments" },
       ]}
     >
-      <DownloadBar
+      <ActionBar
         options={[
           {
             icon: <TableRounded />,

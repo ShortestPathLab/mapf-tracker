@@ -102,7 +102,7 @@ async function saveResults(
   for (const outdated of await OngoingSubmission.find({
     apiKey: submission.apiKey,
     instance: submission.instance,
-    createdAt: { $lt: submission.createdAt },
+    updatedAt: { $lt: submission.updatedAt },
   })) {
     await outdated
       .set(validationResultsKey, {

@@ -29,6 +29,22 @@ export const cellRendererText = ({
     {formattedValue ?? "--"}
   </Typography>
 );
+export const cellRendererCode = ({
+  formattedValue,
+}: {
+  formattedValue?: ReactNode;
+}) => (
+  <Typography
+    variant="body2"
+    sx={{
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }}
+    color={formattedValue ? "text.primary" : "text.secondary"}
+  >
+    <code>{formattedValue ?? "--"}</code>
+  </Typography>
+);
 
 export const cellRendererChip = ({
   formattedValue,

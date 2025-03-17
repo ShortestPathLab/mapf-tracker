@@ -4,7 +4,7 @@ import {
   TableRounded,
 } from "@mui-symbols-material/w400";
 import { Link, Stack, useTheme } from "@mui/material";
-import { DownloadBar } from "components/DownloadBar";
+import { ActionBar } from "components/ActionBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
@@ -70,7 +70,7 @@ export default function Page() {
     >
       <Stack sx={{ gap: 4 }}>
         {!!mapData && (
-          <DownloadBar
+          <ActionBar
             options={[
               {
                 label: "Scenario files (.zip)",

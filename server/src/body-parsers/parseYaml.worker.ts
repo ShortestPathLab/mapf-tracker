@@ -1,11 +1,15 @@
 import { loadAll } from "js-yaml";
 import { head } from "lodash";
-import { usingTaskMessageHandler, usingWorkerTask } from "queue/usingWorker";
+import {
+  usingTaskMessageHandler,
+  usingWorkerTask,
+  usingWorkerTaskReusable,
+} from "queue/usingWorker";
 export type YamlParserWorkerParams = string;
 
 export type YamlParserWorkerResult = any;
 
-export const parseYamlAsync = usingWorkerTask(
+export const parseYamlAsync = usingWorkerTaskReusable(
   () => new Worker(import.meta.path)
 ) as <T = YamlParserWorkerResult>(d: YamlParserWorkerParams) => Promise<T>;
 

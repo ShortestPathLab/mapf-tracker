@@ -50,11 +50,13 @@ export function LogInDialog({ onClose }: DialogContentProps) {
       <LogInForm
         onSubmit={async (values, { setFieldError }) => {
           notify("Logging in");
-          const result = await logIn(values);
-          if (result) {
-            notify("Logged in");
-            onClose?.();
-          } else {
+          try {
+            const result = await logIn(values);
+            if (result) {
+              notify("Logged in");
+              onClose?.();
+            } else throw new Error("");
+          } catch {
             setFieldError("password", "Invalid username or password");
             notify("Couldn't log in");
           }

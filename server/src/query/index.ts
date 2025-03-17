@@ -1,6 +1,6 @@
-import { Request, RequestHandler } from "express";
+import { Request, RequestHandler, Router } from "express";
 import { AggregateBuilder } from "mongodb-aggregate-builder";
-import { Document, FilterQuery, Model, ProjectionType } from "mongoose";
+import { Document, FilterQuery, Model, ProjectionType, Types } from "mongoose";
 import z from "zod";
 import memo from "p-memoize";
 import hash from "object-hash";
@@ -57,6 +57,52 @@ export const queryClient = <T>(model: Model<T>) => {
   };
 
   return {
+    basic: (router = Router()) =>
+      router
+        .get(
+          "/",
+          createHandler(z.unknown(), async () => model.find())
+        )
+        .get(
+          "/:id",
+          createHandler(
+            z.object({
+              id: z.string(),
+            }),
+            async ({ id }) => model.findById(id)
+          )
+        )
+        .post(
+          "/write",
+          route(
+            z.object({
+              id: z.string().optional(),
+              data: z.any(),
+            }),
+            async ({ id, data }) => {
+              const result = await model.findOneAndUpdate(
+                { _id: id ?? new Types.ObjectId() },
+                { $set: data },
+                {
+                  upsert: true,
+                }
+              );
+              return { id: result?.id?.toString?.() };
+            },
+            { source: "body" }
+          )
+        )
+        .post(
+          "/delete",
+          route(
+            z.object({ id: z.string().optional() }),
+            async ({ id }) => {
+              await model.findByIdAndDelete(id);
+              return { id };
+            },
+            { source: "body" }
+          )
+        ),
     query: <V extends z.ZodType>(
       validate: V = z.any() as any,
       query: (

@@ -12,6 +12,7 @@ const schema = createSchema(
       type: Schema.Types.ObjectId,
       ref: "instances",
       required: true,
+      index: true,
     },
     lowerBound: Number,
     cost: Number,
@@ -34,5 +35,6 @@ const schema = createSchema(
 );
 
 schema.index({ apiKey: 1, instance: 1, createdAt: 1 });
+schema.index({ createdAt: 1 });
 
 export const model = createModel("ongoing_submission", schema);

@@ -1,7 +1,9 @@
+import { env } from "bun";
 import pino from "pino";
-import { dump } from "js-yaml";
 
 const logger = pino();
+
+logger.level = env.LOG_LEVEL || "error";
 
 type Level = "debug" | "info" | "warn" | "error" | "trace" | "fatal";
 

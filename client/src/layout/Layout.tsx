@@ -56,7 +56,7 @@ export default function Layout({
   width = "none",
   render = DefaultLayout,
   title,
-  path,
+  path = [],
   children,
   slotProps,
   description,

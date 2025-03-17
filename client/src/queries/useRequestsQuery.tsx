@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "App";
 import { APIConfig } from "core/config";
 import { post } from "queries/mutation";
-import { json } from "queries/query";
+import { json, useBasic } from "queries/query";
 import { Request } from "queries/useRequestQuery";
 
 export type ReviewOutcome = {
@@ -20,6 +20,11 @@ export function useRequestsQuery() {
       json<RequestWithReviewOutcome[]>(`${APIConfig.apiUrl}/request`),
   });
 }
+
+export const requestBasic = useBasic<RequestWithReviewOutcome>(
+  `${APIConfig.apiUrl}/request/basic`
+);
+
 export function useRequestsUpdateMutation() {
   return useMutation({
     mutationKey: ["requestsUpdate"],

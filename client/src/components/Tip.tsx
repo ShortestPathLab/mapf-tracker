@@ -10,7 +10,7 @@ export function Tip({
 }: {
   title: ReactNode;
   description: ReactNode;
-  actions: ReactNode;
+  actions?: ReactNode;
 }) {
   const [{ hideTips }] = useOptions();
   return (
@@ -27,9 +27,11 @@ export function Tip({
           {title}
         </Typography>
         <Typography variant="body2">{description}</Typography>
-        <Stack direction="row" gap={2}>
-          {actions}
-        </Stack>
+        {actions && (
+          <Stack direction="row" gap={2}>
+            {actions}
+          </Stack>
+        )}
       </Stack>
     </Enter>
   );

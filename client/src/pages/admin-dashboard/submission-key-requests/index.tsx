@@ -1,6 +1,8 @@
 import {
   CallReceivedRounded,
+  DeleteRounded,
   EditRounded,
+  KeyRounded,
   SendRounded,
 } from "@mui-symbols-material/w400";
 import { Box } from "@mui/material";
@@ -11,6 +13,7 @@ import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { useSurface } from "components/surface/useSurface";
 import { Layout } from "layout";
 import {
+  requestBasic,
   RequestWithReviewOutcome,
   useRequestsQuery,
 } from "queries/useRequestsQuery";
@@ -18,9 +21,19 @@ import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
 import { FlatCard } from "components/FlatCard";
+import { ConfirmDialog } from "components/dialog/Modal";
+import { bindTrigger } from "material-ui-popup-state";
+import { Surface } from "components/surface";
+import { useSnackbarAction } from "components/Snackbar";
+import { useCreateSubmissionKey } from "queries/useSubmissionKeyQuery";
+import { useNavigate } from "hooks/useNavigation";
 
 export default function index() {
+  const navigate = useNavigate();
+  const notify = useSnackbarAction();
   const { data: requests } = useRequestsQuery();
+  const { mutateAsync: deleteOne } = requestBasic.useDelete();
+  const { mutateAsync: createKey } = useCreateSubmissionKey();
   const { open: showDetails, dialog: detailsDialog } = useSurface(
     ReviewRequestDialog,
     {
@@ -36,6 +49,64 @@ export default function index() {
   );
 
   const actions = useDataGridActions<RequestWithReviewOutcome>({
+    menuItems: [
+      {
+        name: "Generate API key",
+
+        render: (row, trigger) => (
+          <Surface
+            title="Create API key"
+            variant="modal"
+            trigger={(state) => <Box {...bindTrigger(state)}>{trigger}</Box>}
+          >
+            {(state) => (
+              <ConfirmDialog
+                acceptLabel="Create key"
+                closeLabel="Cancel"
+                acceptColor="primary"
+                hintText="Generate an API key for this request. Use this option if you want to manually share an API key with a user. Otherwise, please use the 'Respond to request' option."
+                onClose={state.close}
+                onAccept={notify(
+                  async () => {
+                    const result = await createKey(row.id);
+                    navigate(`/dashboard/api-keys`, { q: result.key });
+                  },
+                  {
+                    start: "Creating key",
+                    end: "Key created, check Manage -> API keys",
+                  }
+                )}
+              />
+            )}
+          </Surface>
+        ),
+        icon: <KeyRounded />,
+      },
+      {
+        name: "Delete",
+        render: (row, trigger) => (
+          <Surface
+            title="Delete request"
+            variant="modal"
+            trigger={(state) => <Box {...bindTrigger(state)}>{trigger}</Box>}
+          >
+            {(state) => (
+              <ConfirmDialog
+                acceptLabel="Delete request"
+                closeLabel="Cancel"
+                hintText="Are you sure you want to delete this request?"
+                onClose={state.close}
+                onAccept={notify(() => deleteOne(row.id), {
+                  start: "Deleting",
+                  end: "Deleted",
+                })}
+              />
+            )}
+          </Surface>
+        ),
+        icon: <DeleteRounded />,
+      },
+    ],
     items: [
       {
         name: "Review request",

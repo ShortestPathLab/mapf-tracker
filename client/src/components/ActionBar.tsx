@@ -3,7 +3,10 @@ import { ActionSheetProps } from "./ActionSheet";
 import { Scroll } from "./dialog/Scrollbars";
 import { useSm } from "./dialog/useSmallDisplay";
 
-export function DownloadBar({ options }: ActionSheetProps) {
+export function ActionBar({
+  options,
+  title = "Export this dataset",
+}: ActionSheetProps & { title?: string }) {
   "use no memo";
 
   const sm = useSm();
@@ -15,7 +18,7 @@ export function DownloadBar({ options }: ActionSheetProps) {
     >
       {!sm && (
         <Typography color="text.secondary" variant="overline" sx={{ mt: -1 }}>
-          Export this dataset
+          {title}
         </Typography>
       )}
       <Scroll x fadeX>

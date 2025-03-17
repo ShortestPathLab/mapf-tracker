@@ -24,7 +24,12 @@ export const createSubmissionValidator = async ({
   let i = 0;
   return {
     add: (jobs: SubmissionValidatorData) => {
-      for (const c of chunk(jobs, +process.env.VALIDATOR_BATCH_COUNT || 64)) {
+      for (const c of chunk(
+        jobs,
+        process.env.VALIDATOR_BATCH_COUNT
+          ? +process.env.VALIDATOR_BATCH_COUNT || 64
+          : 64
+      )) {
         instances[i % workerCount].server.queue.add("validate", c);
         i++;
       }

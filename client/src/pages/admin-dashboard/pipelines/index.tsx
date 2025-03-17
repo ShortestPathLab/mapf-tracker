@@ -17,7 +17,7 @@ export default function index() {
     <Layout
       collapse={false}
       flat
-      title="Pipelines"
+      title="Actions"
       path={[
         { name: "More", url: "/more" },
         { name: "Manage", url: "/dashboard" },
