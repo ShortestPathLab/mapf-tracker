@@ -1,7 +1,13 @@
-import { Avatar } from "@mui/material";
+import { Avatar, AvatarProps } from "@mui/material";
 
-export function AlgorithmPreview({ id }: { id?: string }) {
+export function AlgorithmPreview({
+  id,
+  ...props
+}: { id?: string } & AvatarProps) {
   return (
-    <Avatar src={`https://api.dicebear.com/9.x/identicon/svg?seed=${id}`} />
+    <Avatar
+      {...props}
+      src={`https://api.dicebear.com/9.x/identicon/svg?seed=${id}`}
+    />
   );
 }

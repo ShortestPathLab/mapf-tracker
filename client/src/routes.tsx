@@ -29,7 +29,7 @@ function ManagePage() {
     md && (
       <DirectoryPage
         labels={["Make a submission", "Docs", "Settings"]}
-        title="Home"
+        title="More"
       />
     )
   );

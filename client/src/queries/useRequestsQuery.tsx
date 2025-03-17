@@ -33,6 +33,19 @@ export function useRequestsUpdateMutation() {
     }) => post(`${APIConfig.apiUrl}/request/update/${key}`, values),
   });
 }
+export function useRequestsUpdateElevatedMutation() {
+  return useMutation({
+    mutationKey: ["requestsUpdateElevated"],
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
+    mutationFn: ({
+      id: key,
+      value: values,
+    }: {
+      id: string;
+      value: Partial<RequestWithReviewOutcome>;
+    }) => post(`${APIConfig.apiUrl}/request/updateElevated/${key}`, values),
+  });
+}
 export function useSendOutcomeMutation() {
   return useMutation({
     mutationKey: ["requestsSendOutcome"],

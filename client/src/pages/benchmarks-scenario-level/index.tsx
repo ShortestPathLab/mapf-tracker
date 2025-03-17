@@ -13,7 +13,6 @@ import { GalleryLayout } from "layout/GalleryLayout";
 import { startCase } from "lodash";
 import {
   downloadInstance,
-  downloadMap,
   downloadScenario,
 } from "pages/benchmarks-map-level/download";
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
@@ -21,6 +20,7 @@ import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
 import { Analysis } from "components/analysis/Analysis";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
+import { downloadMap } from "pages/benchmarks-root-level/download";
 
 export default function Page() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
@@ -81,7 +81,7 @@ export default function Page() {
             {
               label: "Map (.map)",
               icon: <MapRounded />,
-              action: () => downloadMap(mapData?.map_name),
+              action: () => downloadMap(mapData),
             },
             {
               label: "Results (.csv)",

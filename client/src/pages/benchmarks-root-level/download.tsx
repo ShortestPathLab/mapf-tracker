@@ -2,7 +2,7 @@ import { APIConfig } from "core/config";
 import { Benchmark } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
-import { blob, json } from "queries/query";
+import { blob, json, text } from "queries/query";
 
 export async function downloadBenchmarks(item?: Benchmark) {
   if (item)
@@ -14,7 +14,7 @@ export async function downloadBenchmarks(item?: Benchmark) {
 export async function downloadMap(item?: Benchmark) {
   if (item)
     return download(
-      await blob(`./assets/map/${item.map_name}.map`),
+      await text(`./assets/map/${item.map_name}.map`),
       `${item.map_name}.map`
     );
 }

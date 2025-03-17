@@ -30,16 +30,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
       >
         <Stack sx={{ gap: 2, my: 1 }}>
           <Typography color="text.secondary">Jump to</Typography>
-          <Stack
-            sx={{
-              position: "sticky",
-              top: 0,
-              zIndex: 100,
-              bgcolor: "background.paper",
-              py: 2,
-              my: -2,
-            }}
-          >
+          <Stack>
             <QuickNavigation />
           </Stack>
           <Typography color="text.secondary" sx={{ pt: 2 }}>

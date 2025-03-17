@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Autocomplete, Field } from "components/Field";
 import { Form, Formik, FormikConfig, FormikProps } from "formik";
 import { chain, noop, once } from "lodash";
-import { json } from "queries/query";
+import { toJson } from "queries/query";
 import { Request, requestSchema } from "queries/useRequestQuery";
 import { ReactNode, useMemo } from "react";
 import { paper } from "theme";
@@ -32,7 +32,7 @@ const filterOptions = createFilterOptions({
 const DISABLED_OPTION = "Keep typing to see suggestions";
 
 const WORLD_UNIVERSITIES_API =
-  "https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json";
+  "https://cdn.jsdelivr.net/gh/Hipo/university-domains-list@master/world_universities_and_domains.json";
 
 export type SubmissionKeyRequestFormProps = Partial<FormikConfig<Request>> & {
   disabled?: boolean;
@@ -52,7 +52,7 @@ export function SubmissionKeyRequestForm({
   const { data: options = [] } = useQuery({
     queryKey: ["universities"],
     queryFn: async () =>
-      chain(await json<{ name: string }[]>(WORLD_UNIVERSITIES_API))
+      chain(await fetch(WORLD_UNIVERSITIES_API).then(toJson))
         .map("name")
         .uniq()
         .value(),

@@ -19,14 +19,13 @@ import { useSm } from "components/dialog/useSmallDisplay";
 import { Surface, useSurface } from "components/surface";
 import { SubmissionKeyRequestForm } from "forms/SubmissionKeyRequestForm";
 import { DialogContentProps } from "hooks/useDialog";
-import { Grid } from "layout";
 import { delay } from "lodash";
 import { bindTrigger } from "material-ui-popup-state";
 import { paper } from "theme";
 import {
   RequestWithReviewOutcome,
   useRequestsUpdateMutation,
-} from "../../../queries/useRequestsQuery";
+} from "queries/useRequestsQuery";
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { SetReviewOutcomeForm } from "./SetReviewOutcomeForm";
 

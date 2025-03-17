@@ -3,10 +3,12 @@ import { useBottomBar } from "App";
 import { useHeartBeatQuery } from "queries/useHeartbeatQuery";
 import usePortal from "react-useportal";
 import { Dot } from "./Dot";
+import useOffline from "use-offline/dist/hooks/use-offline";
 
 export function LostConnectionWarning() {
+  const isOffline = useOffline();
   const { data, isLoading } = useHeartBeatQuery();
-  const lostConnection = !isLoading && !data;
+  const lostConnection = isOffline || (!isLoading && !data);
   const { Portal } = usePortal({ bindTo: document.body });
   const { enabled: bottomBar } = useBottomBar();
   return (

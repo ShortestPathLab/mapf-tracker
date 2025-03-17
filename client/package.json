@@ -69,6 +69,7 @@
     "remark-gfm": "^4.0.0",
     "transition-hook": "^1.5.2",
     "typescript": "5.4.5",
+    "use-offline": "^2.0.0",
     "validator": "workspace:*",
     "vite": "^5.3.3",
     "vite-tsconfig-paths": "^5.1.3",

@@ -14,8 +14,6 @@ export const downloadScenario =
         `${map}.scen`
       );
   };
-export const downloadMap = (map: string) => async () =>
-  download(await text(`./assets/maps/${map}.map`), `${map}.map`);
 
 export const downloadInstance =
   (map: string) => async (item?: InstanceCollection) => {

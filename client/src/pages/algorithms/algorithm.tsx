@@ -24,7 +24,7 @@ export function AlgorithmPage() {
 
   return (
     <GalleryLayout
-      cover={<AlgorithmPreview id={data?.id} />}
+      cover={<AlgorithmPreview id={data?.id} sx={{ width: 40, height: 40 }} />}
       title={data?.algo_name}
       description={data?.authors}
       path={[
