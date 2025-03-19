@@ -55,6 +55,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
                 $match: {
                   $expr: {
                     $and: [
+                      { $ne: ["$lower_cost", null] },
                       { $ne: ["$solution_cost", null] },
                       { $ne: [{ $first: "$instance.lower_cost" }, null] },
                       {
