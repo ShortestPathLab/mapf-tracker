@@ -131,7 +131,7 @@ export function CompletionByAgentCountChart({
         solved: s?.result,
         closed: c?.result,
       }))
-      .thru(sample(50))
+      .thru(sample(250))
       .value();
     return {
       data,

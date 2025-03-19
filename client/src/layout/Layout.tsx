@@ -9,6 +9,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useBottomBar } from "App";
 import { appbarHeight } from "components/appbar";
 import Appbar from "components/appbar/index";
 import { Scroll } from "components/dialog/Scrollbars";
@@ -20,7 +21,6 @@ import { last, merge } from "lodash";
 import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
-import { useBottomBar } from "App";
 
 export type LayoutRenderProps = {
   header?: ReactNode;

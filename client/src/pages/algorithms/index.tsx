@@ -1,6 +1,5 @@
 import { TableRounded } from "@mui-symbols-material/w400";
 import { Button, Stack, Typography, alpha, useTheme } from "@mui/material";
-import { ActionBar } from "components/ActionBar";
 import { Item } from "components/Item";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
@@ -171,6 +170,15 @@ export default function AlgorithmsPage() {
         },
       ]}
       path={[{ name: "Home", url: "/" }]}
+      actions={{
+        options: [
+          {
+            icon: <TableRounded />,
+            label: "Summary (.csv) (coming soon)",
+            primary: true,
+          },
+        ],
+      }}
     >
       <Tip
         title={<>Browse submissions</>}
@@ -195,15 +203,6 @@ export default function AlgorithmsPage() {
             </Button>
           </>
         }
-      />
-      <ActionBar
-        options={[
-          {
-            icon: <TableRounded />,
-            label: "Summary (.csv) (coming soon)",
-            primary: true,
-          },
-        ]}
       />
       <DataInspectorLayout
         dataTabName="Browse submissions"

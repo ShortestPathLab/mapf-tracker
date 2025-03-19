@@ -4,7 +4,7 @@ import {
   TableRounded,
 } from "@mui-symbols-material/w400";
 import { Stack } from "@mui/material";
-import { ActionBar } from "components/ActionBar";
+import { Analysis } from "components/analysis/Analysis";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { useStableLocationState } from "hooks/useStableLocationState";
@@ -15,12 +15,11 @@ import {
   downloadInstance,
   downloadScenario,
 } from "pages/benchmarks-map-level/download";
+import { downloadMap } from "pages/benchmarks-root-level/download";
 import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
+import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
-import { Analysis } from "components/analysis/Analysis";
-import { analysisTemplate, compareTemplate } from "./analysisTemplate";
-import { downloadMap } from "pages/benchmarks-root-level/download";
 
 export default function Page() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
@@ -63,38 +62,38 @@ export default function Page() {
           label: "Instance count",
         },
       ]}
+      actions={{
+        options: [
+          {
+            label: "Export scenario file (.scen)",
+            primary: true,
+            action: notify(
+              () => downloadScenario(mapData?.map_name)(scenarioData),
+              {
+                end: "Scenario downloaded",
+              }
+            ),
+            icon: <DownloadRounded />,
+          },
+          {
+            label: "Export map (.map)",
+            icon: <MapRounded />,
+            action: () => downloadMap(mapData),
+          },
+          {
+            label: "Results (.csv)",
+            action: notify(
+              () => downloadInstance(mapData?.map_name)(scenarioData),
+              {
+                end: "Results downloaded",
+              }
+            ),
+            icon: <TableRounded />,
+          },
+        ],
+      }}
     >
       <Stack gap={4}>
-        <ActionBar
-          options={[
-            {
-              label: "Scenario file (.scen)",
-              primary: true,
-              action: notify(
-                () => downloadScenario(mapData?.map_name)(scenarioData),
-                {
-                  end: "Scenario downloaded",
-                }
-              ),
-              icon: <DownloadRounded />,
-            },
-            {
-              label: "Map (.map)",
-              icon: <MapRounded />,
-              action: () => downloadMap(mapData),
-            },
-            {
-              label: "Results (.csv)",
-              action: notify(
-                () => downloadInstance(mapData?.map_name)(scenarioData),
-                {
-                  end: "Results downloaded",
-                }
-              ),
-              icon: <TableRounded />,
-            },
-          ]}
-        />
         <DataInspectorLayout
           analysisTabName="Trends"
           dataTabName="Browse instances"

@@ -1,9 +1,8 @@
 import {
   ContentPasteRounded,
   DataObjectRounded,
-  UploadFileRounded,
-  HelpRounded,
   TableChartRounded,
+  UploadFileRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -17,9 +16,10 @@ import {
 } from "@mui/material";
 import { CodeBlock } from "components/CodeBlock";
 import { useSnackbar } from "components/Snackbar";
+import { useSurface } from "components/surface/useSurface";
+import { Tip } from "components/Tip";
 import { url } from "core/config";
 import SubmitWithApiContent from "docs/submitWithApi.mdx";
-import { useSurface } from "components/surface/useSurface";
 import { Grid, Prose } from "layout";
 import { find, findKey, some } from "lodash";
 import { ArticleCard } from "pages/docs/ArticleCard";
@@ -159,6 +159,18 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
   );
   return (
     <>
+      <Tip
+        title="Upload data"
+        description="Upload data for your algorithm. First, familiarise yourself with the submission format that we support. Then, choosing one of the three data submission methods."
+        actions={
+          <Button
+            sx={{ mx: -1, mb: -1 }}
+            onClick={() => open("/docs/how-to-submit", "_blank")}
+          >
+            See the docs
+          </Button>
+        }
+      />
       <Grid gap={2} width={240}>
         {[
           {
@@ -203,13 +215,6 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
         {spreadSheetDialog}
         {jsonApiDialog}
       </Grid>
-      <Button
-        sx={{ alignSelf: "flex-start" }}
-        startIcon={<HelpRounded />}
-        onClick={() => open("/docs/how-to-submit", "_blank")}
-      >
-        I need help submitting data
-      </Button>
     </>
   );
 };

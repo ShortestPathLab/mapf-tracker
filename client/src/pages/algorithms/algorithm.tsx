@@ -1,18 +1,17 @@
 import { Divider, Link, Stack } from "@mui/material";
 import { GridChartCard } from "components/charts/GridChartCard";
 import { useSm } from "components/dialog/useSmallDisplay";
-import { ActionBar } from "components/ActionBar";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { AlgorithmByMapChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapChart";
 import { AlgorithmByMapTypeChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapTypeChart";
 
+import { TableRounded } from "@mui-symbols-material/w400";
 import { useAlgorithmDetailData } from "queries/useAlgorithmQuery";
 import { matchPath, redirect } from "react-router-dom";
-import { AlgorithmPreview } from "./AlgorithmPreview";
 import { Title } from "../../components/StickyTitle";
-import { Table } from "./Table";
-import { TableRounded } from "@mui-symbols-material/w400";
+import { AlgorithmPreview } from "./AlgorithmPreview";
 import { inferOptimality } from "./inferOptimality";
+import { Table } from "./Table";
 
 export function AlgorithmPage() {
   const sm = useSm();
@@ -51,16 +50,16 @@ export function AlgorithmPage() {
         { value: data?.best_lower, label: "Best lower-bound" },
         { value: data?.comments, label: "Comments" },
       ]}
-    >
-      <ActionBar
-        options={[
+      actions={{
+        options: [
           {
             icon: <TableRounded />,
-            label: "Instances (.csv) (coming soon)",
+            label: "Export instances (.csv) (coming soon)",
             primary: true,
           },
-        ]}
-      />
+        ],
+      }}
+    >
       <Divider />
       <Title sticky>Algorithm performance</Title>
       <Stack sx={{ gap: 2 }}>

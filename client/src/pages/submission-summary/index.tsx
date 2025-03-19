@@ -7,9 +7,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useSnackbar } from "components/Snackbar";
 import { Title } from "components/StickyTitle";
 import { ConfirmDialog } from "components/dialog/Modal";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useXs } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface/useSurface";
 import { useNavigate } from "hooks/useNavigation";
 import { useStableLocationState } from "hooks/useStableLocationState";
@@ -23,25 +24,21 @@ import {
 } from "queries/useOngoingSubmissionQuery";
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
+import { Fragment, useEffect } from "react";
 import { Actions } from "./Actions";
 import { SubmissionRequestGlance } from "./SubmissionRequestGlance";
 import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
-import { Fragment, useEffect } from "react";
-import { useSnackbar } from "components/Snackbar";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
-  const {
-    data,
-    incomplete: summaryIncomplete,
-    isLoading: summaryLoading,
-  } = useOngoingSubmissionSummaryQuery(apiKey);
+  const { data, incomplete: summaryIncomplete } =
+    useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);

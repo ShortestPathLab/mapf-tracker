@@ -50,7 +50,7 @@ export default function index() {
             style={
               {
                 fontFamily: typography.fontFamily,
-                "--xy-background-color-default": palette.background.default,
+                "--xy-background-color-default": palette.background.paper,
               } as CSSProperties
             }
             colorMode={palette.mode}

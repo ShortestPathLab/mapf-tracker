@@ -4,16 +4,40 @@ import { useLg } from "components/dialog/useSmallDisplay";
 import { isNumber, isUndefined } from "lodash";
 import { ReactNode } from "react";
 import Layout, { LayoutProps, LayoutRenderProps } from "./Layout";
+import { ActionSheetProps } from "components/ActionSheet";
+import { ActionBar } from "components/ActionBar";
+import { InfoRounded } from "@mui-symbols-material/w400";
+import { useSurface } from "components/surface";
 
 const RenderSm = ({
   header,
   children,
-}: LayoutRenderProps & GalleryLayoutProps) => (
-  <Stack sx={{ gap: 4 }}>
-    {header}
-    {children}
-  </Stack>
-);
+  actions,
+  cover,
+  items,
+}: LayoutRenderProps & GalleryLayoutProps) => {
+  const { dialog, open } = useSurface(Sidebar, {
+    title: "Info",
+  });
+  return (
+    <Stack sx={{ gap: 4 }}>
+      {header}
+      <ActionBar
+        {...actions}
+        options={[
+          ...(actions?.options ?? []),
+          {
+            icon: <InfoRounded />,
+            label: "Get info",
+            action: () => open({ cover, header, items, sidebarWidth: "100%" }),
+          },
+        ]}
+      />
+      {children}
+      {dialog}
+    </Stack>
+  );
+};
 
 function Sidebar({
   cover,
@@ -25,7 +49,7 @@ function Sidebar({
     <Stack
       sx={{
         width: sidebarWidth,
-        minWidth: 320,
+        minWidth: sidebarWidth,
         gap: 4,
         position: "sticky",
         height: "max-content",
@@ -69,6 +93,7 @@ const RenderLg = ({
   cover,
   items,
   sidebarWidth = 320,
+  actions,
 }: LayoutRenderProps & GalleryLayoutProps) => (
   <Stack direction="row" sx={{ gap: 8 }}>
     <Sidebar
@@ -77,7 +102,10 @@ const RenderLg = ({
       items={items}
       sidebarWidth={sidebarWidth}
     />
-    <Stack sx={{ gap: 4, flex: 1, minWidth: 0 }}>{children}</Stack>
+    <Stack sx={{ gap: 4, flex: 1, minWidth: 0 }}>
+      {!!actions?.options?.length && <ActionBar {...actions} />}
+      {children}
+    </Stack>
   </Stack>
 );
 
@@ -87,7 +115,8 @@ type GalleryLayoutProps = {
     value?: ReactNode;
     label?: ReactNode;
   }[];
-  sidebarWidth?: number;
+  sidebarWidth?: string | number;
+  actions?: ActionSheetProps;
 };
 
 export function GalleryLayout(props: LayoutProps & GalleryLayoutProps) {

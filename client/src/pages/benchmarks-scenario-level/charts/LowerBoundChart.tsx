@@ -89,7 +89,7 @@ export function LowerBoundComparisonChart({
             ...keyBy(c.record, "algo_name"),
           }))
           .sortBy("agents")
-          .thru(sample(50))
+          .thru(sample(250))
           .value()}
         render={
           <SliceChart

@@ -25,6 +25,7 @@ import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
 import { theme } from "./theme";
 import { ThemeContext, useThemeState } from "./utils/ThemeProvider";
+import { HistoryProvider } from "hooks/useNavigation";
 
 export const queryClient = new QueryClient();
 
@@ -71,9 +72,11 @@ export default function App() {
               <OptionsContext.Provider value={optionsState}>
                 <ConfirmProvider>
                   <SnackbarProvider>
-                    <Content />
-                    <MutatingBar />
-                    <ReactQueryDevtools buttonPosition="bottom-left" />
+                    <HistoryProvider>
+                      <Content />
+                      <MutatingBar />
+                      <ReactQueryDevtools buttonPosition="bottom-left" />
+                    </HistoryProvider>
                   </SnackbarProvider>
                 </ConfirmProvider>
               </OptionsContext.Provider>

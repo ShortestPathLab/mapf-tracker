@@ -37,7 +37,6 @@ export function PipelineStageNode({
 }) {
   const { dialog, open } = useSurface(StageStatusDialog, {
     title: "Stage details",
-    padded: true,
   });
   const { ripple, bindCapture } = useRipple();
   return (
@@ -46,7 +45,7 @@ export function PipelineStageNode({
         {...bindCapture}
         sx={{
           minWidth: 320,
-          bgcolor: "background.paper",
+          bgcolor: "background.default",
           border: (t) => `1px solid ${t.palette.divider}`,
         }}
         onClick={() => open({ stage })}

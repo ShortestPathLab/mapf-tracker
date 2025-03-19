@@ -31,7 +31,7 @@ export function AlgorithmByAgentChart({ map }: { map: string }) {
             agentCount: i + 1,
             ...keyBy(c.solved_instances, "algo_name"),
           }))
-          .thru(sample(50))
+          .thru(sample(250))
           .sortBy("agentCount")
           .value()}
         render={

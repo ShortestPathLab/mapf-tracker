@@ -4,7 +4,6 @@ import {
   TableRounded,
 } from "@mui-symbols-material/w400";
 import { Link, Stack, useTheme } from "@mui/material";
-import { ActionBar } from "components/ActionBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
@@ -67,33 +66,33 @@ export default function Page() {
           ),
         },
       ]}
+      actions={
+        !!mapData && {
+          options: [
+            {
+              label: "Export scenario files (.zip)",
+              icon: <DownloadRounded />,
+              primary: true,
+              action: () => downloadBenchmarks(mapData),
+              // open({
+              //   initialMaps: [mapData?.map_name],
+              // }),
+            },
+            {
+              label: "Export map (.map)",
+              icon: <MapRounded />,
+              action: () => downloadMap(mapData),
+            },
+            {
+              label: "Export results (.csv)",
+              icon: <TableRounded />,
+              action: () => downloadBenchmarksResultsCSV(mapData),
+            },
+          ],
+        }
+      }
     >
       <Stack sx={{ gap: 4 }}>
-        {!!mapData && (
-          <ActionBar
-            options={[
-              {
-                label: "Scenario files (.zip)",
-                icon: <DownloadRounded />,
-                primary: true,
-                action: () => downloadBenchmarks(mapData),
-                // open({
-                //   initialMaps: [mapData?.map_name],
-                // }),
-              },
-              {
-                label: "Map (.map)",
-                icon: <MapRounded />,
-                action: () => downloadMap(mapData),
-              },
-              {
-                label: "Results (.csv)",
-                icon: <TableRounded />,
-                action: () => downloadBenchmarksResultsCSV(mapData),
-              },
-            ]}
-          />
-        )}
         <DataInspectorLayout
           dataTabName="Browse scenarios"
           analysisTabName="Trends"

@@ -1,11 +1,13 @@
+import { DownloadRounded } from "@mui-symbols-material/w400";
 import { Button, Stack, useTheme } from "@mui/material";
-import { ActionBar } from "components/ActionBar";
 import { PreviewCard } from "components/PreviewCard";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
+import { useSurface } from "components/surface";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { head, map, memoize, sum } from "lodash";
+import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
 import { useAggregateOne } from "queries/useAggregateQuery";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import { formatPercentage } from "utils/format";
@@ -13,9 +15,6 @@ import { PreviewCollection } from "../../components/PreviewCollection";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
-import { useSurface } from "components/surface";
-import { DownloadRounded } from "@mui-symbols-material/w400";
-import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
 
 const render = memoize((showHeader: boolean) => ({ header, children }) => (
   <>
@@ -66,6 +65,16 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
           }
         />
       }
+      actions={{
+        options: [
+          {
+            label: "Bulk export",
+            action: () => openDialog(),
+            icon: <DownloadRounded />,
+            primary: true,
+          },
+        ],
+      }}
     >
       <Tip
         title={<>Browse MAPF benchmarks</>}
@@ -86,16 +95,6 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
         }
       />
       <Stack sx={{ gap: 4 }}>
-        <ActionBar
-          options={[
-            {
-              label: "Bulk export",
-              action: () => openDialog(),
-              icon: <DownloadRounded />,
-              primary: true,
-            },
-          ]}
-        />
         <DataInspectorLayout
           dataTabName="Browse maps"
           data={<Table />}

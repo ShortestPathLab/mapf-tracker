@@ -5,7 +5,7 @@ import { useSm } from "./dialog/useSmallDisplay";
 
 export function ActionBar({
   options,
-  title = "Export this dataset",
+  title = "Actions",
 }: ActionSheetProps & { title?: string }) {
   "use no memo";
 

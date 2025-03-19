@@ -25,10 +25,13 @@ function FullScreenCard({ primary, label }: ChartCardProps) {
       <Stack
         sx={{
           flex: 1,
-          pb: 4,
         }}
       >
-        {primary}
+        <Size>
+          {({ width, height }) => (
+            <Stack sx={{ width, height }}>{primary}</Stack>
+          )}
+        </Size>
       </Stack>
     </Stack>
   );
