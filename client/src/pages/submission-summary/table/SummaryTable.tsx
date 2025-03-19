@@ -6,6 +6,7 @@ import {
   HourglassEmptyRounded,
   PlayArrowRounded,
   StopRounded,
+  WarningRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -21,19 +22,20 @@ import {
   capitalize,
   useTheme,
 } from "@mui/material";
+import { FlatCard } from "components/FlatCard";
 import { Item } from "components/Item";
 import { Bar, formatValue, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { Dialog } from "components/dialog";
 import { ConfirmDialog } from "components/dialog/Modal";
-import { useSm } from "components/dialog/useSmallDisplay";
+import { Scroll } from "components/dialog/Scrollbars";
+import { useSurface } from "components/surface/useSurface";
 import Enter from "components/transitions/Enter";
 import {
   TreeDataGrid,
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { Instance, SummarySlice } from "core/types";
-import { useSurface } from "components/surface/useSurface";
 import { identity, isNumber, join, map, sumBy, times } from "lodash";
 import pluralize from "pluralize";
 import {
@@ -50,9 +52,8 @@ import { Model, Models, disambiguate } from "./Model";
 import { ScenarioLabel } from "./ScenarioLabel";
 import { SubmissionInstanceContext } from "./SubmissionInstanceContext";
 import { SubmissionInstanceLabel } from "./SubmissionInstanceLabel";
-import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
-import { Scroll } from "components/dialog/Scrollbars";
 import { getOutcomeDisplay } from "./getOutcomeDisplay";
+import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
 
 function getSubmissionInfoText(
   submission: OngoingSubmission,
@@ -112,13 +113,13 @@ function renderPlaceholder() {
 }
 
 export default function Table({ apiKey }: { apiKey?: string | number }) {
-  const sm = useSm();
   const theme = useTheme();
   const { dialog, open } = useSurface(DetailsDialog, {
     title: "Submission details",
     slotProps: { paper: { sx: { maxWidth: "min(max(50vw, 720px), 100%)" } } },
   });
-  const { data, isLoading } = useOngoingSubmissionSummaryQuery(apiKey);
+  const { data, isFetched, incomplete } =
+    useOngoingSubmissionSummaryQuery(apiKey);
   const { mutateAsync: deleteByScenarioIndex } =
     useDeleteOngoingSubmissionByScenarioIndexMutation(apiKey);
   const { mutate: deleteSubmissions } =
@@ -448,41 +449,43 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           </Stack>
         </Scroll>
       </Stack>
-      <TreeDataGrid
-        sx={{ mx: sm ? -2 : 0 }}
-        getChildren={(row) =>
-          disambiguate(row, {
-            map: (row) => arrayFallback(row.scenarios, placeholder(row.id)),
-            scenario: (row) =>
-              arrayFallback(
-                times(row.count[slice], (i) => ({
-                  id: `${row.id}-${i}`,
-                  scenario: row.id,
-                  index: i,
-                })),
-                placeholder(row.id)
-              ),
-            instance: () => undefined,
-          })
-        }
-        clickable
-        onRowClick={({ row }) =>
-          disambiguate(row, {
-            instance: (row) =>
-              open({
-                apiKey,
-                index: row.index,
-                scenarioId: row.scenario,
-                slice,
-              }),
-          })
-        }
-        expanded={expanded}
-        onExpandedChange={setExpanded}
-        isLoading={isLoading}
-        columns={columns}
-        rows={data?.maps}
-      />
+
+      <FlatCard>
+        <TreeDataGrid
+          getChildren={(row) =>
+            disambiguate(row, {
+              map: (row) => arrayFallback(row.scenarios, placeholder(row.id)),
+              scenario: (row) =>
+                arrayFallback(
+                  times(row.count[slice], (i) => ({
+                    id: `${row.id}-${i}`,
+                    scenario: row.id,
+                    index: i,
+                  })),
+                  placeholder(row.id)
+                ),
+              instance: () => undefined,
+            })
+          }
+          clickable
+          onRowClick={({ row }) =>
+            disambiguate(row, {
+              instance: (row) =>
+                open({
+                  apiKey,
+                  index: row.index,
+                  scenarioId: row.scenario,
+                  slice,
+                }),
+            })
+          }
+          expanded={expanded}
+          onExpandedChange={setExpanded}
+          isLoading={!isFetched}
+          columns={columns}
+          rows={data?.maps}
+        />
+      </FlatCard>
       {dialog}
     </>
   );

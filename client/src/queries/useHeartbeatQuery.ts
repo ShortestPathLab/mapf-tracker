@@ -7,7 +7,7 @@ export function useHeartBeatQuery() {
     queryFn: async () => {
       try {
         const req = await fetch(`${APIConfig.apiUrl}/heartbeat`, {
-          signal: AbortSignal.timeout(5000),
+          signal: AbortSignal.timeout(10000),
         });
         return req.ok;
       } catch {
@@ -15,6 +15,6 @@ export function useHeartBeatQuery() {
       }
     },
     retry: false,
-    refetchInterval: 5000,
+    refetchInterval: 10000,
   });
 }

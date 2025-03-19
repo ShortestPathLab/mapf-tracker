@@ -20,7 +20,7 @@ export default (app: Application) => {
   router.post("/delete", deleteById);
   router.get("/status/:apiKey", statusByApiKey);
   router.delete("/:apiKey", deleteByApiKey);
-  router.get("/summary/:apiKey", summaryByApiKey);
+  router.get("/summary/:apiKey/:page?", summaryByApiKey);
   router.get("/:apiKey", findByApiKey);
   router.get("/scenario/:apiKey/:scenario", findByScenario);
   router.get("/finalise/:key", finalise);

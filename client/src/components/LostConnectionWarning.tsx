@@ -4,6 +4,7 @@ import { useHeartBeatQuery } from "queries/useHeartbeatQuery";
 import usePortal from "react-useportal";
 import { Dot } from "./Dot";
 import useOffline from "use-offline/dist/hooks/use-offline";
+import { useXs } from "./dialog/useSmallDisplay";
 
 export function LostConnectionWarning() {
   const isOffline = useOffline();
@@ -11,11 +12,12 @@ export function LostConnectionWarning() {
   const lostConnection = isOffline || (!isLoading && !data);
   const { Portal } = usePortal({ bindTo: document.body });
   const { enabled: bottomBar } = useBottomBar();
+  const xs = useXs();
   return (
     <Portal>
       <Snackbar
         open={lostConnection}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: xs ? "bottom" : "top", horizontal: "center" }}
         ContentProps={{
           sx: {
             transition: (t) =>
@@ -32,8 +34,10 @@ export function LostConnectionWarning() {
         }}
         message={
           <Typography variant="body2">
-            <Dot sx={{ bgcolor: "warning.main" }} /> Lost connection to the
-            server, reconnecting...
+            <Dot sx={{ bgcolor: "warning.main" }} />{" "}
+            {isOffline
+              ? "You're offline"
+              : "The server is taking a while to respond"}
           </Typography>
         }
       />

@@ -1,5 +1,5 @@
 import { connectToDatabase } from "connection";
-import { chain, flatten, now, values } from "lodash";
+import { chain, flatten, now, omit, truncate, values } from "lodash";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { encode } from "validator";
 import { RefinementCtx, z } from "zod";
@@ -219,8 +219,14 @@ export async function run({
       error: {
         description: "Does not match any schema.",
         attempts: handlers.map(({ name, schema }) => {
-          const error = schema(d);
-          return { name, error };
+          const error = schema(d) as ValidationError[];
+          return {
+            name,
+            error: error.map((e) => ({
+              ...e,
+              actual: truncate(JSON.stringify(e.actual), { length: 1024 }),
+            })),
+          };
         }),
       },
     };

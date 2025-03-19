@@ -3,6 +3,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  CircularProgress,
+  LinearProgress,
   ListItemText,
   Stack,
   Typography,
@@ -17,7 +19,11 @@ export type Props = {
   extras?: ReactNode;
   status?: ReactNode;
   apiKey?: ReactNode;
-  summaryStats?: { label: string; values: { name: string; count: number }[] }[];
+  summaryStats?: {
+    loading?: boolean;
+    label: string;
+    values: { name: string; count: number }[];
+  }[];
   detailStats?: { name: string; stats: { name: string; count: number }[] }[];
   children?: ReactNode;
 };
@@ -29,20 +35,28 @@ export default function SubmissionSummary({
 }: Props) {
   return (
     <>
-      {/* <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-        {status}
-        <Box sx={{ flex: 1 }} />
-        {extras}
-      </Stack> */}
       <Grid
         width={230}
         sx={{
           gap: 2,
-          mt: 2,
         }}
       >
-        {summaryStats?.map?.(({ label, values }) => (
-          <Stack sx={{ p: 2, ...paper(0) }} key={label}>
+        {summaryStats?.map?.(({ label, values, loading }) => (
+          <Stack
+            sx={{ position: "relative", p: 2, ...paper(0), overflow: "hidden" }}
+            key={label}
+          >
+            {loading && (
+              <CircularProgress
+                size={32}
+                sx={{
+                  top: (t) => t.spacing(2),
+                  position: "absolute",
+                  right: (t) => t.spacing(2),
+                }}
+                variant="indeterminate"
+              />
+            )}
             <Typography
               variant="overline"
               color="text.secondary"

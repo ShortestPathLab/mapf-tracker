@@ -217,7 +217,7 @@ export default function TrackSubmission() {
   return (
     <Layout
       flat
-      title="Manage submissions and API keys"
+      title="Submissions and API keys"
       path={
         xs
           ? [

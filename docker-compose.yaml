@@ -1,11 +1,14 @@
 version: '3.3'
 
 services:
-  
+  # Define each service that you want to have HTTPS
+  # Only need a port 80
+  # For example
   api:
     image: mapf-tracker-api:latest
     container_name: app
     environment:
+      # This service will be accessible via this virtual host
       - VIRTUAL_HOST=fe2410d1.pathfinding.ai
       - LETSENCRYPT_HOST=fe2410d1.pathfinding.ai
     expose:
@@ -24,7 +27,7 @@ services:
       - ./data/vhost:/etc/nginx/vhost.d
       - ./data/html:/usr/share/nginx/html
     environment:
-      - DEFAULT_HOST=tracker.pathfinding.ai  # Replace with your domain
+      - DEFAULT_HOST=tracker.pathfinding.ai 
     networks:
       - proxy
   letsencrypt:
@@ -38,7 +41,7 @@ services:
       - ./data/vhost:/etc/nginx/vhost.d
       - ./data/html:/usr/share/nginx/html
     environment:
-      - DEFAULT_EMAIL=kevin.zheng@monash.edu  # Replace with your email
+      - DEFAULT_EMAIL=shortestpathlab@monash.edu  
       - NGINX_PROXY_CONTAINER=nginx-proxy
     networks:
       - proxy
@@ -51,6 +54,7 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true  # Only watch containers with specific labels
     command: --interval 300  # Check for updates every 300 seconds (5 minutes)
+
 networks:
   proxy:
     driver: bridge

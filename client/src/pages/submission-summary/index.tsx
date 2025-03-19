@@ -1,5 +1,12 @@
-import { CheckRounded } from "@mui-symbols-material/w400";
-import { Box, Button, CircularProgress, Stack } from "@mui/material";
+import { CheckRounded, WarningRounded } from "@mui-symbols-material/w400";
+import {
+  alpha,
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Title } from "components/StickyTitle";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
@@ -7,11 +14,12 @@ import { useSurface } from "components/surface/useSurface";
 import { useNavigate } from "hooks/useNavigation";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
-import { sumBy } from "lodash";
+import { filter, sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   useFinaliseOngoingSubmissionMutation,
   useOngoingSubmissionSummaryQuery,
+  useOngoingSubmissionTicketQuery,
 } from "queries/useOngoingSubmissionQuery";
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
@@ -21,7 +29,7 @@ import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { useSnackbar } from "components/Snackbar";
 
 const hintText =
@@ -29,10 +37,17 @@ const hintText =
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
-  const { data } = useOngoingSubmissionSummaryQuery(apiKey);
+  const {
+    data,
+    incomplete: summaryIncomplete,
+    isLoading: summaryLoading,
+  } = useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
+  const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
+  const someIsPending = !!filter(isPending, (p) => p.status === "pending")
+    .length;
   const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Finish submission",
     variant: "modal",
@@ -42,7 +57,6 @@ export default function SubmissionSummaryPage() {
 
   const keyStatus = parseApiKeyStatus(apiKeyData);
 
-  const sm = useSm();
   const xs = useXs();
 
   const contentLeft = [
@@ -89,6 +103,25 @@ export default function SubmissionSummaryPage() {
   ];
 
   const contentRight = [
+    <Fragment key="incomplete">
+      {(summaryIncomplete || someIsPending) && (
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: "center",
+            borderRadius: 1,
+            p: 2,
+            gap: 2,
+            bgcolor: (t) => alpha(t.palette.warning.main, 0.05),
+          }}
+        >
+          <WarningRounded color="warning" />
+          <Typography variant="body2">
+            This is an incomplete list, hold on while we count your submissions
+          </Typography>
+        </Stack>
+      )}
+    </Fragment>,
     <SubmissionSummary
       key="summary"
       summaryStats={[
@@ -181,7 +214,7 @@ export default function SubmissionSummaryPage() {
     title: requestData?.algorithmName ?? "Submit data",
     path: [
       { name: "Home", url: "/" },
-      { name: "My submissions", url: "/track" },
+      { name: "Submissions and API keys", url: "/track" },
     ],
     contentLeft,
     contentRight,

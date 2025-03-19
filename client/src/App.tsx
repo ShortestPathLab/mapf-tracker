@@ -1,6 +1,10 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Fade, LinearProgress, Stack } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useIsMutating,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BottomBar } from "BottomBar";
 import { LostConnectionWarning } from "components/LostConnectionWarning";
@@ -68,6 +72,7 @@ export default function App() {
                 <ConfirmProvider>
                   <SnackbarProvider>
                     <Content />
+                    <MutatingBar />
                     <ReactQueryDevtools buttonPosition="bottom-left" />
                   </SnackbarProvider>
                 </ConfirmProvider>
@@ -77,6 +82,24 @@ export default function App() {
         </ThemeContext.Provider>
       </ModalContext.Provider>
     </QueryClientProvider>
+  );
+}
+
+export function MutatingBar() {
+  const isMutating = useIsMutating();
+  return (
+    <Fade in={!!isMutating}>
+      <LinearProgress
+        sx={{
+          bottom: 0,
+          position: "fixed",
+          left: 0,
+          width: "100%",
+          zIndex: (t) => t.zIndex.appBar + 1,
+        }}
+        variant="indeterminate"
+      />
+    </Fade>
   );
 }
 

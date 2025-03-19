@@ -4,7 +4,7 @@
   "main": "server.ts",
   "scripts": {
     "start": "NODE_ENV=production bun src/server.ts | pino-pretty",
-    "dev": "NODE_ENV=development bun --watch src/server.ts | pino-pretty",
+    "dev": "NODE_ENV=development bun src/server.ts | pino-pretty",
     "installClient": "cd client; npm i",
     "installServer": "npm i",
     "install_all": "npm run installClient; npm run installServer",

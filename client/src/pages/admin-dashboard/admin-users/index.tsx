@@ -52,7 +52,8 @@ function PasswordForm({
           .required("Username is required")
           .test({
             message: "Username already exists",
-            test: (username) => !find(users, { username }),
+            test: (username) =>
+              disabledValues?.username || !find(users, { username }),
           }),
         password: string().required("Password is required"),
       })}

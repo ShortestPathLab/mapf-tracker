@@ -1,13 +1,90 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  QueriesOptions,
+  QueriesResults,
+  useMutation,
+  useQueries,
+  useQuery,
+} from "@tanstack/react-query";
 import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { SummaryResult } from "core/types";
-import { head } from "lodash";
+import {
+  head,
+  identity,
+  keyBy,
+  map,
+  max,
+  mergeWith,
+  range,
+  some,
+  values,
+} from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ref } from "yup";
 
-const REFETCH_MS = 1000;
+function mergeArray<T>(
+  xs: T[],
+  ys: T[],
+  key: (t: T) => string,
+  f: (a: T, b: T) => T
+) {
+  const as = keyBy(xs, key);
+  const bs = keyBy(ys, key);
+  const out = mergeWith(as, bs, f);
+  return values(out);
+}
+
+function g(v1: unknown, v2: unknown) {
+  if (v1 instanceof Array && v2 instanceof Array) {
+    return mergeArray(v1, v2, (v) => v.id, g);
+  }
+  if (typeof v1 === "number" && typeof v2 === "number") {
+    return v1 + v2;
+  }
+  return undefined;
+}
+
+const REFETCH_MS = 2000;
+
+const useRoundRobinQueries = <
+  T extends Array<any>,
+  TCombinedResult = QueriesResults<T>
+>({
+  queries,
+  combine = identity,
+}: {
+  queries: [...QueriesOptions<T>];
+  combine?: (result: QueriesResults<T>) => TCombinedResult;
+}) => {
+  const i = useRef(0);
+  const { original, processed } = useQueries({
+    queries: queries.map((query) => ({
+      ...query,
+      refetchOnWindowFocus: false,
+      refetchInterval: false, // Disable automatic refetch
+    })) as any[],
+    combine: (result) => ({
+      original: result,
+      processed: combine(result as any),
+    }),
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const elem = original[i.current % original.length];
+      if (!elem.isFetching) {
+        elem.refetch();
+      }
+      i.current++;
+    }, REFETCH_MS);
+    return () => clearInterval(interval);
+  }, [original]);
+
+  return processed;
+};
 
 export type ValidationOutcome = {
   isValidationRun: boolean;
@@ -91,16 +168,56 @@ export function useOngoingSubmissionScenarioQuery(
     refetchInterval: REFETCH_MS,
   });
 }
+
+const summaryQuery = (key: string | number, i: number = 0) => ({
+  queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary", key, i],
+  queryFn: () =>
+    json<SummaryResult>(
+      `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`
+    ),
+  enabled: !!key,
+  refetchInterval: REFETCH_MS,
+});
+
 export function useOngoingSubmissionSummaryQuery(key?: string | number) {
-  return useQuery({
-    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary", key],
-    queryFn: () =>
-      json<SummaryResult>(
-        `${APIConfig.apiUrl}/ongoing_submission/summary/${key}`
-      ),
-    enabled: !!key,
-    refetchInterval: REFETCH_MS,
-  });
+  const [length, setLength] = useState(0);
+  const { data, lengths, isFetched, isLoading, isPending } =
+    useRoundRobinQueries({
+      queries: range(length + 1).map((i) => summaryQuery(key, i)),
+      combine: (results) => ({
+        length: results.length,
+        lengths: map(results, (d) => d.data?.maps?.length ?? 0),
+        isFetched: some(results, "isFetched"),
+        isLoading: some(results, "isLoading"),
+        isPending: some(results, "isPending"),
+        data: mergeWith({}, ...map(results, "data"), g),
+      }),
+    });
+  const shouldContract =
+    lengths.length >= 2 &&
+    lengths[lengths.length - 1] === 0 &&
+    lengths[lengths.length - 2] === 0;
+  const shouldExpand = lengths.length >= 1 && lengths[lengths.length - 1] > 0;
+  // Resize
+  useEffect(() => {
+    // The last chunk is not empty
+    if (!isPending) {
+      if (shouldExpand) {
+        setLength((i) => i + 1);
+        return;
+      }
+      if (shouldContract) {
+        setLength((i) => max([i - 1, 0]));
+        return;
+      }
+    }
+  }, [isPending, shouldContract, shouldExpand, data]);
+  return {
+    data,
+    isLoading,
+    isFetched,
+    incomplete: isFetched && (shouldExpand || isPending),
+  };
 }
 
 export type SubmissionTicket = {

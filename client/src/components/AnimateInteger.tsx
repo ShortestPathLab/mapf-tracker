@@ -8,7 +8,7 @@ const lerp = (start: number, end: number, t: number) =>
 export function AnimateInteger({ value = 0 }: { value?: number }) {
   const [display, setDisplay] = useState(value);
   useRafLoop(() => {
-    setDisplay((prev) => lerp(prev, value, 0.1));
+    setDisplay((prev) => lerp(prev, value, 0.05));
   });
   return round(display);
 }
