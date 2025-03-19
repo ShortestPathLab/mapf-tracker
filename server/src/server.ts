@@ -1,5 +1,5 @@
 import bodyParser from "body-parser";
-import { restore } from "controllers/ongoingSubmission";
+import { restore as restoreOngoingSubmission } from "controllers/ongoingSubmission";
 import cors from "cors";
 import express, { urlencoded } from "express";
 import path from "path";
@@ -10,6 +10,7 @@ import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
+import { restore as restorePipeline } from "controllers/pipeline";
 
 export const app = express();
 
@@ -63,6 +64,6 @@ log.info(
 
 log.info("Restoring");
 
-for (const f of [restore]) {
+for (const f of [restoreOngoingSubmission, restorePipeline]) {
   f();
 }

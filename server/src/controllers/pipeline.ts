@@ -6,6 +6,15 @@ import { PipelineStatus } from "models";
 import { get, set } from "models/PipelineStatus";
 import z from "zod";
 
+export async function restore() {
+  const docs = await PipelineStatus.find({
+    type: "running",
+  });
+  for (const doc of docs) {
+    await doc.updateOne({ type: "invalidated" });
+  }
+}
+
 export const getStatus: RequestHandler = async (req, res) => {
   return res.json(
     await chain(stages)

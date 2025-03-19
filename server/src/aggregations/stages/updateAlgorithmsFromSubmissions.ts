@@ -53,15 +53,19 @@ export const updateAlgorithmsFromSubmissions = async () =>
             instances_closed: [
               {
                 $match: {
+                  lower_cost: { $exists: true },
+                  solution_cost: { $exists: true },
+                },
+              },
+              {
+                $match: {
                   $expr: {
                     $and: [
-                      { $ne: ["$lower_cost", null] },
-                      { $ne: ["$solution_cost", null] },
-                      { $ne: [{ $first: "$instance.lower_cost" }, null] },
+                      { $eq: ["$lower_cost", "$solution_cost"] },
                       {
                         $eq: [
-                          "$solution_cost",
-                          { $first: "$instance.lower_cost" },
+                          "$lower_cost",
+                          { $first: "$instance.solution_cost" },
                         ],
                       },
                     ],
