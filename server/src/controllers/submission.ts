@@ -9,8 +9,6 @@ import { usingWorkerTaskReusable } from "queue/usingWorker";
 import { z } from "zod";
 import { cached } from "query";
 
-const { ObjectId } = Types;
-
 export const byScenario = submissions.query(
   z.object({ scenario: z.string(), algorithm: z.string() }),
   ({ scenario, algorithm }) => [
@@ -60,7 +58,7 @@ export const findLeadingLowerboundInstance_id: RequestHandler = (req, res) => {
   Submission.aggregate([
     {
       $match: {
-        instance_id: new ObjectId(id),
+        instance_id: new Types.ObjectId(id),
         isleading: true,
         $or: [{ type: "solution", optimal: true }, { type: "lower_bound" }],
       },

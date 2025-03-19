@@ -128,7 +128,4 @@ export const updateRequest = route(
   handleRequestUpdate
 );
 
-export const updateRequestElevated = route(
-  z.object({ ...requestSchema, reviewStatus: z.any() }),
-  handleRequestUpdate
-);
+export const updateRequestElevated = route(z.any(), handleRequestUpdate);

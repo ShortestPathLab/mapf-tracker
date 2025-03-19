@@ -5,13 +5,14 @@ import express, { urlencoded } from "express";
 import path from "path";
 import { csvParser, yamlParser } from "./body-parsers";
 import { connectToDatabase } from "./connection";
-import { createDevServer } from "./createDevServer";
+import { createDevServer as createServer } from "./createDevServer";
 import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
 
 export const app = express();
+
 app.use(cors());
 
 app.use(yamlParser);
@@ -52,11 +53,7 @@ app.get("*", (req, res) =>
   res.sendFile(path.join(__dirname, "../client/build", "index.html"))
 );
 
-if (process.env.NODE_ENV === "development") {
-  createDevServer(app);
-} else {
-  createProductionServer(app);
-}
+createServer(app);
 
 log.info(
   process.env.NODE_ENV === "development"

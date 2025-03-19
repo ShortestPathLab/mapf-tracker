@@ -1,14 +1,17 @@
-version: '3.8'
+version: '3.3'
 
 services:
-  app:
-    image: example/image-a:latest  # Replace with the actual image for container A
+  
+  api:
+    image: mapf-tracker-api:latest
     container_name: app
+    environment:
+      - VIRTUAL_HOST=fe2410d1.pathfinding.ai
+      - LETSENCRYPT_HOST=fe2410d1.pathfinding.ai
     expose:
       - 80
     networks:
       - proxy
-
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
@@ -21,10 +24,9 @@ services:
       - ./data/vhost:/etc/nginx/vhost.d
       - ./data/html:/usr/share/nginx/html
     environment:
-      - DEFAULT_HOST=fe2410d1.pathfinding.ai  # Replace with your domain
+      - DEFAULT_HOST=tracker.pathfinding.ai  # Replace with your domain
     networks:
       - proxy
-
   letsencrypt:
     image: nginxproxy/acme-companion
     container_name: letsencrypt
@@ -37,9 +39,9 @@ services:
       - ./data/html:/usr/share/nginx/html
     environment:
       - DEFAULT_EMAIL=kevin.zheng@monash.edu  # Replace with your email
+      - NGINX_PROXY_CONTAINER=nginx-proxy
     networks:
       - proxy
-
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
@@ -49,7 +51,6 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true  # Only watch containers with specific labels
     command: --interval 300  # Check for updates every 300 seconds (5 minutes)
-
 networks:
   proxy:
     driver: bridge

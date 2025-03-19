@@ -4,6 +4,6 @@ pm2 delete client
 pm2 delete server
 
 (cd client && pm2 --name client start bunx -- serve dist -s -l 3001)
-(cd server && pm2 --name server start bun -- run start)
+(cd server && pm2 --name server start bun -- run dev)
 
 pm2 save

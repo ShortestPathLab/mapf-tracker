@@ -1,10 +1,8 @@
 import { connectToDatabase } from "connection";
 import { chain, countBy, groupBy, head, keyBy, mapValues, once } from "lodash";
-import { Infer, Map, OngoingSubmission, Scenario } from "models";
+import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
-import { asyncMap } from "utils/waitMap";
 import { z } from "zod";
-import { findInstance } from "./findMemo";
 
 export const path = import.meta.path;
 
@@ -26,10 +24,8 @@ const generateIndexes = once(async () => {
 const run = async (params: unknown) => {
   const indexes = await generateIndexes();
   const data = z.object({ apiKey: z.string() }).parse(params);
-  const docs: Pick<
-    Infer<typeof OngoingSubmission>,
-    "validation" | "instance" | "cost"
-  >[] = await OngoingSubmission.aggregate([
+  const docs: Pick<Infer<typeof OngoingSubmission>, "validation" | "cost"> &
+    { instance: Infer<typeof Instance> }[] = await OngoingSubmission.aggregate([
     { $match: { apiKey: data.apiKey } },
     {
       $project: {
@@ -38,14 +34,23 @@ const run = async (params: unknown) => {
         cost: 1,
       },
     },
+    {
+      $lookup: {
+        from: Instance.collection.collectionName,
+        localField: "instance",
+        foreignField: "_id",
+        as: "instance",
+      },
+    },
+    {
+      $addFields: { instance: { $first: "$instance" } },
+    },
   ]);
-  const submissions = await asyncMap(docs, async (d) => {
-    const instance = await findInstance(d.instance.toString());
-    if (!instance) throw "Instance not found";
-    const scenario = indexes.scenarios[instance.scen_id!.toString()];
+  const submissions = docs.map((d) => {
+    const scenario = indexes.scenarios[d.instance.scen_id!.toString()];
     if (!scenario) throw "Scenario not found";
     const map = indexes.maps[scenario.map_id!.toString()];
-    return { submission: d, scenario, map, instance };
+    return { submission: d, scenario, map, instance: d.instance! };
   });
   const novelty = (c: typeof submissions) =>
     mapValues(
