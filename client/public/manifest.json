@@ -1,6 +1,7 @@
 {
   "short_name": "Tracker",
   "name": "Tracker",
+  "id":"com.shortestpathlab.mapf-tracker",
   "description": "MAPF Tracker is a database for keeping track of state-of-the-art multi-agent pathfinding solutions on a set of grid-based benchmarks. Keep track of the state-of-the-art, share your work, and compare your algorithms.",
   "icons": [
     {
