@@ -25,6 +25,14 @@ RUN bun install
 # Copy all files
 COPY . .
 
+# ─── Setup Mail ───────────────────────────────────────────────────────────────
+
+RUN apt-get install -y mailutils ssmtp
+
+RUN echo 'mailhub=host.docker.internal' >> /etc/ssmtp/ssmtp.conf
+RUN echo 'FromLineOverride=YES' >> /etc/ssmtp/ssmtp.conf
+
+# ──────────────────────────────────────────────────────────────────────────────
 
 ENV PORT=80
 

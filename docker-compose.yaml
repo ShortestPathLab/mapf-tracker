@@ -1,16 +1,34 @@
-version: '3.3'
+version: "3.3"
 
 services:
   # Define each service that you want to have HTTPS
   # Only need a port 80
   # For example
-  api:
-    image: mapf-tracker-api:latest
-    container_name: app
+  mapf-tracker-api:
+    restart: always
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    image: ghcr.io/shortestpathlab/mapf-tracker-api:latest
+    container_name: mapf-tracker-api
     environment:
       # This service will be accessible via this virtual host
       - VIRTUAL_HOST=fe2410d1.pathfinding.ai
       - LETSENCRYPT_HOST=fe2410d1.pathfinding.ai
+    expose:
+      - 80
+    networks:
+      - proxy
+    extra_hosts:
+      - host.docker.internal:host-gateway
+  mapf-tracker-legacy:
+    container_name: mapf-tracker-legacy
+    image: alpine/socat
+    command: TCP4-LISTEN:80,fork TCP4:host.docker.internal:5000
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      - VIRTUAL_HOST=tracker.pathfinding.ai
+      - LETSENCRYPT_HOST=tracker.pathfinding.ai
     expose:
       - 80
     networks:
@@ -27,7 +45,7 @@ services:
       - ./data/vhost:/etc/nginx/vhost.d
       - ./data/html:/usr/share/nginx/html
     environment:
-      - DEFAULT_HOST=tracker.pathfinding.ai 
+      - DEFAULT_HOST=tracker.pathfinding.ai
     networks:
       - proxy
   letsencrypt:
@@ -36,12 +54,13 @@ services:
     depends_on:
       - nginx-proxy
     volumes:
+      - ./data/acme.sh:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./data/certs:/etc/nginx/certs
       - ./data/vhost:/etc/nginx/vhost.d
       - ./data/html:/usr/share/nginx/html
     environment:
-      - DEFAULT_EMAIL=shortestpathlab@monash.edu  
+      - DEFAULT_EMAIL=shortestpathlab@monash.edu
       - NGINX_PROXY_CONTAINER=nginx-proxy
     networks:
       - proxy
@@ -50,11 +69,11 @@ services:
     container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /home/kevin/.docker/config.json:/config.json
     environment:
       - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_LABEL_ENABLE=true  # Only watch containers with specific labels
-    command: --interval 300  # Check for updates every 300 seconds (5 minutes)
-
+      - WATCHTOWER_LABEL_ENABLE=true # Only watch containers with specific labels
+    command: --interval 300 # Check for updates every 300 seconds (5 minutes)
 networks:
   proxy:
     driver: bridge

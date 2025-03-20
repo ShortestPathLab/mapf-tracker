@@ -41,17 +41,20 @@ async function queueMail({
   comments?: string;
 }) {
   log.info("Preparing mail", { apiKey, requesterEmail });
-  const a = await render(
-    <ReviewOutcome
-      apiKey={apiKey}
-      status={status}
-      name={requesterName}
-      comments={comments}
-    />,
-    { pretty: true }
+  mail(
+    "noreply@pathfinding.ai",
+    requesterEmail,
+    titles[status],
+    await render(
+      <ReviewOutcome
+        apiKey={apiKey}
+        status={status}
+        name={requesterName}
+        comments={comments}
+      />,
+      { pretty: true }
+    )
   );
-  log.info(a);
-  mail("noreply@pathfinding.ai", requesterEmail, titles[status], a);
 }
 
 export const createKeyAndSendMail: RequestHandler<
@@ -59,7 +62,6 @@ export const createKeyAndSendMail: RequestHandler<
   unknown,
   { requestId: string }
 > = async (req, res) => {
-  log.info("Hi");
   const { requestId } = z.object({ requestId: z.string() }).parse(req.body);
   const {
     requesterEmail,

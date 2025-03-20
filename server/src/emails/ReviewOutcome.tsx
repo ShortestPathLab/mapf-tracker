@@ -17,8 +17,8 @@ import { footerText } from "./footerText";
 export type Props = {
   name?: string;
   apiKey?: string;
-  status: string;
-  comments: string;
+  status?: string;
+  comments?: string;
 };
 
 ReviewOutcome.PreviewProps = {
