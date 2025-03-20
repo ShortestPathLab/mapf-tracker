@@ -1,27 +1,52 @@
 {
   "short_name": "Tracker",
-  "name": "MAPF Tracker",
-  "description": "A database for benchmark results in Multi-Agent Pathfinding.",
+  "name": "Tracker",
+  "description": "MAPF Tracker is a database for keeping track of state-of-the-art multi-agent pathfinding solutions on a set of grid-based benchmarks. Keep track of the state-of-the-art, share your work, and compare your algorithms.",
   "icons": [
     {
       "src": "./favicon.png",
-      "sizes": "512x512",
-      "type": "image/x-icon"
+      "type": "image/png",
+      "sizes": "96x96"
     },
     {
       "src": "./logo192.png",
       "type": "image/png",
       "sizes": "192x192"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/wide-1.png",
+      "type": "image/png",
+      "sizes": "2560x1600",
+      "form_factor":"wide"
     },
     {
-      "src": "./logo512.png",
+      "src": "./screenshots/wide-2.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "2560x1600",
+      "form_factor":"wide"
+    },
+    {
+      "src": "./screenshots/wide-3.png",
+      "type": "image/png",
+      "sizes": "2560x1600",
+      "form_factor":"wide"
+    },
+    {
+      "src": "./screenshots/narrow-1.png",
+      "type": "image/png",
+      "sizes": "1440x2960"
+    },
+    {
+      "src": "./screenshots/narrow-2.png",
+      "type": "image/png",
+      "sizes": "1440x2960"
     }
   ],
   "start_url": "./",
   "display": "standalone",
-  "theme_color": "#15181c",
+  "theme_color": "#17191d",
   "scope": ".",
-  "background_color": "#15181c"
+  "background_color": "#17191d"
 }
