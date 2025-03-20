@@ -1,16 +1,14 @@
 import bodyParser from "body-parser";
 import { restore as restoreOngoingSubmission } from "controllers/ongoingSubmission";
+import { restore as restorePipeline } from "controllers/pipeline";
 import cors from "cors";
 import express, { urlencoded } from "express";
-import path from "path";
 import { csvParser, yamlParser } from "./body-parsers";
 import { connectToDatabase } from "./connection";
 import { createDevServer as createServer } from "./createDevServer";
-import { createProductionServer } from "./createProductionServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
-import { restore as restorePipeline } from "controllers/pipeline";
 
 export const app = express();
 
@@ -31,17 +29,6 @@ app.use(urlencoded({ extended: true }));
 
 await connectToDatabase();
 
-app.use((request, response, next) => {
-  if (
-    process.env.NODE_ENV != "development" &&
-    !request.secure &&
-    !request.url.includes(".well-known")
-  )
-    return response.redirect(`https://${request.headers.host}${request.url}`);
-
-  next();
-});
-
 createRouters(app);
 
 app.get("/api/heartbeat", (req, res) => {
@@ -50,9 +37,12 @@ app.get("/api/heartbeat", (req, res) => {
 
 createStaticRoutes(app);
 
-app.get("*", (req, res) =>
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"))
-);
+app.get("/", (req, res) => {
+  res.send(process.env.APP_NAME ?? "mapf-tracker-api");
+});
+app.get("*", (req, res) => {
+  res.send("Not found");
+});
 
 createServer(app);
 
