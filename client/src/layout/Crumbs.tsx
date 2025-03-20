@@ -2,6 +2,9 @@ import {
   ArrowBackRounded,
   ArrowForwardRounded,
   ArrowUpwardRounded,
+  ChevronRightRounded,
+  DockToRightFilledRounded,
+  DockToRightRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -12,20 +15,39 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { Scroll } from "components/dialog/Scrollbars";
 import { useHistory, useNavigate } from "hooks/useNavigation";
 import { last } from "lodash";
+import { useOptions } from "utils/OptionsProvider";
 import { PageHeaderProps } from "./PageHeader";
-import { Scroll } from "components/dialog/Scrollbars";
 
 export const Crumbs = ({ path, current }: PageHeaderProps) => {
   const { canForward, canGoBack } = useHistory();
   const navigate = useNavigate();
-  console.log(canForward);
+  const [{ hideSidebar }, setOptions] = useOptions();
+  console.log(hideSidebar);
   return (
     <>
       <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+        <Box sx={{ px: 3, pr: 0 }}>
+          <IconButton
+            edge="start"
+            onClick={() => {
+              setOptions({ hideSidebar: !hideSidebar });
+            }}
+          >
+            {hideSidebar ? (
+              <DockToRightRounded fontSize="small" />
+            ) : (
+              <DockToRightFilledRounded fontSize="small" />
+            )}
+          </IconButton>
+        </Box>
         <Scroll x fadeX>
-          <Breadcrumbs sx={{ minWidth: "max-content", p: 3, py: 2, flex: 1 }}>
+          <Breadcrumbs
+            separator={<ChevronRightRounded fontSize="small" />}
+            sx={{ minWidth: "max-content", p: 3, pl: 0, py: 2, flex: 1 }}
+          >
             {path.map(({ name, url, state }) => (
               <Link
                 key={name}
@@ -56,7 +78,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
               navigate(-1);
             }}
           >
-            <ArrowBackRounded />
+            <ArrowBackRounded fontSize="small" />
           </IconButton>
           <IconButton
             disabled={!canForward}
@@ -64,7 +86,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
               navigate(1);
             }}
           >
-            <ArrowForwardRounded />
+            <ArrowForwardRounded fontSize="small" />
           </IconButton>
           <IconButton
             disabled={!path.length}
@@ -74,7 +96,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
               navigate(url, state);
             }}
           >
-            <ArrowUpwardRounded />
+            <ArrowUpwardRounded fontSize="small" />
           </IconButton>
         </Stack>
       </Stack>

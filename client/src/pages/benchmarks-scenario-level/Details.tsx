@@ -27,6 +27,7 @@ import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import { formatDate } from "utils/format";
 import { downloadRow } from "./download";
+import { isDefined } from "@mui/x-charts/internals";
 
 export default function Details({ id }: { id?: string }) {
   const notify = useSnackbarAction();
@@ -109,28 +110,37 @@ export default function Details({ id }: { id?: string }) {
                   },
                 }}
               >
-                {collection.map(({ algo_name, date, value }, i, xs) => (
-                  <TimelineItem color="text.secondary" key={i}>
-                    <TimelineSeparator>
-                      <TimelineDot variant="outlined" />
-                      {i !== xs.length - 1 && <TimelineConnector />}
-                    </TimelineSeparator>
-                    <TimelineContent>
-                      <ListItem sx={{ m: -2 }}>
-                        <ListItemText
-                          secondary={
-                            <>
-                              {algo_name}
-                              {" at "}
-                              {formatDate(date)}
-                            </>
-                          }
-                          primary={value}
-                        />
-                      </ListItem>
-                    </TimelineContent>
-                  </TimelineItem>
-                ))}
+                {collection.map(({ algo_name, date, value }, i, xs) => {
+                  const previous = i === 0 ? undefined : xs[i - 1]?.value;
+                  return (
+                    <TimelineItem color="text.secondary" key={i}>
+                      <TimelineSeparator>
+                        <TimelineDot variant="outlined" />
+                        {i !== xs.length - 1 && <TimelineConnector />}
+                      </TimelineSeparator>
+                      <TimelineContent>
+                        <ListItem sx={{ m: -2 }}>
+                          <ListItemText
+                            secondary={
+                              <>
+                                {algo_name}
+                                {" at "}
+                                {formatDate(date)}
+                              </>
+                            }
+                            primary={`${value ?? "0"} ${
+                              isDefined(previous)
+                                ? previous < value
+                                  ? "↑"
+                                  : "↓"
+                                : ""
+                            }`}
+                          />
+                        </ListItem>
+                      </TimelineContent>
+                    </TimelineItem>
+                  );
+                })}
               </Timeline>
             ) : (
               <Typography color="text.secondary">No record claims</Typography>

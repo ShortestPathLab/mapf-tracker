@@ -5,19 +5,20 @@ import {
 } from "@mui-symbols-material/w400";
 import { alpha, Button, Stack, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { useXs, useSm } from "components/dialog/useSmallDisplay";
+import { useLg, useSm, useXs } from "components/dialog/useSmallDisplay";
 import { appName } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
 export function Tip() {
   const xs = useXs();
   const sm = useSm();
+  const lg = useLg();
   const navigate = useNavigate();
   return (
     <Stack
       sx={{
-        borderRadius: 3,
-        p: xs ? 3 : sm ? 3 : 4,
-        bgcolor: (t) => alpha(t.palette.background.default, 1),
+        m: xs ? -2 : -3,
+        p: xs ? 4 : lg ? 6 : 6,
+        bgcolor: (t) => alpha(t.palette.background.default, 0),
         gap: xs ? 3 : sm ? 3 : 4,
       }}
     >

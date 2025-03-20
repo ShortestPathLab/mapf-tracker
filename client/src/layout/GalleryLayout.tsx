@@ -48,6 +48,8 @@ function Sidebar({
   return (
     <Stack
       sx={{
+        overflowX: "hidden",
+        wordWrap: "break-word",
         width: sidebarWidth,
         minWidth: sidebarWidth,
         gap: 4,
@@ -92,7 +94,7 @@ const RenderLg = ({
   children,
   cover,
   items,
-  sidebarWidth = 320,
+  sidebarWidth = 280,
   actions,
 }: LayoutRenderProps & GalleryLayoutProps) => (
   <Stack direction="row" sx={{ gap: 8 }}>

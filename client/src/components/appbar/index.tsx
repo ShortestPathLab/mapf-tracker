@@ -1,8 +1,8 @@
-import { ChevronRightRounded, MenuRounded } from "@mui-symbols-material/w400";
+import { ChevronRightRounded } from "@mui-symbols-material/w400";
 import {
+  alpha,
   AppBar,
   AppBarProps,
-  BottomNavigation,
   Box,
   Collapse,
   IconButton,
@@ -15,16 +15,14 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { BottomBarAction } from "BottomBar";
-import { bottomBarPaths } from "bottomBarPaths";
 import { Scroll } from "components/dialog/Scrollbars";
 import { appIconUrl, appName } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
-import { find, flatMap } from "lodash";
 import PopupState, { bindMenu } from "material-ui-popup-state";
 import { matchPath, useLocation } from "react-router-dom";
 import { useCss } from "react-use";
-import { useMd, useSm, useXs } from "../dialog/useSmallDisplay";
+import { useOptions } from "utils/OptionsProvider";
+import { useMd, useXs } from "../dialog/useSmallDisplay";
 import { useNavigationContent } from "./useNavigationContent";
 
 const drawerWidth = 320;
@@ -37,6 +35,7 @@ export default function index(props: AppBarProps) {
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const [{ hideSidebar }, setOptions] = useOptions();
   const { groups, userDialog, logInDialog } = useNavigationContent();
   const clickHandler =
     (url?: string, action?: () => void, close?: () => void) => () => {
@@ -145,6 +144,13 @@ export default function index(props: AppBarProps) {
                                           // Looks more comfortable when there's space on the right
                                           pr: 3,
                                           bgcolor: "transparent",
+                                          "&.Mui-selected": {
+                                            bgcolor: (t) =>
+                                              alpha(
+                                                t.palette.primary.main,
+                                                0.05
+                                              ),
+                                          },
                                         }}
                                         onClick={clickHandler(
                                           url,
@@ -169,7 +175,7 @@ export default function index(props: AppBarProps) {
                                               component="span"
                                               sx={{
                                                 fontWeight: 450,
-                                                fontSize: "0.95rem",
+                                                fontSize: "0.9rem",
                                                 color: "text.primary",
                                               }}
                                             >
@@ -226,68 +232,28 @@ export default function index(props: AppBarProps) {
                   </AppBar>
                 </Box>
               ) : md ? (
-                <Stack
-                  sx={{
-                    width: (t) => t.spacing(12),
-                    alignItems: "center",
-                    py: 2,
-                    gap: 4,
-                  }}
-                >
-                  <IconButton onClick={state.open}>
-                    <MenuRounded />
-                  </IconButton>
-                  <BottomNavigation
-                    value={
-                      find(
-                        bottomBarPaths,
-                        ({ url }) => url && !!matchPath(`${url}/*`, pathname)
-                      )?.label
-                    }
-                    showLabels
+                <></>
+              ) : (
+                <Collapse in={!hideSidebar} orientation="horizontal">
+                  <Box
                     sx={{
-                      height: "max-content",
-                      bgcolor: "transparent",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-start",
-                      gap: 3,
+                      bgcolor: "background.default",
+                      borderRight: (t) =>
+                        t.palette.mode === "dark"
+                          ? "none"
+                          : `1px solid ${t.palette.divider}`,
+                      minWidth: 280,
                     }}
                   >
-                    {bottomBarPaths.map(
-                      ({ icon, url, label, iconSelected }) => {
-                        const selected =
-                          url && !!matchPath(`${url}/*`, pathname);
-                        return (
-                          <BottomBarAction
-                            onClick={clickHandler(url, state.close)}
-                            label={label}
-                            key={label}
-                            icon={selected ? iconSelected ?? icon : icon}
-                            value={label}
-                            sx={{
-                              "::after": { top: (t) => t.spacing(-0.5) },
-                            }}
-                          />
-                        );
-                      }
-                    )}
-                  </BottomNavigation>
-                </Stack>
-              ) : (
-                <Box
-                  sx={{
-                    bgcolor: "background.default",
-                    minWidth: "fit-content",
-                  }}
-                >
-                  {contents}
-                </Box>
+                    {contents}
+                  </Box>
+                </Collapse>
               )}
 
               <SwipeableDrawer
-                onOpen={() => state.open()}
-                {...bindMenu(state)}
+                open={!hideSidebar}
+                onOpen={() => setOptions({ hideSidebar: false })}
+                onClose={() => setOptions({ hideSidebar: true })}
                 elevation={1}
                 variant="temporary"
                 ModalProps={{ keepMounted: true }}

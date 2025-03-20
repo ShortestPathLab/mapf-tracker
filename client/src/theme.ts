@@ -20,7 +20,7 @@ export const theme = (t: "light" | "dark") =>
   createTheme({
     palette: {
       primary: {
-        main: t === "light" ? accentColors.blue.A400 : "#a8c7fa",
+        main: t === "light" ? accentColors.indigo.A700 : "#a8c7fa",
         contrastText: t === "light" ? "#ffffff" : "#062e6f",
       },
       secondary: {
@@ -30,8 +30,8 @@ export const theme = (t: "light" | "dark") =>
       mode: t,
       background:
         t === "light"
-          ? { default: "#f0f4f9", paper: "#ffffff" }
-          : { default: "#17191d", paper: "#111317" },
+          ? { default: "#fafafa", paper: "#ffffff" }
+          : { default: "#18181b", paper: "#0f0f12" },
     },
     shape: { borderRadius: 8 },
     transitions: {

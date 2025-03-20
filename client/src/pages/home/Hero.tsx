@@ -28,7 +28,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
         direction={md ? "column" : "row"}
         sx={{ gap: lg ? 2 : 6, mx: lg ? 0 : 4, alignItems: "flex-start" }}
       >
-        <Stack sx={{ gap: 2, my: 1 }}>
+        <Stack sx={{ gap: 2, my: 1, flex: 1 }}>
           <Typography color="text.secondary">Jump to</Typography>
           <Stack>
             <QuickNavigation />

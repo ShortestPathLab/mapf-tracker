@@ -15,6 +15,7 @@ import {
   ModalContext,
   useModalProviderValue,
 } from "hooks/useModalProviderValue";
+import { HistoryProvider } from "hooks/useNavigation";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
@@ -25,7 +26,6 @@ import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
 import { theme } from "./theme";
 import { ThemeContext, useThemeState } from "./utils/ThemeProvider";
-import { HistoryProvider } from "hooks/useNavigation";
 
 export const queryClient = new QueryClient();
 
@@ -62,7 +62,7 @@ export default function App() {
 
   const t = useMemo(() => theme(mode), [mode]);
 
-  useTitleBar(mode === "dark" ? "#17191d" : "#f0f4f9");
+  useTitleBar(t.palette.background.default);
   return (
     <QueryClientProvider client={queryClient}>
       <ModalContext.Provider value={modalProviderValue}>

@@ -6,11 +6,12 @@ const key = `${identifier}.options`;
 
 export type Options = {
   hideTips?: boolean;
+  hideSidebar?: boolean;
 };
 
 export const storedOptionsValue = localStorage.getItem(key)
   ? JSON.parse(localStorage.getItem(key))
-  : { hideTips: false };
+  : { hideTips: false, hideSidebar: false };
 
 export const OptionsContext = createContext<[Options, (o: Options) => void]>([
   storedOptionsValue,
