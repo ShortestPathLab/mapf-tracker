@@ -37,6 +37,7 @@ export function Tip({
                 border: (t) => `1px solid ${t.palette.divider}`,
                 // boxShadow: (t) => t.shadows[1],
                 px: 2,
+                minWidth: "max-content",
               },
             }}
           >
