@@ -4,7 +4,7 @@ import { CompletionByAlgorithmChartCard } from "components/charts/CompletionByAl
 import { GridChartCard } from "components/charts/GridChartCard";
 import { RecentActivityChart } from "components/charts/RecentActivityChart";
 import { TotalSolvedClosedChart } from "components/charts/TotalSolvedClosedChart";
-import { useLg, useMd } from "components/dialog/useSmallDisplay";
+import { useLg, useMd, useXs } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid } from "layout";
 import { find, map } from "lodash";
@@ -19,14 +19,15 @@ const TEMP_HARDCODED_SOLUTION_PATH =
   "/visualization?mapId=63761f265d814f08ecdbf3bf&reason=unknown&scenId=63761f275d814f08ecdbf96d&instanceId=63761f275d814f08ecdc0a42&solutionId=64111c7aa77d79716559c10f&source=submitted";
 export default function Hero({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
+  const xs = useXs();
   const md = useMd();
   const lg = useLg();
   return (
-    <Stack sx={{ gap: 4 }}>
+    <Stack sx={{ gap: 4, m: xs ? 0 : md ? 2 : 4 }}>
       <Tip />
       <Stack
         direction={md ? "column" : "row"}
-        sx={{ gap: lg ? 2 : 6, mx: lg ? 0 : 4, alignItems: "flex-start" }}
+        sx={{ gap: lg ? 2 : 3, mx: lg ? 0 : 0, alignItems: "flex-start" }}
       >
         <Stack sx={{ gap: 2, my: 1, flex: 1 }}>
           <Typography color="text.secondary">Jump to</Typography>
@@ -125,7 +126,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
         sx={{
           gap: 2,
           mb: 4,
-          mx: lg ? 0 : 4,
+          mx: lg ? 0 : 0,
         }}
       >
         {children}

@@ -37,12 +37,17 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
             }}
           >
             {hideSidebar ? (
-              <DockToRightRounded fontSize="small" />
-            ) : (
               <DockToRightFilledRounded fontSize="small" />
+            ) : (
+              <DockToRightRounded fontSize="small" />
             )}
           </IconButton>
         </Box>
+        <Divider
+          flexItem
+          orientation="vertical"
+          sx={{ height: 24, my: "auto", ml: -1 }}
+        />
         <Scroll x fadeX>
           <Breadcrumbs
             separator={<ChevronRightRounded fontSize="small" />}
@@ -56,10 +61,16 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
                 color="inherit"
                 onClick={() => navigate(url, state)}
               >
-                <Typography variant="body1">{name}</Typography>
+                <Typography variant="body1" sx={{ lineHeight: 0 }}>
+                  {name}
+                </Typography>
               </Link>
             ))}
-            <Typography color="text.primary" variant="body1">
+            <Typography
+              color="text.primary"
+              variant="body1"
+              sx={{ lineHeight: 0 }}
+            >
               {current}
             </Typography>
           </Breadcrumbs>

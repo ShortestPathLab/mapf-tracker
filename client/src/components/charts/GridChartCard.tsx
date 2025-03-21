@@ -61,7 +61,7 @@ function ChartCard({
       sx={{
         [`& .${cls}`]: { opacity: finePointer ? 0 : 1 },
         [`&:hover .${cls}`]: { opacity: 1 },
-        ...paper(0),
+        ...paper(1),
         ...props.sx,
       }}
     >

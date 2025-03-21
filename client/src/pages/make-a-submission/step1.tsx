@@ -27,7 +27,7 @@ export default function index() {
     variant: "modal",
     title: xs
       ? "Submission in review"
-      : "You already have a submission in review",
+      : "You already have submissions in review",
   });
   const [checking, setChecking] = useState(false);
   return (
@@ -107,7 +107,7 @@ export default function index() {
               onClick={submitForm}
               variant="contained"
             >
-              {checking ? "Checking..." : "Next"}
+              {checking ? "Processing..." : "Continue"}
             </Button>
           </Floating>
         )}

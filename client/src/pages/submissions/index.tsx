@@ -191,16 +191,10 @@ export default function TrackSubmission() {
       title="API key"
       actions={
         <>
-          <Button
-            sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
-            onClick={() => navigate("/submit")}
-          >
+          <Button onClick={() => navigate("/submit")}>
             New submission request
           </Button>
-          <Button
-            sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
-            onClick={() => navigate("/docs/how-to-submit")}
-          >
+          <Button onClick={() => navigate("/docs/how-to-submit")}>
             Read the docs
           </Button>
         </>

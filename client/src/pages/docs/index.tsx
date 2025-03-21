@@ -10,6 +10,7 @@ export default function index() {
   const xs = useXs();
   return (
     <Router
+      flat
       routes={[
         {
           path: xs ? "*" : "/docs/",

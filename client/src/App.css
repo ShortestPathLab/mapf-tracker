@@ -94,3 +94,20 @@
   border-radius: 3px 3px 0 0;
   width: 100%;
 }
+.MuiTouchRipple-root > * {
+  filter: blur(12px);
+  opacity: 0.1 !important;
+}
+
+.MuiFilledInput-root {
+  border-radius: 8px;
+  overflow: hidden;
+}
+.MuiFilledInput-root::before,
+.MuiFilledInput-root::after {
+  display: none !important;
+}
+
+button.Mui-disabled {
+  box-shadow: none !important;
+}

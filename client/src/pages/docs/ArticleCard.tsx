@@ -11,7 +11,7 @@ import { Page } from "./pages";
 
 export function ArticleCard({ page, ...props }: { page?: Page } & CardProps) {
   return (
-    <Card sx={paper(0)} {...props}>
+    <Card sx={paper(1)} {...props}>
       <CardActionArea
         sx={{
           height: "100%",
@@ -23,10 +23,9 @@ export function ArticleCard({ page, ...props }: { page?: Page } & CardProps) {
       >
         <CardMedia
           sx={{
-            ...paper(1),
+            // ...paper(1),
             borderRadius: 0,
             border: "none",
-            boxShadow: "none",
             height: 120,
             width: "100%",
             display: "flex",
@@ -39,7 +38,7 @@ export function ArticleCard({ page, ...props }: { page?: Page } & CardProps) {
           {page?.icon}
         </CardMedia>
         <Stack sx={{ p: 2 }}>
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography gutterBottom variant="h6" component="div">
             {page?.label}
           </Typography>
           <Typography variant="body2" color="text.secondary">

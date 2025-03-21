@@ -14,11 +14,12 @@ export function Chart<T>({
   render: ReactElement;
   isLoading?: boolean;
 } & Partial<ResponsiveContainerProps>) {
-  const { palette, shape } = useTheme();
+  const { palette, shape, shadows } = useTheme();
   const cls = useCss({
     "& .recharts-default-tooltip": {
-      backgroundImage: `linear-gradient(to bottom, ${palette.background.paper}, ${palette.background.paper})`,
+      backgroundImage: `linear-gradient(to bottom, ${palette.background.default}, ${palette.background.default})`,
       borderRadius: `${shape.borderRadius}px`,
+      boxShadow: shadows[1],
     },
   });
   return isLoading ? (

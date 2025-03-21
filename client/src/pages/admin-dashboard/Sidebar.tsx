@@ -25,7 +25,8 @@ export function Sidebar(props: StackProps) {
       <Stack
         {...props}
         sx={{
-          bgcolor: alpha(theme.palette.background.default, 0.5),
+          borderRight: (t) => `1px solid ${t.palette.divider}`,
+          bgcolor: "background.paper",
           ...props.sx,
         }}
       >

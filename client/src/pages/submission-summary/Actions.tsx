@@ -163,10 +163,7 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
         title="Upload data"
         description="Upload data for your algorithm. First, familiarise yourself with the submission format that we support. Then, choosing one of the three data submission methods."
         actions={
-          <Button
-            sx={{ mx: -1, mb: -1 }}
-            onClick={() => open("/docs/how-to-submit", "_blank")}
-          >
+          <Button onClick={() => open("/docs/how-to-submit", "_blank")}>
             See the docs
           </Button>
         }

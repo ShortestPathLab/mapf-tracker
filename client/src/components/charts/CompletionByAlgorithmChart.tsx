@@ -6,7 +6,16 @@ import { chain as _, find, get, map, max, round, sortBy, zip } from "lodash";
 import { useAggregateAlgorithm } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { ComponentProps, useMemo } from "react";
-import { Bar, BarChart, Cell, Label, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Label,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { paper } from "theme";
 import { toneBy } from "utils/colors";
 import { GridChartCard } from "./GridChartCard";
@@ -58,7 +67,7 @@ export function CategoryChart({
         data={data}
         margin={{ bottom: 20 }}
         layout="vertical"
-        barGap={0}
+        barGap={4}
         {...props}
       >
         <Tooltip
@@ -66,7 +75,7 @@ export function CategoryChart({
             <Box
               component="span"
               sx={{
-                color: toneBy(theme.palette.mode, item.payload.i),
+                color: toneBy(theme.palette.mode, item.payload.i, 3, 4),
               }}
             >
               {v}
@@ -92,8 +101,10 @@ export function CategoryChart({
             mirror: true,
           })}
         />
+        <CartesianGrid stroke={theme.palette.divider} />
         {map(series, ({ key, opacity, name }) => (
           <Bar
+            radius={[4, 4, 4, 4]}
             type="monotone"
             isAnimationActive={false}
             dataKey={key}
@@ -114,7 +125,7 @@ export function CategoryChart({
             {data.map((entry, i) => (
               <Cell
                 key={`${entry?._id}-${i}`}
-                fill={alpha(toneBy(theme.palette.mode, i, 2, 8), 1)}
+                fill={toneBy(theme.palette.mode, i, 3, 4)}
                 fillOpacity={opacity}
               />
             ))}

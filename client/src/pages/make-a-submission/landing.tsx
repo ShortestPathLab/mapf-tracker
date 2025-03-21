@@ -72,14 +72,15 @@ export default function index() {
             {[
               {
                 icon: <EditRounded />,
-                label: (
-                  <>
-                    {"Make a new submission request"}{" "}
+                label: <>{"Make a new submission request"}</>,
+                content: (
+                  <Stack sx={{ gap: 1, alignItems: "flex-start" }}>
+                    {
+                      "Before submitting solutions from your algorithm, you'll need to submit a request to do so. This will provide you with a one-time use API key that you can use to submit data to the tracker."
+                    }
                     <Chip size="small" label="You're here" />
-                  </>
+                  </Stack>
                 ),
-                content:
-                  "Before submitting solutions from your algorithm, you'll need to submit a request to do so. This will provide you with a one-time use API key that you can use to submit data to the tracker.",
               },
               {
                 label: "The MAPF Tracker team replies with an API key",

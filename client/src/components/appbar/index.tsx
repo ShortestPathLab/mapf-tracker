@@ -16,9 +16,9 @@ import {
   Typography,
 } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { appIconUrl, appName } from "core/config";
+import { appIconUrl, appName, appNameShort } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
-import PopupState, { bindMenu } from "material-ui-popup-state";
+import PopupState from "material-ui-popup-state";
 import { matchPath, useLocation } from "react-router-dom";
 import { useCss } from "react-use";
 import { useOptions } from "utils/OptionsProvider";
@@ -63,7 +63,7 @@ export default function index(props: AppBarProps) {
                 }}
               >
                 <Stack sx={{ p: sm ? 2 : 3 }}>
-                  <Typography variant="h6">{appName}</Typography>
+                  <Typography variant="h6">{appNameShort}</Typography>
                 </Stack>
                 {groups.map(({ items, grow, label, defaultOpen = true }, i) => (
                   <PopupState variant="popover" key={label}>
@@ -117,7 +117,7 @@ export default function index(props: AppBarProps) {
                               </Stack>
                             )}
                             <Collapse in={isOpen}>
-                              <List sx={{ mt: label ? -1 : 0 }}>
+                              <List sx={{ mt: label ? -2 : 0 }}>
                                 {items.map(
                                   (
                                     {
@@ -137,17 +137,18 @@ export default function index(props: AppBarProps) {
                                         key={i}
                                         selected={selected}
                                         sx={{
-                                          borderRadius: 2,
+                                          borderRadius: 1,
                                           mx: sm ? 1 : 1.5,
                                           color: selected && "primary.main",
-                                          px: sm ? 1 : 1.5,
+                                          px: sm ? 1 : 1,
                                           // Looks more comfortable when there's space on the right
                                           pr: 3,
+                                          py: 0.5,
                                           bgcolor: "transparent",
                                           "&.Mui-selected": {
                                             bgcolor: (t) =>
                                               alpha(
-                                                t.palette.primary.main,
+                                                t.palette.text.primary,
                                                 0.05
                                               ),
                                           },
@@ -162,6 +163,8 @@ export default function index(props: AppBarProps) {
                                           sx={{
                                             color: selected && "primary.main",
                                             minWidth: 48,
+                                            mr: -1,
+                                            transform: "scale(0.9)",
                                           }}
                                         >
                                           {avatar ??
@@ -177,6 +180,7 @@ export default function index(props: AppBarProps) {
                                                 fontWeight: 450,
                                                 fontSize: "0.9rem",
                                                 color: "text.primary",
+                                                opacity: 0.8,
                                               }}
                                             >
                                               {label}
@@ -238,10 +242,6 @@ export default function index(props: AppBarProps) {
                   <Box
                     sx={{
                       bgcolor: "background.default",
-                      borderRight: (t) =>
-                        t.palette.mode === "dark"
-                          ? "none"
-                          : `1px solid ${t.palette.divider}`,
                       minWidth: 280,
                     }}
                   >
@@ -260,8 +260,6 @@ export default function index(props: AppBarProps) {
                 sx={{
                   display: md ? "block" : "none",
                   "& .MuiDrawer-paper": {
-                    borderRadius: (t) =>
-                      `0 ${t.shape.borderRadius}px ${t.shape.borderRadius}px 0`,
                     boxSizing: "border-box",
                     width: drawerWidth,
                     maxWidth: "90vw",

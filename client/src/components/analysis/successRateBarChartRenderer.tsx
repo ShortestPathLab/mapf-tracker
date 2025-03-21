@@ -17,6 +17,7 @@ import {
 import { paper } from "theme";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
+
 export const SuccessRateBarChart = ({
   xAxisDataKey = "name",
   proportionClosedKey = "proportionClosed",

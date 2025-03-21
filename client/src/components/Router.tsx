@@ -73,9 +73,11 @@ function Sheet({
 }
 
 export function Router({
+  flat,
   routes,
   fallback,
 }: {
+  flat?: boolean;
   routes: Route[];
   fallback?: ReactNode;
 }) {
@@ -114,7 +116,30 @@ export function Router({
         {child}
       </Sheet>
     ) : matchPath(a, pathname) ? (
-      child
+      flat ? (
+        child
+      ) : (
+        <Stack
+          sx={{
+            bgcolor: "background.default",
+            width: "100%",
+            height: "100dvh",
+          }}
+        >
+          <Stack
+            sx={{
+              m: 0.5,
+              boxShadow: (t) => t.shadows[1],
+              width: (t) => `calc(100% - ${t.spacing(1)}px)`,
+              height: (t) => `calc(100dvh - ${t.spacing(1)}px)`,
+              borderRadius: 1,
+              overflow: "hidden",
+            }}
+          >
+            {child}
+          </Stack>
+        </Stack>
+      )
     ) : undefined;
   const matches = routes.filter(recursiveMatch);
   return (

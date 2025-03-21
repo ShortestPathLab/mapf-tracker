@@ -20,7 +20,7 @@ export function Tip({
           borderRadius: 1,
           p: 2,
           gap: 1,
-          bgcolor: (t) => alpha(t.palette.primary.main, 0.05),
+          bgcolor: (t) => alpha(t.palette.primary.main, 0.04),
         }}
       >
         <Typography variant="overline" color="text.secondary" sx={{ mt: -1 }}>
@@ -28,7 +28,18 @@ export function Tip({
         </Typography>
         <Typography variant="body2">{description}</Typography>
         {actions && (
-          <Stack direction="row" gap={2}>
+          <Stack
+            direction="row"
+            sx={{
+              gap: 1,
+              pt: 1,
+              "> button": {
+                border: (t) => `1px solid ${t.palette.divider}`,
+                // boxShadow: (t) => t.shadows[1],
+                px: 2,
+              },
+            }}
+          >
             {actions}
           </Stack>
         )}

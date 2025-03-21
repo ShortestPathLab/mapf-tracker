@@ -25,6 +25,7 @@ const pages = () => [
 export default function MakeASubmissionPage() {
   return (
     <Router
+      flat
       routes={[
         {
           path: "/submit/",

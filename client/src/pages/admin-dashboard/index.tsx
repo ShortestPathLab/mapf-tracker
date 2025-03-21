@@ -36,6 +36,7 @@ export default function index() {
           }}
         >
           <Router
+            flat
             routes={pages().map(({ content, value }) => ({
               content,
               path: `/dashboard/${value}`,

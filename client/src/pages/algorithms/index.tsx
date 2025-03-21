@@ -189,16 +189,10 @@ export default function AlgorithmsPage() {
         }
         actions={
           <>
-            <Button
-              sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
-              onClick={() => open("/docs/about", "_blank")}
-            >
+            <Button onClick={() => open("/docs/about", "_blank")}>
               See the docs
             </Button>
-            <Button
-              sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
-              onClick={() => open("/docs/about", "_blank")}
-            >
+            <Button onClick={() => open("/docs/about", "_blank")}>
               Make a submission instead
             </Button>
           </>

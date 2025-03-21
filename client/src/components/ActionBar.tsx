@@ -13,7 +13,7 @@ export function ActionBar({
   return (
     <Stack
       sx={{
-        gap: 2,
+        gap: 1,
       }}
     >
       {!sm && (
@@ -26,7 +26,6 @@ export function ActionBar({
           sx={{
             gap: 1,
             "> button": {
-              borderRadius: 999,
               py: 1,
               px: 2,
               minWidth: "max-content",

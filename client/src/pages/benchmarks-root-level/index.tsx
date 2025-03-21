@@ -86,10 +86,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
           </>
         }
         actions={
-          <Button
-            sx={{ alignSelf: "flex-start", m: -1, mt: 0 }}
-            onClick={() => open("/docs/about", "_blank")}
-          >
+          <Button onClick={() => open("/docs/about", "_blank")}>
             See the docs
           </Button>
         }

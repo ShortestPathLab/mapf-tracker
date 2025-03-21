@@ -10,12 +10,13 @@ import {
   startCase,
 } from "lodash";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   Area,
   AreaChart,
   Bar,
   BarChart,
+  CartesianGrid,
   Label,
   Legend,
   Line,
@@ -62,7 +63,7 @@ export const SliceChart = ({
   const Series = _Series as unknown as React.FC<Record<string, unknown>>;
   const theme = useTheme();
   return (
-    <Chart barCategoryGap={4} barGap={0} {...props}>
+    <Chart barCategoryGap="10%" barGap="2.5%" {...props}>
       <Legend />
       <Tooltip
         formatter={slice?.formatter}
@@ -93,6 +94,7 @@ export const SliceChart = ({
           max(map(props.data, (d) => `${get(d, xAxisDataKey)}`.length)) * 4 + 90
         }
       />
+      <CartesianGrid stroke={theme.palette.divider} />
       {map(
         filter(
           algorithms1,
@@ -100,6 +102,7 @@ export const SliceChart = ({
         ),
         (algorithm, i) => (
           <Series
+            radius={[4, 4, 4, 4]}
             {...(algorithm === stateOfTheArt
               ? {
                   fill: theme.palette.primary.main,
@@ -112,7 +115,7 @@ export const SliceChart = ({
                   fillOpacity: {
                     area: 0.25,
                     line: 0,
-                    bar: 0.75,
+                    bar: 1,
                   }[type],
                 })}
             isAnimationActive={false}
