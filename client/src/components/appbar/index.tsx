@@ -53,11 +53,11 @@ export default function index(props: AppBarProps) {
       <PopupState variant="popover">
         {(state) => {
           const contents = (
-            <Scroll y style={{ height: "100dvh" }}>
+            <Scroll y style={{ height: "100%" }}>
               <Stack
                 sx={{
                   color: "text.primary",
-                  minHeight: "100dvh",
+                  minHeight: "100%",
                   minWidth: 260,
                   "> *": { flexShrink: 0 },
                 }}
@@ -71,9 +71,7 @@ export default function index(props: AppBarProps) {
                       const isOpen = defaultOpen ? !_isOpen : _isOpen;
                       return (
                         <>
-                          {!!i && grow && (
-                            <Box sx={{ flexGrow: 1, minHeight: "10vh" }} />
-                          )}
+                          {!!i && grow && <Box sx={{ flexGrow: 1 }} />}
                           <Stack
                             sx={{
                               [`& .${c}`]: { opacity: isOpen ? 0 : 1 },
@@ -199,6 +197,7 @@ export default function index(props: AppBarProps) {
                     }}
                   </PopupState>
                 ))}
+                <Stack sx={{ height: (t) => t.spacing(1) }} />
               </Stack>
             </Scroll>
           );
@@ -243,6 +242,7 @@ export default function index(props: AppBarProps) {
                     sx={{
                       bgcolor: "background.default",
                       minWidth: 280,
+                      height: "100%",
                     }}
                   >
                     {contents}
@@ -260,6 +260,9 @@ export default function index(props: AppBarProps) {
                 sx={{
                   display: md ? "block" : "none",
                   "& .MuiDrawer-paper": {
+                    borderRadius: 1,
+                    m: 1,
+                    height: (t) => `calc(100dvh - ${t.spacing(2)})`,
                     boxSizing: "border-box",
                     width: drawerWidth,
                     maxWidth: "90vw",

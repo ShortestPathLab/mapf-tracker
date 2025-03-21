@@ -13,19 +13,19 @@ import {
   LightbulbRounded,
   LockOpenRounded,
   LockRounded,
+  PersonRounded,
   SearchFilledRounded,
   SearchRounded,
   UploadRounded,
 } from "@mui-symbols-material/w400";
 import { GitHub } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
 import { useSurface } from "components/surface";
 import { ReactNode } from "react";
 import { useOptions } from "utils/OptionsProvider";
 import { useMode } from "utils/ThemeProvider";
 import { useCredentials } from "../../queries/useLogInQuery";
 import { LogInDialog } from "./LogInDialog";
-import { UserDialog, getAvatar } from "./UserDialog";
+import { UserDialog } from "./UserDialog";
 
 export function useNavigationContent() {
   const [mode, toggleMode] = useMode();
@@ -136,7 +136,7 @@ export function useNavigationContent() {
     {
       label: "Settings",
       grow: true,
-      defaultOpen: false,
+      defaultOpen: true,
       items: [
         {
           iconButton: true,
@@ -155,6 +155,12 @@ export function useNavigationContent() {
           action: () => setOptions({ hideTips: !options.hideTips }),
           last: true,
         },
+      ],
+    },
+    {
+      label: "More",
+      defaultOpen: false,
+      items: [
         ...(credentials
           ? [
               {
@@ -169,12 +175,7 @@ export function useNavigationContent() {
                 iconButton: true,
                 label: "Account info",
                 action: showUserDialog,
-                avatar: credentials ? (
-                  <Avatar
-                    sx={{ width: 32, height: 32 }}
-                    src={getAvatar(credentials)}
-                  />
-                ) : undefined,
+                icon: credentials ? <PersonRounded /> : undefined,
               },
             ]
           : [
