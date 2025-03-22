@@ -27,10 +27,7 @@ const reduceHistory = (
           $and: [
             { $ne: [`$$this.${field}`, null] },
             {
-              [variant.cond]: [
-                `$$this.${field}`,
-                { [variant.op]: "$$value.current_best" },
-              ],
+              [variant.cond]: [`$$this.${field}`, "$$value.current_best"],
             },
           ],
         },
@@ -103,8 +100,8 @@ export const updateInstancesSubmissionHistory = () =>
       // Stage 3: Add fields for lower and solution algorithms
       {
         $addFields: {
-          lower_algos: reduceHistory("lower_cost", variants.min),
-          solution_algos: reduceHistory("solution_cost", variants.max),
+          lower_algos: reduceHistory("lower_cost", variants.max),
+          solution_algos: reduceHistory("solution_cost", variants.min),
         },
       },
       {

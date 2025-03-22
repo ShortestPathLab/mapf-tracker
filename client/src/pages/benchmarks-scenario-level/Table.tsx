@@ -42,18 +42,11 @@ export default function Table() {
             row.solution_algos ? (
               row.solution_cost === row.lower_cost ? (
                 <>
-                  <Dot sx={{ bgcolor: "success.main", mr: 0.5 }} /> Closed
+                  <Dot sx={{ bgcolor: "info.main", mr: 0.5 }} /> Closed
                 </>
               ) : (
                 <>
-                  <Dot
-                    sx={{
-                      border: (t) => `1px solid ${t.palette.success.main}`,
-                      boxSizing: "border-box",
-                      mr: 0.5,
-                    }}
-                  />{" "}
-                  Solved
+                  <Dot sx={{ bgcolor: "success.main" }} /> Solved
                 </>
               )
             ) : (

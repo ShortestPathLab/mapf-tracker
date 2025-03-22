@@ -1,6 +1,7 @@
 import { Box, BoxProps, Divider } from "@mui/material";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
-import { MutableRefObject, ReactNode, useRef, useState } from "react";
+import { round } from "lodash";
+import { MutableRefObject, useRef, useState } from "react";
 import { useRafLoop } from "react-use";
 import { navbarHeight } from "./navbarHeight";
 
@@ -11,7 +12,7 @@ export function useTop(ref: MutableRefObject<HTMLElement>) {
   useRafLoop(() => {
     if (ref.current) {
       const rect = ref.current.getBoundingClientRect();
-      setTop(!(sm && rect.top <= threshold));
+      setTop(!(sm && round(rect.top) <= threshold));
     }
   });
   return top;
