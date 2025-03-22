@@ -31,6 +31,7 @@ export function ModalAppBar({
         color: (t) => t.palette.text.primary,
         background: (t) => t.palette.background.paper,
         boxShadow: (t) => (simple ? undefined : t.shadows[0]),
+        border: "none",
         ...sx,
       }}
     >

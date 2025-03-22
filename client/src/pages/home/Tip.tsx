@@ -1,6 +1,6 @@
 import {
   BookRounded,
-  SearchRounded,
+  TableRounded,
   UploadRounded,
 } from "@mui-symbols-material/w400";
 import { alpha, Button, Stack, Typography } from "@mui/material";
@@ -8,7 +8,6 @@ import { Scroll } from "components/dialog/Scrollbars";
 import { useLg, useSm, useXs } from "components/dialog/useSmallDisplay";
 import { appName } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
-import { paper } from "theme";
 export function Tip() {
   const xs = useXs();
   const sm = useSm();
@@ -19,6 +18,7 @@ export function Tip() {
       sx={{
         bgcolor: (t) => alpha(t.palette.background.default, 0),
         gap: xs ? 3 : sm ? 3 : 4,
+        py: xs ? 2 : 0,
       }}
     >
       <Stack sx={{ gap: 1 }}>
@@ -34,12 +34,14 @@ export function Tip() {
           Tracking the state-of-the-art of multi-agent pathfinding algorithms
         </Typography>
       </Stack>
-      <Typography variant="body2" sx={{ maxWidth: 840 }}>
-        Welcome to {appName} – a comprehensive database designed to track
-        state-of-the-art multi-agent pathfinding solutions across a range of
-        grid-based benchmarks. Easily monitor advancements, share your research,
-        and compare the performance of different algorithms.
-      </Typography>
+      {!xs && (
+        <Typography variant="body2" sx={{ maxWidth: 840 }}>
+          Welcome to {appName} – a comprehensive database for tracking
+          state-of-the-art multi-agent pathfinding solutions across a range of
+          grid-based benchmarks. Easily monitor advancements, share your
+          research, and compare the performance of different algorithms.
+        </Typography>
+      )}
       <Scroll x fadeX style={{ marginTop: -8, marginBottom: -8 }}>
         <Stack
           direction="row"
@@ -55,7 +57,7 @@ export function Tip() {
           }}
         >
           <Button
-            startIcon={<SearchRounded />}
+            startIcon={<TableRounded />}
             onClick={() => navigate("/benchmarks")}
             variant="contained"
             sx={{ color: "background.default", bgcolor: "text.primary" }}

@@ -34,7 +34,7 @@ function Table() {
       field: "algo_name",
       headerName: "Submission",
       sortable: true,
-      maxWidth: 240,
+      maxWidth: 360,
       flex: 1,
       renderCell: ({ value, row }) => (
         <Item
@@ -67,7 +67,7 @@ function Table() {
     ].map(({ best: closed, total: solved, color, bestLabel, totalLabel }) => ({
       field: solved,
       flex: 2,
-      maxWidth: 320,
+      maxWidth: 480,
       headerName: `Instances ${bestLabel}/${totalLabel}`,
       sortable: true,
       type: "number" as const,
@@ -108,7 +108,7 @@ function Table() {
     ].map(({ key, label }) => ({
       field: key,
       flex: 2,
-      maxWidth: 160,
+      maxWidth: 240,
       headerName: `Instances ${label}`,
       sortable: true,
       type: "number" as const,

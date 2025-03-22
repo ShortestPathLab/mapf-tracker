@@ -1,11 +1,13 @@
-import { Box, alpha, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import { Slice } from "components/analysis/useAlgorithmSelector";
 import { Scroll } from "components/dialog/Scrollbars";
+import { useNavigate } from "hooks/useNavigation";
 import { chain as _, find, get, map, max, round, sortBy, zip } from "lodash";
 import { useAggregateAlgorithm } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { ComponentProps, useMemo } from "react";
+import { useSize } from "react-use";
 import {
   Bar,
   BarChart,
@@ -19,8 +21,6 @@ import {
 import { paper } from "theme";
 import { toneBy } from "utils/colors";
 import { GridChartCard } from "./GridChartCard";
-import { useNavigate } from "hooks/useNavigation";
-import { useMeasure, useSize } from "react-use";
 
 export const slices = [
   {
@@ -75,7 +75,7 @@ export function CategoryChart({
             <Box
               component="span"
               sx={{
-                color: toneBy(theme.palette.mode, item.payload.i, 3, 4),
+                color: toneBy(theme.palette.mode, item.payload.i, 3, 8),
               }}
             >
               {v}
@@ -125,7 +125,7 @@ export function CategoryChart({
             {data.map((entry, i) => (
               <Cell
                 key={`${entry?._id}-${i}`}
-                fill={toneBy(theme.palette.mode, i, 3, 4)}
+                fill={toneBy(theme.palette.mode, i, 3, 8)}
                 fillOpacity={opacity}
               />
             ))}

@@ -5,8 +5,8 @@ import {
   HomeRounded,
   MoreHorizFilledRounded,
   MoreHorizRounded,
-  SearchFilledRounded,
-  SearchRounded,
+  TableFilledRounded,
+  TableRounded,
 } from "@mui-symbols-material/w400";
 
 export const bottomBarPaths = [
@@ -19,8 +19,8 @@ export const bottomBarPaths = [
   {
     label: "Benchmarks",
     url: "/benchmarks",
-    icon: <SearchRounded />,
-    iconSelected: <SearchFilledRounded />,
+    icon: <TableRounded />,
+    iconSelected: <TableFilledRounded />,
   },
   {
     label: "Submissions",

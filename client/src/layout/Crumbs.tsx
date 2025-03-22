@@ -16,16 +16,19 @@ import {
   Typography,
 } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
+import { useMd } from "components/dialog/useSmallDisplay";
 import { useHistory, useNavigate } from "hooks/useNavigation";
 import { last } from "lodash";
+import { QuickNavigation } from "pages/home/QuickNavigation";
 import { useOptions } from "utils/OptionsProvider";
 import { PageHeaderProps } from "./PageHeader";
 
 export const Crumbs = ({ path, current }: PageHeaderProps) => {
   const { canForward, canGoBack } = useHistory();
   const navigate = useNavigate();
-  const [{ hideSidebar }, setOptions] = useOptions();
-  console.log(hideSidebar);
+  const [{ hideSidebar, sidebarOpenMobile }, setOptions] = useOptions();
+  const md = useMd();
+  const isSidebarOpen = md ? sidebarOpenMobile : !hideSidebar;
   return (
     <>
       <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
@@ -33,10 +36,18 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
           <IconButton
             edge="start"
             onClick={() => {
-              setOptions({ hideSidebar: !hideSidebar });
+              setOptions(
+                md
+                  ? {
+                      sidebarOpenMobile: !sidebarOpenMobile,
+                    }
+                  : {
+                      hideSidebar: !hideSidebar,
+                    }
+              );
             }}
           >
-            {hideSidebar ? (
+            {isSidebarOpen ? (
               <DockToRightFilledRounded fontSize="small" />
             ) : (
               <DockToRightRounded fontSize="small" />
@@ -78,7 +89,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
         <Stack
           direction="row"
           sx={{
-            p: 3,
+            p: 1,
             py: 2,
             gap: 1,
           }}
@@ -101,7 +112,6 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
           </IconButton>
           <IconButton
             disabled={!path.length}
-            edge="end"
             onClick={() => {
               const { url, state } = last(path);
               navigate(url, state);
@@ -110,6 +120,14 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
             <ArrowUpwardRounded fontSize="small" />
           </IconButton>
         </Stack>
+        <Divider
+          flexItem
+          orientation="vertical"
+          sx={{ height: 24, my: "auto", ml: -1 }}
+        />
+        <Box sx={{ minWidth: 180, pr: 3, pl: 1 }}>
+          <QuickNavigation />
+        </Box>
       </Stack>
       <Divider />
     </>

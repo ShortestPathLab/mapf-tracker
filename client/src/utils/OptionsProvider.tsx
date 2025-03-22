@@ -7,11 +7,12 @@ const key = `${identifier}.options`;
 export type Options = {
   hideTips?: boolean;
   hideSidebar?: boolean;
+  sidebarOpenMobile?: boolean;
 };
 
 export const storedOptionsValue = localStorage.getItem(key)
   ? JSON.parse(localStorage.getItem(key))
-  : { hideTips: false, hideSidebar: false };
+  : { hideTips: false, hideSidebar: false, hideSidebarMobile: false };
 
 export const OptionsContext = createContext<[Options, (o: Options) => void]>([
   storedOptionsValue,

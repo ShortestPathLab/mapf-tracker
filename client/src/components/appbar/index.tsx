@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { appIconUrl, appName, appNameShort } from "core/config";
+import { appIconUrl, appNameShort } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
 import PopupState from "material-ui-popup-state";
 import { matchPath, useLocation } from "react-router-dom";
@@ -30,12 +30,12 @@ const drawerWidth = 320;
 export const appbarHeight = (md?: boolean) => (md ? 56 : 64);
 
 export default function index(props: AppBarProps) {
-  const sm = useXs();
+  const xs = useXs();
   const md = useMd();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [{ hideSidebar }, setOptions] = useOptions();
+  const [{ hideSidebar, sidebarOpenMobile }, setOptions] = useOptions();
   const { groups, userDialog, logInDialog } = useNavigationContent();
   const clickHandler =
     (url?: string, action?: () => void, close?: () => void) => () => {
@@ -43,6 +43,7 @@ export default function index(props: AppBarProps) {
         const same = url === pathname;
         navigate(url, {}, { reason: same ? "top" : "appbar" });
         close?.();
+        setOptions({ sidebarOpenMobile: false });
       } else {
         action?.();
       }
@@ -62,7 +63,7 @@ export default function index(props: AppBarProps) {
                   "> *": { flexShrink: 0 },
                 }}
               >
-                <Stack sx={{ p: sm ? 2 : 3 }}>
+                <Stack sx={{ p: 3 }}>
                   <Typography variant="h6">{appNameShort}</Typography>
                 </Stack>
                 {groups.map(({ items, grow, label, defaultOpen = true }, i) => (
@@ -83,8 +84,9 @@ export default function index(props: AppBarProps) {
                                 onClick={toggle}
                                 direction="row"
                                 sx={{
+                                  WebkitTapHighlightColor: "transparent",
                                   cursor: "pointer",
-                                  px: sm ? 2 : 3,
+                                  px: 3,
                                   py: 1,
                                   alignItems: "center",
                                 }}
@@ -136,9 +138,9 @@ export default function index(props: AppBarProps) {
                                         selected={selected}
                                         sx={{
                                           borderRadius: 1,
-                                          mx: sm ? 1 : 1.5,
+                                          mx: 1.5,
                                           color: selected && "primary.main",
-                                          px: sm ? 1 : 1,
+                                          px: 1,
                                           // Looks more comfortable when there's space on the right
                                           pr: 3,
                                           py: 0.5,
@@ -176,7 +178,9 @@ export default function index(props: AppBarProps) {
                                               component="span"
                                               sx={{
                                                 fontWeight: 450,
-                                                fontSize: "0.9rem",
+                                                fontSize: xs
+                                                  ? undefined
+                                                  : "0.9rem",
                                                 color: "text.primary",
                                                 opacity: 0.8,
                                               }}
@@ -204,7 +208,7 @@ export default function index(props: AppBarProps) {
 
           return (
             <>
-              {sm ? (
+              {xs ? (
                 <Box>
                   <AppBar
                     {...props}
@@ -214,13 +218,14 @@ export default function index(props: AppBarProps) {
                       color: "text.primary",
                       boxShadow: "none",
                       backgroundImage: "none",
+                      border: "none",
                       ...props.sx,
                     }}
                   >
                     <Toolbar
                       sx={{
                         bgcolor: "transparent",
-                        height: appbarHeight(sm),
+                        height: appbarHeight(xs),
                       }}
                     >
                       <Box
@@ -229,7 +234,7 @@ export default function index(props: AppBarProps) {
                         src={appIconUrl}
                       />
                       <Typography variant="h6" sx={{ ml: 2 }}>
-                        {appName}
+                        {appNameShort}
                       </Typography>
                     </Toolbar>
                   </AppBar>
@@ -251,16 +256,20 @@ export default function index(props: AppBarProps) {
               )}
 
               <SwipeableDrawer
-                open={!hideSidebar}
-                onOpen={() => setOptions({ hideSidebar: false })}
-                onClose={() => setOptions({ hideSidebar: true })}
+                open={sidebarOpenMobile}
+                onOpen={() =>
+                  setOptions({ hideSidebar: false, sidebarOpenMobile: true })
+                }
+                onClose={() =>
+                  setOptions({ hideSidebar: true, sidebarOpenMobile: false })
+                }
                 elevation={1}
                 variant="temporary"
                 ModalProps={{ keepMounted: true }}
                 sx={{
                   display: md ? "block" : "none",
                   "& .MuiDrawer-paper": {
-                    borderRadius: 1,
+                    borderRadius: 2,
                     m: 1,
                     height: (t) => `calc(100dvh - ${t.spacing(2)})`,
                     boxSizing: "border-box",

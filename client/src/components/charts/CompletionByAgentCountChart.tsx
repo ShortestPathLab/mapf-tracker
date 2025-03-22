@@ -79,13 +79,16 @@ function RenderChart({
             stroke: true,
           },
           {
-            color: alpha(tone(theme.palette.mode, accentColors.blue), 1),
+            color: alpha(
+              tone(theme.palette.mode, accentColors.lightBlue),
+              0.25
+            ),
             key: "solved",
             name: "Solved",
             stroke: false,
           },
           {
-            color: tone(theme.palette.mode, accentColors.green),
+            color: tone(theme.palette.mode, accentColors.blue),
             key: "closed",
             name: "Closed",
             stroke: false,

@@ -105,12 +105,11 @@ export const Scroll = forwardRef(
               : hasLeft
               ? gradient("right")
               : "";
+          if (!controller.signal.aborted) {
+            requestAnimationFrame(f);
+          }
         };
-        panel.addEventListener("scroll", f, {
-          passive: true,
-          signal: controller.signal,
-        });
-        f();
+        requestAnimationFrame(f);
         return () => {
           controller.abort();
         };

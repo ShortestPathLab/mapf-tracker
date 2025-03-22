@@ -7,11 +7,12 @@ import {
   createTheme,
 } from "@mui/material";
 import { constant, times } from "lodash";
-import { accentColors } from "utils/colors";
 
-const shadow = `
-rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px
+export const shadow = `
+rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px
 `;
+export const dropShadow = `
+drop-shadow(rgba(0, 0, 0, 0.1) 0px 2px 2px) drop-shadow(rgba(0, 0, 0, 0.05) 0px 1px 1px)`;
 
 export const fontFamily = '"Geist", "Inter", "Helvetica", "Arial", sans-serif';
 
@@ -27,8 +28,8 @@ export const theme = (t: "light" | "dark") =>
         contrastText: t === "light" ? "#ffffff" : "#09090b",
       },
       secondary: {
-        main: t === "light" ? accentColors.indigo.A700 : "#a8c7fa",
-        contrastText: t === "light" ? "#ffffff" : "#062e6f",
+        main: t === "light" ? "#4338ca" : "#818cf8",
+        contrastText: t === "light" ? "#818cf8" : "#4338ca",
       },
       divider: alpha(t === "light" ? "#000000" : "#f4f4f5", 0.12),
       mode: t,
@@ -59,7 +60,7 @@ export const theme = (t: "light" | "dark") =>
       h3: { fontWeight: 550, fontSize: 24 },
       h4: { fontWeight: 500, fontSize: 20 },
       h5: { fontWeight: 500, fontSize: 19 },
-      h6: { fontWeight: 550, fontSize: 18 },
+      h6: { fontWeight: 550, fontSize: 18, lineHeight: 1.25 },
       body2: { letterSpacing: "0" },
       button: { textTransform: "none", fontWeight: 550 },
     },
@@ -86,12 +87,12 @@ export const theme = (t: "light" | "dark") =>
       },
       MuiPaper: {
         styleOverrides: {
-          elevation:
-            t === "dark"
-              ? {
-                  backgroundColor: alpha("#111317", 1),
-                }
-              : undefined,
+          elevation: {
+            border: `1px solid ${alpha(
+              t === "light" ? "#000000" : "#f4f4f5",
+              0.12
+            )}`,
+          },
           elevation1: { backdropFilter: "blur(16px)" },
           elevation2: { backdropFilter: "blur(16px)" },
           elevation3: { backdropFilter: "blur(16px)" },

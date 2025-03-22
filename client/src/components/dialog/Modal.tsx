@@ -104,6 +104,7 @@ export function ModalAppBar({
         pointerEvents: "none",
         color: theme.palette.text.primary,
         background: "transparent",
+        border: "none",
       }}
     >
       <Toolbar

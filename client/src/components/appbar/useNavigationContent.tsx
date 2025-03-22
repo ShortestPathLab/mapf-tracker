@@ -14,8 +14,8 @@ import {
   LockOpenRounded,
   LockRounded,
   PersonRounded,
-  SearchFilledRounded,
-  SearchRounded,
+  TableFilledRounded,
+  TableRounded,
   UploadRounded,
 } from "@mui-symbols-material/w400";
 import { GitHub } from "@mui/icons-material";
@@ -71,8 +71,8 @@ export function useNavigationContent() {
         {
           label: "Benchmarks",
           url: "/benchmarks",
-          icon: <SearchRounded />,
-          selectedIcon: <SearchFilledRounded />,
+          icon: <TableRounded />,
+          selectedIcon: <TableFilledRounded />,
           description:
             "View all benchmarks and their top-performing submissions",
           showAsIcon: true,
