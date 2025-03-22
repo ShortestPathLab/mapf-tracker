@@ -64,7 +64,15 @@ export default function index(props: AppBarProps) {
                 }}
               >
                 <Stack sx={{ p: 3 }}>
-                  <Typography variant="h6">{appNameShort}</Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      // Visually align with content
+                      pt: 0.5,
+                    }}
+                  >
+                    {appNameShort}
+                  </Typography>
                 </Stack>
                 {groups.map(({ items, grow, label, defaultOpen = true }, i) => (
                   <PopupState variant="popover" key={label}>
