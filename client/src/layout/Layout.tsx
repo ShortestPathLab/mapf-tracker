@@ -112,7 +112,7 @@ export default function Layout({
         (!root ? (
           <MuiAppBar
             position="fixed"
-            sx={{ color: "text.primary", boxShadow: "none" }}
+            sx={{ color: "text.primary", boxShadow: "none", border: "none" }}
           >
             <Toolbar
               sx={{

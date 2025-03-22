@@ -126,6 +126,7 @@ export function SheetSurface({
               maxHeight: `calc(100dvh - ${gap}px)`,
               boxShadow: (t) =>
                 `0 ${t.spacing(4)} 0px 0px ${t.palette.background.paper} `,
+              border: "none",
             },
           } as PaperProps,
         },

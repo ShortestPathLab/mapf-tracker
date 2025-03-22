@@ -71,6 +71,7 @@ export function Modal({
           position: "relative",
           mx: 2,
           marginTop: 0,
+          border: "none",
           ...props.PaperProps?.sx,
         },
       }}
