@@ -21,7 +21,7 @@ function FullScreenCard({ primary, label }: ChartCardProps) {
     <Stack
       sx={{ height: `calc(100dvh - ${xs ? 56 + 16 * 2 : 64 + 24 * 2}px)` }}
     >
-      <Stack sx={{ pb: 4 }}>{label}</Stack>
+      <Stack sx={{ pb: 2 }}>{label}</Stack>
       <Stack
         sx={{
           flex: 1,

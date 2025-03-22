@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useMd, useSm } from "components/dialog/useSmallDisplay";
+import { useMd } from "components/dialog/useSmallDisplay";
 import { Surface } from "components/surface";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
@@ -16,7 +16,6 @@ import { VisualiserLocationState } from "./VisualiserLocationState";
 export { default as Visualiser } from "./Visualiser";
 
 export default function index() {
-  const sm = useSm();
   const md = useMd();
   const state = useStableLocationState<VisualiserLocationState>();
   const { data: instanceData } = useInstanceData(state.instanceId);
@@ -83,15 +82,16 @@ export default function index() {
             </Box>
           </Surface>
         ) : (
-          <>
+          <Stack sx={{ overflow: "hidden" }}>
             <Box
               sx={{
+                overflow: "hidden",
                 bgcolor: "background.paper",
                 position: "absolute",
                 top: 0,
                 left: 0,
                 right: 0,
-                height: `calc(100dvh - ${topbarHeight(sm) + 8}px)`,
+                height: `calc(100dvh - ${topbarHeight(false) + 8 + 1}px)`,
               }}
             >
               <Visualiser />
@@ -107,7 +107,7 @@ export default function index() {
             >
               Best solution
             </Typography>
-          </>
+          </Stack>
         )
       }
     />

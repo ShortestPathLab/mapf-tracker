@@ -1,7 +1,6 @@
 import { Box, Link, List, ListItem, ListItemText } from "@mui/material";
 import Grid from "layout/Grid";
 import { useMapDataByName } from "queries/useBenchmarksQuery";
-import { downloadBenchmarks } from "./download";
 
 export default function BenchmarkDetails({
   benchmark,
@@ -12,14 +11,6 @@ export default function BenchmarkDetails({
 
   const items = [
     { label: "Name", content: data?.map_name },
-    {
-      label: "Download benchmark",
-      content: (
-        <Link href="#" onClick={() => downloadBenchmarks(data)}>
-          {`${data?.map_name}.zip`}
-        </Link>
-      ),
-    },
     { label: "Scenario count", content: data?.scens },
     { label: "Instance count", content: data?.instances },
     { label: "Snapshot date", content: Date() },

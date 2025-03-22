@@ -7,9 +7,10 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { CompletionByAgentCountChartCard } from "components/charts/CompletionByAgentCountChart";
-import { CompletionByAlgorithmChartCard } from "components/charts/CompletionByAlgorithmChart";
-import { GridChartCard } from "components/charts/GridChartCard";
+import {
+  CompletionByAlgorithmChartCard,
+  formatLargeNumber,
+} from "components/charts/CompletionByAlgorithmChart";
 import { TotalSolvedClosedDonutChart } from "components/charts/TotalSolvedClosedChart";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useLg, useMd, useXs } from "components/dialog/useSmallDisplay";
@@ -18,7 +19,6 @@ import { PreviewCard } from "components/PreviewCard";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid } from "layout";
 import { find, map } from "lodash";
-import { MapProportionChart } from "pages/benchmarks-root-level/charts/MapProportionChart";
 import { ArticleCard } from "pages/docs/ArticleCard";
 import { pages } from "pages/docs/pages";
 import { Tip } from "pages/home/Tip";
@@ -97,6 +97,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                 "> *": { minWidth: 320, width: 320, flex: 0 },
                 gap: 2,
                 p: 1,
+                mt: 1,
                 justifyContent: "flex-start",
               }}
             >
@@ -124,17 +125,13 @@ export default function Hero({ children }: { children?: ReactNode }) {
                             textOverflow: "ellipsis",
                           }}
                         >
-                          <span>
-                            {`${m.map_size}, ${pluralize(
-                              "instance",
-                              m.instances ?? 0,
-                              true
-                            )}`}
-                          </span>
+                          {`${m.map_size}, ${pluralize(
+                            "instance",
+                            m.instances ?? 0,
+                            true
+                          )}`}
                           <br />
-                          <span>
-                            {`${m.proportion_instances_solved * 100}% solved`}
-                          </span>
+                          {`${m.proportion_instances_solved * 100}% solved`}
                         </Box>
                       }
                     />
@@ -148,6 +145,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
             sx={{
               mb: -1,
               gap: 2,
+              mt: 1,
               justifyContent: "space-between",
               alignItems: "center",
             }}
@@ -193,6 +191,11 @@ export default function Hero({ children }: { children?: ReactNode }) {
                           }}
                         >
                           {m.authors}
+                          <br />
+                          {`${formatLargeNumber(m.instances ?? 0)} ${pluralize(
+                            "instance",
+                            m.instances ?? 0
+                          )} submitted`}
                         </Box>
                       }
                     />
@@ -202,9 +205,21 @@ export default function Hero({ children }: { children?: ReactNode }) {
             </Stack>
           </Scroll>
 
-          <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-            Trends
-          </Typography>
+          <Stack
+            direction="row"
+            sx={{
+              mb: -1,
+              mt: 1,
+              gap: 2,
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography color="text.secondary">Trends</Typography>
+            <Button onClick={() => navigate("/benchmarks", { t: "analysis" })}>
+              See more trends
+            </Button>
+          </Stack>
           <Stack
             direction="row"
             sx={{
@@ -224,21 +239,6 @@ export default function Hero({ children }: { children?: ReactNode }) {
               columns={1}
               height="100%"
               secondaryLabel="Compare instances closed and solved across submissions"
-            />
-            <GridChartCard
-              sx={{ minHeight: 420 }}
-              columns={1}
-              height="100%"
-              primaryLabel="Completion by domain"
-              content={<MapProportionChart />}
-              secondaryLabel="Instances closed and solved across domains"
-            />
-            <CompletionByAgentCountChartCard
-              sx={{ minHeight: 420 }}
-              columns={1}
-              height="100%"
-              primaryLabel="Completion by agent count"
-              secondaryLabel="Instances solved and closed across agent count"
             />
           </Stack>
         </Stack>

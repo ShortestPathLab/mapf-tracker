@@ -1,4 +1,5 @@
 import {
+  alpha,
   Chip,
   LinearProgress,
   Stack,
@@ -74,12 +75,22 @@ export const cellRendererBar = ({
         gap: 1,
       }}
     >
-      <LinearProgress
+      <Bar
         sx={{ flex: 1 }}
-        color={value === 1 ? "success" : undefined}
-        value={value * 100}
-        valueBuffer={valueBuffer * 100}
-        variant={buffer ? "buffer" : "determinate"}
+        buffer={buffer}
+        values={[
+          {
+            value,
+            color: value === 1 ? "success.main" : "info.main",
+            primary: true,
+            label,
+          },
+          {
+            value: valueBuffer,
+            label: "...",
+            color: (t) => alpha(t.palette.primary.main, 0.5),
+          },
+        ]}
       />
       <Typography
         variant="overline"
@@ -104,7 +115,7 @@ export const Bar = ({
   values?: {
     color: string | ((t: Theme) => string);
     value: number;
-    label: string;
+    label: ReactNode;
     primary?: boolean;
   }[];
   buffer?: boolean;
@@ -128,13 +139,17 @@ export const Bar = ({
     >
       <Stack direction="row" sx={{ flex: 1 }}>
         {map(values, ({ value, color, label }) => (
-          <Tooltip title={renderLabel(label, value)}>
+          <Tooltip
+            title={
+              typeof label === "string" ? renderLabel(label, value) : label
+            }
+          >
             <LinearProgress
               sx={{
                 bgcolor: "transparent",
                 transition: `flex 2s ${easeCircle}`,
                 flex: value,
-                "> .MuiLinearProgress-bar": { bgcolor: color },
+                "> .MuiLinearProgress-bar": { bgcolor: color ?? "info.main" },
               }}
               value={100}
               variant="determinate"

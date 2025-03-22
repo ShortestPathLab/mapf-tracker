@@ -5,6 +5,7 @@ import { useXs } from "components/dialog/useSmallDisplay";
 import { ReactNode, useState } from "react";
 import { setFromParam } from "utils/set";
 import { TabBar } from "./TabBar";
+import { useLocationState } from "hooks/useNavigation";
 
 export function DataInspectorLayout({
   data: dataContent,
@@ -21,7 +22,8 @@ export function DataInspectorLayout({
   analysis?: ReactNode;
   compare?: ReactNode;
 }) {
-  const [tab, setTab] = useState<"data" | "analysis" | "compare">("data");
+  const { t } = useLocationState<{ t?: "data" | "analysis" | "compare" }>();
+  const [tab, setTab] = useState<"data" | "analysis" | "compare">(t ?? "data");
   const sm = useXs();
   return (
     <TabContext value={tab}>

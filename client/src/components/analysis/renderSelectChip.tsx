@@ -10,7 +10,7 @@ export function renderSelectChip(
     const firstFew = selected?.slice(0, max);
     const restCount = selected?.length - firstFew.length;
     return (
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+      <Box sx={{ display: "flex", gap: 0.5 }}>
         {map(firstFew, (value) => (
           <Chip sx={{ height: 22 }} key={value} label={f(value)} size="small" />
         ))}

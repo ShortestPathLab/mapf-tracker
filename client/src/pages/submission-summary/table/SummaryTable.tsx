@@ -382,6 +382,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                   icon={
                     <Collapse in={selected} orientation="horizontal">
                       <CheckRounded
+                        sx={{ transform: "translateY(2px)" }}
                         fontSize="small"
                         color={selected ? "primary" : undefined}
                       />

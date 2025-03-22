@@ -508,7 +508,7 @@ export function Visualisation({
                                 values={[
                                   {
                                     label: name,
-                                    value: value,
+                                    value,
                                     color: getAgentColor(selection.agent),
                                   },
                                 ]}

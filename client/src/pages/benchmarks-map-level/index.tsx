@@ -3,7 +3,7 @@ import {
   MapRounded,
   TableRounded,
 } from "@mui-symbols-material/w400";
-import { Link, Stack, useTheme } from "@mui/material";
+import { Stack, useTheme } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
 import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
@@ -56,14 +56,6 @@ export default function Page() {
         {
           value: mapData?.papers ?? "No references",
           label: "References",
-        },
-        {
-          label: "Download benchmark",
-          value: (
-            <Link href="#" onClick={() => downloadBenchmarks(mapData)}>
-              {`${mapData?.map_name}.zip`}
-            </Link>
-          ),
         },
       ]}
       actions={

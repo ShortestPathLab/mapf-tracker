@@ -28,7 +28,7 @@ function ManagePage() {
   return (
     md && (
       <DirectoryPage
-        labels={["Make a submission", "Docs", "Settings"]}
+        labels={["Make a submission", "Docs", "Settings", "More"]}
         title="More"
       />
     )
@@ -42,10 +42,10 @@ export const routes: Route[] = [
       <DirectoryPage
         title="Home"
         description="The latest progress in multi-agent pathfinding"
-        labels={["Browse", "Make a submission", "Docs", "More"]}
-        render={({ children }) => (
+        labels={["Browse", "Make a submission", "Docs", "Settings", "More"]}
+        render={() => (
           <>
-            <Hero>{children}</Hero>
+            <Hero />
             <Footer />
           </>
         )}

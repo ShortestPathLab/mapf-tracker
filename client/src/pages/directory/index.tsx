@@ -1,10 +1,17 @@
-import { Box, Card, CardActionArea, Stack, Typography } from "@mui/material";
+import {
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useNavigationContent } from "components/appbar/useNavigationContent";
 import { useNavigate } from "hooks/useNavigation";
-import { Grid, Layout } from "layout";
+import { Layout } from "layout";
 import { LayoutProps } from "layout/Layout";
 import { startsWith } from "lodash";
-import { paper } from "theme";
 
 export default function Page({
   labels = [],
@@ -25,41 +32,35 @@ export default function Page({
             {length > 1 && (
               <Typography color="text.secondary">{label}</Typography>
             )}
-            <Grid gap={2}>
+            <List disablePadding>
               {items.map(
                 ({ label, avatar, url, icon, action, description }) => (
-                  <Card key={label} sx={paper(0)}>
-                    <CardActionArea
-                      onClick={
-                        action
-                          ? action
-                          : url
-                          ? startsWith(url, "http")
-                            ? () => window.open(url)
-                            : () => navigate(url)
-                          : undefined
-                      }
-                      sx={{
-                        p: 2,
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        justifyContent: "flex-start",
-                      }}
-                    >
-                      <Box sx={{ color: "text.secondary", pb: 2 }}>
-                        {icon ?? avatar}
-                      </Box>
-                      <Typography variant="h6">{label}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {description}
-                      </Typography>
-                    </CardActionArea>
-                  </Card>
+                  <ListItemButton
+                    disableGutters
+                    key={label}
+                    onClick={
+                      action
+                        ? action
+                        : url
+                        ? startsWith(url, "http")
+                          ? () => window.open(url)
+                          : () => navigate(url)
+                        : undefined
+                    }
+                  >
+                    {icon ? (
+                      <ListItemIcon>{icon}</ListItemIcon>
+                    ) : (
+                      <ListItemAvatar>{avatar}</ListItemAvatar>
+                    )}
+                    <ListItemText
+                      primary={label}
+                      secondary={description}
+                    ></ListItemText>
+                  </ListItemButton>
                 )
               )}
-            </Grid>
+            </List>
           </Stack>
         ))}
       {logInDialog}

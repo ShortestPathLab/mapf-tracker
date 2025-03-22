@@ -40,7 +40,7 @@ export const BottomBarContext = createContext<{
 export const useBottomBar = () => useContext(BottomBarContext);
 
 export const BottomBarProvider = ({ children }: { children: ReactNode }) => {
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(false);
   const xs = useXs();
   const enabled1 = xs && enabled;
   const value = useMemo(

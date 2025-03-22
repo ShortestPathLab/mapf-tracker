@@ -16,6 +16,8 @@ import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import Description from "./description.md";
 import { inferOptimality } from "./inferOptimality";
+import { json2csv } from "json-2-csv";
+import download from "downloadjs";
 
 const g = [
   "instances_solved",
@@ -122,7 +124,7 @@ function Table() {
               {
                 value: row[key] / total,
                 label: capitalize(label),
-                color: "primary.main",
+                color: "info.main",
               },
             ]}
           />
@@ -174,7 +176,13 @@ export default function AlgorithmsPage() {
         options: [
           {
             icon: <TableRounded />,
-            label: "Summary (.csv) (coming soon)",
+            label: "Export summary (.csv)",
+            action: () =>
+              download(
+                new File([json2csv(algorithms)], "summary.csv"),
+                "summary.csv",
+                "text/csv"
+              ),
             primary: true,
           },
         ],

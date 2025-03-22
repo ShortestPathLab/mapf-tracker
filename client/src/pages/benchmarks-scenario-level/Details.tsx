@@ -1,4 +1,8 @@
-import { ConversionPathRounded } from "@mui-symbols-material/w400";
+import {
+  ConversionPathRounded,
+  Stat1Rounded,
+  StatMinus1Rounded,
+} from "@mui-symbols-material/w400";
 import {
   Timeline,
   TimelineConnector,
@@ -15,9 +19,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { isDefined } from "@mui/x-charts/internals";
+import { ActionBar } from "components/ActionBar";
 import { DetailsList } from "components/DetailsList";
 import { Dot } from "components/Dot";
-import { ActionBar } from "components/ActionBar";
 import { useSnackbarAction } from "components/Snackbar";
 import Grid from "layout/Grid";
 import { capitalize, head } from "lodash";
@@ -27,7 +32,6 @@ import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { useInstanceData } from "queries/useInstanceQuery";
 import { formatDate } from "utils/format";
 import { downloadRow } from "./download";
-import { isDefined } from "@mui/x-charts/internals";
 
 export default function Details({ id }: { id?: string }) {
   const notify = useSnackbarAction();
@@ -35,6 +39,8 @@ export default function Details({ id }: { id?: string }) {
   const { data: instance } = useInstanceData(id);
   const { data: scenario } = useScenarioDetailsData(instance?.scen_id);
   const { data: map } = useMapData(instance?.map_id);
+  const isClosed =
+    instance?.solution_cost && instance.solution_cost === instance.lower_cost;
   return (
     <Stack sx={{ gap: 4 }}>
       <DetailsList
@@ -56,17 +62,16 @@ export default function Details({ id }: { id?: string }) {
                 <Dot
                   sx={{
                     bgcolor: instance.solution_cost
-                      ? "success.main"
+                      ? isClosed
+                        ? "info.main"
+                        : "success.main"
                       : "warning.main",
                   }}
                 />
                 {capitalize(
                   [
                     instance.solution_cost ? "solved" : "unsolved",
-                    instance.solution_cost &&
-                    instance.solution_cost === instance.lower_cost
-                      ? "closed"
-                      : "open",
+                    isClosed ? "closed" : "open",
                   ].join(", ")
                 )}
               </>
@@ -92,12 +97,14 @@ export default function Details({ id }: { id?: string }) {
           {
             name: "Lower-bound record claims",
             collection: head(history)?.lower_algos,
+            best: "max",
           },
           {
             name: "Solution record claims",
             collection: head(history)?.solution_algos,
+            best: "min",
           },
-        ].map(({ name, collection }) => (
+        ].map(({ name, collection, best }) => (
           <Stack key={name} sx={{ gap: 2 }}>
             <Typography variant="h6">{name}</Typography>
             {collection?.length ? (
@@ -128,13 +135,38 @@ export default function Details({ id }: { id?: string }) {
                                 {formatDate(date)}
                               </>
                             }
-                            primary={`${value ?? "0"} ${
-                              isDefined(previous)
-                                ? previous < value
-                                  ? "↑"
-                                  : "↓"
-                                : ""
-                            }`}
+                            primary={
+                              <>
+                                {value ?? "0"}
+                                {isDefined(previous) && previous !== value ? (
+                                  previous < value ? (
+                                    <Stat1Rounded
+                                      sx={{
+                                        ml: 0.5,
+                                        transform: "translateY(4px)",
+                                      }}
+                                      fontSize="small"
+                                      color={
+                                        best === "max" ? "success" : "error"
+                                      }
+                                    />
+                                  ) : (
+                                    <StatMinus1Rounded
+                                      sx={{
+                                        ml: 0.5,
+                                        transform: "translateY(4px)",
+                                      }}
+                                      fontSize="small"
+                                      color={
+                                        best === "max" ? "error" : "success"
+                                      }
+                                    />
+                                  )
+                                ) : (
+                                  ""
+                                )}
+                              </>
+                            }
                           />
                         </ListItem>
                       </TimelineContent>

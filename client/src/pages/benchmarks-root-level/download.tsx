@@ -14,7 +14,7 @@ export async function downloadBenchmarks(item?: Benchmark) {
 export async function downloadMap(item?: Benchmark) {
   if (item)
     return download(
-      await text(`./assets/map/${item.map_name}.map`),
+      await text(`./assets/maps/${item.map_name}.map`),
       `${item.map_name}.map`
     );
 }
