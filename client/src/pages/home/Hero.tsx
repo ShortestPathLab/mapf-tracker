@@ -37,8 +37,24 @@ export default function Hero({ children }: { children?: ReactNode }) {
   const xs = useXs();
   const md = useMd();
   const lg = useLg();
-  const { data: maps } = useBenchmarksData();
-  const { data: algorithms } = useAlgorithmDetailsData();
+  const {
+    data: maps = [
+      {
+        map_name: "--",
+        map_size: "--",
+        proportion_instances_solved: 0,
+        instances: 0,
+      },
+    ],
+  } = useBenchmarksData();
+  const {
+    data: algorithms = [
+      {
+        algo_name: "--",
+        authors: "--",
+      },
+    ],
+  } = useAlgorithmDetailsData();
   return (
     <Stack sx={{ gap: 4, m: xs ? 0 : md ? 2 : 4, maxWidth: "100%" }}>
       <Tip />
@@ -77,11 +93,17 @@ export default function Hero({ children }: { children?: ReactNode }) {
           <Scroll x fadeX style={{ width: "calc(100% + 8px)", margin: -8 }}>
             <Stack
               direction="row"
-              sx={{ "> *": { minWidth: 320, width: 320 }, gap: 2, p: 1 }}
+              sx={{
+                "> *": { minWidth: 320, width: 320, flex: 0 },
+                gap: 2,
+                p: 1,
+                justifyContent: "flex-start",
+              }}
             >
               {maps?.map?.((m) => (
                 <CardActionArea
-                  onClick={() => navigate(`/benchmarks`, { mapId: m.id })}
+                  disabled={!m.id}
+                  onClick={() => navigate(`/scenarios`, { mapId: m.id })}
                   key={m.id}
                 >
                   <Stack sx={{ ...paper(1), p: 2 }}>
@@ -138,10 +160,16 @@ export default function Hero({ children }: { children?: ReactNode }) {
           <Scroll x fadeX style={{ width: "calc(100% + 8px)", margin: -8 }}>
             <Stack
               direction="row"
-              sx={{ "> *": { minWidth: 300, width: 300 }, gap: 2, p: 1 }}
+              sx={{
+                "> *": { minWidth: 300, width: 300, flex: 0 },
+                gap: 2,
+                p: 1,
+                justifyContent: "flex-start",
+              }}
             >
               {algorithms?.map?.((m) => (
                 <CardActionArea
+                  disabled={!m.id}
                   sx={{ borderRadius: 1, minHeight: 0, height: "fit-content" }}
                   onClick={() => navigate(`/submissions/${m._id}`)}
                   key={m._id}
@@ -174,7 +202,9 @@ export default function Hero({ children }: { children?: ReactNode }) {
             </Stack>
           </Scroll>
 
-          <Typography color="text.secondary">Trends</Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+            Trends
+          </Typography>
           <Stack
             direction="row"
             sx={{
