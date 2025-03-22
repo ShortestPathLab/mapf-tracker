@@ -42,7 +42,7 @@ export const routes: Route[] = [
       <DirectoryPage
         title="Home"
         description="The latest progress in multi-agent pathfinding"
-        labels={["Browse", "Make a submission", "Docs"]}
+        labels={["Browse", "Make a submission", "Docs", "More"]}
         render={({ children }) => (
           <>
             <Hero>{children}</Hero>
