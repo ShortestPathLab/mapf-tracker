@@ -128,7 +128,7 @@ export function MapProportionChart() {
               )}
               <PolarRadiusAxis
                 stroke={palette.text.primary}
-                angle={90}
+                angle={70}
                 tickFormatter={slice.formatter}
                 domain={[0, 1]}
               />
