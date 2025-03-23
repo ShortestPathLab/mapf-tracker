@@ -44,6 +44,7 @@
     "material-ui-popup-state": "^5.1.2",
     "memoizee": "^0.4.17",
     "mui-file-dropzone": "^4.0.2",
+    "nanoid": "^5.1.5",
     "object-hash": "^3.0.0",
     "overlayscrollbars": "^2.10.0",
     "overlayscrollbars-react": "^0.5.6",

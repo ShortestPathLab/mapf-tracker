@@ -1,17 +1,20 @@
 import { Box } from "@mui/material";
 import { useXs } from "components/dialog/useSmallDisplay";
+import { useLocationState, useNavigate } from "hooks/useNavigation";
 import {
   PopupState as State,
   usePopupState,
 } from "material-ui-popup-state/hooks";
-import { ReactElement, ReactNode } from "react";
+import { nanoid } from "nanoid";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
+import { usePrevious } from "react-use";
+import { FullscreenSurface } from "./FullscreenSurface";
 import { ModalAppBar } from "./ModalAppBar";
 import { ModalSurface } from "./ModalSurface";
 import { PopoverSurface } from "./PopoverSurface";
 import { SheetSurface } from "./SheetSurface";
 import { SheetTitle } from "./SheetTitle";
 import { SlotProps } from "./SlotProps";
-import { FullscreenSurface } from "./FullscreenSurface";
 
 export type SurfaceGeneralProps = {
   variant?: "fullscreen" | "sheet" | "modal" | "popover" | "drawer";
@@ -26,6 +29,21 @@ export type SurfaceProps = SurfaceGeneralProps & {
 
 export function Surface(props: SurfaceProps) {
   const state = usePopupState({ variant: "dialog" });
+  const navigate = useNavigate();
+  const [id, setId] = useState(nanoid());
+  const locationState = useLocationState();
+  useEffect(() => {
+    if (!locationState[id]) {
+      state.close();
+      setId(nanoid());
+    }
+  }, [locationState[id]]);
+  const previouslyOpen = usePrevious(false);
+  useEffect(() => {
+    if (state.isOpen && !previouslyOpen) {
+      navigate(location.pathname, undefined, { ...locationState, [id]: 1 });
+    }
+  }, [state.isOpen, previouslyOpen]);
   return (
     <>
       {props.trigger?.(state)}

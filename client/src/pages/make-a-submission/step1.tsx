@@ -23,7 +23,7 @@ export default function index() {
   const navigate = useNavigate();
   const { contactEmail } = useStableLocationState<ContactEmailState>();
   const xs = useXs();
-  const { open, dialog } = useSurface(ConfirmDialog, {
+  const { open, dialog, close } = useSurface(ConfirmDialog, {
     variant: "modal",
     title: xs
       ? "Submission in review"
@@ -92,7 +92,10 @@ export default function index() {
                 : "Continue making a new submission request",
               closeLabel: "Cancel",
               acceptColor: "primary",
-              onAccept: f,
+              onAccept: () => {
+                f();
+                close();
+              },
             });
           } else {
             f();
