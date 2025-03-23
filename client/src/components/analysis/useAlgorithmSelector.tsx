@@ -11,13 +11,13 @@ export type Slice = {
   domain?: AxisDomain;
 };
 
-export function useAlgorithmSelector<T extends BaseMetric>(
-  slices: Slice[],
+export function useSliceSelector<T extends BaseMetric, U extends Slice>(
+  slices: U[],
   m: BaseMetric[] = metrics,
-  initialSelected: string[] = []
+  initialAlgorithms: string[] = []
 ) {
   const [metric, setMetric] = useState<T["key"]>(head(m)?.key);
-  const [selected, modifySelected] = useList<string>(initialSelected);
+  const [algorithms, modifySelected] = useList<string>(initialAlgorithms);
   const [slice, setSlice] = useState<(typeof slice)[number]["key"]>(
     head(slices)?.key
   );
@@ -25,8 +25,8 @@ export function useAlgorithmSelector<T extends BaseMetric>(
   return {
     metric,
     setMetric,
-    selected,
-    setSelected: modifySelected.set,
+    algorithms: algorithms,
+    setAlgorithms: modifySelected.set,
     setSlice,
     slice: find(slices, (c) => c.key === slice),
   };

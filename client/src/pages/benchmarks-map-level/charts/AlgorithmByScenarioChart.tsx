@@ -3,7 +3,7 @@ import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
 import {
   Slice,
-  useAlgorithmSelector,
+  useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
 import { BaseMetric } from "core/metrics";
 import { flatMap, fromPairs, keys, map, startCase, uniq, zip } from "lodash";
@@ -29,8 +29,8 @@ export const metrics = [
 ] satisfies BaseMetric[];
 
 export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
-  const algorithmSelectorState = useAlgorithmSelector(slices);
-  const { metric, selected } = algorithmSelectorState;
+  const algorithmSelectorState = useSliceSelector(slices);
+  const { metric, algorithms: selected } = algorithmSelectorState;
   const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
     useAlgorithmsData();
 

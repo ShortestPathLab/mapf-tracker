@@ -12,7 +12,7 @@ import { find } from "lodash";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { ReactNode } from "react";
 import { setFromEvent } from "utils/set";
-import { Slice, useAlgorithmSelector } from "./useAlgorithmSelector";
+import { Slice, useSliceSelector } from "./useAlgorithmSelector";
 
 export function CheckboxItem({ selected, children, ...props }: MenuItemProps) {
   return (
@@ -42,19 +42,23 @@ export default function ChartOptions({
   slice,
   setMetric,
   metric,
-  setSelected,
-  selected,
+  setAlgorithms: setSelected,
+  algorithms: selected,
   metrics = defaultMetrics,
   stateOfTheArt: stateOfTheArtEnabled,
   extras,
+  disableAlgorithms,
+  disableMetrics,
 }: {
   stateOfTheArt?: boolean;
   slices?: Slice[];
   metrics?: BaseMetric[];
   extras?: ReactNode;
-} & Partial<ReturnType<typeof useAlgorithmSelector>>) {
+  disableAlgorithms?: boolean;
+  disableMetrics?: boolean;
+} & Partial<ReturnType<typeof useSliceSelector>>) {
   const { data: algorithms = [] } = useAlgorithmsData();
-  const algorithms1 = stateOfTheArtEnabled
+  const combinedAlgorithms = stateOfTheArtEnabled
     ? [stateOfTheArt, ...algorithms]
     : algorithms;
   return (
@@ -66,7 +70,7 @@ export default function ChartOptions({
             gap: 1,
             "> *": {
               flexShrink: 0,
-              minWidth: "120px !important",
+              minWidth: "140px !important",
               width: "max-content !important",
             },
           }}
@@ -74,7 +78,7 @@ export default function ChartOptions({
           {slices?.length > 1 && (
             <TextField
               select
-              label="Slice"
+              label="Display"
               variant="filled"
               onChange={setFromEvent(setSlice)}
               value={slice.key}
@@ -86,42 +90,47 @@ export default function ChartOptions({
               ))}
             </TextField>
           )}
-          <TextField
-            select
-            label="Metric"
-            variant="filled"
-            onChange={setFromEvent(setMetric)}
-            value={metric}
-          >
-            {metrics.map(({ key, name }) => (
-              <MenuItem key={key} value={key}>
-                {name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            SelectProps={{
-              multiple: true,
-              renderValue: renderSelectChip(
-                (id) => find(algorithms1, { _id: id })?.algo_name
-              ),
-            }}
-            label="Algorithm"
-            variant="filled"
-            value={selected}
-            onChange={
-              setFromEvent(setSelected) as (e: {
-                target: { value: unknown };
-              }) => void
-            }
-          >
-            {algorithms1.map((a) => (
-              <CheckboxItem key={a._id} value={a._id}>
-                {a.algo_name}
-              </CheckboxItem>
-            ))}
-          </TextField>
+          {!disableMetrics && (
+            <TextField
+              select
+              label="Metric"
+              variant="filled"
+              onChange={setFromEvent(setMetric)}
+              value={metric}
+            >
+              {metrics.map(({ key, name }) => (
+                <MenuItem key={key} value={key}>
+                  {name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+          {!disableAlgorithms && (
+            <TextField
+              select
+              SelectProps={{
+                multiple: true,
+                renderValue: renderSelectChip(
+                  (id) => find(combinedAlgorithms, { _id: id })?.algo_name
+                ),
+              }}
+              label="Submission"
+              variant="filled"
+              value={selected}
+              onChange={
+                setFromEvent(setSelected) as (e: {
+                  target: { value: unknown };
+                }) => void
+              }
+            >
+              {combinedAlgorithms.map((a) => (
+                <CheckboxItem key={a._id} value={a._id}>
+                  {a.algo_name}
+                </CheckboxItem>
+              ))}
+            </TextField>
+          )}
+
           {extras}
         </Stack>
       </Scroll>

@@ -3,7 +3,7 @@ import ChartOptions from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
-  useAlgorithmSelector,
+  useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
 import { sample } from "components/charts/sample";
 import { chain, keyBy } from "lodash";
@@ -17,8 +17,8 @@ export const slices = [
 ] satisfies Slice[];
 
 export function AlgorithmByAgentChart({ map }: { map: string }) {
-  const algorithmSelectorState = useAlgorithmSelector(slices);
-  const { metric, slice, selected } = algorithmSelectorState;
+  const algorithmSelectorState = useSliceSelector(slices);
+  const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useScenarioOnAgentData(metric, map);
   return (
     <>

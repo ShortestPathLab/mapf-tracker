@@ -3,18 +3,21 @@ import ChartOptions, { stateOfTheArt } from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
-  useAlgorithmSelector,
+  useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { capitalize, chain, includes, keyBy, map, maxBy } from "lodash";
+import { capitalize, chain, find, includes, keyBy, map, maxBy } from "lodash";
 import { useMapData } from "queries/useAlgorithmQuery";
+import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import { useList } from "react-use";
 import { formatPercentage } from "utils/format";
 import { MapPicker } from "./MapPicker";
+import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 
 export const slices = [
   {
     key: "count",
     name: "Count",
+    formatter: formatLargeNumber,
   },
   {
     key: "proportion",
@@ -24,14 +27,15 @@ export const slices = [
 ] satisfies Slice[];
 
 export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
-  const algorithmSelectorState = useAlgorithmSelector(
+  const algorithmSelectorState = useSliceSelector(
     slices,
     undefined,
     algorithm ? [stateOfTheArt._id, algorithm] : []
   );
   const [maps, { set: setMaps }] = useList<string>();
-  const { metric, slice, selected } = algorithmSelectorState;
+  const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useMapData(metric);
+  const { data: mapInfo, isLoading: isInfoLoading } = useBenchmarksData();
   return (
     <>
       <ChartOptions
@@ -48,7 +52,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
         }
       />
       <Chart
-        isLoading={isLoading}
+        isLoading={isLoading || isInfoLoading}
         style={{ flex: 1 }}
         data={chain(data)
           .filter((collection) =>
@@ -73,10 +77,11 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
             ),
           }))
           .map((collection) => ({
+            type: find(mapInfo, { map_name: collection.map_name })?.map_type,
             map: capitalize(collection.map_name),
             ...keyBy(collection.solved_instances, "algo_name"),
           }))
-          .sortBy("map")
+          .sortBy("type")
           .value()}
         render={
           <SliceChart

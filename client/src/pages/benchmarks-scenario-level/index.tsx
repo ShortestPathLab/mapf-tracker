@@ -70,7 +70,8 @@ export default function Page() {
             action: notify(
               () => downloadScenario(mapData?.map_name)(scenarioData),
               {
-                end: "Scenario downloaded",
+                start: "Preparing...",
+                end: "Done",
               }
             ),
             icon: <DownloadRounded />,
@@ -78,14 +79,18 @@ export default function Page() {
           {
             label: "Export map (.map)",
             icon: <MapRounded />,
-            action: () => downloadMap(mapData),
+            action: notify(() => downloadMap(mapData), {
+              start: "Preparing...",
+              end: "Done",
+            }),
           },
           {
             label: "Results (.csv)",
             action: notify(
               () => downloadInstance(mapData?.map_name)(scenarioData),
               {
-                end: "Results downloaded",
+                start: "Preparing",
+                end: "Done",
               }
             ),
             icon: <TableRounded />,

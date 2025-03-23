@@ -34,7 +34,7 @@ export const compareTemplate = [
     icon: <ShowChartRounded />,
     variants: [
       {
-        name: "Algorithm by map type",
+        name: "Algorithm by domain",
         render: () => <AlgorithmByMapTypeChart />,
       },
       {

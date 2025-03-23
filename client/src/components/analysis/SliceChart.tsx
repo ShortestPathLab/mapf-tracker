@@ -10,7 +10,7 @@ import {
   startCase,
 } from "lodash";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
-import React, { forwardRef } from "react";
+import React from "react";
 import {
   Area,
   AreaChart,
@@ -64,7 +64,7 @@ export const SliceChart = ({
   const theme = useTheme();
   return (
     <Chart barCategoryGap="10%" barGap="2.5%" {...props}>
-      <Legend />
+      <Legend verticalAlign="top" height={60} />
       <Tooltip
         formatter={slice?.formatter}
         contentStyle={{ border: paper(0).border(theme) }}
@@ -87,7 +87,12 @@ export const SliceChart = ({
         type={
           isNumber(get(head(props.data), xAxisDataKey)) ? "number" : "category"
         }
-        label={capitalize(startCase(xAxisDataKey))}
+        label={
+          <Label
+            position="insideBottom"
+            value={capitalize(startCase(xAxisDataKey))}
+          />
+        }
         angle={-45}
         textAnchor="end"
         height={

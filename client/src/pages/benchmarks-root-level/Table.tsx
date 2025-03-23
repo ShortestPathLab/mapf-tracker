@@ -56,7 +56,7 @@ export default function Table() {
     },
     {
       field: "map_type",
-      headerName: "Type",
+      headerName: "Domain",
       sortable: true,
       valueFormatter: capitalize,
       fold: true,

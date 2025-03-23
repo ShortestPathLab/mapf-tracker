@@ -4,7 +4,7 @@ import ChartOptions from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
 import {
   Slice,
-  useAlgorithmSelector,
+  useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
 import { sample } from "components/charts/sample";
 import { scenarioMetrics } from "core/metrics";
@@ -71,8 +71,8 @@ export function LowerBoundComparisonChart({
   map: string;
   scenario: string | number;
 }) {
-  const algorithmSelectorState = useAlgorithmSelector(slices, scenarioMetrics);
-  const { metric, slice, selected } = algorithmSelectorState;
+  const algorithmSelectorState = useSliceSelector(slices, scenarioMetrics);
+  const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useScenarioOnAgentGapData(metric, map, scenario);
   return (
     <>

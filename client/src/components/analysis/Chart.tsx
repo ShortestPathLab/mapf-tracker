@@ -25,7 +25,11 @@ export function Chart<T>({
   return isLoading ? (
     <CircularProgress sx={{ m: "auto" }} />
   ) : (
-    <ResponsiveContainer width="100%" {...props}>
+    <ResponsiveContainer
+      width="100%"
+      {...props}
+      style={{ overflow: "hidden", ...props.style }}
+    >
       {cloneElement(render, {
         data,
         className: cls,

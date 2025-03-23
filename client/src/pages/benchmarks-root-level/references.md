@@ -1,0 +1,1 @@
+Sturtevant, N. (2012). Benchmarks for grid-based pathfinding. IEEE Transactions on Computational Intelligence and AI in Games, 4(2), 144–148. https://webdocs.cs.ualberta.ca/~nathanst/papers/benchmarks.pdf

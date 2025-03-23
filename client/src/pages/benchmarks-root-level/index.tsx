@@ -1,20 +1,21 @@
 import { DownloadRounded } from "@mui-symbols-material/w400";
-import { Button, Stack, useTheme } from "@mui/material";
-import { PreviewCard } from "components/PreviewCard";
+import { Button, Stack } from "@mui/material";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
-import { head, map, memoize, sum } from "lodash";
+import { map, memoize, sum } from "lodash";
 import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
 import { useAggregateOne } from "queries/useAggregateQuery";
 import { useBenchmarksData } from "queries/useBenchmarksQuery";
 import { formatPercentage } from "utils/format";
-import { PreviewCollection } from "../../components/PreviewCollection";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
+import References from "./references.md";
+import Description from "./description.md";
+import { Prose } from "layout";
 
 const render = memoize((showHeader: boolean) => ({ header, children }) => (
   <>
@@ -33,7 +34,6 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
   const scenarioCount = sum(map(maps, (m) => m.scens));
   const { data: solved } = useAggregateOne({ filterBy: "solved" });
   const { data: closed } = useAggregateOne({ filterBy: "closed" });
-  const theme = useTheme();
 
   return (
     <GalleryLayout
@@ -53,18 +53,15 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
           label: "Instances closed",
           value: formatPercentage(closed?.result / solved?.all),
         },
+        {
+          label: "References",
+          value: (
+            <Prose sx={{ mt: "-1em" }}>
+              <References />
+            </Prose>
+          ),
+        },
       ]}
-      cover={
-        <PreviewCollection
-          preview={
-            <PreviewCard
-              map={head(maps)?.id}
-              palette={{ obstacle: theme.palette.text.primary }}
-              sx={{ width: "100%", height: "auto", aspectRatio: 1 }}
-            />
-          }
-        />
-      }
       actions={{
         options: [
           {
@@ -80,9 +77,11 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
         title={<>Browse MAPF benchmarks</>}
         description={
           <>
-            Browse state-of-the-art solutions for grid-based multi-agent
-            pathfinding. Analyse trends, compare algorithms, or download the
-            dataset for your own use.
+            <Prose
+              sx={{ fontSize: (t) => t.typography.body2.fontSize, my: -2 }}
+            >
+              <Description />
+            </Prose>
           </>
         }
         actions={

@@ -128,7 +128,7 @@ export function AnalysisButton({
 }
 
 function Chart({ data }: { data: Variant[] }) {
-  const height = "60dvh";
+  const height = "70dvh";
   return (
     <FlatCard>
       <Stack sx={{ gap: 2 }}>

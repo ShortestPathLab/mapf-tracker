@@ -5,6 +5,7 @@ import {
 } from "@mui-symbols-material/w400";
 import { Stack, useTheme } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
+import { useSnackbarAction } from "components/Snackbar";
 import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
 import { useStableLocationState } from "hooks/useStableLocationState";
@@ -29,6 +30,7 @@ export default function Page() {
   const { mapId } = useStableLocationState<MapLevelLocationState>();
   const { data: mapData } = useMapData(mapId);
   const theme = useTheme();
+  const notify = useSnackbarAction();
   return (
     <GalleryLayout
       title={mapData ? startCase(mapData.map_name) : "--"}
@@ -65,20 +67,26 @@ export default function Page() {
               label: "Export scenario files (.zip)",
               icon: <DownloadRounded />,
               primary: true,
-              action: () => downloadBenchmarks(mapData),
-              // open({
-              //   initialMaps: [mapData?.map_name],
-              // }),
+              action: notify(() => downloadBenchmarks(mapData), {
+                start: "Preparing...",
+                end: "Done",
+              }),
             },
             {
               label: "Export map (.map)",
               icon: <MapRounded />,
-              action: () => downloadMap(mapData),
+              action: notify(() => downloadMap(mapData), {
+                start: "Preparing...",
+                end: "Done",
+              }),
             },
             {
               label: "Export results (.csv)",
               icon: <TableRounded />,
-              action: () => downloadBenchmarksResultsCSV(mapData),
+              action: notify(() => downloadBenchmarksResultsCSV(mapData), {
+                start: "Preparing...",
+                end: "Done",
+              }),
             },
           ],
         }
