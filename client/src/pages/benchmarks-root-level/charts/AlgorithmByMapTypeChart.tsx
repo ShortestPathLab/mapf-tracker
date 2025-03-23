@@ -61,6 +61,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
               {
                 ...stateOfTheArt,
                 count: max(map(c.results, "count")),
+                sum_value: max(map(c.results, "sum_value")),
               },
             ],
           }))
