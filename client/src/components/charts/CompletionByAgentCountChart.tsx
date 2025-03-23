@@ -1,7 +1,8 @@
-import { alpha, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import { Slice } from "components/analysis/useAlgorithmSelector";
 import { chain as _, map, max, sortBy, zip } from "lodash";
+import pluralize from "pluralize";
 import { AggregateQuery, useAggregate } from "queries/useAggregateQuery";
 import { ComponentProps, useMemo } from "react";
 import {
@@ -41,6 +42,7 @@ function RenderChart({
       <Legend verticalAlign="top" />
       <Tooltip
         formatter={formatter}
+        labelFormatter={(c) => pluralize("Agent", +c, true)}
         contentStyle={{ border: paper(0).border(theme) }}
         cursor={{ fill: theme.palette.action.disabledBackground }}
       />
@@ -73,16 +75,7 @@ function RenderChart({
       {map(
         [
           {
-            color: tone(theme.palette.mode, accentColors.grey),
-            key: "all",
-            name: "Total instances",
-            stroke: true,
-          },
-          {
-            color: alpha(
-              tone(theme.palette.mode, accentColors.lightBlue),
-              0.25
-            ),
+            color: tone(theme.palette.mode, accentColors.green),
             key: "solved",
             name: "Solved",
             stroke: false,
@@ -93,6 +86,12 @@ function RenderChart({
             name: "Closed",
             stroke: false,
           },
+          {
+            color: theme.palette.text.primary,
+            key: "all",
+            name: "Total instances",
+            stroke: true,
+          },
         ],
         ({ key, color, name, stroke }) => (
           <Area
@@ -101,9 +100,11 @@ function RenderChart({
             dataKey={key}
             name={name}
             opacity={0.8}
-            fillOpacity={1}
+            fillOpacity={0.5}
             fill={stroke ? "transparent" : color}
             stroke={color}
+            strokeWidth={stroke ? 2 : 0}
+            strokeOpacity={1}
           />
         )
       )}

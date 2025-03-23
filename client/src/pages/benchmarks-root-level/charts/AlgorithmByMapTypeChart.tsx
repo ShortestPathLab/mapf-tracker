@@ -42,7 +42,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
   const algorithmSelectorState = useSliceSelector(
     slices,
     undefined,
-    algorithm ? [stateOfTheArt._id, algorithm] : []
+    algorithm ? [algorithm, stateOfTheArt._id] : []
   );
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useMapTypeData(metric);
@@ -77,27 +77,28 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
             <PolarGrid stroke={palette.text.secondary} />
             {map(
               filter(
-                [stateOfTheArt, ...algorithms],
+                [...algorithms, stateOfTheArt],
                 (a) => !selected.length || selected.includes(a._id)
               ),
               (algorithm, i) => (
                 <Radar
+                  isAnimationActive={false}
+                  dataKey={`${algorithm.algo_name}.${slice.key}`}
+                  opacity={0.5}
+                  name={algorithm.algo_name}
                   {...(algorithm === stateOfTheArt
                     ? {
-                        fill: palette.info.main,
+                        fill: palette.text.primary,
                         fillOpacity: 0,
-                        stroke: palette.info.main,
+                        stroke: palette.text.primary,
                         strokeOpacity: 1,
-                        strokeWidth: 1.5,
+                        strokeWidth: 2,
+                        opacity: 1,
                       }
                     : {
                         fill: toneBy(palette.mode, i),
                         fillOpacity: 0.4,
                       })}
-                  isAnimationActive={false}
-                  dataKey={`${algorithm.algo_name}.${slice.key}`}
-                  opacity={1}
-                  name={algorithm.algo_name}
                 />
               )
             )}

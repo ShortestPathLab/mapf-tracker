@@ -89,14 +89,10 @@ export function MapProportionChart() {
           render={
             <RadarChart>
               <Legend />
+              <PolarGrid />
+              <PolarAngleAxis dataKey="name" />
               {map(
                 [
-                  {
-                    key: slice.keyAll,
-                    name: "All",
-                    stroke: palette.text.primary,
-                    color: undefined,
-                  },
                   {
                     color: tone(palette.mode, accentColors.green),
                     key: slice.keySolved,
@@ -109,27 +105,33 @@ export function MapProportionChart() {
                     name: "Closed",
                     stroke: undefined,
                   },
+                  {
+                    key: slice.keyAll,
+                    name: "All",
+                    stroke: palette.text.primary,
+                    color: undefined,
+                  },
                 ],
                 ({ key, color, name, stroke }) => (
                   <Radar
-                    fill={color}
+                    fill={color ?? "transparent"}
                     isAnimationActive={false}
                     dataKey={key}
-                    opacity={1}
+                    opacity={0.8}
                     fillOpacity={0.5}
                     name={name}
                     stroke={stroke}
+                    strokeWidth={stroke ? 2 : 0}
+                    strokeOpacity={stroke ? 1 : undefined}
                   />
                 )
               )}
-              <PolarGrid />
               <PolarRadiusAxis
                 stroke={palette.text.primary}
                 angle={90}
                 tickFormatter={slice.formatter}
                 domain={[0, 1]}
               />
-              <PolarAngleAxis dataKey="name" />
               <ChartTooltip formatter={slice.formatter} />
             </RadarChart>
           }
