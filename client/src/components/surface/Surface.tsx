@@ -27,8 +27,7 @@ export type SurfaceProps = SurfaceGeneralProps & {
   trigger?: (state: State) => ReactElement;
 };
 
-export function Surface(props: SurfaceProps) {
-  const state = usePopupState({ variant: "dialog" });
+export function useSurfaceHistory(state) {
   const navigate = useNavigate();
   const [id, setId] = useState(nanoid());
   const { params, saved, session } = useLocationStateSeparate();
@@ -48,6 +47,11 @@ export function Surface(props: SurfaceProps) {
       );
     }
   }, [state.isOpen, previouslyOpen]);
+}
+
+export function Surface(props: SurfaceProps) {
+  const state = usePopupState({ variant: "dialog" });
+  useSurfaceHistory(state);
   return (
     <>
       {props.trigger?.(state)}
