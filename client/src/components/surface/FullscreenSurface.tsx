@@ -17,8 +17,8 @@ export function FullscreenSurface({
       {...bindDialog(state)}
       fullScreen
       width="100dvw"
-      {...slotProps?.modal}
       scrollable={false}
+      {...slotProps?.modal}
       PaperProps={{
         ...slotProps?.paper,
         sx: {

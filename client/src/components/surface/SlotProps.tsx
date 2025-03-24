@@ -1,10 +1,6 @@
-import {
-  BoxProps,
-  ModalProps,
-  PopoverProps,
-  SwipeableDrawerProps,
-} from "@mui/material";
+import { BoxProps, PopoverProps, SwipeableDrawerProps } from "@mui/material";
 import { ModalAppBarProps } from "./ModalAppBar";
+import { ModalProps } from "./Modal";
 
 export type SlotProps = {
   sheet?: Partial<SwipeableDrawerProps> & { gap?: number };

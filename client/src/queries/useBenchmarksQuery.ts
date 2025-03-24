@@ -28,25 +28,10 @@ export const useBenchmarksData = () =>
   });
 
 export const useInstanceScenarioData = (id: number | string) =>
-  useQuery({
-    queryKey: ["instanceCollections", id],
-    queryFn: async () =>
-      map(
-        await json<InstanceCollection[]>(
-          `${APIConfig.apiUrl}/scenario/map/${id}`
-        ),
-        incorporateProportions
-      ),
-    enabled: !!id,
-  });
+  useQuery(instanceScenarioQuery(id));
 
 export const useScenarioDetailsData = (id: number | string) =>
-  useQuery({
-    queryKey: ["scenario", id],
-    queryFn: () =>
-      json<InstanceCollection>(`${APIConfig.apiUrl}/scenario/id/${id}`),
-    enabled: !!id,
-  });
+  useQuery(scenarioDetailsQuery(id));
 
 export const useInstanceCollectionData = (id: number | string) =>
   useQuery({
@@ -72,3 +57,26 @@ export const useMapData = (id: string = "") => {
     enabled: !!data && !!id,
   });
 };
+
+export function instanceScenarioQuery(id: string | number) {
+  return {
+    queryKey: ["instanceCollections", id],
+    queryFn: async () =>
+      map(
+        await json<InstanceCollection[]>(
+          `${APIConfig.apiUrl}/scenario/map/${id}`
+        ),
+        incorporateProportions
+      ),
+    enabled: !!id,
+  };
+}
+
+export function scenarioDetailsQuery(id: string | number) {
+  return {
+    queryKey: ["scenario", id],
+    queryFn: () =>
+      json<InstanceCollection>(`${APIConfig.apiUrl}/scenario/id/${id}`),
+    enabled: !!id,
+  };
+}

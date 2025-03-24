@@ -2,11 +2,18 @@ import { Box } from "@mui/material";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { useLocationStateSeparate, useNavigate } from "hooks/useNavigation";
 import {
+  PopupState,
   PopupState as State,
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import { nanoid } from "nanoid";
-import { ReactElement, ReactNode, useEffect, useState } from "react";
+import {
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { usePrevious } from "react-use";
 import { FullscreenSurface } from "./FullscreenSurface";
 import { ModalAppBar } from "./ModalAppBar";
@@ -27,17 +34,26 @@ export type SurfaceProps = SurfaceGeneralProps & {
   trigger?: (state: State) => ReactElement;
 };
 
-export function useSurfaceHistory(state) {
+export function useSurfaceHistory(state: PopupState) {
   const navigate = useNavigate();
-  const [id, setId] = useState(nanoid());
+  const [id, newId] = useReducer(() => nanoid(), nanoid());
   const { params, saved, session } = useLocationStateSeparate();
+  const previouslyOpen = usePrevious(state.isOpen);
+  // Sync close state
+  useEffect(() => {
+    if (previouslyOpen && !state.isOpen && session[id]) {
+      navigate(-1);
+      newId();
+    }
+  }, [session[id], state.isOpen, previouslyOpen]);
+  // Read close state from session
   useEffect(() => {
     if (!session[id]) {
       state.close();
-      setId(nanoid());
+      newId();
     }
   }, [session[id]]);
-  const previouslyOpen = usePrevious(false);
+  // Sync open state
   useEffect(() => {
     if (state.isOpen && !previouslyOpen) {
       navigate(

@@ -6,6 +6,7 @@ import {
   Slice,
   useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
+import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { sample } from "components/charts/sample";
 import { scenarioMetrics } from "core/metrics";
 import { chain, keyBy, map } from "lodash";
@@ -61,6 +62,7 @@ export const slices = [
   {
     key: "cost",
     name: "Cost",
+    formatter: formatLargeNumber,
   },
 ] satisfies Slice[];
 

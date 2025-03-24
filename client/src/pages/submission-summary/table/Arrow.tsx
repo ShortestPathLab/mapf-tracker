@@ -1,7 +1,10 @@
 import { ChevronRightRounded } from "@mui-symbols-material/w400";
-import { IconProps } from "@mui/material";
+import { ComponentProps } from "react";
 
-export function Arrow({ open, ...props }: { open?: boolean } & IconProps) {
+export function Arrow({
+  open,
+  ...props
+}: { open?: boolean } & ComponentProps<typeof ChevronRightRounded>) {
   return (
     <ChevronRightRounded
       color="action"

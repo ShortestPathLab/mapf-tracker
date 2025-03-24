@@ -297,7 +297,6 @@ export default function DataGrid<
                   px: xs ? 2 : 0,
                   borderTop: (t) => `1px solid ${t.palette.divider}`,
                   bgcolor: "background.paper",
-                  pt: 0,
                   "& .MuiToolbar-root": { px: 0, mr: "auto" },
                 },
                 ...rest.sx,

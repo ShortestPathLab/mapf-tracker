@@ -27,6 +27,7 @@ const render = memoize((showHeader: boolean) => ({ header, children }) => (
 export default function Page({ showHeader }: { showHeader?: boolean }) {
   const { open: openDialog, dialog } = useSurface(DownloadOptions, {
     title: "Bulk export",
+    variant: "fullscreen",
   });
 
   const { data: maps } = useBenchmarksData();

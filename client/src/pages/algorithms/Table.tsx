@@ -29,6 +29,7 @@ function renderPlaceholder() {
     </Enter>
   );
 }
+
 function arrayFallback<T, U>(s: T[] | undefined, u: U) {
   return s?.length ? s : u;
 }
