@@ -172,3 +172,18 @@ export function useLocationState<
     };
   }, [location]);
 }
+
+export function useLocationStateSeparate<
+  T extends object = object,
+  U extends object = object
+>() {
+  const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
+  return useMemo(() => {
+    const params = Object.fromEntries(new URLSearchParams(location.search));
+    return {
+      params: mapValues(params, (v) => (isNaN(+v) ? v : +v)) ?? {},
+      saved: location.state?.saved ?? {},
+      session: location.state?.session ?? {},
+    };
+  }, [location]);
+}

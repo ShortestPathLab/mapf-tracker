@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { useXs } from "components/dialog/useSmallDisplay";
-import { useLocationState, useNavigate } from "hooks/useNavigation";
+import { useLocationStateSeparate, useNavigate } from "hooks/useNavigation";
 import {
   PopupState as State,
   usePopupState,
@@ -31,17 +31,21 @@ export function Surface(props: SurfaceProps) {
   const state = usePopupState({ variant: "dialog" });
   const navigate = useNavigate();
   const [id, setId] = useState(nanoid());
-  const locationState = useLocationState();
+  const { params, saved, session } = useLocationStateSeparate();
   useEffect(() => {
-    if (!locationState[id]) {
+    if (!session[id]) {
       state.close();
       setId(nanoid());
     }
-  }, [locationState[id]]);
+  }, [session[id]]);
   const previouslyOpen = usePrevious(false);
   useEffect(() => {
     if (state.isOpen && !previouslyOpen) {
-      navigate(location.pathname, undefined, { ...locationState, [id]: 1 });
+      navigate(
+        location.pathname,
+        { ...params, ...saved },
+        { ...session, [id]: 1 }
+      );
     }
   }, [state.isOpen, previouslyOpen]);
   return (

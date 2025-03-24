@@ -1,4 +1,4 @@
-import { useLocationState, useNavigate } from "hooks/useNavigation";
+import { useLocationStateSeparate, useNavigate } from "hooks/useNavigation";
 import { merge } from "lodash";
 import { usePopupState } from "material-ui-popup-state/hooks";
 import { nanoid } from "nanoid";
@@ -13,14 +13,18 @@ export function useSurface<T>(
   props: SurfaceProps = {}
 ) {
   const [id, setId] = useState(nanoid());
-  const locationState = useLocationState();
+  const { params, saved, session } = useLocationStateSeparate();
   const navigate = useNavigate();
   const popupState = usePopupState({ variant: "dialog" });
   const [state, setState] = useState<T & SurfaceContentProps>();
   const [modalProps, setModalProps] = useState<Partial<SurfaceBaseProps>>({});
   const open = (s?: T & SurfaceContentProps) => {
     popupState.open();
-    navigate(location.pathname, undefined, { ...locationState, [id]: 1 });
+    navigate(
+      location.pathname,
+      { ...params, ...saved },
+      { ...session, [id]: 1 }
+    );
     setState(s);
   };
   const close = useCallback(() => {
@@ -28,11 +32,11 @@ export function useSurface<T>(
     setModalProps({});
   }, []);
   useEffect(() => {
-    if (!locationState[id]) {
+    if (!session[id]) {
       close();
       setId(nanoid());
     }
-  }, [locationState[id]]);
+  }, [session[id]]);
   return {
     open,
     close,
