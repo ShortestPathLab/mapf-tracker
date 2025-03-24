@@ -117,11 +117,15 @@ function createAgentPositionGetter(
 
 type SolutionParameters = {
   instanceId?: string;
+  scenarioId?: string;
+  mapId?: string;
   solutionId?: string;
   source?: "ongoing" | "submitted";
 };
 
 export function useSolution({
+  mapId,
+  scenarioId,
   instanceId,
   solutionId,
   source,
@@ -143,39 +147,61 @@ export function useSolution({
     );
 
   const { data: scenario, isLoading: isScenarioLoading } =
-    useScenarioDetailsData(instance?.scen_id);
+    useScenarioDetailsData(instance?.scen_id ?? scenarioId);
   const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(
-    instance?.map_id
+    instance?.map_id ?? mapId
   );
 
+  console.log(mapMetaData, scenario);
+
   const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
-    queryKey: ["solutionContextData", solutionId, source, instanceId],
+    queryKey: [
+      "solutionContextData",
+      instance?.agents,
+      solution?.join?.("\n"),
+      scenario?.scen_type,
+      scenario?.type_id,
+      mapMetaData?.map_name,
+    ],
     queryFn: async () => {
-      const [mapData, scenarioData] = await Promise.all([
-        await text(`/assets/maps/${mapMetaData.map_name}.map`),
-        await text(
-          `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
-        ),
-      ]);
-      const parsedMap = parseMap(mapData);
-      const parsedScenario = parseScenario(
-        scenarioData,
-        instance.agents,
-        solution.join("\n")
-      );
+      const getMap = async () => {
+        if (mapMetaData?.map_name) {
+          const mapData = await text(
+            `/assets/maps/${mapMetaData.map_name}.map`
+          );
+          const parsedMap = parseMap(mapData);
+          const size = {
+            width: head(parsedMap).length,
+            height: parsedMap.length,
+          };
+          return {
+            size,
+            map: parsedMap,
+            optimisedMap: optimiseGridMap(parsedMap, size),
+          };
+        }
+      };
+      const getScenario = async () => {
+        if (mapMetaData?.map_name && scenario?.scen_type && scenario?.type_id) {
+          const scenarioData = await text(
+            `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
+          );
+          const parsedScenario = parseScenario(
+            scenarioData,
+            instance?.agents,
+            solution?.join?.("\n")
+          );
+          return { result: parsedScenario };
+        }
+      };
       return {
-        optimisedMap: optimiseGridMap(parsedMap, {
-          width: parsedScenario.x,
-          height: parsedScenario.y,
-        }),
-        map: parsedMap,
-        result: parsedScenario,
+        ...(await getMap()),
+        ...(await getScenario()),
       };
     },
-    enabled: !!solution && !!instance && !!mapMetaData && !!scenario,
   });
 
-  const { map, result, optimisedMap } = generalData ?? {};
+  const { map, result, optimisedMap, size } = generalData ?? {};
   const { sources, paths, timespan } = result ?? {};
 
   const getters = useMemo(
@@ -193,6 +219,7 @@ export function useSolution({
       isMapDataLoading ||
       isDiagnosticsLoading,
     map: map ?? [],
+    size,
     optimisedMap: optimisedMap ?? [],
     result,
     diagnostics: ongoingSubmission?.validation,

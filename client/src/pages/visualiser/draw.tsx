@@ -1,5 +1,5 @@
 import { Graphics } from "@pixi/react";
-import { each, first, head, isUndefined, range, trim } from "lodash";
+import { each, first, head, isNumber, isUndefined, range, trim } from "lodash";
 import memoizee from "memoizee";
 import { Graphics as PixiGraphics } from "pixi.js";
 import { LINE_WIDTH } from "./constants";
@@ -32,10 +32,14 @@ export const $box =
       .lineTo(0, 0);
   };
 export const $agents =
-  (agents: { color: string; x: number; y: number }[]) => (g: PixiGraphics) => {
+  (
+    agents: { color: string; x: number; y: number; i: number }[],
+    selection?: number
+  ) =>
+  (g: PixiGraphics) => {
     g.clear();
-    for (const { x, y, color } of agents) {
-      g.beginFill(hexToInt(color))
+    for (const { x, y, color, i } of agents) {
+      g.beginFill(color, isNumber(selection) ? (+i === selection ? 1 : 0.5) : 1)
         .drawCircle(x + 0.5, y + 0.5, 0.5)
         .endFill();
     }

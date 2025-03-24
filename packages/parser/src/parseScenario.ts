@@ -28,8 +28,8 @@ export function parseScenarioMeta(scenarioData: string, agentCount?: number) {
 
 export function parseScenario(
   scenarioData: string,
-  agentCount: number,
-  solutionData: string
+  agentCount: number = 0,
+  solutionData: string = ""
 ) {
   const { sources, width, height, goals } = parseScenarioMeta(
     scenarioData,

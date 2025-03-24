@@ -3,7 +3,7 @@ import {
   MapRounded,
   TableRounded,
 } from "@mui-symbols-material/w400";
-import { Stack, useTheme } from "@mui/material";
+import { CardActionArea, Stack, Tooltip, useTheme } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { Analysis } from "components/analysis/Analysis";
@@ -20,6 +20,7 @@ import {
 import { useMapData } from "queries/useBenchmarksQuery";
 import { DownloadOptions } from "./DownloadOptions";
 import { MapLevelLocationState } from "./MapLevelLocationState";
+import { MapVisualisationDialog } from "./MapVisualisationDialog";
 import Table from "./Table";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 
@@ -29,6 +30,21 @@ export default function Page() {
   });
   const { mapId } = useStableLocationState<MapLevelLocationState>();
   const { data: mapData } = useMapData(mapId);
+  const { open: openPreview, dialog: previewDialog } = useSurface(
+    MapVisualisationDialog,
+    {
+      variant: "fullscreen",
+      title: mapData ? startCase(mapData.map_name) : "--",
+      slotProps: {
+        appBar: {
+          sx: {
+            background: "transparent",
+            width: "fit-content",
+          },
+        },
+      },
+    }
+  );
   const theme = useTheme();
   const notify = useSnackbarAction();
   return (
@@ -39,11 +55,18 @@ export default function Page() {
         { name: "Benchmarks", url: "/benchmarks" },
       ]}
       cover={
-        <PreviewCard
-          palette={{ obstacle: theme.palette.text.primary }}
-          map={mapId}
-          sx={{ width: "100%", height: "auto", aspectRatio: 1 }}
-        />
+        <Tooltip title="Enlarge">
+          <CardActionArea
+            sx={{ borderRadius: 1 }}
+            onClick={() => openPreview({ mapId })}
+          >
+            <PreviewCard
+              palette={{ obstacle: theme.palette.text.primary }}
+              map={mapId}
+              sx={{ width: "100%", height: "auto", aspectRatio: 1 }}
+            />
+          </CardActionArea>
+        </Tooltip>
       }
       items={[
         { value: <code>{mapData?.map_name}</code>, label: "Map ID" },
@@ -102,6 +125,7 @@ export default function Page() {
         />
       </Stack>
       {dialog}
+      {previewDialog}
     </GalleryLayout>
   );
 }

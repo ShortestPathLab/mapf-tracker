@@ -36,6 +36,7 @@ import {
   isUndefined,
   map,
   mapValues,
+  thru,
   zip,
 } from "lodash";
 import { Viewport as PixiViewport } from "pixi-viewport";
@@ -72,13 +73,16 @@ import { usePlayback } from "./usePlayback";
 import { useThrottleState } from "./useThrottleState";
 import { within } from "./within";
 
+const defaultGetAgentPath = () => [{ x: 0, y: 0, action: "w" }];
+const defaultGetAgentPositions = () => [{ x: 0, y: 0 }];
+
 export function Visualisation({
   goals,
   width,
   height,
   timespan,
-  getAgentPath,
-  getAgentPositions,
+  getAgentPath = defaultGetAgentPath,
+  getAgentPositions = defaultGetAgentPositions,
   isLoading,
   optimisedMap,
   diagnostics = [
@@ -90,14 +94,16 @@ export function Visualisation({
       label: "agent-to-agent direct collision",
     },
   ],
+  disablePlayback,
 }: {
+  disablePlayback?: boolean;
   width?: number;
   height?: number;
   isLoading?: boolean;
   goals?: { x: number; y: number }[];
   timespan?: number;
-  getAgentPositions: (t: number) => { x: number; y: number }[];
-  getAgentPath: (a: number) => {
+  getAgentPositions?: (t: number) => { x: number; y: number }[];
+  getAgentPath?: (a: number) => {
     x: number;
     y: number;
     action?: string;
@@ -177,9 +183,11 @@ export function Visualisation({
         .map(([a, b], i) => ({
           x: lerp(a.x, b.x, dt),
           y: lerp(a.y, b.y, dt),
+          i,
           color: getAgentColor(i),
         }))
-        .filter((position) => within(position, bounds))
+        .filter((position) => within(position, bounds)),
+      selection.show ? selection.agent : undefined
     );
   };
 
@@ -245,7 +253,7 @@ export function Visualisation({
     }
   }, [viewport, getAgentPositions, step, setSelection]);
 
-  const noVisualisation = !isLoading && !timespan;
+  const noVisualisation = !isLoading && (disablePlayback ? false : !timespan);
 
   return (
     <Box
@@ -331,11 +339,14 @@ export function Visualisation({
                               return (
                                 within(position, bounds) && (
                                   <Arrow
-                                    opacity={lerp(
-                                      +prevDidMove,
-                                      +nextDidMove,
-                                      dt
-                                    )}
+                                    opacity={
+                                      (selection.show
+                                        ? selection.agent === i
+                                          ? 1
+                                          : 0.5
+                                        : 1) *
+                                      lerp(+prevDidMove, +nextDidMove, dt)
+                                    }
                                     position={position}
                                     color={getAgentColor(i)}
                                     rotation={lerpCircle(
@@ -356,93 +367,100 @@ export function Visualisation({
                   </Box>
                 </Fade>
               )}
-              <Stack
-                sx={{
-                  position: "absolute",
-                  right: 0,
-                  bottom: 0,
-                  maxWidth: "100%",
-                  // p: 4,
-                }}
-              >
-                <Card sx={{ py: 1, m: sm ? 2 : 3, px: 2, ...paper() }}>
-                  <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-                    {!sm && (
-                      <>
-                        <Typography sx={{ px: 2 }}>
-                          {step} / {timespan ?? "0"}
-                        </Typography>
-                        <Divider orientation="vertical" flexItem />
-                      </>
-                    )}
-                    {filter([
-                      !sm && {
-                        name: "Step back",
-                        icon: <ChevronLeftRounded />,
-                        action: backwards,
-                      },
-                      {
-                        name: paused ? "Play" : "Pause",
-                        icon: paused ? (
-                          <PlayArrowRounded sx={{ color: "primary.main" }} />
-                        ) : (
-                          <PauseRounded sx={{ color: "primary.main" }} />
-                        ),
-                        action: paused ? play : pause,
-                      },
-                      !sm && {
-                        name: "Step forward",
-                        icon: <ChevronRightRounded />,
-                        action: forwards,
-                      },
-                      {
-                        name: "Restart",
-                        icon: <ReplayRounded />,
-                        action: restart,
-                        disabled: step === 0,
-                      },
-                    ]).map(({ name, icon, action, disabled }) => (
-                      <Tooltip title={name} key={name} placement="top">
-                        <IconButton disabled={disabled} onClick={action}>
-                          {icon}
-                        </IconButton>
-                      </Tooltip>
-                    ))}
-                    <Divider orientation="vertical" flexItem />
-                    <Slider
-                      value={step}
-                      onChange={(_, n) => seek(+n)}
-                      min={0}
-                      max={timespan}
-                      step={1}
-                      sx={{
-                        "& *": { transition: "none !important" },
-                        mx: 2,
-                        width: 240,
-                        flex: 1,
-                        ".MuiSlider-rail": {
-                          opacity: 1,
-                          bgcolor: (t) => alpha(t.palette.primary.main, 0.38),
-                          backgroundImage: (t) => {
-                            const ts = map(diagnostics, "t")
-                              .filter((c) => !isUndefined(c))
-                              .map((c) => c / timespan);
-                            return `linear-gradient(to right, ${map(
-                              ts,
-                              (c) =>
-                                `transparent ${c * 100 - 0.5}%, ${
-                                  t.palette.error.main
-                                } ${c * 100 - 0.5}%, ${t.palette.error.main} ${
-                                  c * 100 + 0.5
-                                }%, transparent ${c * 100 + 0.5}%`
-                            ).join(", ")})`;
-                          },
+              {!disablePlayback && (
+                <Stack
+                  sx={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    maxWidth: "100%",
+                    // p: 4,
+                  }}
+                >
+                  <Card sx={{ py: 1, m: sm ? 2 : 3, px: 2, ...paper() }}>
+                    <Stack
+                      direction="row"
+                      sx={{ gap: 2, alignItems: "center" }}
+                    >
+                      {!sm && (
+                        <>
+                          <Typography sx={{ px: 2 }}>
+                            {step} / {timespan ?? "0"}
+                          </Typography>
+                          <Divider orientation="vertical" flexItem />
+                        </>
+                      )}
+                      {filter([
+                        !sm && {
+                          name: "Step back",
+                          icon: <ChevronLeftRounded />,
+                          action: backwards,
                         },
-                      }}
-                    />
-                  </Stack>
-                </Card>
-              </Stack>
+                        {
+                          name: paused ? "Play" : "Pause",
+                          icon: paused ? (
+                            <PlayArrowRounded sx={{ color: "primary.main" }} />
+                          ) : (
+                            <PauseRounded sx={{ color: "primary.main" }} />
+                          ),
+                          action: paused ? play : pause,
+                        },
+                        !sm && {
+                          name: "Step forward",
+                          icon: <ChevronRightRounded />,
+                          action: forwards,
+                        },
+                        {
+                          name: "Restart",
+                          icon: <ReplayRounded />,
+                          action: restart,
+                          disabled: step === 0,
+                        },
+                      ]).map(({ name, icon, action, disabled }) => (
+                        <Tooltip title={name} key={name} placement="top">
+                          <IconButton disabled={disabled} onClick={action}>
+                            {icon}
+                          </IconButton>
+                        </Tooltip>
+                      ))}
+                      <Divider orientation="vertical" flexItem />
+                      <Slider
+                        value={step}
+                        onChange={(_, n) => seek(+n)}
+                        min={0}
+                        max={timespan}
+                        step={1}
+                        sx={{
+                          "& *": { transition: "none !important" },
+                          mx: 2,
+                          width: 240,
+                          flex: 1,
+                          ".MuiSlider-rail": {
+                            opacity: 1,
+                            bgcolor: (t) => alpha(t.palette.primary.main, 0.38),
+                            backgroundImage: (t) => {
+                              const ts = map(diagnostics, "t")
+                                .filter((c) => !isUndefined(c))
+                                .map((c) => c / timespan);
+                              return `linear-gradient(to right, ${map(
+                                ts,
+                                (c) =>
+                                  `transparent ${c * 100 - 0.5}%, ${
+                                    t.palette.error.main
+                                  } ${c * 100 - 0.5}%, ${
+                                    t.palette.error.main
+                                  } ${c * 100 + 0.5}%, transparent ${
+                                    c * 100 + 0.5
+                                  }%`
+                              ).join(", ")})`;
+                            },
+                          },
+                        }}
+                      />
+                    </Stack>
+                  </Card>
+                </Stack>
+              )}
               <Enter in={selection.show} axis="X" key={selection.agent}>
                 <Stack
                   sx={{
@@ -483,6 +501,29 @@ export function Visualisation({
                           invert
                           primary={getAgentPath(selection.agent).length - 1}
                           secondary="Cost"
+                        />
+                        <Item
+                          invert
+                          primary={thru(
+                            getAgentPositions(step)[selection.agent],
+                            (p) => (p ? `(${p.x}, ${p.y})` : "--")
+                          )}
+                          secondary="Position"
+                        />
+                        <Item
+                          invert
+                          primary={thru(
+                            getAgentPath(selection.agent)[step],
+                            (p) =>
+                              ({
+                                w: "Wait",
+                                u: "Up",
+                                d: "Down",
+                                l: "Left",
+                                r: "Right",
+                              }[p?.action] ?? "--")
+                          )}
+                          secondary="Action"
                         />
                         {[
                           {

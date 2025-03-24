@@ -31,3 +31,27 @@ export function SolutionVisualisation({
     />
   );
 }
+
+export function MapVisualisation({
+  mapId,
+  scenarioId,
+}: {
+  mapId?: string;
+  scenarioId?: string;
+}) {
+  const { result, optimisedMap, size, isLoading } = useSolution({
+    mapId,
+    scenarioId,
+  });
+  console.log(result, optimisedMap);
+  return (
+    <Visualisation
+      isLoading={isLoading}
+      optimisedMap={optimisedMap}
+      {...result}
+      {...size}
+      getAgentPositions={() => result?.sources}
+      disablePlayback
+    />
+  );
+}

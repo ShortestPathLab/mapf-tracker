@@ -20,15 +20,7 @@ import {
 } from "./SubmissionInstanceContext";
 import { getOutcomeDisplay } from "./getOutcomeDisplay";
 
-function VisualisationDialog({
-  instanceId,
-  solutionId,
-  source,
-}: {
-  instanceId?: string;
-  solutionId?: string;
-  source?: "ongoing" | "submitted";
-} & DialogContentProps) {
+export function FullsizeDialog({ children }: { children }) {
   return (
     <>
       <Box
@@ -42,10 +34,26 @@ function VisualisationDialog({
           width: "100vw",
         }}
       >
-        <SolutionVisualisation {...{ instanceId, solutionId, source }} />
+        {children}
       </Box>
       <Box sx={{ height: "100dvh" }}></Box>
     </>
+  );
+}
+
+function VisualisationDialog({
+  instanceId,
+  solutionId,
+  source,
+}: {
+  instanceId?: string;
+  solutionId?: string;
+  source?: "ongoing" | "submitted";
+} & DialogContentProps) {
+  return (
+    <FullsizeDialog>
+      <SolutionVisualisation {...{ instanceId, solutionId, source }} />
+    </FullsizeDialog>
   );
 }
 

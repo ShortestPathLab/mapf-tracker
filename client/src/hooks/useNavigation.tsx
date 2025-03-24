@@ -90,8 +90,6 @@ export function useHistoryProvider<T extends object, U extends object>() {
       });
     }
   }, [previous?.key, location.key, push]);
-
-  console.log(out);
   return out;
 }
 

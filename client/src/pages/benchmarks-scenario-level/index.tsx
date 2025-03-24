@@ -3,7 +3,7 @@ import {
   MapRounded,
   TableRounded,
 } from "@mui-symbols-material/w400";
-import { Stack } from "@mui/material";
+import { CardActionArea, Stack, Tooltip } from "@mui/material";
 import { Analysis } from "components/analysis/Analysis";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
@@ -20,6 +20,8 @@ import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
+import { useSurface } from "components/surface";
+import { MapVisualisationDialog } from "pages/benchmarks-map-level/MapVisualisationDialog";
 
 export default function Page() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
@@ -27,8 +29,27 @@ export default function Page() {
   const { data: mapData } = useMapData(mapId);
   const { data: scenarioData } = useScenarioDetailsData(scenId);
   const notify = useSnackbarAction();
+
   const title =
     scenarioData && `${scenarioData?.scen_type}-${scenarioData?.type_id}`;
+  const { open: openPreview, dialog: previewDialog } = useSurface(
+    MapVisualisationDialog,
+    {
+      title:
+        mapData && title
+          ? `${startCase(mapData.map_name)}, ${startCase(title)}`
+          : "--",
+      variant: "fullscreen",
+      slotProps: {
+        appBar: {
+          sx: {
+            background: "transparent",
+            width: "fit-content",
+          },
+        },
+      },
+    }
+  );
   return (
     <GalleryLayout
       title={title ? startCase(title) : "--"}
@@ -42,10 +63,17 @@ export default function Page() {
         },
       ]}
       cover={
-        <PreviewCard
-          scenario={scenarioData?.id}
-          sx={{ width: "100%", height: "auto", aspectRatio: 1 }}
-        />
+        <Tooltip title="Enlarge">
+          <CardActionArea
+            sx={{ borderRadius: 1 }}
+            onClick={() => openPreview({ mapId, scenarioId: scenarioData?.id })}
+          >
+            <PreviewCard
+              scenario={scenarioData?.id}
+              sx={{ width: "100%", height: "auto", aspectRatio: 1 }}
+            />
+          </CardActionArea>
+        </Tooltip>
       }
       items={[
         {
@@ -109,6 +137,7 @@ export default function Page() {
           }
         />
       </Stack>
+      {previewDialog}
     </GalleryLayout>
   );
 }
