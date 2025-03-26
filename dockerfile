@@ -27,6 +27,8 @@ COPY . .
 
 # ─── Setup Mail ───────────────────────────────────────────────────────────────
 
+RUN apt-get update && apt-get upgrade -y
+
 RUN apt-get install -y mailutils ssmtp
 
 RUN echo 'mailhub=host.docker.internal' >> /etc/ssmtp/ssmtp.conf
