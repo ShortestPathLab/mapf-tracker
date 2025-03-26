@@ -42,9 +42,9 @@ const processScenario = memoize(
 
 async function getSources({ map, instance, scenario }: CreatePreviewData) {
   const sources = {
-    map: undefined as Infer<typeof Map> | undefined,
-    instance: undefined as Infer<typeof Instance> | undefined,
-    scenario: undefined as Infer<typeof Scenario> | undefined,
+    map: undefined as Infer<typeof Map> | undefined | null,
+    instance: undefined as Infer<typeof Instance> | undefined | null,
+    scenario: undefined as Infer<typeof Scenario> | undefined | null,
   };
   // Get instance
   if (instance) {

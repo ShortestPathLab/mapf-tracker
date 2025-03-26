@@ -2,7 +2,7 @@ import { Request, RequestHandler, Router } from "express";
 import { AggregateBuilder } from "mongodb-aggregate-builder";
 import { Document, FilterQuery, Model, ProjectionType, Types } from "mongoose";
 import z from "zod";
-import memo from "p-memoize";
+import memo, { AnyAsyncFunction } from "p-memoize";
 import hash from "object-hash";
 import QuickLRU from "quick-lru";
 
@@ -14,21 +14,35 @@ export const json = <T>(p: string) => fetch(p).then(toJson) as Promise<T>;
 export const text = (p: string) => fetch(p).then(toText);
 export const blob = (p: string) => fetch(p).then(toBlob);
 
-export function cached<T, V extends z.ZodType, U>(
+const createCache = <T extends AnyAsyncFunction>(f: T) => {
+  const cache = new QuickLRU<string, Awaited<ReturnType<T>>>({ maxSize: 1000 });
+  const g = memo(f, {
+    cache,
+    cacheKey: ([a]) => hash(a ?? ""),
+  });
+  return [g, cache] as const;
+};
+
+export function cached<V extends z.ZodType>(
   watch: Model<any>[],
   validate: V = z.any() as any,
   handler: (req: z.infer<V>) => Promise<any>,
   source: "body" | "params" = "params"
 ) {
-  const cache = new QuickLRU<string, Awaited<U>>({ maxSize: 1000 });
-  const g = memo(handler, { cache, cacheKey: ([a]) => hash(a) });
+  const [g, cache] = createCache(handler);
   for (const w of watch) {
     w.watch().on("change", () => cache.clear());
   }
   return (async (req, res) => {
-    const request = await validate.parseAsync(req[source]);
-    const out = await g(request);
-    return res.json(out);
+    try {
+      const request = await validate.parseAsync(req[source]);
+      const out = await g(request);
+      return res.json(out);
+    } catch (e) {
+      res.status(500).json({
+        error: `Error occurred: ${e}`,
+      });
+    }
   }) as RequestHandler<unknown>;
 }
 
@@ -37,8 +51,7 @@ export const queryClient = <T>(model: Model<T>) => {
     validate: V = z.any() as any,
     f: (data: z.infer<V>) => Promise<U>
   ): RequestHandler<z.infer<V>> => {
-    const cache = new QuickLRU<string, Awaited<U>>({ maxSize: 1000 });
-    const g = memo(f, { cache, cacheKey: ([a]) => hash(a) });
+    const [g, cache] = createCache(f);
     model.watch().on("change", () => cache.clear());
     return async (req, res) => {
       const { success, data, error } = await validate.safeParseAsync({

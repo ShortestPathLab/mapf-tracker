@@ -1,7 +1,6 @@
-import { useLocationState } from "hooks/useNavigation";
-import { VisualiserLocationState } from "./VisualiserLocationState";
-import { SolutionVisualisation } from "./SolutionVisualisation";
 import { useStableLocationState } from "hooks/useStableLocationState";
+import { SolutionVisualisation } from "./SolutionVisualisation";
+import { VisualiserLocationState } from "./VisualiserLocationState";
 
 export default function () {
   const state = useStableLocationState<VisualiserLocationState>();

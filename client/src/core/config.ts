@@ -1,6 +1,10 @@
 export const identifier = "com.shortestpathlab.mapf-tracker";
 
-export const url = "https://fe2410d1.pathfinding.ai/api";
+export const url =
+  // is localhost?
+  window.location.hostname === "localhost"
+    ? "http://118.138.234.90:8888/api"
+    : "https://fe2410d1.pathfinding.ai/api";
 
 export const appName = "MAPF Tracker";
 

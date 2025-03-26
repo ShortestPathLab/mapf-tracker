@@ -130,8 +130,8 @@ export function Router({
             sx={{
               m: 0.5,
               boxShadow: (t) => t.shadows[1],
-              width: (t) => `calc(100% - ${t.spacing(1)}px)`,
-              height: (t) => `calc(100dvh - ${t.spacing(1)}px)`,
+              width: (t) => `calc(100% - ${t.spacing(1)})`,
+              height: (t) => `calc(100dvh - ${t.spacing(1)})`,
               borderRadius: 1,
               overflow: "hidden",
             }}
@@ -160,7 +160,7 @@ export function Router({
                   sx={
                     sm
                       ? { height: "100dvh", display: "flex" }
-                      : { height: "100dvh", width: "100%", display: "flex" }
+                      : { height: "100%", width: "100%", display: "flex" }
                   }
                 >
                   {r.content}

@@ -56,7 +56,7 @@ export const SliceChart = ({
   stateOfTheArt?: boolean;
 } & { data?: unknown[] }) => {
   const { data: algorithms = [] } = useAlgorithmsData();
-  const algorithms1 = stateOfTheArtEnabled
+  const algorithmsWithSota = stateOfTheArtEnabled
     ? [stateOfTheArt, ...algorithms]
     : algorithms;
   const { chart: Chart, series: _Series } = Charts[type];
@@ -102,7 +102,7 @@ export const SliceChart = ({
       <CartesianGrid stroke={theme.palette.divider} />
       {map(
         filter(
-          algorithms1,
+          algorithmsWithSota,
           (a) => !selected.length || selected.includes(a._id)
         ),
         (algorithm, i) => (

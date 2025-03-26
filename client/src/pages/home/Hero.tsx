@@ -80,6 +80,42 @@ export default function Hero({ children }: { children?: ReactNode }) {
             direction="row"
             sx={{
               mb: -1,
+              mt: 1,
+              gap: 2,
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography color="text.secondary">Trends</Typography>
+            <Button onClick={() => navigate("/benchmarks", { t: "analysis" })}>
+              See more trends
+            </Button>
+          </Stack>
+          <Stack
+            direction="row"
+            sx={{
+              flexWrap: "wrap",
+              gap: 2,
+              "> *": {
+                flex: "1 1 0",
+                width: "100%",
+                minWidth: "min(100%, 380px)",
+              },
+            }}
+          >
+            <TotalSolvedClosedDonutChart sx={{ minHeight: 320, flex: 1 }} />
+            <CompletionByAlgorithmChartCard
+              sx={{ minHeight: 420 }}
+              primaryLabel="Completion by submission"
+              columns={1}
+              height="100%"
+              secondaryLabel="Compare instances closed and solved across submissions"
+            />
+          </Stack>{" "}
+          <Stack
+            direction="row"
+            sx={{
+              mb: -1,
               gap: 2,
               justifyContent: "space-between",
               alignItems: "center",
@@ -204,43 +240,6 @@ export default function Hero({ children }: { children?: ReactNode }) {
               ))}
             </Stack>
           </Scroll>
-
-          <Stack
-            direction="row"
-            sx={{
-              mb: -1,
-              mt: 1,
-              gap: 2,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography color="text.secondary">Trends</Typography>
-            <Button onClick={() => navigate("/benchmarks", { t: "analysis" })}>
-              See more trends
-            </Button>
-          </Stack>
-          <Stack
-            direction="row"
-            sx={{
-              flexWrap: "wrap",
-              gap: 2,
-              "> *": {
-                flex: "1 1 0",
-                width: "100%",
-                minWidth: "min(100%, 380px)",
-              },
-            }}
-          >
-            <TotalSolvedClosedDonutChart sx={{ minHeight: 320, flex: 1 }} />
-            <CompletionByAlgorithmChartCard
-              sx={{ minHeight: 420 }}
-              primaryLabel="Completion by submission"
-              columns={1}
-              height="100%"
-              secondaryLabel="Compare instances closed and solved across submissions"
-            />
-          </Stack>
         </Stack>
         <Stack
           sx={{

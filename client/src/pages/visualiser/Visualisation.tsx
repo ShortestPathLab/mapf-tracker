@@ -3,9 +3,13 @@ import {
   ChevronLeftRounded,
   ChevronRightRounded,
   CloseRounded,
+  FitScreenRounded,
+  FullscreenExitRounded,
+  FullscreenRounded,
   PauseRounded,
   PlayArrowRounded,
   ReplayRounded,
+  SettingsRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -14,6 +18,10 @@ import {
   Divider,
   Fade,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Slider,
   Stack,
   Tooltip,
@@ -39,6 +47,7 @@ import {
   thru,
   zip,
 } from "lodash";
+import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { FederatedPointerEvent, Rectangle } from "pixi.js";
 import pluralize from "pluralize";
@@ -51,6 +60,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
+import { useFullscreen, useToggle } from "react-use";
 import AutoSize from "react-virtualized-auto-sizer";
 import { paper } from "theme";
 import { colors } from "utils/colors";
@@ -214,10 +225,12 @@ export function Visualisation({
 
   useEffect(() => {
     if (viewport && width && height) {
+      viewport.worldWidth = width;
+      viewport.worldHeight = height;
       viewport
         .fit(false, width, height)
         .moveCenter(width / 2, height / 2)
-        .zoom(10, true);
+        .zoomPercent(-0.1, true);
       updateShowGrid();
     }
   }, [viewport, width, height, updateShowGrid]);
@@ -255,7 +268,17 @@ export function Visualisation({
 
   const noVisualisation = !isLoading && (disablePlayback ? false : !timespan);
 
-  return (
+  // ─── Toggle Fullscreen ───────────────────────────────────────────────
+
+  const root = useRef<HTMLElement | null>(document.body);
+  const [show, toggle] = useToggle(false);
+  const isFullscreen = useFullscreen(root, show, {
+    onClose: () => toggle(false),
+  });
+
+  const [toolbar, setToolbar] = useState<HTMLDivElement | null>(null);
+
+  const contents = (
     <Box
       sx={{
         width: "100%",
@@ -367,100 +390,162 @@ export function Visualisation({
                   </Box>
                 </Fade>
               )}
-              {!disablePlayback && (
-                <Stack
-                  sx={{
-                    position: "absolute",
-                    right: 0,
-                    bottom: 0,
-                    maxWidth: "100%",
-                    // p: 4,
-                  }}
-                >
-                  <Card sx={{ py: 1, m: sm ? 2 : 3, px: 2, ...paper() }}>
-                    <Stack
-                      direction="row"
-                      sx={{ gap: 2, alignItems: "center" }}
-                    >
-                      {!sm && (
-                        <>
-                          <Typography sx={{ px: 2 }}>
-                            {step} / {timespan ?? "0"}
-                          </Typography>
-                          <Divider orientation="vertical" flexItem />
-                        </>
-                      )}
-                      {filter([
-                        !sm && {
-                          name: "Step back",
-                          icon: <ChevronLeftRounded />,
-                          action: backwards,
-                        },
-                        {
-                          name: paused ? "Play" : "Pause",
-                          icon: paused ? (
-                            <PlayArrowRounded sx={{ color: "primary.main" }} />
-                          ) : (
-                            <PauseRounded sx={{ color: "primary.main" }} />
-                          ),
-                          action: paused ? play : pause,
-                        },
-                        !sm && {
-                          name: "Step forward",
-                          icon: <ChevronRightRounded />,
-                          action: forwards,
-                        },
-                        {
-                          name: "Restart",
-                          icon: <ReplayRounded />,
-                          action: restart,
-                          disabled: step === 0,
-                        },
-                      ]).map(({ name, icon, action, disabled }) => (
-                        <Tooltip title={name} key={name} placement="top">
-                          <IconButton disabled={disabled} onClick={action}>
-                            {icon}
+              <Stack
+                sx={{
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
+                  maxWidth: "100%",
+                  // p: 4,
+                }}
+              >
+                <Card sx={{ py: 1, m: 2, px: 2, ...paper() }} ref={setToolbar}>
+                  <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
+                    {!disablePlayback && (
+                      <>
+                        {!sm && (
+                          <>
+                            <Typography sx={{ px: 1 }}>
+                              {step} / {timespan ?? "0"}
+                            </Typography>
+                            <Divider orientation="vertical" flexItem />
+                          </>
+                        )}
+                        {filter([
+                          !sm && {
+                            name: "Step back",
+                            icon: <ChevronLeftRounded />,
+                            action: backwards,
+                          },
+                          {
+                            name: paused ? "Play" : "Pause",
+                            icon: paused ? (
+                              <PlayArrowRounded
+                                sx={{ color: "primary.main" }}
+                              />
+                            ) : (
+                              <PauseRounded sx={{ color: "primary.main" }} />
+                            ),
+                            action: paused ? play : pause,
+                          },
+                          !sm && {
+                            name: "Step forward",
+                            icon: <ChevronRightRounded />,
+                            action: forwards,
+                          },
+                          {
+                            name: "Restart",
+                            icon: <ReplayRounded />,
+                            action: restart,
+                            disabled: step === 0,
+                          },
+                        ]).map(({ name, icon, action, disabled }) => (
+                          <Tooltip title={name} key={name} placement="top">
+                            <IconButton disabled={disabled} onClick={action}>
+                              {icon}
+                            </IconButton>
+                          </Tooltip>
+                        ))}
+                        <Divider orientation="vertical" flexItem />
+                        <Slider
+                          value={step}
+                          onChange={(_, n) => seek(+n)}
+                          min={0}
+                          max={timespan}
+                          step={1}
+                          sx={{
+                            "& *": { transition: "none !important" },
+                            mx: 2,
+                            width: 240,
+                            flex: 1,
+                            ".MuiSlider-rail": {
+                              opacity: 1,
+                              bgcolor: (t) =>
+                                alpha(t.palette.primary.main, 0.38),
+                              backgroundImage: (t) => {
+                                const ts = map(diagnostics, "t")
+                                  .filter((c) => !isUndefined(c))
+                                  .map((c) => c / timespan);
+                                return `linear-gradient(to right, ${map(
+                                  ts,
+                                  (c) =>
+                                    `transparent ${c * 100 - 0.5}%, ${
+                                      t.palette.error.main
+                                    } ${c * 100 - 0.5}%, ${
+                                      t.palette.error.main
+                                    } ${c * 100 + 0.5}%, transparent ${
+                                      c * 100 + 0.5
+                                    }%`
+                                ).join(", ")})`;
+                              },
+                            },
+                          }}
+                        />
+                      </>
+                    )}
+                    {!sm && !disablePlayback && (
+                      <Divider orientation="vertical" flexItem />
+                    )}
+                    {!sm && (
+                      <>
+                        <Tooltip title="Toggle fullscreen" placement="top">
+                          <IconButton
+                            onClick={() => {
+                              toggle();
+                            }}
+                          >
+                            {isFullscreen ? (
+                              <FullscreenExitRounded />
+                            ) : (
+                              <FullscreenRounded />
+                            )}
                           </IconButton>
                         </Tooltip>
-                      ))}
-                      <Divider orientation="vertical" flexItem />
-                      <Slider
-                        value={step}
-                        onChange={(_, n) => seek(+n)}
-                        min={0}
-                        max={timespan}
-                        step={1}
-                        sx={{
-                          "& *": { transition: "none !important" },
-                          mx: 2,
-                          width: 240,
-                          flex: 1,
-                          ".MuiSlider-rail": {
-                            opacity: 1,
-                            bgcolor: (t) => alpha(t.palette.primary.main, 0.38),
-                            backgroundImage: (t) => {
-                              const ts = map(diagnostics, "t")
-                                .filter((c) => !isUndefined(c))
-                                .map((c) => c / timespan);
-                              return `linear-gradient(to right, ${map(
-                                ts,
-                                (c) =>
-                                  `transparent ${c * 100 - 0.5}%, ${
-                                    t.palette.error.main
-                                  } ${c * 100 - 0.5}%, ${
-                                    t.palette.error.main
-                                  } ${c * 100 + 0.5}%, transparent ${
-                                    c * 100 + 0.5
-                                  }%`
-                              ).join(", ")})`;
-                            },
-                          },
-                        }}
-                      />
-                    </Stack>
-                  </Card>
-                </Stack>
-              )}
+                        <PopupState variant="popover">
+                          {(popupState) => (
+                            <>
+                              <IconButton {...bindTrigger(popupState)}>
+                                <SettingsRounded />
+                              </IconButton>
+                              <Menu
+                                {...bindMenu(popupState)}
+                                anchorEl={toolbar}
+                                anchorOrigin={{
+                                  vertical: -8,
+                                  horizontal: "right",
+                                }}
+                                transformOrigin={{
+                                  vertical: "bottom",
+                                  horizontal: "right",
+                                }}
+                              >
+                                <MenuItem
+                                  onClick={() => {
+                                    popupState.close();
+                                    if (viewport) {
+                                      viewport.animate({
+                                        time: 300,
+                                        scale:
+                                          viewport.findFit(width, height) * 0.9,
+                                        ease: "easeInOutQuint",
+                                      });
+                                    }
+                                  }}
+                                >
+                                  <ListItemIcon>
+                                    <FitScreenRounded />
+                                  </ListItemIcon>
+                                  <ListItemText>Fit to screen</ListItemText>
+                                </MenuItem>
+                              </Menu>
+                            </>
+                          )}
+                        </PopupState>
+                      </>
+                    )}
+                  </Stack>
+                </Card>
+              </Stack>
               <Enter in={selection.show} axis="X" key={selection.agent}>
                 <Stack
                   sx={{
@@ -589,4 +674,23 @@ export function Visualisation({
       )}
     </Box>
   );
+
+  return isFullscreen
+    ? createPortal(
+        <Box
+          sx={{
+            zIndex: (t) => t.zIndex.modal + 1,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            bgcolor: "background.paper",
+          }}
+        >
+          {contents}
+        </Box>,
+        root.current
+      )
+    : contents;
 }

@@ -1,6 +1,5 @@
 import { Router, Application } from "express";
 import * as map from "../controllers/map";
-import { middleware as cache } from "apicache";
 
 export default (app: Application) => {
   const router = Router();

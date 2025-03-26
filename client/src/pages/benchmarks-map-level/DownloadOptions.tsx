@@ -280,6 +280,7 @@ export function DownloadOptions({ initialMaps }: { initialMaps: string[] }) {
             <Typography variant="h5" sx={{ mb: 2 }}>
               Selection summary
             </Typography>
+            <Item invert primary={"12,310"} secondary="File count" />
             <Item invert primary={"5 MB"} secondary="Estimated size" />
           </Stack>
           <Floating>
