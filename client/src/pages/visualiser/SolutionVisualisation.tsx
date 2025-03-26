@@ -43,7 +43,7 @@ export function MapVisualisation({
     mapId,
     scenarioId,
   });
-  console.log(result, optimisedMap);
+
   return (
     <Visualisation
       isLoading={isLoading}

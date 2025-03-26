@@ -152,8 +152,6 @@ export function useSolution({
     instance?.map_id ?? mapId
   );
 
-  console.log(mapMetaData, scenario);
-
   const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
     queryKey: [
       "solutionContextData",
