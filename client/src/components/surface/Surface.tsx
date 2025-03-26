@@ -7,13 +7,7 @@ import {
   usePopupState,
 } from "material-ui-popup-state/hooks";
 import { nanoid } from "nanoid";
-import {
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { ReactElement, ReactNode, useEffect, useReducer } from "react";
 import { usePrevious } from "react-use";
 import { FullscreenSurface } from "./FullscreenSurface";
 import { ModalAppBar } from "./ModalAppBar";

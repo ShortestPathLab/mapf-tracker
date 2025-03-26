@@ -25,6 +25,7 @@ export function FullscreenSurface({
           borderRadius: 0,
           width: " 100dvw",
           height: "100dvh",
+          "& > div": { height: "100%" },
           mx: 0,
           ...slotProps?.paper?.sx,
         },

@@ -34,6 +34,7 @@ import { setFromEvent } from "utils/set";
 import { useBottomBar } from "App";
 import { createContext } from "react";
 import { useLocationState } from "hooks/useNavigation";
+import { paper } from "theme";
 
 function smoothScrollTo(
   element: HTMLElement,
@@ -288,15 +289,17 @@ export default function DataGrid<
                   },
                 }),
                 "& .MuiDataGrid-footerContainer": {
+                  ...paper(),
+                  mr: xs ? 2 : 0,
+                  ml: "auto",
                   position: "sticky",
                   transition: (t) => t.transitions.create("bottom"),
-                  bottom: `calc(${bottomBarEnabled ? 80 : 0}px - ${
-                    allRows.length > PAGE_SIZE ? "0" : "100"
-                  }%)`,
-                  py: 1,
-                  px: xs ? 2 : 0,
-                  borderTop: (t) => `1px solid ${t.palette.divider}`,
-                  bgcolor: "background.paper",
+                  bottom: (bottomBarEnabled ? 80 : 0) + (xs ? 16 : 24),
+                  right: 0,
+                  py: 0,
+                  width: "max-content",
+                  px: 2,
+                  pl: 3,
                   "& .MuiToolbar-root": { px: 0, mr: "auto" },
                 },
                 ...rest.sx,

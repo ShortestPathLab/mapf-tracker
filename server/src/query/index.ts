@@ -157,7 +157,7 @@ export const route = <T extends z.ZodType, R>(
       const out = await f(data, req);
       res.json(out ?? undefined);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       res.status(500).json({
         error: e,
       });

@@ -1,4 +1,9 @@
-import { BoxProps, PopoverProps, SwipeableDrawerProps } from "@mui/material";
+import {
+  BoxProps,
+  DialogProps,
+  PopoverProps,
+  SwipeableDrawerProps,
+} from "@mui/material";
 import { ModalAppBarProps } from "./ModalAppBar";
 import { ModalProps } from "./Modal";
 
@@ -7,6 +12,6 @@ export type SlotProps = {
   appBar?: Partial<ModalAppBarProps>;
   popover?: Partial<PopoverProps>;
   paper?: Partial<BoxProps>;
-  modal?: Partial<ModalProps>;
+  modal?: Partial<ModalProps> & DialogProps;
   scroll?: Omit<Partial<unknown>, "ref">;
 };

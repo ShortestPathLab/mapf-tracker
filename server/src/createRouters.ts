@@ -13,6 +13,7 @@ import solutionSubmissionRoutes from "./routes/solutionSubmission";
 import submissionRoutes from "./routes/submission";
 import submissionKeyRoutes from "./routes/submissionKey";
 import userRoutes from "./routes/user";
+import { use as useBulk } from "./controllers/bulk";
 
 export const createRouters = (app: Application) => {
   mapRoutes(app);
@@ -30,4 +31,5 @@ export const createRouters = (app: Application) => {
   //
   useQueries(app);
   useAuth(app);
+  useBulk(app);
 };

@@ -5,6 +5,7 @@ import Show from "components/transitions/Show";
 import { ComponentProps, ReactNode } from "react";
 import { useCache } from "./useCache";
 import { useModalOverflow } from "./useModalOverflow";
+import { isString } from "lodash";
 
 export type ModalProps = {
   children?: ReactNode;
@@ -81,7 +82,7 @@ export function Modal({
           y
           style={{
             height: "100%",
-            width: `min(${width}px, 100%)`,
+            width: `min(${isString(width) ? width : `${width}px`}, 100%)`,
             maxWidth: width,
           }}
         >
@@ -96,7 +97,7 @@ export function Modal({
         <Box
           ref={(e: HTMLDivElement) => setContent(e)}
           sx={{
-            width: `min(${width}px, 100%)`,
+            width: `min(${isString(width) ? width : `${width}px`}, 100%)`,
             maxWidth: width,
             height: sm ? "100%" : undefined,
           }}

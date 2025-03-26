@@ -20,6 +20,7 @@ const schema = createSchema({
       algo_name: String,
       algo_id: { type: Schema.Types.ObjectId, ref: "algorithm" },
       date: String,
+      submission_id: { type: Schema.Types.ObjectId, ref: "submission" },
       value: Number,
     },
   ],

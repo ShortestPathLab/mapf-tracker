@@ -26,6 +26,8 @@ import { SnackbarProvider } from "./components/Snackbar";
 import { useTitleBar } from "./hooks/useTitleBar";
 import { theme } from "./theme";
 import { ThemeContext, useThemeState } from "./utils/ThemeProvider";
+import { createPortal } from "react-dom";
+import { BulkDownloadProvider } from "pages/benchmarks-map-level/DownloadOptions";
 
 export const queryClient = new QueryClient();
 
@@ -73,9 +75,11 @@ export default function App() {
                 <ConfirmProvider>
                   <SnackbarProvider>
                     <HistoryProvider>
-                      <Content />
-                      <MutatingBar />
-                      <ReactQueryDevtools buttonPosition="bottom-left" />
+                      <BulkDownloadProvider>
+                        <Content />
+                        <MutatingBar />
+                        <ReactQueryDevtools buttonPosition="bottom-left" />
+                      </BulkDownloadProvider>
                     </HistoryProvider>
                   </SnackbarProvider>
                 </ConfirmProvider>
@@ -90,7 +94,7 @@ export default function App() {
 
 export function MutatingBar() {
   const isMutating = useIsMutating();
-  return (
+  return createPortal(
     <Fade in={!!isMutating}>
       <LinearProgress
         sx={{
@@ -98,11 +102,12 @@ export function MutatingBar() {
           position: "fixed",
           left: 0,
           width: "100%",
-          zIndex: (t) => t.zIndex.appBar + 1,
+          zIndex: (t) => t.zIndex.modal + 1,
         }}
         variant="indeterminate"
       />
-    </Fade>
+    </Fade>,
+    document.body
   );
 }
 

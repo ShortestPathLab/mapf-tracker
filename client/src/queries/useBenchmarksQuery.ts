@@ -17,15 +17,7 @@ const incorporateProportions = <T extends CollectionWithInstanceCount>(
   closed_percentage: item.instances_closed / item.instances,
 });
 
-export const useBenchmarksData = () =>
-  useQuery({
-    queryKey: ["benchmarks"],
-    queryFn: async () =>
-      map(
-        await json<Benchmark[]>(`${APIConfig.apiUrl}/map`),
-        incorporateProportions
-      ),
-  });
+export const useBenchmarksData = () => useQuery(benchmarksQuery());
 
 export const useInstanceScenarioData = (id: number | string) =>
   useQuery(instanceScenarioQuery(id));
@@ -57,6 +49,17 @@ export const useMapData = (id: string = "") => {
     enabled: !!data && !!id,
   });
 };
+
+export function benchmarksQuery() {
+  return {
+    queryKey: ["benchmarks"],
+    queryFn: async () =>
+      map(
+        await json<Benchmark[]>(`${APIConfig.apiUrl}/map`),
+        incorporateProportions
+      ),
+  };
+}
 
 export function instanceScenarioQuery(id: string | number) {
   return {
