@@ -561,7 +561,7 @@ export function DownloadOptions({ initialMaps }: { initialMaps: string[] }) {
           <FlatCard sx={{ flex: 1, overflow: "hidden", mt: 0 }}>
             <Scroll y style={{ height: "100%" }}>
               <BottomBarContext.Provider
-                value={{ enabled: xs, setEnabled: noop }}
+                value={{ enabled: false, setEnabled: noop }}
               >
                 <TreeDataGrid
                   clickable
