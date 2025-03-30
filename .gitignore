@@ -4,5 +4,4 @@ build
 dist
 lib
 /data
-.env.development
-.env.production
+.env.*

@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
   # Define each service that you want to have HTTPS
   # Only need a port 80
@@ -14,6 +12,8 @@ services:
       # This service will be accessible via this virtual host
       - VIRTUAL_HOST=fe2410d1.pathfinding.ai
       - LETSENCRYPT_HOST=fe2410d1.pathfinding.ai
+    env_file:
+      - server/.env.production
     expose:
       - 80
     networks:
