@@ -31,7 +31,7 @@ export function QuickNavigation() {
           name: source.map_name,
           render: () => <MapLabel mapId={source.id} />,
           navigate: () =>
-            navigate<MapLevelLocationState>("/benchmarks", {
+            navigate<MapLevelLocationState>("/scenarios", {
               mapId: source.id,
             }),
         })),
