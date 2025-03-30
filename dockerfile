@@ -15,7 +15,7 @@ WORKDIR /app
 COPY packages packages
 
 # Copy package.json
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 COPY client/package.json client/package.json
 COPY server/package.json server/package.json
 
