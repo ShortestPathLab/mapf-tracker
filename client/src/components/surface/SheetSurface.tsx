@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { merge, noop } from "lodash-es";
+import { merge, noop } from "lodash";
 import { PopupState as State, bindDialog } from "material-ui-popup-state/hooks";
 import { ReactNode, createContext } from "react";
 import { useMeasure } from "react-use";

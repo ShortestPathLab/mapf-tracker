@@ -13,7 +13,7 @@ import pluralize from "pluralize";
 import { requestByEmailQueryFn } from "queries/useRequestQuery";
 import { useState } from "react";
 import { paper } from "theme";
-import { RenderSection } from "./Section";
+import { Section } from "./Section";
 
 export type ContactEmailState = {
   contactEmail: string;
@@ -35,7 +35,7 @@ export default function index() {
       disablePadding
       flat
       title="Your point of contact"
-      render={RenderSection}
+      render={Section}
       path={[
         { name: "Home", url: "/" },
         { name: "New submission request", url: "/submit" },
@@ -47,7 +47,7 @@ export default function index() {
         initialValues={{ email: contactEmail }}
         onSubmit={async (values) => {
           setChecking(true);
-          const a = await requestByEmailQueryFn(values.email)();
+          const requests = await requestByEmailQueryFn(values.email)();
           setChecking(false);
           const f = () =>
             navigate<object, ContactEmailState>(
@@ -57,18 +57,18 @@ export default function index() {
                 contactEmail: values.email,
               }
             );
-          const as = filter(
-            a,
+          const pendingRequests = filter(
+            requests,
             (c) => c.reviewStatus?.status === "not-reviewed"
           );
-          if (as.length) {
+          if (pendingRequests.length) {
             open({
               hintText: (
                 <Stack sx={{ gap: 2 }}>
                   We&apos;re still reviewing the following{" "}
-                  {pluralize("request", as.length)} from you.
+                  {pluralize("request", pendingRequests.length)} from you.
                   {map(
-                    as,
+                    pendingRequests,
                     ({
                       algorithmName,
                       requesterName,

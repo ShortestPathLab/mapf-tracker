@@ -3,7 +3,7 @@ import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
 import { SubmitRequestForm } from "pages/contribute/SubmitRequestForm";
 import { useEffect } from "react";
-import { RenderSection } from "./Section";
+import { Section } from "./Section";
 import { ContactEmailState } from "./step1";
 import { defer } from "lodash";
 
@@ -20,7 +20,7 @@ export default function index() {
         disablePadding
         flat
         title="About your submission"
-        render={RenderSection}
+        render={Section}
         path={[
           { name: "Home", url: "/" },
           { name: "New submission request", url: "/submit" },

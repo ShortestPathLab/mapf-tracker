@@ -20,7 +20,7 @@ export default function index() {
       title="Actions"
       path={[
         { name: "More", url: "/more" },
-        { name: "Manage", url: "/dashboard" },
+        { name: "Sudo", url: "/sudo" },
       ]}
       render={RenderFixed}
     >

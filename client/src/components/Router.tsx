@@ -1,7 +1,7 @@
 import { Box, Stack } from "@mui/material";
 import { useXs } from "components/dialog/useSmallDisplay";
-import { filter, map, some } from "lodash";
-import { Fragment, ReactElement, ReactNode } from "react";
+import { filter, find, head, map, some } from "lodash";
+import { Fragment, ReactElement, ReactNode, useEffect, useState } from "react";
 import { matchPath, useLocation } from "react-router-dom";
 import { usePrevious } from "react-use";
 import { useTransition } from "transition-hook";
@@ -15,39 +15,41 @@ export type Route = {
 function Sheet({
   children,
   in: state = false,
-  top = true,
+  direction,
   disableAnimation = false,
-  root,
 }: {
-  children?: ReactElement;
+  children?: ReactNode;
   in?: boolean;
-  top?: boolean;
+  direction?: "forwards" | "backwards";
   disableAnimation?: boolean;
-  root?: boolean;
 }) {
-  const { stage, shouldMount } = useTransition(state, 300);
-  const { stage: topStage } = useTransition(top, 300);
-  const active = disableAnimation || topStage === "enter";
+  const [inner, setInner] = useState(false);
+  useEffect(() => void setInner(state), [state]);
+
+  const { stage, shouldMount } = useTransition(inner, 300);
+  const active = shouldMount || disableAnimation;
   const styles = {
     from: {
-      transform: root ? "translateX(-16px)" : "translateX(16px)",
+      transform:
+        direction === "forwards" ? "translateX(16px)" : "translateX(-16px)",
       opacity: 0,
     },
     enter: {
       "> div": {
-        transform: active ? "translateX(0)" : "translateX(-16px)",
-        opacity: active ? 1 : 0,
+        transform: "translateX(0)",
+        opacity: 1,
       },
     },
     leave: {
-      transform: root ? "translateX(-16px)" : "translateX(16px)",
+      transform:
+        direction === "forwards" ? "translateX(16px)" : "translateX(-16px)",
       opacity: 0,
     },
   };
   return children ? (
     <Box
       sx={{
-        pointerEvents: shouldMount ? "auto" : "none",
+        pointerEvents: active ? "auto" : "none",
         position: "absolute",
         zIndex: (t) => t.zIndex.appBar + 1,
         top: 0,
@@ -57,13 +59,18 @@ function Sheet({
         ...styles[disableAnimation ? "enter" : stage],
         "&, & > div": {
           overflow: "hidden",
-          transition: (t) => t.transitions.create(["transform", "opacity"]),
+          transition: (t) =>
+            t.transitions.create(["transform", "opacity"], { duration: 450 }),
         },
       }}
     >
-      {shouldMount && (
+      {active && (
         <Box
-          sx={{ width: "100%", height: "100%", bgcolor: "background.default" }}
+          sx={{
+            width: "100%",
+            height: "100dvh",
+            bgcolor: "background.default",
+          }}
         >
           {children}
         </Box>
@@ -75,20 +82,30 @@ function Sheet({
 export function Router({
   flat,
   routes,
-  fallback,
+  fallback: _fallback,
 }: {
   flat?: boolean;
   routes: Route[];
-  fallback?: ReactNode;
+  fallback?: ReactNode | true;
 }) {
+  const fallback =
+    _fallback === true
+      ? head(routes)
+      : {
+          content: _fallback,
+          path: "",
+        };
+
   const { pathname } = useLocation();
   const previous = usePrevious(pathname);
   const sm = useXs();
   const current = routes.find((r) => matchPath(r.path, pathname));
-  const previous1 = previous
+  const prev = previous
     ? routes.find((r) => matchPath(r.path, previous))
     : undefined;
+
   const directMatch = (a?: Route) => matchPath(a.path, pathname);
+
   const recursiveMatch = (a?: Route) => {
     if (!a) return false;
     if (directMatch(a)) return true;
@@ -96,26 +113,33 @@ export function Router({
     if (b) return some(map(b, recursiveMatch));
     return false;
   };
-  const createRoute = (
-    a: Route,
-    child: ReactElement,
-    visible: boolean,
-    top: boolean,
-    root: boolean
-  ) =>
-    sm ? (
-      <Sheet
-        root={root}
-        in={visible}
-        top={top}
-        disableAnimation={
-          // Disable animation only if navigating between roots
-          root && !current?.parent && !previous1?.parent
-        }
-      >
-        {child}
-      </Sheet>
-    ) : matchPath(a, pathname) ? (
+
+  const depth = (a?: Route) =>
+    a?.parent ? depth(find(routes, (x) => x.path === a.parent)) + 1 : 0;
+
+  const isRoot = (a?: Route) => !a?.parent;
+
+  const [animationState, setAnimationState] = useState<{
+    previous?: Route;
+    next?: Route;
+    direction?: "forwards" | "backwards";
+  }>({
+    previous: undefined,
+    next: undefined,
+    direction: undefined,
+  });
+  useEffect(() => {
+    if (prev === current) return;
+    const betweenRoots = isRoot(prev) && isRoot(current);
+    const direction = depth(prev) > depth(current) ? "backwards" : "forwards";
+    setAnimationState({
+      previous: prev,
+      next: current,
+      direction: betweenRoots ? undefined : direction,
+    });
+  }, [prev, current]);
+  const createRoute = (a: Route, child: ReactElement) => {
+    return directMatch(a) ? (
       flat ? (
         child
       ) : (
@@ -141,37 +165,69 @@ export function Router({
         </Stack>
       )
     ) : undefined;
+  };
   const matches = routes.filter(recursiveMatch);
   return (
     <Stack
       sx={{
         bgcolor: "background.paper",
         minHeight: "100dvh",
+        height: "100%",
         width: "100%",
         color: "text.primary",
       }}
     >
-      {matches.length
-        ? routes.map((r) => (
-            <Fragment key={r.path}>
-              {createRoute(
-                r,
-                <Box
-                  sx={
-                    sm
-                      ? { height: "100dvh", display: "flex" }
-                      : { height: "100%", width: "100%", display: "flex" }
-                  }
+      {!sm
+        ? matches.length
+          ? routes.map((r) => (
+              <Fragment key={r.path}>
+                {createRoute(
+                  r,
+                  <Box sx={{ height: "100%", width: "100%", display: "flex" }}>
+                    {r.content}
+                  </Box>
+                )}
+              </Fragment>
+            ))
+          : fallback.content
+        : matches.length
+        ? animationState.direction
+          ? animationState.direction === "forwards"
+            ? [
+                <Sheet
+                  direction="backwards"
+                  key={animationState.previous?.path}
                 >
-                  {r.content}
-                </Box>,
-                !!recursiveMatch(r),
-                !!directMatch(r),
-                !r.parent
-              )}
-            </Fragment>
-          ))
-        : fallback}
+                  {animationState.previous?.content}
+                </Sheet>,
+                <Sheet in direction="forwards" key={animationState.next?.path}>
+                  {animationState.next?.content}
+                </Sheet>,
+              ]
+            : [
+                <Sheet in direction="backwards" key={animationState.next?.path}>
+                  {animationState.next?.content}
+                </Sheet>,
+                <Sheet direction="forwards" key={animationState.previous?.path}>
+                  {animationState.previous?.content}
+                </Sheet>,
+              ]
+          : [
+              <Sheet key={animationState.previous?.path} />,
+              <Sheet
+                disableAnimation
+                in
+                direction="forwards"
+                key={animationState.next?.path}
+              >
+                {animationState.next?.content}
+              </Sheet>,
+            ]
+        : [
+            <Sheet direction="forwards" in disableAnimation key={fallback.path}>
+              {fallback.content}
+            </Sheet>,
+          ]}
     </Stack>
   );
 }

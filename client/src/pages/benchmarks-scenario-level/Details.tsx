@@ -28,16 +28,16 @@ import Grid from "layout/Grid";
 import { capitalize, head } from "lodash";
 import pluralize from "pluralize";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
-import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
-import { useInstanceData } from "queries/useInstanceQuery";
+import { useMapData, useScenario } from "queries/useMapQuery";
+import { useInstance } from "queries/useInstanceQuery";
 import { formatDate } from "utils/format";
 import { downloadRow } from "./download";
 
 export default function Details({ id }: { id?: string }) {
   const notify = useSnackbarAction();
   const { data: history } = useAlgorithmForInstanceData(id);
-  const { data: instance } = useInstanceData(id);
-  const { data: scenario } = useScenarioDetailsData(instance?.scen_id);
+  const { data: instance } = useInstance(id);
+  const { data: scenario } = useScenario(instance?.scen_id);
   const { data: map } = useMapData(instance?.map_id);
   const isClosed =
     instance?.solution_cost && instance.solution_cost === instance.lower_cost;

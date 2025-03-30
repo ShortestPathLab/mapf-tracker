@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { Field } from "../Field";
 import { useSnackbar } from "../Snackbar";
 import { useLogInMutation } from "queries/useLogInQuery";
+import { useNavigate } from "hooks/useNavigation";
 
 export type LogInFormData = { username: string; password: string };
 function LogInForm({
@@ -42,6 +43,7 @@ export function LogInDialog({ onClose }: DialogContentProps) {
   const {
     logIn: { mutateAsync: logIn },
   } = useLogInMutation();
+  const navigate = useNavigate();
   return (
     <Stack sx={{ gap: 2 }}>
       <Typography color="text.secondary">
@@ -53,6 +55,7 @@ export function LogInDialog({ onClose }: DialogContentProps) {
           try {
             const result = await logIn(values);
             if (result) {
+              navigate("/sudo");
               notify("Logged in");
               onClose?.();
             } else throw new Error("");

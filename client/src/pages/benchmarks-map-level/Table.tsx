@@ -2,21 +2,21 @@ import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
 import { cellRendererBar, cellRendererChip } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { InstanceCollection } from "core/types";
+import { Scenario } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
-import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
+import { useScenariosByMap } from "queries/useMapQuery";
 
 export default function Table() {
   const state = useStableLocationState<MapLevelLocationState>();
   const { mapId } = state;
-  const { data, isLoading } = useInstanceScenarioData(mapId);
+  const { data, isLoading } = useScenariosByMap(mapId);
   const navigate = useNavigate();
 
-  const columns: GridColDef<InstanceCollection>[] = [
+  const columns: GridColDef<Scenario>[] = [
     {
       field: "type_id",
       headerName: "Scenario",

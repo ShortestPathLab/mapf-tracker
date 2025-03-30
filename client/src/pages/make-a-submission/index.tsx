@@ -26,6 +26,7 @@ export default function MakeASubmissionPage() {
   return (
     <Router
       flat
+      fallback
       routes={[
         {
           path: "/submit/",

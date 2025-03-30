@@ -92,7 +92,7 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
                 type: getFileType(file.name),
                 label: file.name,
                 size: file.size,
-              });
+              }).catch(console.error);
               notify("Upload done");
             };
             reader.readAsText(file);

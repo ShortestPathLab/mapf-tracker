@@ -1,12 +1,12 @@
 import { ShowChartRounded } from "@mui-symbols-material/w400";
-import { Benchmark, InstanceCollection } from "core/types";
+import { Map, Scenario } from "core/types";
 import {
   LowerBoundChart,
   LowerBoundComparisonChart,
 } from "./charts/LowerBoundChart";
 import { SuccessRateOnAgentsChart } from "pages/benchmarks-map-level/charts/SuccessRateChart";
 
-export function analysisTemplate(scenarioData?: InstanceCollection) {
+export function analysisTemplate(scenarioData?: Scenario) {
   return [
     {
       name: ``,
@@ -31,10 +31,7 @@ export function analysisTemplate(scenarioData?: InstanceCollection) {
     },
   ];
 }
-export function compareTemplate(
-  scenarioData?: InstanceCollection,
-  mapData?: Benchmark
-) {
+export function compareTemplate(scenarioData?: Scenario, mapData?: Map) {
   return [
     {
       name: ``,

@@ -1,6 +1,6 @@
 import { SummarySlice } from "core/types";
 import { filter } from "lodash";
-import { useInstanceData } from "queries/useInstanceQuery";
+import { useInstance } from "queries/useInstanceQuery";
 import {
   OngoingSubmission,
   useOngoingSubmissionScenarioQuery,
@@ -37,7 +37,7 @@ function useSubmissionInstance({
     useOngoingSubmissionScenarioQuery(apiKey, scenarioId);
   const filtered = filter(submissions, filters[slice]);
   const submission = filtered?.[index];
-  const { data: instance, isLoading: isInstanceLoading } = useInstanceData(
+  const { data: instance, isLoading: isInstanceLoading } = useInstance(
     submission?.instance
   );
   const isLoading = isSubmissionLoading || isInstanceLoading;

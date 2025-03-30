@@ -3,7 +3,7 @@ import {
   SubmissionInfo,
   useAlgorithmScenarioQuery,
 } from "queries/useAlgorithmQuery";
-import { useInstanceData } from "queries/useInstanceQuery";
+import { useInstance } from "queries/useInstanceQuery";
 import { ReactNode } from "react";
 
 export type SubmissionInstanceContextParams = {
@@ -26,7 +26,7 @@ export function SubmissionInstanceContext({
 }) {
   const { data, isLoading } = useAlgorithmScenarioQuery(algorithm, scenario);
   const current = data?.[index];
-  const { data: instance, isLoading: isInstanceLoading } = useInstanceData(
+  const { data: instance, isLoading: isInstanceLoading } = useInstance(
     current?.instance_id
   );
   return children({

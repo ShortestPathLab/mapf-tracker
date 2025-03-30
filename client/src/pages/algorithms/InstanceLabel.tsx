@@ -3,10 +3,10 @@ import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
 import Enter from "components/transitions/Enter";
 import pluralize from "pluralize";
-import { useInstanceData } from "queries/useInstanceQuery";
+import { useInstance } from "queries/useInstanceQuery";
 
 export function InstanceLabel({ id }: { id?: string }) {
-  const { data: instance, isLoading } = useInstanceData(id);
+  const { data: instance, isLoading } = useInstance(id);
   return (
     <Enter axis="x" in={!isLoading}>
       <Stack

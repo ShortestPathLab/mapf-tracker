@@ -122,7 +122,7 @@ export default function index() {
       title="API keys"
       path={[
         { name: "More", url: "/more" },
-        { name: "Manage", url: "/dashboard" },
+        { name: "Sudo", url: "/sudo" },
       ]}
     >
       <Tip

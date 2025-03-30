@@ -4,17 +4,19 @@ import {
 } from "@mui-symbols-material/w400";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
-import Link from "@mui/material/Link";
 import { useMutation } from "@tanstack/react-query";
-import { IconCard } from "components/IconCard";
-import { Item } from "components/Item";
-import { useSnackbar } from "components/Snackbar";
 import {
   DataGrid,
   cellRendererText,
   useDataGridActions,
 } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
+import { useXs } from "components/dialog/useSmallDisplay";
+import { FlatCard } from "components/FlatCard";
+import { IconCard } from "components/IconCard";
+import { Item } from "components/Item";
+import { useSnackbar } from "components/Snackbar";
+import { Tip } from "components/Tip";
 import { APIConfig } from "core/config";
 import { AddKeyForm } from "forms/AddKeyForm";
 import { useNavigate } from "hooks/useNavigation";
@@ -26,9 +28,6 @@ import { Request, useRequestsData } from "queries/useRequestQuery";
 import { object, string } from "yup";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
 import { SubmissionLocationState } from "./SubmissionLocationState";
-import { useXs } from "components/dialog/useSmallDisplay";
-import { FlatCard } from "components/FlatCard";
-import { Tip } from "components/Tip";
 
 export function AddKey() {
   const navigate = useNavigate();
@@ -39,7 +38,7 @@ export function AddKey() {
   });
 
   const navigateToDetails = (key: string | number) =>
-    navigate<SubmissionLocationState>("/submissionSummary", {
+    navigate<SubmissionLocationState>("/upload", {
       apiKey: key,
     });
   const handleApiFormSubmit = async ({ key }, { resetForm }) => {
@@ -105,7 +104,7 @@ export default function TrackSubmission() {
   const notify = useSnackbar();
 
   function navigateToDetails(key: string | number) {
-    navigate<SubmissionLocationState>("/submissionSummary", {
+    navigate<SubmissionLocationState>("/upload", {
       apiKey: key,
     });
   }

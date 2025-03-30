@@ -1,5 +1,5 @@
 import { ShowChartRounded } from "@mui-symbols-material/w400";
-import { Benchmark } from "core/types";
+import { Map } from "core/types";
 import { AlgorithmByAgentChart } from "./charts/AlgorithmByAgentChart";
 import { AlgorithmByScenarioChart } from "./charts/AlgorithmByScenarioChart";
 import {
@@ -7,7 +7,7 @@ import {
   SuccessRateOnAgentsChart,
 } from "./charts/SuccessRateChart";
 
-export function compareTemplate(mapData: Benchmark) {
+export function compareTemplate(mapData: Map) {
   return [
     {
       name: "",
@@ -25,7 +25,7 @@ export function compareTemplate(mapData: Benchmark) {
     },
   ];
 }
-export function analysisTemplate(mapData: Benchmark) {
+export function analysisTemplate(mapData: Map) {
   return [
     {
       name: "",

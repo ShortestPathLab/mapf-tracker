@@ -10,7 +10,7 @@ export type CollectionWithProportions = {
   proportion_instances_solved: number;
 };
 
-export type Benchmark = {
+export type Map = {
   map_size: string;
   map_type: string;
   map_name: string;
@@ -22,7 +22,7 @@ export type Benchmark = {
 } & CollectionWithInstanceCount &
   CollectionWithProportions;
 
-export type InstanceCollection = {
+export type Scenario = {
   type_id: number;
   scen_type: string;
   map_id: string;
@@ -42,12 +42,12 @@ export type Instance = {
   solution_path_id: string;
 };
 
-export type AlgorithmCollection = {
+export type Algorithm = {
   _id: string;
   algo_name: string;
 };
 
-export type AlgorithmDetails = AlgorithmCollection &
+export type AlgorithmDetails = Algorithm &
   CollectionWithInstanceCount & {
     comments: string;
     authors: string;
@@ -60,12 +60,12 @@ export type AlgorithmDetails = AlgorithmCollection &
     request_id: string;
   };
 
-export type AlgorithmCollectionCount = AlgorithmCollection & {
+export type AlgorithmCollectionCount = Algorithm & {
   count: number;
   total: number;
 };
 
-export type AlgorithmCollectionAggregate = AlgorithmCollection & {
+export type AlgorithmCollectionAggregate = Algorithm & {
   count: number;
   sum_value: number;
   total_ins: number;

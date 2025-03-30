@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { APIConfig } from "core/config";
 import { capitalize, upperFirst } from "lodash";
-import { AlgorithmCollection, AlgorithmCollectionCount } from "core/types";
+import { Algorithm, AlgorithmCollectionCount } from "core/types";
 import { Metric, ScenarioMetric } from "core/metrics";
 import { json } from "./query";
 
@@ -32,6 +32,7 @@ export const useScenarioOnAgentData = (query: Metric, id: string) =>
       >(`${APIConfig.apiUrl}/algorithm/getAgent${capitalize(query)}Info/${id}`),
     enabled: !!query && !!id,
   });
+
 export const useScenarioOnAgentGapData = (
   query: ScenarioMetric,
   map: string | number,
@@ -43,7 +44,7 @@ export const useScenarioOnAgentGapData = (
       json<
         {
           agents: number;
-          record: (AlgorithmCollection & { cost: number })[];
+          record: (Algorithm & { cost: number })[];
         }[]
       >(
         `${APIConfig.apiUrl}/algorithm/getAgent${upperFirst(

@@ -24,7 +24,7 @@ import { pages } from "pages/docs/pages";
 import { Tip } from "pages/home/Tip";
 import pluralize from "pluralize";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 import { ReactNode } from "react";
 import { paper } from "theme";
 
@@ -46,7 +46,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
         instances: 0,
       },
     ],
-  } = useBenchmarksData();
+  } = useMapsData();
   const {
     data: algorithms = [
       {

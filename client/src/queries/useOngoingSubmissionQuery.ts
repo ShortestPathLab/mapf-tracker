@@ -1,17 +1,11 @@
-import {
-  QueriesOptions,
-  QueriesResults,
-  useMutation,
-  useQueries,
-  useQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { SummaryResult } from "core/types";
 import {
+  cloneDeep,
   head,
-  identity,
   keyBy,
   map,
   max,
@@ -22,8 +16,11 @@ import {
 } from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ref } from "yup";
+import { useEffect, useState } from "react";
+import {
+  REFETCH_MS,
+  useRoundRobinQueries,
+} from "../hooks/useRoundRobinQueries";
 
 function mergeArray<T>(
   xs: T[],
@@ -31,60 +28,18 @@ function mergeArray<T>(
   key: (t: T) => string,
   f: (a: T, b: T) => T
 ) {
-  const as = keyBy(xs, key);
-  const bs = keyBy(ys, key);
-  const out = mergeWith(as, bs, f);
-  return values(out);
+  return values(mergeWith(keyBy(xs, key), keyBy(ys, key), f));
 }
 
-function g(v1: unknown, v2: unknown) {
+function mergeValues(v1: unknown, v2: unknown) {
   if (v1 instanceof Array && v2 instanceof Array) {
-    return mergeArray(v1, v2, (v) => v.id, g);
+    return mergeArray(v1, v2, (v) => v.id, mergeValues);
   }
   if (typeof v1 === "number" && typeof v2 === "number") {
     return v1 + v2;
   }
   return undefined;
 }
-
-const REFETCH_MS = 2000;
-
-const useRoundRobinQueries = <
-  T extends Array<any>,
-  TCombinedResult = QueriesResults<T>
->({
-  queries,
-  combine = identity,
-}: {
-  queries: [...QueriesOptions<T>];
-  combine?: (result: QueriesResults<T>) => TCombinedResult;
-}) => {
-  const i = useRef(0);
-  const { original, processed } = useQueries({
-    queries: queries.map((query) => ({
-      ...query,
-      refetchOnWindowFocus: false,
-      refetchInterval: false, // Disable automatic refetch
-    })) as any[],
-    combine: (result) => ({
-      original: result,
-      processed: combine(result as any),
-    }),
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const elem = original[i.current % original.length];
-      if (!elem.isFetching) {
-        elem.refetch();
-      }
-      i.current++;
-    }, REFETCH_MS);
-    return () => clearInterval(interval);
-  }, [original]);
-
-  return processed;
-};
 
 export type ValidationOutcome = {
   isValidationRun: boolean;
@@ -190,7 +145,11 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
         isFetched: some(results, "isFetched"),
         isLoading: some(results, "isLoading"),
         isPending: some(results, "isPending"),
-        data: mergeWith({}, ...map(results, "data"), g),
+        data: mergeWith(
+          {},
+          ...map(results, "data"),
+          mergeValues
+        ) as SummaryResult,
       }),
     });
   const shouldContract =
@@ -238,7 +197,7 @@ export function useOngoingSubmissionTicketQuery(key?: string | number) {
       ...(await json<SubmissionTicket[]>(
         `${APIConfig.apiUrl}/ongoing_submission/status/${key}`
       )),
-      ...Array.from(optimisticQueue),
+      ...cloneDeep(Array.from(optimisticQueue)),
     ],
     enabled: !!key,
     refetchInterval: REFETCH_MS,

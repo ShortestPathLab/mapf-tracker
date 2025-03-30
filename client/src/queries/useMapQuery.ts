@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { find, map } from "lodash";
 import {
-  Benchmark,
+  Map,
   CollectionWithInstanceCount,
   Instance as Instance,
-  InstanceCollection,
+  Scenario,
 } from "core/types";
 import { APIConfig } from "core/config";
 import { json } from "./query";
@@ -17,23 +17,22 @@ const incorporateProportions = <T extends CollectionWithInstanceCount>(
   closed_percentage: item.instances_closed / item.instances,
 });
 
-export const useBenchmarksData = () => useQuery(benchmarksQuery());
+export const useMapsData = () => useQuery(mapsQuery());
 
-export const useInstanceScenarioData = (id: number | string) =>
-  useQuery(instanceScenarioQuery(id));
+export const useScenariosByMap = (id: number | string) =>
+  useQuery(scenariosQuery(id));
 
-export const useScenarioDetailsData = (id: number | string) =>
-  useQuery(scenarioDetailsQuery(id));
+export const useScenario = (id: number | string) => useQuery(scenarioQuery(id));
 
-export const useInstanceCollectionData = (id: number | string) =>
+export const useInstancesByScenario = (id: number | string) =>
   useQuery({
     queryKey: ["instanceCollection", id],
     queryFn: () => json<Instance[]>(`${APIConfig.apiUrl}/instance/${id}`),
     enabled: !!id,
   });
 
-export const useMapDataByName = (name: string = "") => {
-  const { data } = useBenchmarksData();
+export const useMapByName = (name: string = "") => {
+  const { data } = useMapsData();
   return useQuery({
     queryKey: ["benchmarks", "name", name],
     queryFn: () => find(data, { map_name: name }) || null,
@@ -42,7 +41,7 @@ export const useMapDataByName = (name: string = "") => {
 };
 
 export const useMapData = (id: string = "") => {
-  const { data } = useBenchmarksData();
+  const { data } = useMapsData();
   return useQuery({
     queryKey: ["benchmarks", id],
     queryFn: () => find(data, { id }) || null,
@@ -50,36 +49,30 @@ export const useMapData = (id: string = "") => {
   });
 };
 
-export function benchmarksQuery() {
+export function mapsQuery() {
   return {
     queryKey: ["benchmarks"],
     queryFn: async () =>
-      map(
-        await json<Benchmark[]>(`${APIConfig.apiUrl}/map`),
-        incorporateProportions
-      ),
+      map(await json<Map[]>(`${APIConfig.apiUrl}/map`), incorporateProportions),
   };
 }
 
-export function instanceScenarioQuery(id: string | number) {
+export function scenariosQuery(id: string | number) {
   return {
     queryKey: ["instanceCollections", id],
     queryFn: async () =>
       map(
-        await json<InstanceCollection[]>(
-          `${APIConfig.apiUrl}/scenario/map/${id}`
-        ),
+        await json<Scenario[]>(`${APIConfig.apiUrl}/scenario/map/${id}`),
         incorporateProportions
       ),
     enabled: !!id,
   };
 }
 
-export function scenarioDetailsQuery(id: string | number) {
+export function scenarioQuery(id: string | number) {
   return {
     queryKey: ["scenario", id],
-    queryFn: () =>
-      json<InstanceCollection>(`${APIConfig.apiUrl}/scenario/id/${id}`),
+    queryFn: () => json<Scenario>(`${APIConfig.apiUrl}/scenario/id/${id}`),
     enabled: !!id,
   };
 }

@@ -69,7 +69,7 @@ export default function index() {
                 onAccept={notify(
                   async () => {
                     const result = await createKey(row.id);
-                    navigate(`/dashboard/api-keys`, { q: result.key });
+                    navigate(`/sudo/api-keys`, { q: result.key });
                   },
                   {
                     start: "Creating key",
@@ -187,7 +187,7 @@ export default function index() {
       title="Submission key requests"
       path={[
         { name: "More", url: "/more" },
-        { name: "Manage", url: "/dashboard" },
+        { name: "Sudo", url: "/sudo" },
       ]}
     >
       <FlatCard>

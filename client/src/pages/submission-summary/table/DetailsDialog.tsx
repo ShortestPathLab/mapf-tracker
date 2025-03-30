@@ -10,7 +10,7 @@ import { DialogContentProps } from "hooks/useDialog";
 import { capitalize, isNumber, map } from "lodash";
 import { SolutionVisualisation } from "pages/visualiser/SolutionVisualisation";
 import pluralize from "pluralize";
-import { useScenarioDetailsData } from "queries/useBenchmarksQuery";
+import { useScenario } from "queries/useMapQuery";
 import { DATE_TIME_FORMAT, formatDate } from "utils/format";
 import { MapLabel } from "./MapLabel";
 import { ScenarioLabel } from "./ScenarioLabel";
@@ -64,7 +64,7 @@ export function DetailsDialog({
   slice,
 }: SubmissionInstanceProps & DialogContentProps) {
   const sm = useSm();
-  const { data: scenario } = useScenarioDetailsData(scenarioId);
+  const { data: scenario } = useScenario(scenarioId);
   const { dialog, open } = useSurface(VisualisationDialog, {
     variant: "fullscreen",
     slotProps: {

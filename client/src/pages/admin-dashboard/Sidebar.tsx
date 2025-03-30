@@ -1,12 +1,4 @@
-import {
-  Stack,
-  StackProps,
-  Tab,
-  Tabs,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Stack, StackProps, Tab, Tabs, Typography } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { head } from "lodash";
@@ -16,10 +8,9 @@ import { pages } from "./pages";
 export function Sidebar(props: StackProps) {
   const lg = useSm();
   const { pathname } = useLocation();
-  const match = matchPath("/dashboard/:section?/", pathname);
+  const match = matchPath("/sudo/:section?/", pathname);
   const { section } = match?.params ?? {};
   const navigate = useNavigate();
-  const theme = useTheme();
   return (
     !lg && (
       <Stack
@@ -31,11 +22,11 @@ export function Sidebar(props: StackProps) {
         }}
       >
         <Stack sx={{ p: 3 }}>
-          <Typography variant="h6">Manage</Typography>
+          <Typography variant="h6">Sudo</Typography>
         </Stack>
         <Tabs
           value={section ?? head(pages()).value}
-          onChange={(_, v) => navigate(`/dashboard/${v}`)}
+          onChange={(_, v) => navigate(`/sudo/${v}`)}
           orientation="vertical"
         >
           {pages().map(({ value, label, description }) => (

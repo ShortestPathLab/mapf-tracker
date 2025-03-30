@@ -4,7 +4,7 @@ import { PreviewCard } from "components/PreviewCard";
 import { isUndefined, startCase } from "lodash";
 import { PreviewCollection } from "components/PreviewCollection";
 import pluralize from "pluralize";
-import { useMapData } from "queries/useBenchmarksQuery";
+import { useMapData } from "queries/useMapQuery";
 
 export function MapLabel({ mapId, count }: { mapId: string; count?: number }) {
   const { data: map } = useMapData(mapId);

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { APIConfig } from "core/config";
 import { Metric } from "core/metrics";
 import {
-  AlgorithmCollection,
+  Algorithm,
   AlgorithmCollectionAggregate,
   AlgorithmCollectionCount,
   AlgorithmDetails,
@@ -32,6 +32,7 @@ export type SubmissionInfo = {
   best_lower: boolean;
   best_solution: boolean;
 };
+
 export function useAlgorithmScenarioQuery(
   algorithm?: string,
   scenario?: string
@@ -49,8 +50,7 @@ export function useAlgorithmScenarioQuery(
 export const useAlgorithmsData = () => {
   return useQuery({
     queryKey: ["algorithms"],
-    queryFn: () =>
-      json<AlgorithmCollection[]>(`${APIConfig.apiUrl}/algorithm/`),
+    queryFn: () => json<Algorithm[]>(`${APIConfig.apiUrl}/algorithm/`),
   });
 };
 
@@ -77,13 +77,13 @@ export const useAlgorithmForInstanceData = (id: string) => {
       json<
         {
           id: string;
-          lower_algos: (AlgorithmCollection & {
+          lower_algos: (Algorithm & {
             value: number;
             algo_id: string;
             submission_id: string;
             date: string;
           })[];
-          solution_algos: (AlgorithmCollection & {
+          solution_algos: (Algorithm & {
             value: number;
             submission_id: string;
             algo_id: string;

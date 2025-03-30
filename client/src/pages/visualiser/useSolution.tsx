@@ -12,8 +12,8 @@ import {
 import memoizee from "memoizee";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
-import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
-import { useInstanceData } from "queries/useInstanceQuery";
+import { useMapData, useScenario } from "queries/useMapQuery";
+import { useInstance } from "queries/useInstanceQuery";
 import { useOngoingSubmissionByIdQuery } from "queries/useOngoingSubmissionQuery";
 import { useSolutionData } from "queries/useSolutionQuery";
 import { useMemo } from "react";
@@ -132,7 +132,7 @@ export function useSolution({
 }: SolutionParameters) {
   "use no memo";
   const { data: instance, isLoading: isInstanceLoading } =
-    useInstanceData(instanceId);
+    useInstance(instanceId);
   const { data: history, isLoading: isHistoryLoading } =
     useAlgorithmForInstanceData(instanceId);
   const { data: solution, isLoading: isSolutionLoading } = useSolutionData(
@@ -146,8 +146,9 @@ export function useSolution({
       source === "ongoing" ? solutionId : undefined
     );
 
-  const { data: scenario, isLoading: isScenarioLoading } =
-    useScenarioDetailsData(instance?.scen_id ?? scenarioId);
+  const { data: scenario, isLoading: isScenarioLoading } = useScenario(
+    instance?.scen_id ?? scenarioId
+  );
   const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(
     instance?.map_id ?? mapId
   );

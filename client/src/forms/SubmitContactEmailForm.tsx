@@ -1,6 +1,5 @@
-import { Box } from "@mui/material";
 import { Field } from "components/Field";
-import { FormikProps, FormikConfig, Formik, Form } from "formik";
+import { Form, Formik, FormikConfig, FormikProps } from "formik";
 import { noop } from "lodash";
 import { ReactNode } from "react";
 import { object, string } from "yup";

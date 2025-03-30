@@ -29,8 +29,6 @@ export function SubmitRequestForm({
 
   const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Submit request",
-    slotProps: { modal: { variant: "default" } },
-    padded: true,
   });
 
   const { mutateAsync: submit } = useMutation({

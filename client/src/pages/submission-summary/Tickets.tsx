@@ -22,6 +22,7 @@ import prettyBytes from "pretty-bytes";
 import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
 import { paper } from "theme";
 import GenericDetailsList from "./GenericDetailsList";
+import React from "react";
 
 export function Tickets({ apiKey }: { apiKey?: string | number }) {
   const { data: tickets } = useOngoingSubmissionTicketQuery(apiKey);

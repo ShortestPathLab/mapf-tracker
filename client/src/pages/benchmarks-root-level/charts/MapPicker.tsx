@@ -2,12 +2,12 @@ import { TextField, TextFieldProps } from "@mui/material";
 import { CheckboxItem } from "components/analysis/ChartOptions";
 import { renderSelectChip } from "components/analysis/renderSelectChip";
 import { chain, startCase } from "lodash";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 
 // TODO: Current picker uses name as ID, should use ID
 
 export function MapPicker({ ...props }: TextFieldProps) {
-  const { data } = useBenchmarksData();
+  const { data } = useMapsData();
   return (
     <TextField
       label="Map"

@@ -182,7 +182,7 @@ export default function index() {
       title="Admin users"
       path={[
         { name: "More", url: "/more" },
-        { name: "Manage", url: "/dashboard" },
+        { name: "Sudo", url: "/sudo" },
       ]}
     >
       <ActionBar

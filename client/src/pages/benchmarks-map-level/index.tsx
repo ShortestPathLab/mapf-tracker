@@ -17,7 +17,7 @@ import {
   downloadBenchmarksResultsCSV,
   downloadMap,
 } from "pages/benchmarks-root-level/download";
-import { useMapData } from "queries/useBenchmarksQuery";
+import { useMapData } from "queries/useMapQuery";
 import { DownloadOptions } from "./DownloadOptions";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import { MapVisualisationDialog } from "./MapVisualisationDialog";

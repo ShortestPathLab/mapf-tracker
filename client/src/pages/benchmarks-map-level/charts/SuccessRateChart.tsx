@@ -6,10 +6,10 @@ import {
 import { capitalize, chain } from "lodash";
 import { CompletionByAgentCountChart } from "components/charts/CompletionByAgentCountChart";
 import { CategoryChart } from "components/charts/CompletionByAlgorithmChart";
-import { useInstanceScenarioData } from "queries/useBenchmarksQuery";
+import { useScenariosByMap } from "queries/useMapQuery";
 
 export function SuccessRateChart({ map }: { map: string }) {
-  const { data, isLoading } = useInstanceScenarioData(map);
+  const { data, isLoading } = useScenariosByMap(map);
   return (
     <Chart
       isLoading={isLoading}

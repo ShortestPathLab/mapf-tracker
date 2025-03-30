@@ -5,13 +5,13 @@ import {
 } from "@mui-symbols-material/w400";
 import { alpha, Button, Stack, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
-import { useLg, useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { appName } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
+
 export function Tip() {
   const xs = useXs();
   const sm = useSm();
-  const lg = useLg();
   const navigate = useNavigate();
   return (
     <Stack

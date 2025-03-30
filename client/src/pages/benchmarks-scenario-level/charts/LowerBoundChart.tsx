@@ -10,7 +10,7 @@ import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart"
 import { sample } from "components/charts/sample";
 import { scenarioMetrics } from "core/metrics";
 import { chain, keyBy, map } from "lodash";
-import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
+import { useInstancesByScenario } from "queries/useMapQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
 import {
   Area,
@@ -26,7 +26,7 @@ import { formatPercentage } from "utils/format";
 
 export function LowerBoundChart({ scenario }: { scenario: string | number }) {
   const { palette } = useTheme();
-  const { data, isLoading } = useInstanceCollectionData(scenario);
+  const { data, isLoading } = useInstancesByScenario(scenario);
   return (
     <Chart
       isLoading={isLoading}

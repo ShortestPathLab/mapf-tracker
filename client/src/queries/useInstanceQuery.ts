@@ -7,16 +7,15 @@ import { map } from "lodash";
 const queryFn = (id: string | number) => () =>
   json<Instance>(`${APIConfig.apiUrl}/instance/id/${id}`);
 
-const queryOptions = (id: string | number) => ({
+const instanceQuery = (id: string | number) => ({
   queryKey: ["instance", id],
   queryFn: queryFn(id),
   enabled: !!id,
 });
 
-export const useInstanceData = (id: number | string) =>
-  useQuery(queryOptions(id));
+export const useInstance = (id: number | string) => useQuery(instanceQuery(id));
 
-export const useInstancesData = (ids: (number | string)[]) =>
+export const useInstances = (ids: (number | string)[]) =>
   useQueries({
-    queries: map(ids, queryOptions),
+    queries: map(ids, instanceQuery),
   });

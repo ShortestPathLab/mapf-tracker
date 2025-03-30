@@ -4,7 +4,7 @@ import { PreviewCard } from "components/PreviewCard";
 import { isUndefined, startCase } from "lodash";
 import { PreviewCollection } from "components/PreviewCollection";
 import pluralize from "pluralize";
-import { useScenarioDetailsData } from "queries/useBenchmarksQuery";
+import { useScenario } from "queries/useMapQuery";
 
 export function ScenarioLabel({
   scenarioId,
@@ -13,7 +13,7 @@ export function ScenarioLabel({
   scenarioId: string;
   count?: number;
 }) {
-  const { data } = useScenarioDetailsData(scenarioId);
+  const { data } = useScenario(scenarioId);
   return (
     <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
       <Stack sx={{ width: 48, pt: 1 }}>

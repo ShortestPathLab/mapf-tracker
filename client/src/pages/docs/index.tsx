@@ -11,10 +11,11 @@ export default function index() {
   return (
     <Router
       flat
+      fallback
       routes={[
         {
-          path: xs ? "*" : "/docs/",
-          parent: "/more",
+          path: "/docs/",
+          parent: "/",
           content: (
             <Layout
               flat

@@ -15,10 +15,10 @@ import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocati
 import { pages } from "pages/docs/pages";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 
 export function QuickNavigation() {
-  const { data: maps = [] } = useBenchmarksData();
+  const { data: maps = [] } = useMapsData();
   const { data: algorithms = [] } = useAlgorithmsData();
   const navigate = useNavigate();
   const content = useNavigationContent();

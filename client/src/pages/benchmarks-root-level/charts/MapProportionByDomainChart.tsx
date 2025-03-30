@@ -6,11 +6,11 @@ import {
 } from "components/analysis/reducers";
 import { SuccessRateBarChart } from "components/analysis/successRateBarChartRenderer";
 import { capitalize, chain, head } from "lodash";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 
 export function MapProportionByDomainChart() {
   const { palette } = useTheme();
-  const { data, isLoading } = useBenchmarksData();
+  const { data, isLoading } = useMapsData();
   return (
     <Chart
       isLoading={isLoading}

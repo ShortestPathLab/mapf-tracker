@@ -23,6 +23,7 @@ export type User = {
 };
 
 export const userBasic = useBasic<User>(`${APIConfig.apiUrl}/user/basic`);
+
 export const submissionKeyBasic = useBasic<ApiKey>(
   `${APIConfig.apiUrl}/submission_key/basic`
 );

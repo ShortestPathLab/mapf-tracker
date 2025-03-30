@@ -8,14 +8,14 @@ import { useStableLocationState } from "hooks/useStableLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
 import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
 import pluralize from "pluralize";
-import { useInstanceCollectionData } from "queries/useBenchmarksQuery";
+import { useInstancesByScenario } from "queries/useMapQuery";
 import { formatDate } from "utils/format";
 import { PreviewCard } from "../../components/PreviewCard";
 
 export default function Table() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
   const { scenId } = state;
-  const { data, isLoading } = useInstanceCollectionData(scenId);
+  const { data, isLoading } = useInstancesByScenario(scenId);
   const navigate = useNavigate();
 
   const openVisualisation = (row: Instance) =>

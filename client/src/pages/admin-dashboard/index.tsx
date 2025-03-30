@@ -12,7 +12,7 @@ import { pages } from "./pages";
 export default function index() {
   const { data: credentials } = useCredentials();
   const { pathname } = useLocation();
-  const match = matchPath("/dashboard/:section?/", pathname);
+  const match = matchPath("/sudo/:section?/", pathname);
   const { section } = match?.params ?? {};
   return credentials ? (
     <TabContext value={section ?? head(pages()).value}>
@@ -37,10 +37,11 @@ export default function index() {
         >
           <Router
             flat
+            fallback
             routes={pages().map(({ content, value }) => ({
               content,
-              path: `/dashboard/${value}`,
-              parent: value === "" ? "/" : "/dashboard/",
+              path: `/sudo/${value}`,
+              parent: value === "" ? "/" : "/sudo/",
             }))}
           />
         </Box>

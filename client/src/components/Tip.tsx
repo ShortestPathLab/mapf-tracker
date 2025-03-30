@@ -2,6 +2,7 @@ import { alpha, Stack, Typography } from "@mui/material";
 import { ReactNode } from "react";
 import { useOptions } from "utils/OptionsProvider";
 import Enter from "./transitions/Enter";
+import { Scroll } from "./dialog/Scrollbars";
 
 export function Tip({
   title,
@@ -28,21 +29,23 @@ export function Tip({
         </Typography>
         <Typography variant="body2">{description}</Typography>
         {actions && (
-          <Stack
-            direction="row"
-            sx={{
-              gap: 1,
-              pt: 1,
-              "> button": {
-                border: (t) => `1px solid ${t.palette.divider}`,
-                // boxShadow: (t) => t.shadows[1],
-                px: 2,
-                minWidth: "max-content",
-              },
-            }}
-          >
-            {actions}
-          </Stack>
+          <Scroll x fadeX>
+            <Stack
+              direction="row"
+              sx={{
+                gap: 1,
+                pt: 1,
+                "> button": {
+                  border: (t) => `1px solid ${t.palette.divider}`,
+                  // boxShadow: (t) => t.shadows[1],
+                  px: 2,
+                  minWidth: "max-content",
+                },
+              }}
+            >
+              {actions}
+            </Stack>
+          </Scroll>
         )}
       </Stack>
     </Enter>

@@ -4,7 +4,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
-  LinearProgress,
   ListItemText,
   Stack,
   Typography,

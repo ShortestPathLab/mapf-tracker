@@ -32,7 +32,7 @@ export default function index() {
   return (
     <Layout
       flat
-      title="Manage"
+      title="Sudo"
       description="Review submission requests, issue submission keys, and run jobs"
       path={[{ name: "More", url: "/more" }]}
     >
@@ -46,7 +46,7 @@ export default function index() {
                   reviewStatus: { status: "not-reviewed" },
                 })?.length,
                 secondary: "Submission key requests awaiting review",
-                action: () => navigate("/dashboard/submission-key-requests"),
+                action: () => navigate("/sudo/submission-key-requests"),
                 actionLabel: "See requests",
               },
               {
@@ -54,7 +54,7 @@ export default function index() {
                   status: { type: "error" },
                 })?.length,
                 secondary: "Stages with error",
-                action: () => navigate("/dashboard/pipelines"),
+                action: () => navigate("/sudo/pipelines"),
                 actionLabel: "See pipelines",
               },
             ].map(
@@ -82,11 +82,11 @@ export default function index() {
           </Grid>
         </Stack>
         <Stack sx={{ gap: 2 }}>
-          <Typography variant={sm ? "h4" : "h3"}>Manage</Typography>
+          <Typography variant={sm ? "h4" : "h3"}>Sudo</Typography>
           <List sx={{ mx: -2 }}>
             {sections().map(({ label, icon, value, description }) => (
               <>
-                <ListItemButton onClick={() => navigate(`/dashboard/${value}`)}>
+                <ListItemButton onClick={() => navigate(`/sudo/${value}`)}>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText primary={label} secondary={description} />
                   <ChevronRightRounded />

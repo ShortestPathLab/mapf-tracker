@@ -8,8 +8,8 @@ import { startCase } from "lodash";
 import { bindTrigger } from "material-ui-popup-state";
 import Details from "pages/benchmarks-scenario-level/Details";
 import pluralize from "pluralize";
-import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
-import { useInstanceData } from "queries/useInstanceQuery";
+import { useMapData, useScenario } from "queries/useMapQuery";
+import { useInstance } from "queries/useInstanceQuery";
 import Visualiser from "./Visualiser";
 import { VisualiserLocationState } from "./VisualiserLocationState";
 
@@ -18,8 +18,8 @@ export { default as Visualiser } from "./Visualiser";
 export default function index() {
   const md = useMd();
   const state = useStableLocationState<VisualiserLocationState>();
-  const { data: instanceData } = useInstanceData(state.instanceId);
-  const { data: scenarioData } = useScenarioDetailsData(instanceData?.scen_id);
+  const { data: instanceData } = useInstance(state.instanceId);
+  const { data: scenarioData } = useScenario(instanceData?.scen_id);
   const { data: mapData } = useMapData(instanceData?.map_id);
   const scenarioString = scenarioData
     ? startCase(`${scenarioData?.scen_type}-${scenarioData?.type_id}`)

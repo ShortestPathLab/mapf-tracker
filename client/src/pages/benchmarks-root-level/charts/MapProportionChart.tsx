@@ -13,7 +13,7 @@ import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart"
 import { DetailsList } from "components/DetailsList";
 import { Scroll } from "components/dialog/Scrollbars";
 import { capitalize, chain, head, map, startCase } from "lodash";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 import { useMeasure } from "react-use";
 import {
   Tooltip as ChartTooltip,
@@ -56,7 +56,7 @@ export const slices = [
 
 export function MapProportionChart() {
   const { palette } = useTheme();
-  const { data, isLoading } = useBenchmarksData();
+  const { data, isLoading } = useMapsData();
   const selectorState = useSliceSelector(slices, undefined, []);
   const { slice } = selectorState;
   const aggregated = chain(data)

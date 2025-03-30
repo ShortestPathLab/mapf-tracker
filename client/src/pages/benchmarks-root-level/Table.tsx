@@ -7,11 +7,11 @@ import {
   cellRendererText,
 } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { Benchmark } from "core/types";
+import { Map } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { capitalize, startCase } from "lodash";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 
 const parseSize = (s: string) => {
   const [a, b] = s.split("x");
@@ -19,11 +19,11 @@ const parseSize = (s: string) => {
 };
 
 export default function Table() {
-  const { data, isLoading } = useBenchmarksData();
+  const { data, isLoading } = useMapsData();
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const columns: GridColDef<Benchmark>[] = [
+  const columns: GridColDef<Map>[] = [
     {
       field: "map_name",
       headerName: "Map",

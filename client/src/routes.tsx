@@ -11,17 +11,13 @@ import DirectoryPage from "pages/directory";
 import Hero from "pages/home/Hero";
 import MakeASubmissionPage from "pages/make-a-submission";
 import SubmissionSummaryPage from "pages/submission-summary";
-import UserMapPage from "./pages/UserMapPage";
-import AdminDashboard from "./pages/admin-dashboard";
-import AdminDashboardOld from "./pages/admin-dashboard/index.old";
+import SudoPage from "./pages/admin-dashboard";
 import Submissions from "./pages/algorithms";
-import ContributePage from "./pages/contribute";
 import DocsPage from "./pages/docs";
 import TrackSubmission from "./pages/submissions";
-import Summary from "./pages/summary/DashboardPage";
 import Visualiser from "./pages/visualiser";
 
-function ManagePage() {
+function MorePage() {
   const md = useMd();
   const navigate = useNavigate();
   if (!md) defer(() => navigate("/"));
@@ -34,8 +30,21 @@ function ManagePage() {
     )
   );
 }
+type NestedRoute = Omit<Route, "parent"> & {
+  children?: NestedRoute[];
+};
 
-export const routes: Route[] = [
+const flattenRoutes = (routes: NestedRoute[], parent?: string): Route[] => {
+  return routes.flatMap(({ children, ...route }) => {
+    const flatRoute: Route = parent ? { ...route, parent } : route;
+    return [
+      flatRoute,
+      ...(children ? flattenRoutes(children, route.path) : []),
+    ];
+  });
+};
+
+const nestedRoutes: NestedRoute[] = [
   {
     path: "/",
     content: (
@@ -53,64 +62,41 @@ export const routes: Route[] = [
     ),
   },
   {
-    path: "/more",
-    content: <ManagePage />,
-  },
-  {
-    path: "/submit/:section?",
-    content: <MakeASubmissionPage />,
-    parent: "/more",
-  },
-  {
     path: "/benchmarks",
     content: <BenchmarksRootLevelPage />,
+    children: [
+      {
+        path: "/scenarios",
+        content: <BenchmarksMapLevelPage />,
+        children: [
+          {
+            path: "/instances",
+            content: <BenchmarksScenarioLevelPage />,
+            children: [{ path: "/visualization", content: <Visualiser /> }],
+          },
+        ],
+      },
+    ],
   },
   {
-    path: "/scenarios",
-    content: <BenchmarksMapLevelPage />,
-    parent: "/benchmarks",
+    path: "/submissions",
+    content: <Submissions />,
+    children: [{ path: "/submissions/:id", content: <AlgorithmPage /> }],
   },
   {
-    path: "/instances",
-    content: <BenchmarksScenarioLevelPage />,
-    parent: "/scenarios",
-  },
-  { path: "/visualization", content: <Visualiser />, parent: "/instances" },
-  { path: "/summary", content: <Summary />, parent: "/" },
-  { path: "/submissions", content: <Submissions /> },
-  {
-    path: "/submissions/:id",
-    content: <AlgorithmPage />,
-    parent: "/submissions",
-  },
-  { path: "/contributes", content: <ContributePage />, parent: "/submit" },
-  {
-    path: "/track",
-    content: <TrackSubmission />,
-
-    parent: "/more",
-  },
-  {
-    path: "/submissionSummary",
-    content: <SubmissionSummaryPage />,
-    parent: "/track",
-  },
-  {
-    path: "/dashboard/:section?",
-    content: <AdminDashboard />,
-    parent: "/more",
-  },
-  {
-    path: "/docs/:article?",
-    content: <DocsPage />,
-    parent: "/more",
-  },
-  {
-    path: "/dashboard-old",
-    content: <AdminDashboardOld />,
-  },
-  {
-    path: "/user/maps",
-    content: <UserMapPage />,
+    path: "/more",
+    content: <MorePage />,
+    children: [
+      { path: "/submit/:section?", content: <MakeASubmissionPage /> },
+      {
+        path: "/track",
+        content: <TrackSubmission />,
+        children: [{ path: "/upload", content: <SubmissionSummaryPage /> }],
+      },
+      { path: "/sudo/:section?", content: <SudoPage /> },
+      { path: "/docs/:article?", content: <DocsPage /> },
+    ],
   },
 ];
+
+export const routes: Route[] = flattenRoutes(nestedRoutes);

@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { isNull, max } from "lodash-es";
+import { isNull, max } from "lodash";
 import { useEffect, useState } from "react";
 
 const VELOCITY_THRESHOLD = 1;

@@ -46,12 +46,12 @@ export function useSubmissionMutation({
       });
       return { optimistic };
     },
-    onSettled: async (res, _1, _2, { optimistic }) => {
-      if (res.ok) {
+    onSettled: async (res, e, _2, { optimistic }) => {
+      if (res?.ok) {
         optimisticQueue.delete(optimistic);
       } else {
         optimistic.status = "error";
-        optimistic.error = await res.json();
+        optimistic.error = e ?? (await res?.json?.());
       }
       queryClient.invalidateQueries({
         queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", apiKey],

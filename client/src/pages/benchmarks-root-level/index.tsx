@@ -8,7 +8,7 @@ import { GalleryLayout } from "layout/GalleryLayout";
 import { map, memoize, sum } from "lodash";
 import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
 import { useAggregateOne } from "queries/useAggregateQuery";
-import { useBenchmarksData } from "queries/useBenchmarksQuery";
+import { useMapsData } from "queries/useMapQuery";
 import { formatPercentage } from "utils/format";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
@@ -30,7 +30,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
     variant: "fullscreen",
   });
 
-  const { data: maps } = useBenchmarksData();
+  const { data: maps } = useMapsData();
   const instanceCount = sum(map(maps, (m) => m.instances));
   const scenarioCount = sum(map(maps, (m) => m.scens));
   const { data: solved } = useAggregateOne({ filterBy: "solved" });

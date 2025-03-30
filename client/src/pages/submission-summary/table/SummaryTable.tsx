@@ -6,7 +6,6 @@ import {
   HourglassEmptyRounded,
   PlayArrowRounded,
   StopRounded,
-  WarningRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,

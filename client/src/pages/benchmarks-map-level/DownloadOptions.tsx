@@ -32,7 +32,7 @@ import {
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { APIConfig } from "core/config";
-import { Benchmark, InstanceCollection } from "core/types";
+import { Map, Scenario } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
 import {
@@ -59,10 +59,7 @@ import pluralize from "pluralize";
 import { parallel, series } from "promise-tools";
 import { post } from "queries/mutation";
 import { text, toJson } from "queries/query";
-import {
-  instanceScenarioQuery,
-  useBenchmarksData,
-} from "queries/useBenchmarksQuery";
+import { scenariosQuery, useMapsData } from "queries/useMapQuery";
 import {
   createContext,
   MouseEvent,
@@ -77,8 +74,8 @@ import { paper } from "theme";
 
 type Models = {
   all: { all: Models["map"][]; id: string };
-  map: Benchmark & { scenarios: Models["scenario"][] };
-  scenario: InstanceCollection;
+  map: Map & { scenarios: Models["scenario"][] };
+  scenario: Scenario;
   fallback: { id: string };
 };
 export type Model = Models[keyof Models];
@@ -113,9 +110,9 @@ function placeholder(id: string) {
 }
 
 function useBenchmarksAll() {
-  const { data: maps, isLoading: isMapLoading } = useBenchmarksData();
+  const { data: maps, isLoading: isMapLoading } = useMapsData();
   const { data, isLoading } = useQueries({
-    queries: maps?.map?.((m) => instanceScenarioQuery(m.id)) ?? [],
+    queries: maps?.map?.((m) => scenariosQuery(m.id)) ?? [],
     combine: (result) => ({
       isLoading: some(result, "isLoading"),
       data: zip(maps, map(result, "data"))?.map?.(([map, data]) => ({
@@ -601,63 +598,78 @@ export function DownloadOptions({ initialMaps }: { initialMaps: string[] }) {
             justifyContent: "flex-end",
           }}
         >
-          {!xs && (
+          {!sm && (
             <Tip
               title="Bulk export"
               description="Export a large quantity of data at once."
-              actions={<Button>Data format reference</Button>}
+              actions={
+                <Button onClick={() => open("/docs/solution-format", "_blank")}>
+                  Data format reference
+                </Button>
+              }
             />
           )}
-          <Stack sx={{ ...paper(0), p: 2, gap: 2 }}>
-            <Stack>
-              <Typography variant="h5" sx={{ mb: 1 }}>
-                Export options
-              </Typography>
-              <CheckboxItem
-                disableGutters
-                selected={includeSolutions}
-                onClick={() => setIncludeSolutions(!includeSolutions)}
-              >
-                Include solutions in results
-              </CheckboxItem>
-              <CheckboxItem
-                disableGutters
-                selected={downloadParts}
-                onClick={() => setDownloadParts(!downloadParts)}
-              >
-                Download in parts (
-                {thru(byteSize(CHUNK_SIZE_B), (r) => `${r.value} ${r.unit}`)}{" "}
-                per part)
-              </CheckboxItem>
-            </Stack>
-            <Stack>
-              <Typography variant="h5" sx={{ mb: 1 }}>
-                Selection summary
-              </Typography>
-              <Item
-                invert
-                primary={`${pluralize("map", maps.count, true)}, ${pluralize(
-                  "scenario",
-                  scens.count,
-                  true
-                )}, ${pluralize("result", results.count, true)}`}
-                secondary="Files"
-              />
-              <Item
-                invert
-                primary={thru(
-                  byteSize(
-                    maps.count * SIZE_MAP_B +
-                      scens.count * SIZE_SCEN_B +
-                      results.count *
-                        ((includeSolutions ? SIZE_SOLUTION_B : 0) +
-                          SIZE_RESULT_B)
-                  ),
-                  (r) => `${r.value} ${r.unit}`
-                )}
-                secondary="Estimated size"
-              />
-            </Stack>
+          <Stack sx={{ ...paper(0), maxHeight: sm ? "30dvh" : undefined }}>
+            <Scroll y>
+              <Stack sx={{ p: 2, gap: 2 }}>
+                <Stack>
+                  <Typography variant="h5" sx={{ mb: 1 }}>
+                    Export options
+                  </Typography>
+                  <CheckboxItem
+                    disableGutters
+                    selected={includeSolutions}
+                    onClick={() => setIncludeSolutions(!includeSolutions)}
+                  >
+                    Include solutions in results
+                  </CheckboxItem>
+                  <CheckboxItem
+                    disableGutters
+                    selected={downloadParts}
+                    onClick={() => setDownloadParts(!downloadParts)}
+                  >
+                    Download in parts (
+                    {thru(
+                      byteSize(CHUNK_SIZE_B),
+                      (r) => `${r.value} ${r.unit}`
+                    )}{" "}
+                    per part)
+                  </CheckboxItem>
+                </Stack>
+                <Stack>
+                  <Typography variant="h5" sx={{ mb: 1 }}>
+                    Selection summary
+                  </Typography>
+                  <Item
+                    invert
+                    primary={`${pluralize(
+                      "map",
+                      maps.count,
+                      true
+                    )}, ${pluralize(
+                      "scenario",
+                      scens.count,
+                      true
+                    )}, ${pluralize("result", results.count, true)}`}
+                    secondary="Files"
+                  />
+                  <Item
+                    invert
+                    primary={thru(
+                      byteSize(
+                        maps.count * SIZE_MAP_B +
+                          scens.count * SIZE_SCEN_B +
+                          results.count *
+                            ((includeSolutions ? SIZE_SOLUTION_B : 0) +
+                              SIZE_RESULT_B)
+                      ),
+                      (r) => `${r.value} ${r.unit}`
+                    )}
+                    secondary="Estimated size"
+                  />
+                </Stack>
+              </Stack>
+            </Scroll>
           </Stack>
           <Floating>
             <Button

@@ -16,7 +16,7 @@ import {
   downloadScenario,
 } from "pages/benchmarks-map-level/download";
 import { downloadMap } from "pages/benchmarks-root-level/download";
-import { useMapData, useScenarioDetailsData } from "queries/useBenchmarksQuery";
+import { useMapData, useScenario } from "queries/useMapQuery";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
@@ -27,7 +27,7 @@ export default function Page() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
   const { mapId, scenId } = state;
   const { data: mapData } = useMapData(mapId);
-  const { data: scenarioData } = useScenarioDetailsData(scenId);
+  const { data: scenarioData } = useScenario(scenId);
   const notify = useSnackbarAction();
 
   const title =

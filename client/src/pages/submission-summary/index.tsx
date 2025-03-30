@@ -89,7 +89,7 @@ export default function SubmissionSummaryPage() {
           onAccept: () => {
             finalise();
             close();
-            navigate("/submissionSummary");
+            navigate("/upload");
           },
           onClose: close,
         })

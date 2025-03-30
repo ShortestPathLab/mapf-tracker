@@ -23,7 +23,7 @@ export const request = async <T = null>(
     return req;
   } else {
     const error = await req.json();
-    throw new Error("message" in error ? error.message : req.statusText);
+    throw error ?? new Error(req.statusText);
   }
 };
 

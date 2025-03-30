@@ -165,9 +165,9 @@ export function useNavigationContent() {
           ? [
               {
                 iconButton: true,
-                label: "Management",
+                label: "Sudo",
                 icon: <LockOpenRounded />,
-                url: "/dashboard",
+                url: "/sudo",
                 description:
                   "Review submission requests, issue submission keys, and run jobs",
               },

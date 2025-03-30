@@ -8,14 +8,15 @@ import { AlgorithmByMapTypeChart } from "pages/benchmarks-root-level/charts/Algo
 import { TableRounded } from "@mui-symbols-material/w400";
 import { useAlgorithmDetailData } from "queries/useAlgorithmQuery";
 import { matchPath, redirect } from "react-router-dom";
-import { Title } from "../../components/StickyTitle";
+import { Title } from "components/StickyTitle";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import { inferOptimality } from "./inferOptimality";
 import { Table } from "./Table";
 
 export function AlgorithmPage() {
   const sm = useSm();
-  const { params } = matchPath("/submissions/:id", window.location.pathname);
+  const { params } =
+    matchPath("/submissions/:id", window.location.pathname) ?? {};
 
   const { data } = useAlgorithmDetailData(params?.id);
 
