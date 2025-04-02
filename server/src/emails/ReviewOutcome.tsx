@@ -13,6 +13,7 @@ import { startCase } from "lodash";
 import React from "react";
 import { renderItem, renderLink, renderText } from "./renderText";
 import { footerText } from "./footerText";
+import { env } from "config/db";
 
 export type Props = {
   name?: string;
@@ -71,7 +72,7 @@ export default function ReviewOutcome({
                 <>
                   <CodeInline>{apiKey}</CodeInline>
                   <br />
-                  {renderLink("Use your key", process.env.EMAIL_CALLBACK)}
+                  {renderLink("Use your key", env.EMAIL_CALLBACK)}
                 </>
               )}
             {comments && renderItem("Comments", comments)}

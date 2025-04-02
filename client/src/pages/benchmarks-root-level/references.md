@@ -1,1 +1,1 @@
-Sturtevant, N. (2012). Benchmarks for grid-based pathfinding. IEEE Transactions on Computational Intelligence and AI in Games, 4(2), 144–148. https://webdocs.cs.ualberta.ca/~nathanst/papers/benchmarks.pdf
+Roni Stern, Nathan Sturtevant, Ariel Felner, Sven Koenig, Hang Ma, Thayne Walker, Jiaoyang Li et al. "Multi-agent pathfinding: Definitions, variants, and benchmarks." In Proceedings of the International Symposium on Combinatorial Search (SoCS), 2019.

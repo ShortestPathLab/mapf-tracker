@@ -77,6 +77,7 @@ export function TotalSolvedClosedDonutChart(
           direction="row"
           sx={{
             flex: 1,
+            overflow: "hidden",
             "& > *": { maxWidth: 240, flex: 0 },
             justifyContent: "center",
           }}

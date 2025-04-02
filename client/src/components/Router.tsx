@@ -88,14 +88,6 @@ export function Router({
   routes: Route[];
   fallback?: ReactNode | true;
 }) {
-  const fallback =
-    _fallback === true
-      ? head(routes)
-      : {
-          content: _fallback,
-          path: "",
-        };
-
   const { pathname } = useLocation();
   const previous = usePrevious(pathname);
   const sm = useXs();
@@ -128,6 +120,7 @@ export function Router({
     next: undefined,
     direction: undefined,
   });
+
   useEffect(() => {
     if (prev === current) return;
     const betweenRoots = isRoot(prev) && isRoot(current);
@@ -138,6 +131,17 @@ export function Router({
       direction: betweenRoots ? undefined : direction,
     });
   }, [prev, current]);
+
+  const fallback2 = usePrevious(current);
+
+  const fallback =
+    _fallback === true
+      ? fallback2 ?? head(routes)
+      : {
+          content: _fallback,
+          path: "",
+        };
+
   const createRoute = (a: Route, child: ReactElement) => {
     return directMatch(a) ? (
       flat ? (

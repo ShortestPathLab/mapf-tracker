@@ -10,7 +10,7 @@ type Level = "debug" | "info" | "warn" | "error" | "trace" | "fatal";
 export const raw = (level: Level, ...params: Params) => {
   const [source, msg, ...payload] = params;
   logger[level](`[${source}] ${msg}`);
-  if (payload?.length) for (const p of payload) console[level](p);
+  if (payload?.length) for (const p of payload) console.log(p);
 };
 
 type Args = [msg?: any, ...payload: any[]];

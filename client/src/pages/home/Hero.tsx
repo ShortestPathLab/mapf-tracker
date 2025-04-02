@@ -55,6 +55,32 @@ export default function Hero({ children }: { children?: ReactNode }) {
       },
     ],
   } = useAlgorithmDetailsData();
+
+  const renderHeader = (
+    label: string,
+    description: string,
+    buttonLabel: string,
+    onClick: () => void
+  ) => (
+    <Stack
+      direction="row"
+      sx={{
+        mt: 1,
+        gap: 2,
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+      }}
+    >
+      <Stack>
+        <Typography>{label}</Typography>
+        <Typography color="text.secondary" variant="subtitle2">
+          {description}
+        </Typography>
+      </Stack>
+      <Button onClick={onClick}>{buttonLabel}</Button>
+    </Stack>
+  );
+
   return (
     <Stack sx={{ gap: 4, m: xs ? 0 : md ? 2 : 4, maxWidth: "100%" }}>
       <Tip />
@@ -62,7 +88,6 @@ export default function Hero({ children }: { children?: ReactNode }) {
         direction={md ? "column" : "row"}
         sx={{
           gap: lg ? 2 : 3,
-          mx: lg ? 0 : 0,
           alignItems: "flex-start",
           maxWidth: "100%",
         }}
@@ -76,21 +101,12 @@ export default function Hero({ children }: { children?: ReactNode }) {
             width: md ? "100%" : 0,
           }}
         >
-          <Stack
-            direction="row"
-            sx={{
-              mb: -1,
-              mt: 1,
-              gap: 2,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography color="text.secondary">Trends</Typography>
-            <Button onClick={() => navigate("/benchmarks", { t: "analysis" })}>
-              See more trends
-            </Button>
-          </Stack>
+          {renderHeader(
+            "Trends",
+            "Explore trends in the dataset",
+            "See more trends",
+            () => navigate("/benchmarks", { t: "analysis" })
+          )}
           <Stack
             direction="row"
             sx={{
@@ -105,27 +121,20 @@ export default function Hero({ children }: { children?: ReactNode }) {
           >
             <TotalSolvedClosedDonutChart sx={{ minHeight: 320, flex: 1 }} />
             <CompletionByAlgorithmChartCard
-              sx={{ minHeight: 420 }}
+              sx={{ minHeight: 480 }}
               primaryLabel="Completion by submission"
               columns={1}
               height="100%"
               secondaryLabel="Compare instances closed and solved across submissions"
             />
-          </Stack>{" "}
-          <Stack
-            direction="row"
-            sx={{
-              mb: -1,
-              gap: 2,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography color="text.secondary">Benchmarks</Typography>
-            <Button onClick={() => navigate("/benchmarks")}>
-              See all benchmarks
-            </Button>
           </Stack>
+          {renderHeader(
+            "Benchmarks",
+            "Browse benchmarks and solutions via maps",
+            "See all benchmarks",
+            () => navigate("/benchmarks")
+          )}
+
           <Scroll x fadeX style={{ width: "calc(100% + 8px)", margin: -8 }}>
             <Stack
               direction="row"
@@ -133,7 +142,6 @@ export default function Hero({ children }: { children?: ReactNode }) {
                 "> *": { minWidth: 320, width: 320, flex: 0 },
                 gap: 2,
                 p: 1,
-                mt: 1,
                 justifyContent: "flex-start",
               }}
             >
@@ -176,21 +184,12 @@ export default function Hero({ children }: { children?: ReactNode }) {
               ))}
             </Stack>
           </Scroll>
-          <Stack
-            direction="row"
-            sx={{
-              mb: -1,
-              gap: 2,
-              mt: 1,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography color="text.secondary">Submissions</Typography>
-            <Button onClick={() => navigate("/submissions")}>
-              See all submissions
-            </Button>
-          </Stack>
+          {renderHeader(
+            "Submissions",
+            "These are the algorithms researchers have submitted solutions for",
+            "See all submissions",
+            () => navigate("/submissions")
+          )}
           <Scroll x fadeX style={{ width: "calc(100% + 8px)", margin: -8 }}>
             <Stack
               direction="row"

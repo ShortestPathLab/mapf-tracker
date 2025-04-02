@@ -11,6 +11,7 @@ import ApiKeysPage from "./api-keys";
 import OverviewPage from "./overview";
 import PipelinesPage from "./pipelines";
 import SubmissionKeyRequestsPage from "./submission-key-requests";
+import InfoPage from "./info";
 
 export const pages = once(() => [
   {
@@ -46,6 +47,13 @@ export const pages = once(() => [
     label: "Actions",
     description: "View and run data-processing jobs",
     content: <PipelinesPage />,
+    icon: <AccountTreeRounded />,
+  },
+  {
+    value: "info",
+    label: "Info",
+    description: "View platform information",
+    content: <InfoPage />,
     icon: <AccountTreeRounded />,
   },
   // {
