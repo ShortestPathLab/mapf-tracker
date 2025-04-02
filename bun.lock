@@ -85,6 +85,7 @@
         "transition-hook": "^1.5.2",
         "typescript": "5.4.5",
         "use-offline": "^2.0.0",
+        "use-stick-to-bottom": "^1.0.52",
         "validator": "workspace:*",
         "vite": "^5.3.3",
         "vite-tsconfig-paths": "^5.1.3",
@@ -1000,7 +1001,7 @@
 
     "bun": ["bun@1.1.38", "", { "optionalDependencies": { "@oven/bun-darwin-aarch64": "1.1.38", "@oven/bun-darwin-x64": "1.1.38", "@oven/bun-darwin-x64-baseline": "1.1.38", "@oven/bun-linux-aarch64": "1.1.38", "@oven/bun-linux-x64": "1.1.38", "@oven/bun-linux-x64-baseline": "1.1.38", "@oven/bun-windows-x64": "1.1.38", "@oven/bun-windows-x64-baseline": "1.1.38" }, "os": [ "linux", "win32", "darwin", ], "cpu": [ "x64", "arm64", ], "bin": { "bun": "bin/bun.exe", "bunx": "bin/bun.exe" } }, "sha512-cr+UDFiEasyw0kKEbbD7kDewrI2vTo17JssVVjzBv/eNskeL2wikJ+4RNgUfoRqgthCjDZux7r6ELGgIGq6aWw=="],
 
-    "bun-types": ["bun-types@1.2.7", "", { "dependencies": { "@types/node": "*", "@types/ws": "*" } }, "sha512-P4hHhk7kjF99acXqKvltyuMQ2kf/rzIw3ylEDpCxDS9Xa0X0Yp/gJu/vDCucmWpiur5qJ0lwB2bWzOXa2GlHqA=="],
+    "bun-types": ["bun-types@1.2.8", "", { "dependencies": { "@types/node": "*", "@types/ws": "*" } }, "sha512-D5npfxKIGuYe9dTHLK1hi4XFmbMdKYoLrgyd25rrUyCrnyU4ljmQW7vDdonvibKeyU72mZuixIhQ2J+q6uM0Mg=="],
 
     "busboy": ["busboy@1.6.0", "", { "dependencies": { "streamsearch": "^1.1.0" } }, "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA=="],
 
@@ -2383,6 +2384,8 @@
     "use-offline": ["use-offline@2.0.0", "", { "peerDependencies": { "react": ">=16.8.0" } }, "sha512-tFG0VQAdSnw2JY9C8lVflnXyR52mmiXIBEO3x6Ocu+Nod6fu8z56JPiWiiTka0wlC0rjUdLqdYi/IWmx8dC8JA=="],
 
     "use-ssr": ["use-ssr@1.0.25", "", { "peerDependencies": { "react": "^16.13.1 || ^17.0.0 || ^18.0.0", "react-dom": "^16.13.1 || ^17.0.0 || ^18.0.0" } }, "sha512-VYF8kJKI+X7+U4XgGoUER2BUl0vIr+8OhlIhyldgSGE0KHMoDRXPvWeHUUeUktq7ACEOVLzXGq1+QRxcvtwvyQ=="],
+
+    "use-stick-to-bottom": ["use-stick-to-bottom@1.0.52", "", { "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-KqnZB6zjCBeSLQqqTdiPiGI45oi5dALb8MekuCSVhmSElc+KWFM87GVxGUNxhh+TmagzMUZR7Bc5KVOOdLlCkg=="],
 
     "use-sync-external-store": ["use-sync-external-store@1.2.2", "", { "peerDependencies": { "react": "^16.8.0 || ^17.0.0 || ^18.0.0" } }, "sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw=="],
 

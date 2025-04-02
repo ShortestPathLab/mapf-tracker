@@ -76,7 +76,6 @@ export default function SubmissionSummaryPage() {
       startIcon={<CheckRounded />}
       disabled={keyStatus === "submitted" || keyStatus === "expired"}
       variant="contained"
-      color="secondary"
       disableElevation
       size="large"
       sx={{ alignSelf: xs ? "stretch" : "flex-end", borderRadius: 2 }}
@@ -84,7 +83,6 @@ export default function SubmissionSummaryPage() {
         open({
           hintText,
           acceptLabel: "Submit now",
-          acceptProps: { color: "secondary" },
           closeLabel: "Cancel",
           onAccept: () => {
             finalise();

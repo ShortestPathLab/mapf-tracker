@@ -2,6 +2,7 @@ import { Status, run, stages } from "aggregations";
 import { timeStamp } from "console";
 import { RequestHandler } from "express";
 import { chain, map } from "lodash";
+import { log } from "logging";
 import { PipelineStatus } from "models";
 import { get, set } from "models/PipelineStatus";
 import z from "zod";
@@ -62,6 +63,8 @@ export const runStage =
       );
       res.status(200).send({});
     } catch (err) {
+      log.error("Pipeline error", err);
+
       console.error(err);
       res.status(500).send({ error: err.message });
     }

@@ -75,6 +75,7 @@
     "transition-hook": "^1.5.2",
     "typescript": "5.4.5",
     "use-offline": "^2.0.0",
+    "use-stick-to-bottom": "^1.0.52",
     "validator": "workspace:*",
     "vite": "^5.3.3",
     "vite-tsconfig-paths": "^5.1.3",

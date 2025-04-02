@@ -1,6 +1,7 @@
 import {
   AccountTreeRounded,
   CallReceivedRounded,
+  InfoRounded,
   PersonRounded,
   SpaceDashboardRounded,
   VpnKeyRounded,
@@ -52,9 +53,9 @@ export const pages = once(() => [
   {
     value: "info",
     label: "Info",
-    description: "View platform information",
+    description: "View logs and platform information",
     content: <InfoPage />,
-    icon: <AccountTreeRounded />,
+    icon: <InfoRounded />,
   },
   // {
   //   value: "statistics",

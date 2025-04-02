@@ -290,6 +290,7 @@ export default function DataGrid<
                 }),
                 "& .MuiDataGrid-footerContainer": {
                   ...paper(),
+                  mt: 5,
                   mr: xs ? 2 : 0,
                   ml: "auto",
                   position: "sticky",

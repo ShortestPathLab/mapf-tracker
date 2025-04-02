@@ -1,11 +1,14 @@
 import {
+  Button,
   CircularProgress,
   listItemClasses,
   Stack,
-  Typography,
+  useTheme,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { DetailsList } from "components/DetailsList";
+import { Scroll } from "components/dialog/Scrollbars";
+import { Title } from "components/StickyTitle";
 import {
   APIConfig,
   appName,
@@ -14,8 +17,31 @@ import {
   version,
 } from "core/config";
 import { Layout } from "layout";
-import { toPairs } from "lodash";
+import { capitalize, startCase, toPairs } from "lodash";
 import { json } from "queries/query";
+import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import { paper } from "theme";
+import { tryChain } from "utils/tryChain";
+
+import { useXs } from "components/dialog/useSmallDisplay";
+import { useSurface } from "components/surface";
+import json1 from "react-syntax-highlighter/dist/esm/languages/prism/json";
+import {
+  oneDark,
+  oneLight,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useStickToBottom } from "use-stick-to-bottom";
+SyntaxHighlighter.registerLanguage("json", json1);
+
+function useInfoGeneral() {
+  return useQuery({
+    queryKey: ["info/general"],
+    queryFn: () =>
+      json<{
+        [K in string]: string | number;
+      }>(`${APIConfig.apiUrl}/info/general`),
+  });
+}
 
 function useInfo() {
   return useQuery({
@@ -27,16 +53,77 @@ function useInfo() {
   });
 }
 
+function useInfoLogs() {
+  return useQuery({
+    queryKey: ["info/logs"],
+    refetchInterval: 1000,
+    queryFn: () => json<string[]>(`${APIConfig.apiUrl}/info/logs`),
+  });
+}
+
+function Logs() {
+  const isDark = useTheme().palette.mode === "dark";
+  const xs = useXs();
+  const { data: logs, isLoading: isLogsLoading } = useInfoLogs();
+  const { scrollRef, contentRef } = useStickToBottom();
+  return (
+    <>
+      {isLogsLoading ? (
+        <CircularProgress />
+      ) : (
+        <Stack
+          sx={{
+            ...paper(0),
+            height: `calc(100dvh - ${xs ? 56 + 16 * 2 : 64 + 24 * 2}px)`,
+          }}
+        >
+          <Scroll y ref={scrollRef}>
+            <Stack sx={{ p: 2 }} ref={contentRef}>
+              {logs?.map?.((l, i) =>
+                tryChain(
+                  () => (
+                    <SyntaxHighlighter
+                      language="json"
+                      customStyle={{ padding: 0 }}
+                      style={{
+                        ...(isDark ? oneDark : oneLight),
+                        'pre[class*="language-"]': {
+                          background: "transparent !important",
+                        },
+                        'code[class*="language-"]': {
+                          background: "transparent !important",
+                        },
+                      }}
+                    >
+                      {JSON.stringify(JSON.parse(`${l}`), null, 2)}
+                    </SyntaxHighlighter>
+                  ),
+                  () => <code key={i}>{l}</code>
+                )
+              )}
+            </Stack>
+          </Scroll>
+        </Stack>
+      )}
+    </>
+  );
+}
+
 export default function index() {
   const { data: info, isLoading: isInfoLoading } = useInfo();
+  const { data: general, isLoading: isInfoLoading2 } = useInfoGeneral();
+  const { dialog, open } = useSurface(Logs, {
+    title: "Server logs",
+    variant: "fullscreen",
+  });
 
   const renderSection = (
     title: string,
     items: { label: string; value: string }[],
     loading?: boolean
   ) => (
-    <Stack sx={{ gap: 2 }}>
-      <Typography variant="h6">{title}</Typography>
+    <Stack sx={{ gap: 0 }}>
+      <Title sticky>{title}</Title>
       {loading ? (
         <CircularProgress />
       ) : (
@@ -67,9 +154,28 @@ export default function index() {
       ])}
       {renderSection(
         "Server info",
+        toPairs(general).map(([k, v]) => ({
+          label: capitalize(startCase(k)),
+          value: `${v}`,
+        })),
+        isInfoLoading2
+      )}
+      {renderSection(
+        "Environment variables",
         toPairs(info).map(([k, v]) => ({ label: k, value: `${v}` })),
         isInfoLoading
       )}
+      <Stack sx={{ gap: 2 }}>
+        <Title sticky>Server logs</Title>
+        <Button
+          variant="contained"
+          sx={{ alignSelf: "flex-start" }}
+          onClick={() => open()}
+        >
+          Show logs
+        </Button>
+      </Stack>
+      {dialog}
     </Layout>
   );
 }

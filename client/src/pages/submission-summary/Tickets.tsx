@@ -13,16 +13,16 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Dialog } from "components/dialog";
+import { Surface } from "components/surface";
 import Enter from "components/transitions/Enter";
 import { format } from "date-fns";
 import { identity, map, orderBy } from "lodash";
+import { bindTrigger } from "material-ui-popup-state";
 import pluralize from "pluralize";
 import prettyBytes from "pretty-bytes";
 import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
 import { paper } from "theme";
 import GenericDetailsList from "./GenericDetailsList";
-import React from "react";
 
 export function Tickets({ apiKey }: { apiKey?: string | number }) {
   const { data: tickets } = useOngoingSubmissionTicketQuery(apiKey);
@@ -55,13 +55,11 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                         {
                           done: pluralize("entry", result?.count, true),
                           error: (
-                            <Dialog
-                              padded
-                              slotProps={{ modal: { variant: "default" } }}
+                            <Surface
                               title="Error details"
-                              trigger={(onClick) => (
+                              trigger={(state) => (
                                 <Link
-                                  onClick={onClick}
+                                  {...bindTrigger(state)}
                                   sx={{ cursor: "pointer" }}
                                 >
                                   Error
@@ -73,7 +71,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                                 following is the error returned by the server.
                               </Typography>
                               <GenericDetailsList data={{ error }} />
-                            </Dialog>
+                            </Surface>
                           ),
                           pending: "Processing",
                           uploading: "Uploading",

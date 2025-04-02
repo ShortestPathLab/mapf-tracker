@@ -23,3 +23,8 @@ export const env = z
     VALIDATOR_CONCURRENCY_COUNT: z.coerce.number().default(1),
   })
   .parse(process.env);
+
+export const general = {
+  version: "0.1.1",
+  runningSince: new Date().toISOString(),
+};

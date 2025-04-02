@@ -1,4 +1,5 @@
 import { env } from "bun";
+import { upperCase } from "lodash";
 import pino from "pino";
 
 const logger = pino();
@@ -17,11 +18,16 @@ type Args = [msg?: any, ...payload: any[]];
 
 type Params = [source: string, ...Args];
 
-export const context = (name: string) => {
+export const context = (name: string, maxRecent: number = 100) => {
+  const recent: string[] = [];
   const r =
     (l: Level) =>
-    (msg: any, ...p: any[]) =>
-      raw(l, name, msg, ...p);
+    (msg: any, ...p: any[]) => {
+      recent.push(`[${new Date().toISOString()}] ${upperCase(l)}: ${msg}`);
+      recent.push(...p.map((p1) => JSON.stringify(p1)));
+      if (recent.length > maxRecent) recent.shift();
+      return raw(l, name, msg, ...p);
+    };
   return {
     debug: r("debug"),
     info: r("info"),
@@ -29,7 +35,10 @@ export const context = (name: string) => {
     error: r("error"),
     trace: r("trace"),
     fatal: r("fatal"),
-  } as { [K in Level]: (...a: Args) => void };
+    recent,
+  } as { [K in Level]: (...a: Args) => void } & {
+    recent: string[];
+  };
 };
 
 export let log = context("Main");

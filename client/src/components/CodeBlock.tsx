@@ -49,9 +49,10 @@ export const CodeBlock = ({
             overflow: "visible",
             minWidth: "fit-content",
             paddingRight: 72,
+            ...rest.customStyle,
           }}
           language={language}
-          style={isDark ? oneDark : oneLight}
+          style={{ ...(isDark ? oneDark : oneLight), ...rest.style }}
         >
           {children}
         </SyntaxHighlighter>
