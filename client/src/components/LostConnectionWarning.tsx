@@ -34,10 +34,7 @@ export function LostConnectionWarning() {
         }}
         message={
           <Typography variant="body2">
-            <Dot sx={{ bgcolor: "warning.main" }} />{" "}
-            {isOffline
-              ? "You're offline"
-              : "The server is taking a while to respond"}
+            <Dot sx={{ bgcolor: "warning.main" }} /> Offline
           </Typography>
         }
       />

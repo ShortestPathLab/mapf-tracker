@@ -10,10 +10,10 @@ import { isNumber, mergeWith } from "lodash";
 
 const b = (n: number) => b1(n ?? 0);
 
-const m1 = <T>(t: T[]) =>
+const agg = <T>(t: T[]): T =>
   mergeWith(...(t as []), (a: unknown, b: unknown) =>
     isNumber(a) && isNumber(b) ? a + b : undefined
-  ) as T;
+  );
 
 export const use = (app: Application, path: string = "/api/info") =>
   app.use(
@@ -25,8 +25,8 @@ export const use = (app: Application, path: string = "/api/info") =>
         route(z.unknown(), async () => {
           const m = await mem();
           const c = await currentLoad();
-          const n = m1(await networkStats());
-          const d = m1(await fsSize());
+          const n = agg(await networkStats());
+          const d = agg(await fsSize());
           return {
             ...general,
             processor: `${c.currentLoad.toFixed(2)}%`,
