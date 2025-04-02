@@ -1,12 +1,16 @@
+import { env } from "config";
 import { once } from "lodash";
 import { log } from "logging";
-import { url } from "models";
 import { connect } from "mongoose";
 
-export const connectToDatabase = once(async () => {
+const url = env.MONGO_DB_URI;
+
+export const connectToDatabase = once(async (pool = 2) => {
   log.info(`Connecting to database at ${new URL(url).hostname}`);
   try {
-    const connection = await connect(url, {});
+    const connection = await connect(url, {
+      maxPoolSize: pool,
+    });
     log.info(`Connected to database at ${new URL(url).hostname}`);
     return connection;
   } catch (e) {

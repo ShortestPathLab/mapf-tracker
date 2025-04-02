@@ -21,7 +21,7 @@ import { APIConfig } from "core/config";
 import { AddKeyForm } from "forms/AddKeyForm";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
-import { zipWith } from "lodash";
+import { some, zipWith } from "lodash";
 import { Status } from "pages/submission-summary/Status";
 import { get } from "queries/mutation";
 import { Request, useRequestsData } from "queries/useRequestQuery";
@@ -100,6 +100,8 @@ export default function TrackSubmission() {
     ...data,
     id: key,
   })).filter((c) => c.key);
+
+  const isLoading = some(results, "isLoading");
 
   const notify = useSnackbar();
 
@@ -224,6 +226,7 @@ export default function TrackSubmission() {
       <Typography variant="h5">Previously used keys</Typography>
       <FlatCard>
         <DataGrid
+          loading={isLoading}
           clickable
           columns={columns}
           rows={rows}

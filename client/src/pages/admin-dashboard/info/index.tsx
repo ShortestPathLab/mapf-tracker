@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   CircularProgress,
   listItemClasses,
@@ -17,7 +18,7 @@ import {
   version,
 } from "core/config";
 import { Layout } from "layout";
-import { capitalize, startCase, toPairs } from "lodash";
+import { capitalize, has, isObject, omit, startCase, toPairs } from "lodash";
 import { json } from "queries/query";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import { paper } from "theme";
@@ -25,17 +26,19 @@ import { tryChain } from "utils/tryChain";
 
 import { useXs } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface";
-import json1 from "react-syntax-highlighter/dist/esm/languages/prism/json";
+import jsonLang from "react-syntax-highlighter/dist/esm/languages/prism/json";
 import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useStickToBottom } from "use-stick-to-bottom";
-SyntaxHighlighter.registerLanguage("json", json1);
 
-function useInfoGeneral() {
+SyntaxHighlighter.registerLanguage("json", jsonLang);
+
+function useInfo() {
   return useQuery({
     queryKey: ["info/general"],
+    refetchInterval: 1000,
     queryFn: () =>
       json<{
         [K in string]: string | number;
@@ -43,7 +46,7 @@ function useInfoGeneral() {
   });
 }
 
-function useInfo() {
+function useEnvironment() {
   return useQuery({
     queryKey: ["info/environment"],
     queryFn: () =>
@@ -81,24 +84,48 @@ function Logs() {
             <Stack sx={{ p: 2 }} ref={contentRef}>
               {logs?.map?.((l, i) =>
                 tryChain(
+                  () => {
+                    const e = JSON.parse(`${l}`);
+                    const { message, error } =
+                      isObject(e) && has(e, "message")
+                        ? { message: e.message, error: omit(e, "message") }
+                        : { message: "", error: e };
+                    return message ? (
+                      <Box sx={{ whiteSpace: "pre-wrap" }} component="code">
+                        {message}
+                      </Box>
+                    ) : (
+                      <SyntaxHighlighter
+                        language="json"
+                        customStyle={{ padding: 0 }}
+                        wrapLongLines
+                        style={{
+                          ...(isDark ? oneDark : oneLight),
+                          'pre[class*="language-"]': {
+                            background: "transparent !important",
+                          },
+                          'code[class*="language-"]': {
+                            background: "transparent !important",
+                          },
+                        }}
+                      >
+                        {JSON.stringify(error, null, 2)}
+                      </SyntaxHighlighter>
+                    );
+                  },
                   () => (
-                    <SyntaxHighlighter
-                      language="json"
-                      customStyle={{ padding: 0 }}
-                      style={{
-                        ...(isDark ? oneDark : oneLight),
-                        'pre[class*="language-"]': {
-                          background: "transparent !important",
-                        },
-                        'code[class*="language-"]': {
-                          background: "transparent !important",
-                        },
+                    <Box
+                      component="code"
+                      sx={{
+                        color: l.includes("ERROR:")
+                          ? "error.main"
+                          : "text.primary",
                       }}
+                      key={i}
                     >
-                      {JSON.stringify(JSON.parse(`${l}`), null, 2)}
-                    </SyntaxHighlighter>
-                  ),
-                  () => <code key={i}>{l}</code>
+                      {l}
+                    </Box>
+                  )
                 )
               )}
             </Stack>
@@ -110,8 +137,8 @@ function Logs() {
 }
 
 export default function index() {
-  const { data: info, isLoading: isInfoLoading } = useInfo();
-  const { data: general, isLoading: isInfoLoading2 } = useInfoGeneral();
+  const { data: info, isLoading: isInfoLoading } = useEnvironment();
+  const { data: general, isLoading: isInfoLoading2 } = useInfo();
   const { dialog, open } = useSurface(Logs, {
     title: "Server logs",
     variant: "fullscreen",

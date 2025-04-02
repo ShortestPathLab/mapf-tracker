@@ -277,7 +277,10 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     const { submissionId, mode } = data;
 
     // Can error if submission doesn't exist, this is allowed.
-    const submission = await OngoingSubmission.findById(submissionId);
+    const submission = (await OngoingSubmission.findById(
+      submissionId
+    )) as OngoingSubmissionDocument | null;
+
     if (!submission) throw new Error("Error: submission not found");
 
     if (submission.options?.skipValidation) return await skip(submission);
@@ -310,7 +313,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
       result: { outcome: errors?.length ? "invalid" : "valid", errors },
     };
   } catch (e) {
-    log.error("General error", e);
+    log.error("General error", { message: e.message });
     return {
       result: { outcome: "error", errors: [{ label: "General error" }] },
     };

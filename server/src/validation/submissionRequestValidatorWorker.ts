@@ -122,6 +122,11 @@ export const transformOne = async (v: One) => {
     typeof v.solution_plan === "string"
       ? v.solution_plan.split(/\r\n|\r|\n/)
       : v.solution_plan ?? [];
+  v.solution_plan = v.flip_up_down
+    ? v.solution_plan.map((s) =>
+        s.replaceAll(/u/g, "_").replaceAll(/d/g, "u").replaceAll(/_/g, "d")
+      )
+    : v.solution_plan;
   // ─── Coerce Agent Count ──────────────────────────────────────────────
   v.agent_count ??= v.agents;
   // ─── Coerce Agent Count ──────────────────────────────────────────────

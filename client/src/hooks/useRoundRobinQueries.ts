@@ -4,7 +4,8 @@ import {
   useQueries,
 } from "@tanstack/react-query";
 import { identity } from "lodash";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useInterval } from "react-use";
 
 export const REFETCH_MS = 2000;
 
@@ -30,17 +31,13 @@ export const useRoundRobinQueries = <
       processed: combine(result),
     }),
   });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const elem = original[i.current % original.length];
-      if (!elem.isFetching) {
-        elem.refetch();
-      }
-      i.current++;
-    }, REFETCH_MS);
-    return () => clearInterval(interval);
-  }, [original]);
+  useInterval(() => {
+    const elem = original[i.current % original.length];
+    if (!elem.isFetching) {
+      elem.refetch();
+    }
+    i.current++;
+  }, REFETCH_MS);
 
   return processed;
 };

@@ -63,8 +63,7 @@ export const runStage =
       );
       res.status(200).send({});
     } catch (err) {
-      log.error("Pipeline error", err);
-
+      log.error("Pipeline error", { message: err?.message });
       console.error(err);
       res.status(500).send({ error: err.message });
     }

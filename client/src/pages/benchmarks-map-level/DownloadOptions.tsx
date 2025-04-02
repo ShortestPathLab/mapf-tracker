@@ -309,9 +309,14 @@ function useBulkMutationProvider() {
 
       await series(
         resultsData.map(({ results, name }) => async () => {
-          const csv = json2csv(results);
+          const csv = json2csv(results, { emptyFieldValue: "" });
           const reader = new TextReader(csv);
-          const meta = await zipWriter.add(`results/${name}.csv`, reader);
+          const scen = scensIndex[name];
+          const map = mapsIndex[scen.map_id];
+          const meta = await zipWriter.add(
+            `results/${map.map_name}-${scen.scen_type}-${scen.type_id}.csv`,
+            reader
+          );
           await tryFlush(meta.compressedSize);
           setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
         })

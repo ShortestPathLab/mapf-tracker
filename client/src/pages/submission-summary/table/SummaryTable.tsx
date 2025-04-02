@@ -25,9 +25,9 @@ import { FlatCard } from "components/FlatCard";
 import { Item } from "components/Item";
 import { Bar, formatValue, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
-import { Dialog } from "components/dialog";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { Scroll } from "components/dialog/Scrollbars";
+import { Surface } from "components/surface";
 import { useSurface } from "components/surface/useSurface";
 import Enter from "components/transitions/Enter";
 import {
@@ -36,6 +36,7 @@ import {
 } from "components/tree-data-grid/TreeDataGrid";
 import { Instance, SummarySlice } from "core/types";
 import { identity, isNumber, join, map, sumBy, times } from "lodash";
+import { bindTrigger } from "material-ui-popup-state";
 import pluralize from "pluralize";
 import {
   OngoingSubmission,
@@ -117,8 +118,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     title: "Submission details",
     slotProps: { paper: { sx: { maxWidth: "min(max(50vw, 720px), 100%)" } } },
   });
-  const { data, isFetched, incomplete } =
-    useOngoingSubmissionSummaryQuery(apiKey);
+  const { data, isFetched } = useOngoingSubmissionSummaryQuery(apiKey);
   const { mutateAsync: deleteByScenarioIndex } =
     useDeleteOngoingSubmissionByScenarioIndexMutation(apiKey);
   const { mutate: deleteSubmissions } =
@@ -418,16 +418,15 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
               Pause validation
             </Button>
             <Divider orientation="vertical" flexItem />
-            <Dialog
+            <Surface
               title="Delete all submissions"
-              slotProps={{ modal: { variant: "default" } }}
-              padded
-              trigger={(onClick) => (
+              variant="modal"
+              trigger={(state) => (
                 <Button
                   disabled={!sumBy(data?.maps, "count.total")}
                   color="error"
                   startIcon={<DeleteRounded />}
-                  onClick={onClick}
+                  {...bindTrigger(state)}
                 >
                   Delete all
                 </Button>
@@ -445,7 +444,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                   }}
                 />
               )}
-            </Dialog>
+            </Surface>
           </Stack>
         </Scroll>
       </Stack>

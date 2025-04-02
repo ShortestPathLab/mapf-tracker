@@ -2,7 +2,6 @@ import { mapValues } from "lodash";
 import csv from "neat-csv";
 import {
   usingTaskMessageHandler,
-  usingWorkerTask,
   usingWorkerTaskReusable,
 } from "queue/usingWorker";
 
@@ -20,11 +19,13 @@ if (!Bun.isMainThread) {
     CsvParserWorkerResult
   >(async (d) =>
     (await csv(d)).map((x) =>
-      mapValues(x, (v: any) =>
-        // Coerce boolean
-        v === "TRUE"
+      mapValues(x, (v: string) =>
+        v === ""
+          ? undefined
+          : // Coerce boolean
+          v.toUpperCase() === "TRUE"
           ? true
-          : v === "FALSE"
+          : v.toUpperCase() === "FALSE"
           ? false
           : // Coerce number
           isNaN(+v) || v === ""

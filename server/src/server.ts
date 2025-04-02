@@ -27,7 +27,7 @@ app.use(
 );
 app.use(urlencoded({ extended: true }));
 
-await connectToDatabase();
+await connectToDatabase(32);
 
 createRouters(app);
 

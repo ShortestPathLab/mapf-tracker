@@ -34,7 +34,7 @@ services:
     networks:
       - proxy
   nginx-proxy:
-    image: jwilder/nginx-proxy
+    image: bbtsoftwareag/nginx-proxy-unrestricted-requestsize:alpine
     container_name: nginx-proxy
     ports:
       - 80:80

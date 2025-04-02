@@ -1,5 +1,5 @@
 import mongoose, { Model } from "mongoose";
-import config from "config/db";
+import config from "config";
 import { Document } from "mongoose";
 import { queryClient } from "query";
 

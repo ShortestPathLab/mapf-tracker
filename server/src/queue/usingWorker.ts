@@ -37,7 +37,7 @@ const createWorkerTaskFunction =
             };
             worker.addEventListener("message", f);
             worker.addEventListener("error", (e) => {
-              log.error("Worker error", e);
+              log.error("Worker error", { message: e.message });
               console.error(e);
               // Do not reject on error, this listener listens to general worker errors, which may not indicate the current task failing.
               // Task fails should result in a message that looks like { error: ErrorMessage }.

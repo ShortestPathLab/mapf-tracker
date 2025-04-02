@@ -13,7 +13,7 @@ import { startCase } from "lodash";
 import React from "react";
 import { renderItem, renderLink, renderText } from "./renderText";
 import { footerText } from "./footerText";
-import { env } from "config/db";
+import { env } from "config";
 
 export type Props = {
   name?: string;

@@ -8,6 +8,7 @@ import { route } from "query";
 import { z } from "zod";
 import { password } from "bun";
 import { Types } from "mongoose";
+
 const { hash } = password;
 
 export default (app: Application) =>

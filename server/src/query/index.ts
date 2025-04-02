@@ -158,7 +158,7 @@ export const route = <T extends z.ZodType, R>(
       const out = await f(data, req);
       res.json(out ?? undefined);
     } catch (e) {
-      log.error("Query error", e);
+      log.error("Query error", { message: e?.message });
       console.error(e);
       res.status(500).json({
         error: e,
