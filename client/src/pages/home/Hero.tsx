@@ -71,13 +71,23 @@ export default function Hero({ children }: { children?: ReactNode }) {
         alignItems: "flex-end",
       }}
     >
-      <Stack>
+      <Stack sx={{ overflow: "hidden" }}>
         <Typography>{label}</Typography>
-        <Typography color="text.secondary" variant="subtitle2">
+        <Typography
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+          color="text.secondary"
+          variant="subtitle2"
+        >
           {description}
         </Typography>
       </Stack>
-      <Button onClick={onClick}>{buttonLabel}</Button>
+      <Button onClick={onClick} sx={{ minWidth: "max-content" }}>
+        {buttonLabel}
+      </Button>
     </Stack>
   );
 
@@ -251,9 +261,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
             height: "fit-content",
           }}
         >
-          <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-            Try these
-          </Typography>
+          <Typography sx={{ mt: 0.5 }}>Try these</Typography>
           <Grid width={420} gap={2}>
             {map(
               [
@@ -286,7 +294,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
         sx={{
           gap: 2,
           mb: 4,
-          mx: lg ? 0 : 0,
+          mx: 0,
         }}
       >
         {children}

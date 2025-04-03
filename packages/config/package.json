@@ -1,0 +1,20 @@
+{
+    "name": "config",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.ts",
+    "scripts": {
+      "test": "bun test",
+      "build": "bun build index.ts --outdir lib"
+    },
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "exports": {
+      ".": {
+        "types": "./index.ts",
+        "import": "./index.ts"
+      }
+    }
+  }
+  

@@ -1,4 +1,4 @@
-import { env, general } from "config";
+import { env, general } from "env";
 import { Application, Router } from "express";
 import { log } from "logging";
 import passport from "passport";

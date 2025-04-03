@@ -1,7 +1,4 @@
-import mongoose, { Model } from "mongoose";
-import config from "config";
-import { Document } from "mongoose";
-import { queryClient } from "query";
+import mongoose, { Document, Model } from "mongoose";
 
 mongoose.Promise = global.Promise;
 
@@ -11,6 +8,7 @@ export { model as Instance, query as instances } from "./Instance";
 
 export { model as Map, query as maps } from "./Map";
 export { model as OngoingSubmission } from "./OngoingSubmission";
+export { model as PipelineStatus } from "./PipelineStatus";
 export { model as Request, query as requests } from "./Request";
 export { model as Scenario } from "./Scenario";
 export { model as SolutionPath } from "./SolutionPath";
@@ -20,9 +18,6 @@ export {
   query as submissionKeys,
 } from "./SubmissionKey";
 export { model as User, query as users } from "./User";
-export { model as PipelineStatus } from "./PipelineStatus";
-
-export const url = config.url;
 
 export type InferRaw<T extends Model<any, any, any, any>> = T extends Model<
   infer R,

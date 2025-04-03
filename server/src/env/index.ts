@@ -1,3 +1,4 @@
+import { version } from "config";
 import { config } from "dotenv";
 import { z } from "zod";
 
@@ -25,6 +26,6 @@ export const env = z
   .parse(process.env);
 
 export const general = {
-  version: "0.2.0",
+  version,
   runningSince: new Date().toISOString(),
 };

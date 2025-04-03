@@ -1,3 +1,5 @@
+export { version } from "config";
+
 export const identifier = "com.shortestpathlab.mapf-tracker";
 
 export const url =
@@ -17,5 +19,3 @@ export const appIconUrl = "/favicon.png";
 export const APIConfig = {
   apiUrl: url,
 };
-
-export const version = "0.2.0";

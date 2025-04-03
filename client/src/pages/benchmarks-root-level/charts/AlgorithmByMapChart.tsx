@@ -41,7 +41,6 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
     find(metrics, (m) => m.key === metric)?.keyAlt
   );
   const { data: mapInfo, isLoading: isInfoLoading } = useMapsData();
-  console.log(data);
   return (
     <>
       <ChartOptions
@@ -65,7 +64,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
             maps.length ? includes(maps, collection.id) : true
           )
           .map((collection) => {
-            const m = find(mapInfo, { map_name: collection.id });
+            const m = find(mapInfo, { id: collection.id });
             return {
               type: m?.map_type,
               map: capitalize(m?.map_name),

@@ -27,6 +27,7 @@
     "concurrently": "^7.6.0"
   },
   "dependencies": {
+    "config": "workspace:*",
     "@react-email/components": "0.0.23",
     "@types/object-hash": "^3.0.6",
     "@types/passport": "^1.0.17",

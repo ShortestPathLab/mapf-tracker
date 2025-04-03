@@ -1,4 +1,4 @@
-import { env } from "config";
+import { env } from "env";
 import { once } from "lodash";
 import { log } from "logging";
 import { connect } from "mongoose";
