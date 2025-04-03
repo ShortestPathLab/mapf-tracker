@@ -187,7 +187,7 @@ export function ConfirmDialog({
   acceptColor = "error",
   acceptProps,
 }: DialogContentProps & {
-  onAccept?: () => void;
+  onAccept?: () => void | Promise<void>;
   hintText?: ReactNode;
   closeLabel?: ReactNode;
   acceptLabel?: ReactNode;
@@ -207,7 +207,10 @@ export function ConfirmDialog({
           {closeLabel}
         </Button>
         <Button
-          onClick={() => onAccept?.()}
+          onClick={async () => {
+            await onAccept?.();
+            onClose?.();
+          }}
           variant="contained"
           color={acceptColor}
           sx={{ px: 2, py: 1 }}

@@ -18,6 +18,7 @@ import { useRequestsQuery } from "queries/useRequestsQuery";
 import { pages } from "../pages";
 import { usePipelineStatus } from "queries/usePipelineQuery";
 import { paper } from "theme";
+import { Title } from "components/StickyTitle";
 
 const sections = () => {
   const [, ...rest] = pages();
@@ -38,7 +39,7 @@ export default function index() {
     >
       <Stack gap={6}>
         <Stack sx={{ gap: 3 }}>
-          <Typography variant={sm ? "h4" : "h3"}>Requires attention</Typography>
+          <Title sticky>Requires attention</Title>
           <Grid sx={{ gap: 2 }}>
             {[
               {
@@ -82,7 +83,7 @@ export default function index() {
           </Grid>
         </Stack>
         <Stack sx={{ gap: 2 }}>
-          <Typography variant={sm ? "h4" : "h3"}>Sudo</Typography>
+          <Title sticky>Manage</Title>
           <List sx={{ mx: -2 }}>
             {sections().map(({ label, icon, value, description }) => (
               <>

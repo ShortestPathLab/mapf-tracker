@@ -19,6 +19,7 @@ export const useRoundRobinQueries = <
   queries: [...QueriesOptions<T>];
   combine?: (result: QueriesResults<T>) => TCombinedResult;
 }) => {
+  "use no memo";
   const i = useRef(0);
   const { original, processed } = useQueries({
     queries: queries.map((query) => ({

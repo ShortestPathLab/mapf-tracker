@@ -32,7 +32,7 @@ function RequestInfo({ id }: { id?: string }) {
 }
 
 export default function index() {
-  const { data } = submissionKeyBasic.useAll();
+  const { data, isLoading } = submissionKeyBasic.useAll();
   const { mutateAsync: deleteOne } = submissionKeyBasic.useDelete();
   const notify = useSnackbar();
   const notifyAction = useSnackbarAction();
@@ -144,7 +144,7 @@ export default function index() {
         ]}
       />
       <FlatCard>
-        <DataGrid search rows={data} columns={columns} />
+        <DataGrid loading={isLoading} search rows={data} columns={columns} />
       </FlatCard>
     </Layout>
   );

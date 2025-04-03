@@ -1,6 +1,6 @@
 import { alpha, Stack, useTheme } from "@mui/material";
 import { useQueries } from "@tanstack/react-query";
-import { Chart } from "components/analysis/Chart";
+import { Chart, Loading } from "components/analysis/Chart";
 import { Bar } from "components/data-grid";
 import { map } from "lodash";
 import { aggregateQueryOne } from "queries/useAggregateQuery";
@@ -82,30 +82,35 @@ export function TotalSolvedClosedDonutChart(
             justifyContent: "center",
           }}
         >
-          <Chart
-            isLoading={isLoadingClosed || isLoadingSolved}
-            style={{ flex: 1 }}
-            data={[
-              {
-                name: "Solved",
-                value: solved / total,
-                color: theme.palette.success.main,
-              },
-            ]}
-            render={<DonutChart />}
-          />
-          <Chart
-            style={{ flex: 1 }}
-            isLoading={isLoadingClosed || isLoadingSolved}
-            data={[
-              {
-                name: "Closed",
-                value: closed / total,
-                color: theme.palette.info.main,
-              },
-            ]}
-            render={<DonutChart />}
-          />
+          {isLoadingClosed || isLoadingSolved ? (
+            <Loading />
+          ) : (
+            <>
+              {" "}
+              <Chart
+                style={{ flex: 1 }}
+                data={[
+                  {
+                    name: "Solved",
+                    value: solved / total,
+                    color: theme.palette.success.main,
+                  },
+                ]}
+                render={<DonutChart />}
+              />
+              <Chart
+                style={{ flex: 1 }}
+                data={[
+                  {
+                    name: "Closed",
+                    value: closed / total,
+                    color: theme.palette.info.main,
+                  },
+                ]}
+                render={<DonutChart />}
+              />
+            </>
+          )}
         </Stack>
       }
     />

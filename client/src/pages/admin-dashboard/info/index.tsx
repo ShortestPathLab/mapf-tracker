@@ -32,6 +32,9 @@ import {
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useStickToBottom } from "use-stick-to-bottom";
+import { useConnectivity } from "hooks/useConnectivity";
+import { ReactNode } from "react";
+import { Dot } from "components/Dot";
 
 SyntaxHighlighter.registerLanguage("json", jsonLang);
 
@@ -137,6 +140,14 @@ function Logs() {
 }
 
 export default function index() {
+  const { disconnected, offline } = useConnectivity();
+
+  const s = offline
+    ? { label: "Offline", color: "text.secondary" }
+    : disconnected
+    ? { label: "Disconnected", color: "error.main" }
+    : { label: "Connected", color: "success.main" };
+
   const { data: info, isLoading: isInfoLoading } = useEnvironment();
   const { data: general, isLoading: isInfoLoading2 } = useInfo();
   const { dialog, open } = useSurface(Logs, {
@@ -146,7 +157,7 @@ export default function index() {
 
   const renderSection = (
     title: string,
-    items: { label: string; value: string }[],
+    items: { label: string; value: ReactNode }[],
     loading?: boolean
   ) => (
     <Stack sx={{ gap: 0 }}>
@@ -181,10 +192,26 @@ export default function index() {
       ])}
       {renderSection(
         "Server info",
-        toPairs(general).map(([k, v]) => ({
-          label: capitalize(startCase(k)),
-          value: `${v}`,
-        })),
+        [
+          {
+            label: "Connection",
+            value: (
+              <>
+                <Dot
+                  sx={{
+                    bgcolor: s.color,
+                    mb: 0,
+                  }}
+                />
+                {s.label}
+              </>
+            ),
+          },
+          ...toPairs(general).map(([k, v]) => ({
+            label: capitalize(startCase(k)),
+            value: `${v}`,
+          })),
+        ],
         isInfoLoading2
       )}
       {renderSection(

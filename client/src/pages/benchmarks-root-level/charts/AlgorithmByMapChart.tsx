@@ -5,17 +5,18 @@ import {
   Slice,
   useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
-import { capitalize, chain, find, includes, keyBy, map, maxBy } from "lodash";
-import { useMapData } from "queries/useAlgorithmQuery";
+import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
+import { metrics } from "core/metrics";
+import { capitalize, chain, find, includes, keyBy } from "lodash";
 import { useMapsData } from "queries/useMapQuery";
 import { useList } from "react-use";
 import { formatPercentage } from "utils/format";
 import { MapPicker } from "./MapPicker";
-import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
+import { useAlgorithmChartData } from "./useAlgorithmChartData";
 
 export const slices = [
   {
-    key: "count",
+    key: "result",
     name: "Count",
     formatter: formatLargeNumber,
   },
@@ -34,8 +35,13 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
   );
   const [maps, { set: setMaps }] = useList<string>();
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data, isLoading } = useMapData(metric);
+  const { data, isLoading } = useAlgorithmChartData(
+    "map",
+    selected.filter((a) => a !== stateOfTheArt._id),
+    find(metrics, (m) => m.key === metric)?.keyAlt
+  );
   const { data: mapInfo, isLoading: isInfoLoading } = useMapsData();
+  console.log(data);
   return (
     <>
       <ChartOptions
@@ -56,31 +62,16 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
         style={{ flex: 1 }}
         data={chain(data)
           .filter((collection) =>
-            maps.length ? includes(maps, collection.map_name) : true
+            maps.length ? includes(maps, collection.id) : true
           )
-          .map((collection) => ({
-            ...collection,
-            solved_instances: map(
-              // Add state of the art
-              [
-                {
-                  ...maxBy(collection.solved_instances, "count"),
-                  ...stateOfTheArt,
-                },
-                ...collection.solved_instances,
-              ],
-              // Add proportion
-              (instance) => ({
-                ...instance,
-                proportion: instance.count / instance.total,
-              })
-            ),
-          }))
-          .map((collection) => ({
-            type: find(mapInfo, { map_name: collection.map_name })?.map_type,
-            map: capitalize(collection.map_name),
-            ...keyBy(collection.solved_instances, "algo_name"),
-          }))
+          .map((collection) => {
+            const m = find(mapInfo, { map_name: collection.id });
+            return {
+              type: m?.map_type,
+              map: capitalize(m?.map_name),
+              ...keyBy(collection.data, "algorithm"),
+            };
+          })
           .sortBy("type")
           .value()}
         render={
@@ -89,8 +80,8 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
             stacked={false}
             slice={slice}
             selected={selected}
-            keyType="name"
-            stateOfTheArt={true}
+            keyType="id"
+            stateOfTheArt
           />
         }
       />

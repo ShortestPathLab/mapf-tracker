@@ -1,22 +1,19 @@
 import { Snackbar, Typography } from "@mui/material";
 import { useBottomBar } from "App";
-import { useHeartBeatQuery } from "queries/useHeartbeatQuery";
 import usePortal from "react-useportal";
 import { Dot } from "./Dot";
-import useOffline from "use-offline/dist/hooks/use-offline";
 import { useXs } from "./dialog/useSmallDisplay";
+import { useConnectivity } from "../hooks/useConnectivity";
 
 export function LostConnectionWarning() {
-  const isOffline = useOffline();
-  const { data, isLoading } = useHeartBeatQuery();
-  const lostConnection = isOffline || (!isLoading && !data);
+  const { disconnected } = useConnectivity();
   const { Portal } = usePortal({ bindTo: document.body });
   const { enabled: bottomBar } = useBottomBar();
   const xs = useXs();
   return (
     <Portal>
       <Snackbar
-        open={lostConnection}
+        open={disconnected}
         anchorOrigin={{ vertical: xs ? "bottom" : "top", horizontal: "center" }}
         ContentProps={{
           sx: {

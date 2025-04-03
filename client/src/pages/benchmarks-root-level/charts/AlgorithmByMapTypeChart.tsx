@@ -6,8 +6,9 @@ import {
   useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
-import { capitalize, chain, filter, keyBy, map, max } from "lodash";
-import { useAlgorithmsData, useMapTypeData } from "queries/useAlgorithmQuery";
+import { metrics } from "core/metrics";
+import { capitalize, chain, filter, find, keyBy, map } from "lodash";
+import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import {
   Legend,
   PolarAngleAxis,
@@ -20,16 +21,26 @@ import {
 import { AxisDomain } from "recharts/types/util/types";
 import { toneBy } from "utils/colors";
 import { formatPercentage } from "utils/format";
+import { useAlgorithmChartData } from "./useAlgorithmChartData";
 
 export const slices = [
   {
-    key: "count",
+    key: "proportion",
+    dataKey: "proportion",
     name: "Proportion",
     formatter: (v) => formatPercentage(+v, 0),
     domain: [0, 1],
   },
   {
-    key: "sum_value",
+    key: "proportion-extents",
+    dataKey: "proportion",
+    name: "Proportion (extents)",
+    formatter: (v) => formatPercentage(+v, 0),
+    domain: [0, "auto"],
+  },
+  {
+    key: "count",
+    dataKey: "result",
     name: "Count",
     formatter: formatLargeNumber,
     domain: [0, "auto"],
@@ -45,7 +56,11 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
     algorithm ? [algorithm, stateOfTheArt._id] : []
   );
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data, isLoading } = useMapTypeData(metric);
+  const { data, isLoading } = useAlgorithmChartData(
+    "mapType",
+    selected.filter((a) => a !== stateOfTheArt._id),
+    find(metrics, (m) => m.key === metric)?.keyAlt
+  );
 
   return (
     <>
@@ -55,26 +70,15 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
         style={{ flex: 1 }}
         data={chain(data)
           .map((c) => ({
-            map_type: c.map_type,
-            results: [
-              ...c.results,
-              {
-                ...stateOfTheArt,
-                count: max(map(c.results, "count")),
-                sum_value: max(map(c.results, "sum_value")),
-              },
-            ],
-          }))
-          .map((c) => ({
-            map: capitalize(c.map_type),
-            ...keyBy(c.results, "algo_name"),
+            domain: capitalize(c.id),
+            ...keyBy(c.data, "algorithm"),
           }))
           .sortBy("map")
           .value()}
         render={
           <RadarChart>
             <Legend />
-            <PolarAngleAxis dataKey="map" />
+            <PolarAngleAxis dataKey="domain" />
             <PolarGrid stroke={palette.text.secondary} />
             {map(
               filter(
@@ -84,7 +88,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
               (algorithm, i) => (
                 <Radar
                   isAnimationActive={false}
-                  dataKey={`${algorithm.algo_name}.${slice.key}`}
+                  dataKey={`${algorithm._id}.${slice.dataKey ?? slice.key}`}
                   opacity={0.5}
                   name={algorithm.algo_name}
                   {...(algorithm === stateOfTheArt

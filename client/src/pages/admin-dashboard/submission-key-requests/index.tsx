@@ -6,32 +6,31 @@ import {
   SendRounded,
 } from "@mui-symbols-material/w400";
 import { Box } from "@mui/material";
+import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";
+import { useSnackbarAction } from "components/Snackbar";
 import { cellRendererText, useDataGridActions } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
+import { ConfirmDialog } from "components/dialog/Modal";
+import { Surface } from "components/surface";
 import { useSurface } from "components/surface/useSurface";
+import { useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
+import { bindTrigger } from "material-ui-popup-state";
 import {
   requestBasic,
   RequestWithReviewOutcome,
-  useRequestsQuery,
 } from "queries/useRequestsQuery";
+import { useCreateSubmissionKey } from "queries/useSubmissionKeyQuery";
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
 import { StatusChip } from "./StatusChip";
-import { FlatCard } from "components/FlatCard";
-import { ConfirmDialog } from "components/dialog/Modal";
-import { bindTrigger } from "material-ui-popup-state";
-import { Surface } from "components/surface";
-import { useSnackbarAction } from "components/Snackbar";
-import { useCreateSubmissionKey } from "queries/useSubmissionKeyQuery";
-import { useNavigate } from "hooks/useNavigation";
 
 export default function index() {
   const navigate = useNavigate();
   const notify = useSnackbarAction();
-  const { data: requests } = useRequestsQuery();
+  const { data: requests, isLoading } = requestBasic.useAll();
   const { mutateAsync: deleteOne } = requestBasic.useDelete();
   const { mutateAsync: createKey } = useCreateSubmissionKey();
   const { open: showDetails, dialog: detailsDialog } = useSurface(
@@ -192,6 +191,7 @@ export default function index() {
     >
       <FlatCard>
         <DataGrid
+          loading={isLoading}
           search
           clickable
           onRowClick={({ row }) => showDetails({ data: row })}

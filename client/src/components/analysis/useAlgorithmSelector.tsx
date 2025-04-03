@@ -6,6 +6,7 @@ import { AxisDomain } from "recharts/types/util/types";
 
 export type Slice = {
   key: string;
+  dataKey?: string;
   name: string;
   formatter?: (a: string | number) => string;
   domain?: AxisDomain;
@@ -25,7 +26,7 @@ export function useSliceSelector<T extends BaseMetric, U extends Slice>(
   return {
     metric,
     setMetric,
-    algorithms: algorithms,
+    algorithms,
     setAlgorithms: modifySelected.set,
     setSlice,
     slice: find(slices, (c) => c.key === slice),

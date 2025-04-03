@@ -4,7 +4,14 @@ import {
 } from "aggregations/stages/updateScenariosFromInstances";
 import { Application, Router } from "express";
 import { isUndefined, omitBy } from "lodash";
-import { Instance, Scenario, algorithms, instances, submissions } from "models";
+import {
+  Instance,
+  Map,
+  Scenario,
+  algorithms,
+  instances,
+  submissions,
+} from "models";
 import { AggregateBuilder, dateToString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
 import { z } from "zod";
@@ -42,7 +49,7 @@ const aggregateOptions = {
   // ─── Group By ────────────────────────────────────────────────────────
 
   groupBy: z
-    .enum(["scenario", "map", "agents", "scenarioType", "all"])
+    .enum(["scenario", "map", "agents", "scenarioType", "mapType", "all"])
     .default("all"),
   //
 };
@@ -118,6 +125,11 @@ const createAggregateBase =
               )
               .addFields({ scenario: { $first: "$scenario" } })
               .build()
+          : groupBy === "mapType"
+          ? new AggregateBuilder()
+              .lookup(Map.collection.collectionName, "map_id", "_id", "map")
+              .addFields({ map: { $first: "$map" } })
+              .build()
           : [],
       ])
       .group({
@@ -171,6 +183,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
               all: () => undefined,
             },
             {
+              mapType: "$map.map_type",
               scenarioType: "$scenario.scen_type",
               scenario: "$scen_id",
               map: "$map_id",
@@ -217,6 +230,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
                     all: () => undefined,
                   },
                   {
+                    mapType: "$map.map_type",
                     scenarioType: "$scenario.scen_type",
                     scenario: "$scen_id",
                     map: "$map_id",

@@ -1,5 +1,5 @@
 import { Box, useTheme } from "@mui/material";
-import { Chart } from "components/analysis/Chart";
+import { Chart, Loading } from "components/analysis/Chart";
 import { Slice } from "components/analysis/useAlgorithmSelector";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useNavigate } from "hooks/useNavigation";
@@ -176,7 +176,10 @@ function CompletionByAlgorithmChart() {
       data,
     };
   }, [closed, solved, algorithms]);
-  return (
+  const isLoading = isSolvedLoading || isClosedLoading || isAlgorithmsLoading;
+  return isLoading ? (
+    <Loading />
+  ) : (
     <Scroll y>
       <Box
         sx={{
@@ -187,7 +190,6 @@ function CompletionByAlgorithmChart() {
         }}
       >
         <Chart
-          isLoading={isSolvedLoading || isClosedLoading || isAlgorithmsLoading}
           style={{ flex: 1 }}
           data={data}
           render={

@@ -6,6 +6,7 @@ import memo, { AnyAsyncFunction } from "p-memoize";
 import hash from "object-hash";
 import QuickLRU from "quick-lru";
 import { log } from "logging";
+import { has } from "lodash";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -158,7 +159,7 @@ export const route = <T extends z.ZodType, R>(
       const out = await f(data, req);
       res.json(out ?? undefined);
     } catch (e) {
-      log.error("Query error", { message: e?.message });
+      log.error("Query error", { message: has(e, "message") ? e.message : e });
       console.error(e);
       res.status(500).json({
         error: e,

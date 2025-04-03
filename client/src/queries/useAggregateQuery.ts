@@ -18,7 +18,7 @@ export type AggregateQuery = {
   scenarioType?: string;
   agents?: number;
   filterBy?: "closed" | "solved" | "all";
-  groupBy?: "scenario" | "map" | "agents" | "scenarioType";
+  groupBy?: "scenario" | "map" | "agents" | "scenarioType" | "mapType";
 };
 
 export const useAggregate = (params: AggregateQuery) => {
