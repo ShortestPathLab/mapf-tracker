@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const ReactCompilerConfig = {
   /* ... */
@@ -17,7 +19,8 @@ export default defineConfig({
     {
       enforce: "pre",
       ...mdx({
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeKatex],
       }),
     },
     react({

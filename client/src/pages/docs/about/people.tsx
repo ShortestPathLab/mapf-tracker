@@ -21,6 +21,12 @@ export const people = [
     group: "Advisors",
   },
   {
+    name: "Kevin Zheng",
+    avatar: "https://pathfinding.ai/assets/profiles/kzheng.jpg",
+    affiliation: "Software Engineer, Monash University",
+    group: "Developers",
+  },
+  {
     name: "Bojie Shen",
     avatar: "/assets/photo/Bojie.jpg",
     affiliation: "Ph.D. Candidate, Monash University",

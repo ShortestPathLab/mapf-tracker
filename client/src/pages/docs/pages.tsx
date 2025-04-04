@@ -2,7 +2,6 @@ import {
   AnimationRounded,
   BookRounded,
   CampaignRounded,
-  DownloadRounded,
   EmojiEventsRounded,
   ShapeLineRounded,
   UploadFileRounded,
@@ -11,7 +10,6 @@ import { find } from "lodash";
 import AboutPage from "./about";
 import { createArticlePage } from "./createArticlePage";
 import DemoPage from "./docs-demo.mdx";
-import DatasetPage from "./docs-get-dataset.mdx";
 import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
 import MotivationsPage from "./docs-motivations.mdx";
 import ProblemDefinitionPage from "./docs-problem-definition.md";
@@ -58,13 +56,6 @@ export const pages = () => [
     content: <SubmissionInstructionsPage />,
     description:
       "Quick-start guide on how to submit your results to the platform",
-  }),
-  createArticlePage({
-    key: "dataset",
-    title: "Get the dataset",
-    icon: <DownloadRounded />,
-    content: <DatasetPage />,
-    description: "Learn how to download the dataset",
   }),
   {
     label: "About",

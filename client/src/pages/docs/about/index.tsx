@@ -28,7 +28,7 @@ export default function Page() {
       </Prose>
       {["Advisors", "Developers"].map((group) => (
         <Card sx={{ py: 1, px: 1 }} key={group}>
-          <Typography variant="h5" sx={{ px: 2, pt: 2 }}>
+          <Typography variant="h5" component="h4" sx={{ px: 2, pt: 2 }}>
             {group}
           </Typography>
           <List>
