@@ -79,7 +79,7 @@ export default function SubmissionSummaryPage() {
       variant="contained"
       disableElevation
       size="large"
-      sx={{ alignSelf: xs ? "stretch" : "flex-end", borderRadius: 2 }}
+      sx={{ alignSelf: xs ? "stretch" : "flex-end" }}
       onClick={() =>
         open({
           hintText,
