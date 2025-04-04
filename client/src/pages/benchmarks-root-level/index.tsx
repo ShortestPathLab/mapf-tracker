@@ -66,7 +66,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
       actions={{
         options: [
           {
-            label: "Bulk export",
+            label: "Bulk export benchmarks",
             action: () => openDialog(),
             icon: <FolderZipRounded />,
             primary: true,

@@ -221,7 +221,7 @@ export function AlgorithmDownloadOptions({
               "summary",
               summaries.count,
               true
-            )}, ${pluralize("submission", submissions.count, true)}`}
+            )}, ${pluralize("scenario", submissions.count, true)}`}
             secondary="Files"
           />
           <Item
@@ -236,6 +236,13 @@ export function AlgorithmDownloadOptions({
             secondary="Estimated size"
           />
         </>
+      }
+      onRowClick={(row) =>
+        disambiguate(row, {
+          scenario: (row) => {
+            submissions.toggle(!submissions.has(row.id), row.id);
+          },
+        })
       }
       rows={rows}
       columns={columns}
