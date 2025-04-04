@@ -78,6 +78,7 @@ export function AddKey() {
       onSubmit={handleApiFormSubmit}
       submit={({ isValid, isValidating }) => (
         <Button
+          color="secondary"
           type="submit"
           variant="contained"
           disabled={isValidating || isChecking || !isValid}

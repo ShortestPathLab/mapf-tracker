@@ -23,7 +23,7 @@ export function Title({
           position: "sticky",
           top: 0,
           zIndex: (t) => t.zIndex.fab - 1,
-          bgcolor: isTop ? "background.paper" : "background.default",
+          bgcolor: isTop ? "background.paper" : "transparent",
         }),
       }}
     >

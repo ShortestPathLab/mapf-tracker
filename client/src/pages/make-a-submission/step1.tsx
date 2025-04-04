@@ -108,6 +108,7 @@ export default function index() {
               disabled={!isValid || checking}
               fullWidth={xs}
               onClick={submitForm}
+              color="secondary"
               variant="contained"
             >
               {checking ? "Processing..." : "Continue"}

@@ -18,12 +18,25 @@ export function CheckboxItem({ selected, children, ...props }: MenuItemProps) {
   return (
     <MenuItem {...props}>
       <Checkbox
+        color="secondary"
         checked={selected}
         sx={{
           pointerEvents: "none",
           p: 0,
           py: 0.5,
           pr: 2,
+          "&.Mui-checked::before": {
+            content: '""',
+            width: 16,
+            height: 16,
+            position: "absolute",
+            left: 12,
+            borderRadius: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: (t) => t.palette.secondary.contrastText,
+            zIndex: -1,
+          },
         }}
       />
       {children}

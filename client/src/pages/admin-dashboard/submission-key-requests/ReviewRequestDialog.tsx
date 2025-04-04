@@ -81,6 +81,8 @@ export function ReviewRequestDialog({
           submit={({ submitForm, values }) => (
             <ButtonGroup>
               <Button
+                disableElevation
+                color="secondary"
                 sx={{ flex: 1 }}
                 variant="contained"
                 onClick={async () => {
@@ -95,6 +97,8 @@ export function ReviewRequestDialog({
                 title="More save options"
                 trigger={(state) => (
                   <Button
+                    color="secondary"
+                    disableElevation
                     {...bindTrigger(state)}
                     variant="contained"
                     sx={{ px: 1 }}

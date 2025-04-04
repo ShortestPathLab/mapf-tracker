@@ -68,6 +68,7 @@ export function SubmitRequestForm({
               }
               size="large"
               disableElevation
+              color="secondary"
               startIcon={<CheckRounded />}
             >
               {isSubmitting ? "Submitting request..." : "Submit request"}

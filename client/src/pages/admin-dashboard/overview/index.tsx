@@ -70,6 +70,7 @@ export default function index() {
                         </Typography>
                       </Stack>
                       <Button
+                        color="secondary"
                         variant="contained"
                         sx={{ py: 2 }}
                         onClick={action}

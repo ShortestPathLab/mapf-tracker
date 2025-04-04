@@ -100,7 +100,7 @@
 }
 
 .MuiFilledInput-root {
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
 }
 .MuiFilledInput-root::before,
@@ -114,4 +114,17 @@ button.Mui-disabled {
 
 .MuiDataGrid-columnHeader--alignCenter .MuiDataGrid-columnHeaderTitleContainer {
   margin-right: 4px;
+}
+
+.MuiCheckbox-root.Mui-checked::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 29%;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  z-index: -1;
 }

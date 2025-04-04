@@ -38,7 +38,7 @@ export function ActionBar({
               key={i}
               startIcon={icon}
               variant={primary ? "contained" : "outlined"}
-              color="primary"
+              color={primary ? "secondary" : "primary"}
               onClick={action}
             >
               {label}

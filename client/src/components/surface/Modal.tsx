@@ -61,7 +61,7 @@ export function Modal({
         ...props.PaperProps,
         sx: {
           maxWidth: width,
-          borderRadius: 3,
+          borderRadius: 2,
           background: theme.palette.background.paper,
           overflow: "hidden",
           height: height

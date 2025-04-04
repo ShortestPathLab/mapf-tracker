@@ -28,8 +28,8 @@ export const theme = (t: "light" | "dark") =>
         contrastText: t === "light" ? "#ffffff" : "#09090b",
       },
       secondary: {
-        main: t === "light" ? "#4338ca" : "#818cf8",
-        contrastText: t === "light" ? "#818cf8" : "#4338ca",
+        main: t === "light" ? "#3464ec" : "#3464ec",
+        contrastText: t === "light" ? "#ffffff" : "#f4f4f5",
       },
       divider: alpha(t === "light" ? "#000000" : "#f4f4f5", 0.12),
       mode: t,
@@ -38,7 +38,7 @@ export const theme = (t: "light" | "dark") =>
           ? { default: "#fafafa", paper: "#ffffff" }
           : { default: "#18181b", paper: "#111113" },
     },
-    shape: { borderRadius: 8 },
+    shape: { borderRadius: 12 },
     transitions: {
       easing: {
         easeInOut: "cubic-bezier(0.2, 0, 0, 1)",

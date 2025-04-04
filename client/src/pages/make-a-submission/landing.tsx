@@ -130,6 +130,7 @@ export default function index() {
             <Button
               onClick={() => navigate("/submit/1")}
               variant="contained"
+              color="secondary"
               fullWidth={xs}
             >
               Continue

@@ -421,10 +421,10 @@ export function Visualisation({
                             name: paused ? "Play" : "Pause",
                             icon: paused ? (
                               <PlayArrowRounded
-                                sx={{ color: "primary.main" }}
+                                sx={{ color: "secondary.main" }}
                               />
                             ) : (
-                              <PauseRounded sx={{ color: "primary.main" }} />
+                              <PauseRounded sx={{ color: "secondary.main" }} />
                             ),
                             action: paused ? play : pause,
                           },

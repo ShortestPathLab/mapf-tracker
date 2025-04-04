@@ -60,7 +60,7 @@ export function Tip() {
             startIcon={<TableRounded />}
             onClick={() => navigate("/benchmarks")}
             variant="contained"
-            sx={{ color: "background.default", bgcolor: "text.primary" }}
+            color="secondary"
           >
             Browse benchmarks
           </Button>

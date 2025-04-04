@@ -127,17 +127,7 @@ export default function index(props: AppBarProps) {
                             <Collapse in={isOpen}>
                               <List sx={{ mt: label ? -2 : 0 }}>
                                 {items.map(
-                                  (
-                                    {
-                                      icon,
-                                      selectedIcon,
-                                      label,
-                                      url,
-                                      action,
-                                      avatar,
-                                    },
-                                    i
-                                  ) => {
+                                  ({ icon, label, url, action, avatar }, i) => {
                                     const selected =
                                       url && !!matchPath(`${url}/*`, pathname);
                                     return (
@@ -175,10 +165,7 @@ export default function index(props: AppBarProps) {
                                             transform: "scale(0.9)",
                                           }}
                                         >
-                                          {avatar ??
-                                            (selected
-                                              ? selectedIcon ?? icon
-                                              : icon)}
+                                          {avatar ?? icon}
                                         </ListItemIcon>
                                         <ListItemText
                                           primary={

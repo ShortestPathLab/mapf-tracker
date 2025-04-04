@@ -73,6 +73,7 @@ export default function SubmissionSummaryPage() {
   const contentBottom = [
     <Button
       key="submit"
+      color="secondary"
       startIcon={<CheckRounded />}
       disabled={keyStatus === "submitted" || keyStatus === "expired"}
       variant="contained"

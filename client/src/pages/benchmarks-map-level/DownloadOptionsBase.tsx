@@ -269,7 +269,7 @@ export function DownloadOptionsBase<
           <Floating>
             <Button
               fullWidth
-              color="primary"
+              color="secondary"
               variant="contained"
               sx={{ width: "100%" }}
               disabled={isRunning}

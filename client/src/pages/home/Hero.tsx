@@ -92,7 +92,13 @@ export default function Hero({ children }: { children?: ReactNode }) {
   );
 
   return (
-    <Stack sx={{ gap: 4, m: xs ? 0 : md ? 2 : 4, maxWidth: "100%" }}>
+    <Stack
+      sx={{
+        gap: 4,
+        m: xs ? 0 : md ? 2 : 4,
+        maxWidth: "100%",
+      }}
+    >
       <Tip />
       <Stack
         direction={md ? "column" : "row"}

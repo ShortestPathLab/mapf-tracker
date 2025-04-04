@@ -38,6 +38,7 @@ export function SubmissionKeyRequestFormDialog({
               size="large"
               disabled={isSubmitting || !isValid}
               startIcon={<CheckRounded />}
+              color="secondary"
             >
               Save changes
             </Button>
