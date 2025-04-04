@@ -1,5 +1,5 @@
 import {
-  DownloadRounded,
+  ListRounded,
   MapRounded,
   TableRounded,
 } from "@mui-symbols-material/w400";
@@ -7,6 +7,7 @@ import { CardActionArea, Stack, Tooltip } from "@mui/material";
 import { Analysis } from "components/analysis/Analysis";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
+import { useSurface } from "components/surface";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
@@ -15,13 +16,12 @@ import {
   downloadInstance,
   downloadScenario,
 } from "pages/benchmarks-map-level/download";
+import { MapVisualisationDialog } from "pages/benchmarks-map-level/MapVisualisationDialog";
 import { downloadMap } from "pages/benchmarks-root-level/download";
 import { useMapData, useScenario } from "queries/useMapQuery";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
-import { useSurface } from "components/surface";
-import { MapVisualisationDialog } from "pages/benchmarks-map-level/MapVisualisationDialog";
 
 export default function Page() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
@@ -102,7 +102,7 @@ export default function Page() {
                 end: "Done",
               }
             ),
-            icon: <DownloadRounded />,
+            icon: <ListRounded />,
           },
           {
             label: "Export map (.map)",

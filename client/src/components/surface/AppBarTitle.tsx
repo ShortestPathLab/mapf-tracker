@@ -3,7 +3,15 @@ import { ReactNode } from "react";
 
 export function AppBarTitle({ children }: { children?: ReactNode }) {
   return (
-    <Typography component="div" variant="h6">
+    <Typography
+      sx={{
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      }}
+      component="div"
+      variant="h6"
+    >
       {children}
     </Typography>
   );

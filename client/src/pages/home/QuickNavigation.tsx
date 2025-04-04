@@ -1,16 +1,10 @@
-import {
-  alpha,
-  Autocomplete,
-  Avatar,
-  Box,
-  BoxProps,
-  TextField,
-} from "@mui/material";
+import { alpha, Autocomplete, Box, BoxProps, TextField } from "@mui/material";
 import { useNavigationContent } from "components/appbar/useNavigationContent";
 import { Item } from "components/Item";
 import { appNameShort } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
 import { flatMap, map } from "lodash";
+import { AlgorithmPreview } from "pages/algorithms/AlgorithmPreview";
 import { MapLevelLocationState } from "pages/benchmarks-map-level/MapLevelLocationState";
 import { pages } from "pages/docs/pages";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
@@ -40,12 +34,7 @@ export function QuickNavigation() {
           name: source.algo_name,
           render: () => (
             <Item
-              icon={
-                <Avatar
-                  sx={{ mr: 1 }}
-                  src={`https://api.dicebear.com/9.x/identicon/svg?seed=${source._id}`}
-                />
-              }
+              icon={<AlgorithmPreview id={source._id} />}
               primary={source.algo_name}
               secondary="Algorithm"
             />

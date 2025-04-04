@@ -1,5 +1,5 @@
 import {
-  DownloadRounded,
+  FolderZipRounded,
   MapRounded,
   TableRounded,
 } from "@mui-symbols-material/w400";
@@ -18,16 +18,12 @@ import {
   downloadMap,
 } from "pages/benchmarks-root-level/download";
 import { useMapData } from "queries/useMapQuery";
-import { DownloadOptions } from "./DownloadOptions";
 import { MapLevelLocationState } from "./MapLevelLocationState";
 import { MapVisualisationDialog } from "./MapVisualisationDialog";
 import Table from "./Table";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 
 export default function Page() {
-  const { open, dialog } = useSurface(DownloadOptions, {
-    title: "Download options",
-  });
   const { mapId } = useStableLocationState<MapLevelLocationState>();
   const { data: mapData } = useMapData(mapId);
   const { open: openPreview, dialog: previewDialog } = useSurface(
@@ -88,7 +84,7 @@ export default function Page() {
           options: [
             {
               label: "Export scenario files (.zip)",
-              icon: <DownloadRounded />,
+              icon: <FolderZipRounded />,
               primary: true,
               action: notify(() => downloadBenchmarks(mapData), {
                 start: "Preparing...",
@@ -124,7 +120,6 @@ export default function Page() {
           compare={<Analysis template={compareTemplate(mapData)} />}
         />
       </Stack>
-      {dialog}
       {previewDialog}
     </GalleryLayout>
   );

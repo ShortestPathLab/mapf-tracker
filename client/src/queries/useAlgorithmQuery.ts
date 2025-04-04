@@ -12,14 +12,7 @@ import { capitalize, find } from "lodash";
 import { json } from "./query";
 
 export function useAlgorithmSummaryQuery(algorithm?: string) {
-  return useQuery({
-    queryKey: ["algorithms", "summary", algorithm],
-    queryFn: () =>
-      json<SummaryResult>(
-        `${APIConfig.apiUrl}/submission/summary/${algorithm}`
-      ),
-    enabled: !!algorithm,
-  });
+  return useQuery(algorithmSummaryQuery(algorithm));
 }
 
 export type SubmissionInfo = {
@@ -33,18 +26,22 @@ export type SubmissionInfo = {
   best_solution: boolean;
 };
 
+export function algorithmSummaryQuery(algorithm: string) {
+  return {
+    queryKey: ["algorithms", "summary", algorithm],
+    queryFn: () =>
+      json<SummaryResult>(
+        `${APIConfig.apiUrl}/submission/summary/${algorithm}`
+      ),
+    enabled: !!algorithm,
+  };
+}
+
 export function useAlgorithmScenarioQuery(
   algorithm?: string,
   scenario?: string
 ) {
-  return useQuery({
-    queryKey: ["algorithms", algorithm, scenario],
-    queryFn: () =>
-      json<SubmissionInfo[]>(
-        `${APIConfig.apiUrl}/submission/${algorithm}/${scenario}`
-      ),
-    enabled: !!algorithm && !!scenario,
-  });
+  return useQuery(algorithmScenarioQuery(algorithm, scenario));
 }
 
 export const useAlgorithmsData = () => {
@@ -55,11 +52,7 @@ export const useAlgorithmsData = () => {
 };
 
 export const useAlgorithmDetailsData = () => {
-  return useQuery({
-    queryKey: ["algorithms-detailed"],
-    queryFn: () =>
-      json<AlgorithmDetails[]>(`${APIConfig.apiUrl}/algorithm/all_detail`),
-  });
+  return useQuery(algorithmDetailsQuery());
 };
 export const useAlgorithmDetailData = (id?: string) => {
   const { data } = useAlgorithmDetailsData();
@@ -135,3 +128,21 @@ export const useScenarioSuccessRateByAgentCountData = (id: string) =>
       >(`${APIConfig.apiUrl}/instance/test/${id}`),
     enabled: !!id,
   });
+export function algorithmScenarioQuery(algorithm: string, scenario: string) {
+  return {
+    queryKey: ["algorithms", algorithm, scenario],
+    queryFn: () =>
+      json<SubmissionInfo[]>(
+        `${APIConfig.apiUrl}/submission/${algorithm}/${scenario}`
+      ),
+    enabled: !!algorithm && !!scenario,
+  };
+}
+
+export function algorithmDetailsQuery() {
+  return {
+    queryKey: ["algorithms-detailed"],
+    queryFn: () =>
+      json<AlgorithmDetails[]>(`${APIConfig.apiUrl}/algorithm/all_detail`),
+  };
+}

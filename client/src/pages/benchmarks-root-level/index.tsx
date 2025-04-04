@@ -1,8 +1,9 @@
-import { DownloadRounded } from "@mui-symbols-material/w400";
+import { FolderZipRounded } from "@mui-symbols-material/w400";
 import { Button, Stack } from "@mui/material";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
 import { useSurface } from "components/surface";
+import { Prose } from "layout";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { map, memoize, sum } from "lodash";
@@ -13,9 +14,8 @@ import { formatPercentage } from "utils/format";
 import { IndexHeader } from "./IndexHeader";
 import Table from "./Table";
 import { analysisTemplate, compareTemplate } from "./analysisTemplate";
-import References from "./references.md";
 import Description from "./description.md";
-import { Prose } from "layout";
+import References from "./references.md";
 
 const render = memoize((showHeader: boolean) => ({ header, children }) => (
   <>
@@ -68,7 +68,7 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
           {
             label: "Bulk export",
             action: () => openDialog(),
-            icon: <DownloadRounded />,
+            icon: <FolderZipRounded />,
             primary: true,
           },
         ],

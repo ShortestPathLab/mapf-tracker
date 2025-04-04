@@ -294,11 +294,9 @@ export default function DataGrid<
                   mr: xs ? 2 : 0,
                   ml: "auto",
                   position: "sticky",
+                  bottom: 80 + (xs ? 16 : 24),
                   transition: (t) => t.transitions.create("transform"),
-                  bottom: 0,
-                  transform: `translateY(${
-                    (bottomBarEnabled ? -80 : 0) + (xs ? -16 : -24)
-                  }px)`,
+                  transform: `translateY(${bottomBarEnabled ? 0 : 80}px)`,
                   right: 0,
                   py: 0,
                   width: "max-content",

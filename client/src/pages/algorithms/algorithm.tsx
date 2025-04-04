@@ -6,12 +6,14 @@ import { AlgorithmByMapChart } from "pages/benchmarks-root-level/charts/Algorith
 import { AlgorithmByMapTypeChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapTypeChart";
 
 import { TableRounded } from "@mui-symbols-material/w400";
+import { Title } from "components/StickyTitle";
+import { useSurface } from "components/surface";
+import { AlgorithmDownloadOptions } from "pages/benchmarks-map-level/AlgorithmDownloadOptions";
 import { useAlgorithmDetailData } from "queries/useAlgorithmQuery";
 import { matchPath, redirect } from "react-router-dom";
-import { Title } from "components/StickyTitle";
 import { AlgorithmPreview } from "./AlgorithmPreview";
-import { inferOptimality } from "./inferOptimality";
 import { Table } from "./Table";
+import { inferOptimality } from "./inferOptimality";
 
 export function AlgorithmPage() {
   const sm = useSm();
@@ -20,6 +22,10 @@ export function AlgorithmPage() {
 
   const { data } = useAlgorithmDetailData(params?.id);
 
+  const { open, dialog } = useSurface(AlgorithmDownloadOptions, {
+    title: `${data ? data?.algo_name : "--"} - Export instances`,
+    variant: "fullscreen",
+  });
   if (!params?.id) redirect("/");
 
   return (
@@ -54,8 +60,9 @@ export function AlgorithmPage() {
       actions={{
         options: [
           {
+            action: () => open({ algorithm: params?.id }),
             icon: <TableRounded />,
-            label: "Export instances (.csv) (coming soon)",
+            label: "Export instances",
             primary: true,
           },
         ],
@@ -83,6 +90,7 @@ export function AlgorithmPage() {
       <Stack sx={{ mx: sm ? -2 : 0 }}>
         <Table algorithm={data?.id} />
       </Stack>
+      {dialog}
     </GalleryLayout>
   );
 }

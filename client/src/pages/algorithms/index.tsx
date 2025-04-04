@@ -1,4 +1,4 @@
-import { TableRounded } from "@mui-symbols-material/w400";
+import { FolderZipRounded } from "@mui-symbols-material/w400";
 import { Button, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { Tip } from "components/Tip";
@@ -6,18 +6,18 @@ import { Analysis } from "components/analysis/Analysis";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { Bar, DataGrid, cellRendererChip } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
+import { useSurface } from "components/surface";
 import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { DataInspectorLayout, Prose } from "layout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { capitalize, flatMap, map, max, maxBy, startCase, sum } from "lodash";
+import { AlgorithmDownloadOptions } from "pages/benchmarks-map-level/AlgorithmDownloadOptions";
 import { compareTemplate } from "pages/benchmarks-root-level/analysisTemplate";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import Description from "./description.md";
 import { inferOptimality } from "./inferOptimality";
-import { json2csv } from "json-2-csv";
-import download from "downloadjs";
 
 const g = [
   "instances_solved",
@@ -145,6 +145,10 @@ function Table() {
 }
 
 export default function AlgorithmsPage() {
+  const { open: openDialog, dialog } = useSurface(AlgorithmDownloadOptions, {
+    title: "Export instances",
+    variant: "fullscreen",
+  });
   const { data: algorithms } = useAlgorithmDetailsData();
   return (
     <GalleryLayout
@@ -175,14 +179,9 @@ export default function AlgorithmsPage() {
       actions={{
         options: [
           {
-            icon: <TableRounded />,
-            label: "Export summary (.csv)",
-            action: () =>
-              download(
-                new File([json2csv(algorithms)], "summary.csv"),
-                "summary.csv",
-                "text/csv"
-              ),
+            icon: <FolderZipRounded />,
+            label: "Bulk export instances",
+            action: () => openDialog(),
             primary: true,
           },
         ],
@@ -211,6 +210,7 @@ export default function AlgorithmsPage() {
         data={<Table />}
         analysis={<Analysis template={compareTemplate} />}
       />
+      {dialog}
     </GalleryLayout>
   );
 }

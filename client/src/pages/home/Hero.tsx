@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   CardActionArea,
@@ -19,6 +18,7 @@ import { PreviewCard } from "components/PreviewCard";
 import { useNavigate } from "hooks/useNavigation";
 import { Grid } from "layout";
 import { find, map } from "lodash";
+import { AlgorithmPreview } from "pages/algorithms/AlgorithmPreview";
 import { ArticleCard } from "pages/docs/ArticleCard";
 import { pages } from "pages/docs/pages";
 import { Tip } from "pages/home/Tip";
@@ -219,12 +219,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                 >
                   <Stack sx={{ ...paper(1), p: 2 }}>
                     <Item
-                      icon={
-                        <Avatar
-                          sx={{ mr: 1.5 }}
-                          src={`https://api.dicebear.com/9.x/identicon/svg?seed=${m._id}`}
-                        />
-                      }
+                      icon={<AlgorithmPreview id={m._id} />}
                       primary={m.algo_name}
                       secondary={
                         <Box

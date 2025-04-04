@@ -27,7 +27,7 @@ import { useTitleBar } from "./hooks/useTitleBar";
 import { theme } from "./theme";
 import { ThemeContext, useThemeState } from "./utils/ThemeProvider";
 import { createPortal } from "react-dom";
-import { BulkDownloadProvider } from "pages/benchmarks-map-level/DownloadOptions";
+import { BulkDownloadProvider } from "pages/benchmarks-map-level/useBulkMutation";
 
 export const queryClient = new QueryClient();
 

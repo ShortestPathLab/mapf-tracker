@@ -7,6 +7,7 @@ export function AlgorithmPreview({
   return (
     <Avatar
       {...props}
+      sx={{ width: 32, height: 32, ...props.sx }}
       src={`https://api.dicebear.com/9.x/identicon/svg?seed=${id}`}
     />
   );

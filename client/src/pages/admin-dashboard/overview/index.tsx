@@ -90,7 +90,7 @@ export default function index() {
                 <ListItemButton onClick={() => navigate(`/sudo/${value}`)}>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <ListItemText primary={label} secondary={description} />
-                  <ChevronRightRounded />
+                  <ChevronRightRounded sx={{ ml: 2 }} />
                 </ListItemButton>
                 <Divider variant="inset" component="li" />
               </>

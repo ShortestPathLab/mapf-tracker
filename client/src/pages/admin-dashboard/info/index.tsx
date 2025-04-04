@@ -1,8 +1,12 @@
 import {
   Box,
-  Button,
   CircularProgress,
+  Divider,
+  List,
+  ListItemButton,
   listItemClasses,
+  ListItemIcon,
+  ListItemText,
   Stack,
   useTheme,
 } from "@mui/material";
@@ -24,17 +28,21 @@ import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import { paper } from "theme";
 import { tryChain } from "utils/tryChain";
 
+import {
+  ChevronRightRounded,
+  DescriptionRounded,
+} from "@mui-symbols-material/w400";
 import { useXs } from "components/dialog/useSmallDisplay";
+import { Dot } from "components/Dot";
 import { useSurface } from "components/surface";
+import { useConnectivity } from "hooks/useConnectivity";
+import { ReactNode } from "react";
 import jsonLang from "react-syntax-highlighter/dist/esm/languages/prism/json";
 import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useStickToBottom } from "use-stick-to-bottom";
-import { useConnectivity } from "hooks/useConnectivity";
-import { ReactNode } from "react";
-import { Dot } from "components/Dot";
 
 SyntaxHighlighter.registerLanguage("json", jsonLang);
 
@@ -220,14 +228,17 @@ export default function index() {
         isInfoLoading
       )}
       <Stack sx={{ gap: 2 }}>
-        <Title sticky>Server logs</Title>
-        <Button
-          variant="contained"
-          sx={{ alignSelf: "flex-start" }}
-          onClick={() => open()}
-        >
-          Show logs
-        </Button>
+        <Title sticky>More</Title>
+        <List sx={{ mx: -2 }}>
+          <ListItemButton onClick={() => open()}>
+            <ListItemIcon>
+              <DescriptionRounded />
+            </ListItemIcon>
+            <ListItemText primary="Server logs" secondary="Show server logs" />
+            <ChevronRightRounded sx={{ ml: 2 }} />
+          </ListItemButton>
+          <Divider variant="inset" component="li" />
+        </List>
       </Stack>
       {dialog}
     </Layout>

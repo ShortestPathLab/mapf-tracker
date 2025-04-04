@@ -111,3 +111,7 @@
 button.Mui-disabled {
   box-shadow: none !important;
 }
+
+.MuiDataGrid-columnHeader--alignCenter .MuiDataGrid-columnHeaderTitleContainer {
+  margin-right: 4px;
+}
