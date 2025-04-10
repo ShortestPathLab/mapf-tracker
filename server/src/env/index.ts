@@ -1,4 +1,4 @@
-import { version } from "config";
+import { version, appId } from "config";
 import { config } from "dotenv";
 import { z } from "zod";
 
@@ -22,6 +22,7 @@ export const env = z
     VALIDATOR_QUEUE_COUNT: z.coerce.number().default(1),
     VALIDATOR_BATCH_COUNT: z.coerce.number().default(1),
     VALIDATOR_CONCURRENCY_COUNT: z.coerce.number().default(1),
+    CACHE_DIRECTORY: z.string().default(`/var/tmp/${appId}/`),
   })
   .parse(process.env);
 

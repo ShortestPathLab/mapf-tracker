@@ -1,13 +1,30 @@
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { BlobWriter, TextReader, ZipWriter } from "@zip.js/zip.js";
+import { useMutation } from "@tanstack/react-query";
+import {
+  BlobWriter,
+  TextReader,
+  ZipWriter,
+  ZipWriterConstructorOptions,
+} from "@zip.js/zip.js";
 import { queryClient } from "App";
 import { APIConfig } from "core/config";
 import { AlgorithmDetails, Map, Scenario } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
-import { find, flatMap, kebabCase, keyBy } from "lodash";
+import {
+  ceil,
+  delay,
+  find,
+  flatMap,
+  kebabCase,
+  keyBy,
+  last,
+  once,
+  range,
+  sumBy,
+} from "lodash";
 import { nanoid } from "nanoid";
-import { parallel, series } from "promise-tools";
+import prettyBytes from "pretty-bytes";
+import { parallel } from "promise-tools";
 import { post } from "queries/mutation";
 import { text, toJson } from "queries/query";
 import {
@@ -32,14 +49,31 @@ type UseBulkMutationArgs = {
   downloadInParts?: boolean;
 };
 const PARALLEL_LIMIT = 5;
-const resultQuery = (id: string, solutions: boolean) => ({
+const CHUNK_LIMIT = 500;
+
+const resultQuery = (
+  id: string,
+  limit: number,
+  solutions: boolean,
+  onProgress?: (p: number) => void
+) => ({
   queryKey: ["bulk-results", id, solutions],
   enabled: !!id,
-  queryFn: () =>
-    post(`${APIConfig.apiUrl}/bulk/results`, {
-      scenario: id,
-      solutions,
-    }).then(toJson),
+  queryFn: async () => {
+    const all = [];
+    const chunks = ceil(limit / CHUNK_LIMIT);
+    for (const c of range(chunks)) {
+      const res = await post(`${APIConfig.apiUrl}/bulk/results`, {
+        scenario: id,
+        solutions,
+        limit: CHUNK_LIMIT,
+        skip: c * CHUNK_LIMIT,
+      }).then(toJson);
+      all.push(...res);
+      onProgress?.(chunks ? (c + 1) / chunks : 0);
+    }
+    return all;
+  },
 });
 
 export function useIndexAll() {
@@ -52,6 +86,41 @@ export function useIndexAll() {
   return { all, mapsIndex, scensIndex, isLoading };
 }
 
+const zipOptions: ZipWriterConstructorOptions = {
+  compressionMethod: 8,
+  level: 5,
+  bufferedWrite: true,
+};
+
+class Zip {
+  private jobs: Promise<unknown>[] = [];
+  constructor(
+    public writer: ZipWriter<Blob>,
+    public options: {
+      name: string;
+      part: number;
+    },
+    public size: number = 0
+  ) {}
+
+  flush = once(async () => {
+    await Promise.all(this.jobs);
+    const data = await this.writer.close();
+    download(
+      data,
+      `${this.options.name}-${this.options.part}.zip`,
+      "application/zip"
+    );
+  });
+
+  async write(path: string, reader: TextReader) {
+    this.size += reader.size;
+    const job = this.writer.add(path, reader);
+    this.jobs.push(job);
+    return await job;
+  }
+}
+
 function createZipWriter({
   chunkSize = CHUNK_SIZE_B,
   inParts = true,
@@ -61,38 +130,34 @@ function createZipWriter({
   inParts?: boolean;
   name?: string;
 }) {
-  let part = 0;
-  let runningSize = 0;
+  const zips: Zip[] = [];
 
-  let blobWriter = new BlobWriter();
-  let zipWriter = new ZipWriter(blobWriter);
-
-  const flush = async (more: boolean) => {
-    const data = await zipWriter.close();
-    download(data, `${name}-${part}.zip`, "application/zip");
-    runningSize = 0;
-    part++;
-    if (more) {
-      blobWriter = new BlobWriter();
-      zipWriter = new ZipWriter(blobWriter);
+  async function acquire() {
+    const zip = last(zips);
+    const sizeExceeded = zip && inParts && zip.size > chunkSize;
+    if (!zip || sizeExceeded) {
+      if (sizeExceeded) {
+        await zip.flush();
+      }
+      zips.push(
+        new Zip(new ZipWriter(new BlobWriter(), zipOptions), {
+          name,
+          part: zips.length,
+        })
+      );
+      return acquire();
     }
-  };
-
-  const tryFlush = async (size: number) => {
-    runningSize += size;
-    if (runningSize > chunkSize && inParts) {
-      await flush(true);
-    }
-  };
+    return zip;
+  }
 
   const writeOne = async (path: string, contents: string) => {
+    const zip = await acquire();
     const reader = new TextReader(contents);
-    const meta = await zipWriter.add(path, reader);
-    await tryFlush(meta.compressedSize);
+    return await zip.write(path, reader);
   };
 
   const close = async () => {
-    await flush(false);
+    await parallel(zips.map((z) => () => z.flush()));
   };
   return { writeOne, close };
 }
@@ -106,19 +171,12 @@ export const bulkDownloadAlgorithms = async (
 
   mapsIndex: Record<string, Map>,
   scensIndex: Record<string, Scenario>,
-  setProgress: React.Dispatch<
-    React.SetStateAction<{ current: number; total: number }>
-  >
+  addJob: R2
 ) => {
-  setProgress({
-    current: 0,
-    total: summaries.length + submissions.length,
-  });
-
   const { writeOne, close } = createZipWriter({
     chunkSize: CHUNK_SIZE_B,
     inParts: downloadInParts,
-    name: `bulk-submission-${nanoid(6)}`,
+    name: `bulk-algo-${nanoid(6)}`,
   });
 
   // ─── Export Summaries ────────────────────────────────────────────────
@@ -129,47 +187,58 @@ export const bulkDownloadAlgorithms = async (
 
   const algorithmIndex = keyBy(algorithmsDetails, "id");
 
-  const algoName1 = (a: AlgorithmDetails) =>
+  const getAlgoName = (a: AlgorithmDetails) =>
     `${kebabCase(a.algo_name)}-${a.id}`;
 
-  await series(
+  await parallel(
     summaries.map((id) => async () => {
       const details = find(algorithmsDetails, { id });
       const csv = json2csv([details], { emptyFieldValue: "" });
-      await writeOne(`summary/${algoName1(details)}.csv`, csv);
-      setProgress((p) => ({ current: p.current + 1, total: p.total }));
-    })
-  );
-
-  const s3 = await parallel(
-    submissions.map((id) => async () => {
-      const { algorithm, resource: scenario } = decodeAlgorithmResource(id);
-
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-      const result = await queryClient.fetchQuery(
-        algorithmScenarioQuery(algorithm, scenario)
-      );
-      return { id, result };
+      const { set } = addJob({
+        label: `${details.algo_name}.csv`,
+        status: "Downloading",
+      });
+      const meta = await writeOne(`summary/${getAlgoName(details)}.csv`, csv);
+      set({
+        progress: 0.75,
+        status: `Compressing, ${prettyBytes(meta.compressedSize)}`,
+      });
+      set({ progress: 1, status: "Done" });
     }),
     PARALLEL_LIMIT
   );
 
-  await series(
-    s3.map(({ id, result }) => async () => {
+  // ─── Export Submissions ────────────────────────────────────────────────
+
+  await parallel(
+    submissions.map((id) => async () => {
       const { algorithm, resource: scenario } = decodeAlgorithmResource(id);
       const details = algorithmIndex[algorithm];
       const scenarioDetails = scensIndex[scenario];
       const mapDetails = mapsIndex[scenarioDetails.map_id];
+      const fullName = `${mapDetails.map_name}-${scenarioDetails.scen_type}-${scenarioDetails.type_id}.csv`;
+      const { set } = addJob({
+        label: `${details.algo_name}: ${fullName}`,
+        status: "Downloading",
+      });
+      set({ progress: 0.25, status: "Downloading" });
+      const result = await queryClient.fetchQuery(
+        algorithmScenarioQuery(algorithm, scenario)
+      );
+      set({ progress: 0.5, status: "Compressing" });
       const csv = json2csv(result, { emptyFieldValue: "" });
-
-      await writeOne(
-        `submission/${algoName1(details)}/${mapDetails.map_name}-${
-          scenarioDetails.scen_type
-        }-${scenarioDetails.type_id}.csv`,
+      const meta = await writeOne(
+        `submission/${getAlgoName(details)}/${fullName}`,
         csv
       );
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-    })
+      set({
+        progress: 0.75,
+        status: `Compressing, ${prettyBytes(meta.compressedSize)}`,
+      });
+      set({ progress: 1, status: "Done" });
+      return { id, result };
+    }),
+    PARALLEL_LIMIT
   );
 
   await close();
@@ -185,15 +254,8 @@ export const bulkDownloadMaps = async (
   }: UseBulkMutationArgs,
   mapsIndex: Record<string, Map>,
   scensIndex: Record<string, Scenario>,
-  setProgress: React.Dispatch<
-    React.SetStateAction<{ current: number; total: number }>
-  >
+  addJob: R2
 ) => {
-  setProgress({
-    current: 0,
-    total: maps.length + scens.length + results.length,
-  });
-
   const { writeOne, close } = createZipWriter({
     chunkSize: CHUNK_SIZE_B,
     inParts: downloadInParts,
@@ -203,116 +265,118 @@ export const bulkDownloadMaps = async (
   // ─── Export Maps ─────────────────────────────────────
 
   const mapNames = maps.map((m) => mapsIndex[m]?.map_name);
-  const mapContents = await parallel(
-    mapNames.map((m) => async () => {
-      const contents = await text<string>(`/assets/maps/${m}.map`);
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-      return {
-        contents,
-        name: m,
-      };
+  await parallel(
+    mapNames.map((name) => async () => {
+      const fullName = `${name}.map`;
+      const { set } = addJob({ label: fullName, status: "Downloading" });
+      const contents = await text<string>(`/assets/maps/${fullName}`);
+      set({ progress: 0.75, status: "Compressing" });
+      const meta = await writeOne(`maps/${fullName}`, contents);
+      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
     }),
     PARALLEL_LIMIT
-  );
-
-  await series(
-    mapContents.map(({ name, contents }) => async () => {
-      await writeOne(`maps/${name}.map`, contents);
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-    })
   );
 
   // ─── Export Scenarios ────────────────────────────────
 
-  const scensContents = await parallel(
+  await parallel(
     scens.map((s) => async () => {
       const { scen_type, type_id, map_id } = scensIndex[s];
       const mapName = mapsIndex[map_id]?.map_name;
-      const contents = await text(
-        `./assets/scens/${mapName}-${scen_type}-${type_id}.scen`
-      );
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-      return {
-        contents,
-        mapName,
-        scen_type,
-        type_id,
-      };
+      const fullName = `${mapName}-${scen_type}-${type_id}.scen`;
+      const { set } = addJob({
+        label: fullName,
+        status: "Downloading",
+      });
+      const contents = await text(`./assets/scens/${fullName}`);
+      set({ progress: 0.75, status: "Compressing" });
+      const meta = await writeOne(`scenarios/${fullName}`, contents);
+      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
     }),
     PARALLEL_LIMIT
-  );
-
-  await series(
-    scensContents.map(
-      ({ contents, mapName, scen_type, type_id }) =>
-        async () => {
-          await writeOne(
-            `scenarios/${mapName}-${scen_type}-${type_id}.scen`,
-            contents
-          );
-          setProgress((p) => ({
-            current: p.current + 0.5,
-            total: p.total,
-          }));
-        }
-    )
   );
 
   // ─── Export Results ──────────────────────────────────
 
-  const resultsData = await parallel(
-    results.map((r) => async () => {
+  await parallel(
+    results.map((name) => async () => {
+      const scen = scensIndex[name];
+      const map = mapsIndex[scen.map_id];
+      const fullName = `${map.map_name}-${scen.scen_type}-${scen.type_id}.csv`;
+      const { set } = addJob({
+        label: fullName,
+        status: "Downloading",
+      });
       const results = await queryClient.fetchQuery(
-        resultQuery(r, includeSolutions)
+        resultQuery(name, scen.instances, includeSolutions, (d) => {
+          set({ progress: 0.25 + d / 2, status: "Downloading" });
+        })
       );
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-      return {
-        results,
-        name: r,
-      };
+      const csv = json2csv(results, { emptyFieldValue: "" });
+      set({ progress: 0.8, status: "Compressing" });
+      const meta = await writeOne(`results/${fullName}`, csv);
+      set({
+        progress: 1,
+        status: `Done, ${prettyBytes(meta.compressedSize)}`,
+      });
     }),
     PARALLEL_LIMIT
   );
 
-  await series(
-    resultsData.map(({ results, name }) => async () => {
-      const csv = json2csv(results, { emptyFieldValue: "" });
-      const scen = scensIndex[name];
-      const map = mapsIndex[scen.map_id];
-      await writeOne(
-        `results/${map.map_name}-${scen.scen_type}-${scen.type_id}.csv`,
-        csv
-      );
-      setProgress((p) => ({ current: p.current + 0.5, total: p.total }));
-    })
-  );
-
   await close();
+};
+export type Job = {
+  id: string;
+  label: string;
+  status: string;
+  progress: number | undefined;
 };
 
 function useBulkMutationProvider() {
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [jobs, dispatch] = useState<Job[]>([]);
   const mutation = useMutation({
     mutationKey: ["bulk-download"],
     mutationFn: async (func: () => Promise<void>) => {
       await func();
     },
   });
-  return { mutation, progress, setProgress };
+  return {
+    mutation,
+    jobs,
+    summary: {
+      current: sumBy(jobs, "progress"),
+      total: jobs.length,
+    },
+    setProgress: dispatch,
+    add: (s: Partial<Job>) => {
+      const id = nanoid();
+      dispatch((p) => [
+        ...p,
+        { id, label: "Job", status: "Waiting", progress: 0.1, ...s },
+      ]);
+      return {
+        id,
+        remove: (d = 2000) => {
+          delay(() => {
+            dispatch((p) => p.filter((x) => x.id !== id));
+          }, d);
+        },
+        set: (s: Partial<Job>) => {
+          dispatch((xs) => xs.map((x) => (x.id === id ? { ...x, ...s } : x)));
+        },
+      };
+    },
+  };
 }
 
-export const BulkDownloadContext = createContext<{
-  mutation: UseMutationResult<void, unknown, () => Promise<void>>;
-  progress: { current: number; total: number };
-  setProgress: React.Dispatch<
-    React.SetStateAction<{ current: number; total: number }>
-  >;
-} | null>(null);
+type R1 = ReturnType<typeof useBulkMutationProvider>;
+type R2 = R1["add"];
+export const BulkDownloadContext = createContext<R1>(null);
 
 export const BulkDownloadProvider = ({ children }: PropsWithChildren) => {
-  const { mutation, progress, setProgress } = useBulkMutationProvider();
+  const value = useBulkMutationProvider();
   return (
-    <BulkDownloadContext.Provider value={{ mutation, progress, setProgress }}>
+    <BulkDownloadContext.Provider value={value}>
       {children}
     </BulkDownloadContext.Provider>
   );

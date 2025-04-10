@@ -2,3 +2,4 @@
 /python_tool/__pycache__
 /python_tool/.ipynb_checkpoints
 .env.dev
+/tmp

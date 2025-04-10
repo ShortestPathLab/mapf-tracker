@@ -269,7 +269,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                 {
                   label: "See a solution for 4000 agents on ORZ 900 D",
                   description:
-                    "Multi-agent pathfinding is difficult. LaCAM solves this problem instance, yet you can clearly where there's room for improvement.",
+                    "Multi-agent pathfinding is difficult. We have algorithms that can solve this problem, yet you can clearly where there's room for improvement.",
                   value: TEMP_HARDCODED_SOLUTION_PATH,
                   icon: undefined,
                   content: undefined,

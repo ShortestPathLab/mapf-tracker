@@ -60,8 +60,9 @@ export function DownloadOptions() {
   const { mapsIndex, scensIndex } = useIndexAll();
   const {
     mutation: { isPending, mutateAsync: startDownload },
-    progress,
-    setProgress,
+    summary,
+    add,
+    jobs,
   } = useBulkMutation();
   const { data, isLoading } = useBenchmarksAll();
 
@@ -168,7 +169,7 @@ export function DownloadOptions() {
             },
             mapsIndex,
             scensIndex,
-            setProgress
+            add
           )
         )
       }
@@ -235,7 +236,9 @@ export function DownloadOptions() {
       }}
       isLoading={isLoading}
       isRunning={isPending}
-      progress={progress}
+      progress={summary}
+      jobs={jobs}
+      disabled={(!maps.count && !scens.count && !results.count) || isLoading}
       renderLabel={(row) =>
         disambiguate(row, {
           all: (row) => (

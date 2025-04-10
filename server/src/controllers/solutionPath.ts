@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { last, split } from "lodash";
+import { chunk, last, map, split, zipWith } from "lodash";
 import {
   Instance,
   OngoingSubmission,
@@ -7,7 +7,9 @@ import {
   SolutionPath,
   Submission,
 } from "models";
+import { Types } from "mongoose";
 import { route } from "query";
+import { encode } from "validator";
 import { z } from "zod";
 
 export const getSolutionPath = async (
@@ -31,6 +33,29 @@ export const getSolutionPath = async (
     }
   }
 };
+
+export async function getSolutionPathsRaw(ids: string[]) {
+  const chunks = chunk(ids, 250);
+  const all: string[] = [];
+  for (const c of chunks) {
+    const q = {
+      _id: {
+        $in: map(c, (id) => new Types.ObjectId(id)),
+      },
+    };
+    const [dataLegacy, data] = await Promise.all([
+      SolutionPath.find(q, { solution_path: 1 }),
+      Submission.find(q, { solutions: 1 }),
+    ]);
+    const x = zipWith(
+      data,
+      dataLegacy,
+      (a, b) => a?.solutions?.join("\n") ?? encode(b?.solution_path ?? "")
+    );
+    all.push(...x);
+  }
+  return all;
+}
 
 export const findPath: RequestHandler = async (req, res) => {
   const { id, source } = z

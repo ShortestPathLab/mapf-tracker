@@ -1,5 +1,6 @@
 /**
  * From ChatGPT
+ *
  * Run length encoder
  */
 export function encode(input: string): string {

@@ -89,25 +89,6 @@
   }
 }
 
-.MuiTabs-root:not(.MuiTabs-vertical) span.MuiTabs-indicator {
-  height: 3px;
-  border-radius: 3px 3px 0 0;
-  width: 100%;
-}
-.MuiTouchRipple-root > * {
-  filter: blur(12px);
-  opacity: 0.1 !important;
-}
-
-.MuiFilledInput-root {
-  border-radius: 12px;
-  overflow: hidden;
-}
-.MuiFilledInput-root::before,
-.MuiFilledInput-root::after {
-  display: none !important;
-}
-
 button.Mui-disabled {
   box-shadow: none !important;
 }
@@ -116,7 +97,7 @@ button.Mui-disabled {
   margin-right: 4px;
 }
 
-.MuiCheckbox-root.Mui-checked::before {
+.MuiCheckbox-root.Mui-checked.MuiCheckbox-colorSecondary::before {
   content: "";
   width: 16px;
   height: 16px;

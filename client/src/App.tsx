@@ -103,7 +103,9 @@ export function MutatingBar() {
           left: 0,
           width: "100%",
           zIndex: (t) => t.zIndex.modal + 1,
+          bgcolor: "transparent",
         }}
+        color="secondary"
         variant="indeterminate"
       />
     </Fade>,

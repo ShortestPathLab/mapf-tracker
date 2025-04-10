@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Menu,
   MenuItem,
   Stack,
@@ -23,13 +24,17 @@ import {
   useBooleanMap,
 } from "components/tree-data-grid/TreeDataGrid";
 import { Map, Scenario } from "core/types";
-import { floor, map, noop } from "lodash";
+import { floor, isUndefined, map, noop } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { PopupState as State } from "material-ui-popup-state/hooks";
 import { Arrow } from "pages/submission-summary/table/Arrow";
 import { ReactNode } from "react";
 import { paper } from "theme";
+import { useStickToBottom } from "use-stick-to-bottom";
 import { useBenchmarksAll } from "./DownloadOptions";
+import { Job } from "./useBulkMutation";
+import { useThrottle } from "react-use";
+import { CheckRounded } from "@mui-symbols-material/w400";
 
 export type Models = {
   all: { maps: Models["map"][]; id: string };
@@ -85,6 +90,8 @@ export function DownloadOptionsBase<
   onRowClick,
   onSelectionMenuItemClick,
   renderLabel,
+  jobs: _jobs,
+  disabled,
 }: {
   onRowClick?: (row: T) => void;
   selectionMenuItems?: U[];
@@ -98,7 +105,11 @@ export function DownloadOptionsBase<
   progress?: { current: number; total: number };
   options?: ReactNode;
   renderLabel?: (row: T) => ReactNode;
+  jobs?: Job[];
+  disabled?: boolean;
 }) {
+  const jobs = useThrottle(_jobs, 300);
+
   const notify = useSnackbarAction();
   const theme = useTheme();
   const md = useMd();
@@ -106,6 +117,8 @@ export function DownloadOptionsBase<
   const sm = useSm();
 
   const [expanded, setExpanded] = useBooleanMap({ root: true });
+
+  const { scrollRef, contentRef } = useStickToBottom();
 
   const columns1: GridColDef<T>[] = [
     {
@@ -232,57 +245,147 @@ export function DownloadOptionsBase<
           sx={{
             flex: 1,
             minWidth: 320,
-            width: sm ? "100%" : 0,
-            gap: 2,
+            overflow: sm ? "visible" : "hidden",
             justifyContent: "flex-end",
+            width: sm ? "100%" : 0,
+            height: "100%",
           }}
         >
-          {!sm && (
-            <Tip
-              title="Bulk export"
-              description="Export a large quantity of data at once."
-              actions={
-                <Button onClick={() => open("/docs/solution-format", "_blank")}>
-                  Data format reference
-                </Button>
-              }
-            />
-          )}
-          <Stack sx={{ ...paper(0), maxHeight: sm ? "30dvh" : undefined }}>
-            <Scroll y>
-              <Stack sx={{ p: 2, gap: 2 }}>
-                <Stack>
-                  <Typography variant="h5" sx={{ mb: 1 }}>
-                    Export options
-                  </Typography>
-                  {options}
-                </Stack>
-                <Stack>
-                  <Typography variant="h5" sx={{ mb: 1 }}>
-                    Selection summary
-                  </Typography>
-                  {summary}
-                </Stack>
-              </Stack>
-            </Scroll>
-          </Stack>
-          <Floating>
-            <Button
-              fullWidth
-              color="secondary"
-              variant="contained"
-              sx={{ width: "100%" }}
-              disabled={isRunning}
-              onClick={notify(() => onSubmit?.(), {
-                start: "Exporting selection",
-                end: "Exported selection",
-              })}
+          <Scroll y>
+            <Stack
+              sx={{
+                minHeight: "100%",
+                gap: 2,
+                justifyContent: "flex-end",
+                "> *": {
+                  transition: (t) => t.transitions.create("height"),
+                },
+              }}
             >
-              {isRunning
-                ? `Exporting, ${floor(progress.current)} of ${progress.total}`
-                : "Export selection"}
-            </Button>
-          </Floating>
+              {!sm && (
+                <Tip
+                  title="Bulk export"
+                  description="Export a large quantity of data at once."
+                  actions={
+                    <Button
+                      onClick={() => open("/docs/solution-format", "_blank")}
+                    >
+                      Data format reference
+                    </Button>
+                  }
+                />
+              )}
+              <Stack
+                sx={{
+                  ...paper(0),
+                  maxHeight: sm ? "30dvh" : undefined,
+                  height: "fit-content",
+                  flex: 1,
+                  flexGrow: 0,
+                }}
+              >
+                <Scroll y>
+                  <Stack sx={{ p: 2, gap: 2 }}>
+                    <Stack>
+                      <Typography variant="h5" sx={{ mb: 1 }}>
+                        Export options
+                      </Typography>
+                      {options}
+                    </Stack>
+                    <Stack>
+                      <Typography variant="h5" sx={{ mb: 1 }}>
+                        Selection summary
+                      </Typography>
+                      {summary}
+                    </Stack>
+                  </Stack>
+                </Scroll>
+              </Stack>
+
+              {!!jobs?.length && !sm && (
+                <Stack
+                  sx={{ ...paper(0), maxHeight: "30dvh", height: 120, flex: 1 }}
+                >
+                  <Scroll y ref={scrollRef}>
+                    <Stack
+                      ref={contentRef}
+                      direction="column-reverse"
+                      sx={{ p: 2, gap: 1 }}
+                    >
+                      {jobs
+                        .slice(-20)
+                        .reverse()
+                        .map(({ id, label, status, progress }) => (
+                          <Enter in axis="x" key={id}>
+                            <Stack
+                              direction="row"
+                              sx={{ gap: 2, alignItems: "center" }}
+                            >
+                              {progress === 1 ? (
+                                <CheckRounded color="success" />
+                              ) : (
+                                <Stack
+                                  sx={{
+                                    width: 24,
+                                    height: 24,
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <CircularProgress
+                                    size={20}
+                                    sx={{
+                                      "& circle": {
+                                        strokeWidth: 4,
+                                      },
+                                      color: "text.secondary",
+                                    }}
+                                    variant={
+                                      isUndefined(progress)
+                                        ? "indeterminate"
+                                        : "determinate"
+                                    }
+                                    value={progress * 100}
+                                  />
+                                </Stack>
+                              )}
+                              <Stack>
+                                <Typography variant="body2">{label}</Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  {status}
+                                </Typography>
+                              </Stack>
+                            </Stack>
+                          </Enter>
+                        ))}
+                    </Stack>
+                  </Scroll>
+                </Stack>
+              )}
+              <Floating>
+                <Button
+                  fullWidth
+                  color="secondary"
+                  variant="contained"
+                  sx={{ width: "100%" }}
+                  disabled={isRunning || disabled}
+                  onClick={notify(() => onSubmit?.(), {
+                    start: "Exporting selection",
+                    end: "Exported selection",
+                  })}
+                >
+                  {isRunning
+                    ? `Exporting ${floor(progress.current)} of ${
+                        progress.total
+                      }`
+                    : "Export selection"}
+                </Button>
+              </Floating>
+            </Stack>
+          </Scroll>
         </Stack>
       </Stack>
     </Stack>

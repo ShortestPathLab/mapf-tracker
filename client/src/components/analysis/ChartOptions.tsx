@@ -25,7 +25,7 @@ export function CheckboxItem({ selected, children, ...props }: MenuItemProps) {
           p: 0,
           py: 0.5,
           pr: 2,
-          "&.Mui-checked::before": {
+          "&.MuiCheckbox-colorSecondary.Mui-checked::before": {
             content: '""',
             width: 16,
             height: 16,

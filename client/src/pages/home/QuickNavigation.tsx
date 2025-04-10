@@ -1,7 +1,6 @@
 import { alpha, Autocomplete, Box, BoxProps, TextField } from "@mui/material";
 import { useNavigationContent } from "components/appbar/useNavigationContent";
 import { Item } from "components/Item";
-import { appNameShort } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
 import { flatMap, map } from "lodash";
 import { AlgorithmPreview } from "pages/algorithms/AlgorithmPreview";
@@ -98,7 +97,7 @@ export function QuickNavigation() {
       )}
       renderInput={(props) => (
         <TextField
-          label={`Search ${appNameShort}...`}
+          label={`Search for anything...`}
           variant="outlined"
           size="small"
           fullWidth

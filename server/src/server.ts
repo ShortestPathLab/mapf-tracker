@@ -9,10 +9,13 @@ import { createDevServer as createServer } from "./createDevServer";
 import { createRouters } from "./createRouters";
 import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
+import compression from "compression";
 
 export const app = express();
 
 app.use(cors());
+
+app.use(compression());
 
 app.use(yamlParser);
 app.use(csvParser);

@@ -1,12 +1,15 @@
-import { env } from "bun";
+import { env, isMainThread } from "bun";
 import { upperCase } from "lodash";
 import pino from "pino";
+import { customAlphabet } from "nanoid";
 
 const logger = pino();
 
 logger.level = env.LOG_LEVEL || "error";
 
 type Level = "debug" | "info" | "warn" | "error" | "trace" | "fatal";
+
+const id = customAlphabet("1234567890");
 
 export const raw = (level: Level, ...params: Params) => {
   const [source, msg, ...payload] = params;
@@ -41,7 +44,7 @@ export const context = (name: string, maxRecent: number = 100) => {
   };
 };
 
-export let log = context("Main");
+export let log = context(isMainThread ? "Main" : `Worker ${id(6)}`);
 
 export const setContext = (name: string) => {
   log = context(name);

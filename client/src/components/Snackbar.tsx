@@ -49,8 +49,13 @@ export function useSnackbarAction<T extends []>() {
     ) =>
     async (...params: T) => {
       if (start) push(start);
-      await f(...params);
-      if (end) push(end);
+      try {
+        await f(...params);
+        if (end) push(end);
+      } catch (e) {
+        push("Error occurred");
+        throw e;
+      }
     };
 }
 

@@ -11,7 +11,7 @@ import {
   sum,
 } from "lodash";
 import { context } from "logging";
-import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
+import { Infer, OngoingSubmission } from "models";
 import { Document, Types } from "mongoose";
 import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
@@ -32,8 +32,8 @@ import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 import memoize from "memoizee";
-import { memoizeAsync } from "utils/memoizeAsync";
 import { asyncMap } from "utils/waitMap";
+import { findInstance, findMap, findScenario } from "controllers/findMemo";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -80,14 +80,10 @@ function createSolutionCostChecker(expected: number = 0) {
   ] as const;
 }
 
-const findInstance = memoizeAsync((id: string) => Instance.findById(id));
-const findMap = memoizeAsync((id: string) => Map.findById(id));
-const findScenario = memoizeAsync((id: string) => Scenario.findById(id));
-
 async function getMeta(instanceId: Types.ObjectId) {
-  const instance = await findInstance(instanceId.toString());
-  const map = await findMap(instance.map_id.toString());
-  const scenario = await findScenario(instance.scen_id.toString());
+  const instance = await findInstance(instanceId.toString())!;
+  const map = await findMap(instance!.map_id!.toString())!;
+  const scenario = await findScenario(instance!.scen_id!.toString())!;
   const mapContent = await getMap({ map, scenario });
   const scenarioContent = await getScenario({ map, scenario });
   return { map, scenario, mapContent, scenarioContent };

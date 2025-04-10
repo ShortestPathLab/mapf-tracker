@@ -51,8 +51,9 @@ export function AlgorithmDownloadOptions({
 }) {
   const {
     mutation: { mutateAsync: startDownload, isPending },
-    progress,
-    setProgress,
+    add,
+    jobs,
+    summary,
   } = useBulkMutation();
 
   const [downloadParts, setDownloadParts] = useState(true);
@@ -184,7 +185,7 @@ export function AlgorithmDownloadOptions({
 
   return (
     <DownloadOptionsBase
-      progress={progress}
+      progress={summary}
       isRunning={isPending}
       onSubmit={() =>
         startDownload(() =>
@@ -196,7 +197,7 @@ export function AlgorithmDownloadOptions({
             },
             mapsIndex,
             scensIndex,
-            setProgress
+            add
           )
         )
       }
@@ -213,6 +214,8 @@ export function AlgorithmDownloadOptions({
           </CheckboxItem>
         </>
       }
+      jobs={jobs}
+      disabled={(!summaries.count && !submissions.count) || isLoading}
       summary={
         <>
           <Item
