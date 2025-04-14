@@ -85,8 +85,12 @@ class Zip {
     );
   });
 
-  async write(path: string, reader: TextReader | ReadableStream) {
-    this.size += "size" in reader ? reader.size : Infinity;
+  async write(
+    path: string,
+    reader: TextReader | ReadableStream,
+    estimatedSize?: number
+  ) {
+    this.size += estimatedSize ?? ("size" in reader ? reader.size : Infinity);
     const job = this.writer.add(path, reader);
     this.jobs.push(job);
     return await job;
@@ -127,9 +131,13 @@ function createZipWriter({
     const reader = new TextReader(contents);
     return await zip.write(path, reader);
   };
-  const streamOne = async (path: string, contents: ReadableStream) => {
+  const streamOne = async (
+    path: string,
+    contents: ReadableStream,
+    estimatedSize?: number
+  ) => {
     const zip = await acquire();
-    return await zip.write(path, contents);
+    return await zip.write(path, contents, estimatedSize);
   };
 
   const close = async () => {
@@ -316,9 +324,17 @@ export const bulkDownloadMaps = async (
                   worker.terminate();
               }
             };
+            worker.onerror = (e) => {
+              throw e;
+            };
           },
         });
-        const meta = await streamOne(`results/${fullName}`, stream);
+        const meta = await streamOne(
+          `results/${fullName}`,
+          stream,
+          // Estimate that file will be 1.5MB per instance
+          scen.instances * 1024 * (includeSolutions ? 1024 * 1.5 : 1)
+        );
         set({
           progress: 1,
           status: `Done, ${prettyBytes(meta.compressedSize)}`,

@@ -1,10 +1,14 @@
 export const getAuth = () => {
-  const user = localStorage.getItem("user");
-  if (user) {
-    const parsed = JSON.parse(user);
-    if ("token" in parsed) {
-      return { Authorization: `Bearer ${parsed.token}` };
+  try {
+    const user = localStorage.getItem("user");
+    if (user) {
+      const parsed = JSON.parse(user);
+      if ("token" in parsed) {
+        return { Authorization: `Bearer ${parsed.token}` };
+      }
     }
+  } catch {
+    return;
   }
 };
 

@@ -28,7 +28,7 @@ import { floor, isUndefined, map, noop } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { PopupState as State } from "material-ui-popup-state/hooks";
 import { Arrow } from "pages/submission-summary/table/Arrow";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { paper } from "theme";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { useBenchmarksAll } from "./DownloadOptions";
@@ -118,7 +118,11 @@ export function DownloadOptionsBase<
 
   const [expanded, setExpanded] = useBooleanMap({ root: true });
 
-  const { scrollRef, contentRef } = useStickToBottom();
+  const { scrollRef, contentRef, scrollToBottom } = useStickToBottom();
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [scrollToBottom, map(jobs, "id").join(",")]);
 
   const columns1: GridColDef<T>[] = [
     {

@@ -1,7 +1,8 @@
+import { JSONParser } from "@streamparser/json";
 import { APIConfig } from "core/config";
-import { throttle, noop, ceil, map, range } from "lodash";
-import oboe from "oboe";
+import { ceil, map, noop, range, throttle } from "lodash";
 import { parallel } from "promise-tools";
+import { post } from "queries/mutation";
 import type { Job } from "./useBulkMutation";
 
 export const CHUNK_LIMIT = 500;
@@ -28,25 +29,38 @@ export const resultQuery = async (
       range(chunks),
       (c) => () =>
         new Promise<void>((res) => {
-          oboe({
-            url: `${APIConfig.apiUrl}/bulk/results`,
-            method: "post",
-            body: {
-              scenario: id,
-              solutions,
-              limit: CHUNK_LIMIT,
-              skip: c * CHUNK_LIMIT,
-            },
-          })
-            .node("!.*", (node) => {
-              count++;
-              onNode?.(node);
-              progress({
-                status: `Downloading (${count} of ${limit})`,
-                progress: limit ? count / limit : 0,
-              });
-            })
-            .done(res);
+          const parser = new JSONParser({
+            // 16 MB buffer
+            stringBufferSize: 16 * 1024 * 1024,
+            paths: ["$.*"],
+          });
+          parser.onValue = (n) => {
+            count++;
+            onNode?.(n.value);
+            progress({
+              status: `Downloading (${count} of ${limit})`,
+              progress: limit ? count / limit : 0,
+            });
+          };
+          parser.onEnd = () => {
+            res();
+          };
+          parser.onError = console.log;
+          post(`${APIConfig.apiUrl}/bulk/results`, {
+            scenario: id,
+            solutions,
+            limit: CHUNK_LIMIT,
+            skip: c * CHUNK_LIMIT,
+          }).then(async (b) => {
+            const reader = b.body.getReader();
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) {
+                break;
+              }
+              parser.write(value);
+            }
+          });
         })
     ),
     PARALLEL_LIMIT
