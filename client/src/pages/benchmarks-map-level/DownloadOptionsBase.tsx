@@ -338,7 +338,11 @@ export function DownloadOptionsBase<
                                       "& circle": {
                                         strokeWidth: 4,
                                       },
-                                      color: "text.secondary",
+                                      color: status
+                                        ?.toLocaleLowerCase()
+                                        ?.includes?.("error")
+                                        ? "error.main"
+                                        : "text.secondary",
                                     }}
                                     variant={
                                       isUndefined(progress)

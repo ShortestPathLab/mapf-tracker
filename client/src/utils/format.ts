@@ -1,5 +1,6 @@
 import { format, parse, parseISO } from "date-fns";
 import { tryChain } from "./tryChain";
+import { capitalize, startCase } from "lodash";
 
 export const formatPercentage = (c: number, d: number = 2) =>
   `${((isNaN(c) ? 0 : c) * 100).toFixed(d)}%`;
@@ -19,3 +20,5 @@ export const formatDate = (c: unknown, formatStr = DATE_FORMAT) => {
       )
     : "--";
 };
+
+export const prose = (v: string) => capitalize(startCase(v));

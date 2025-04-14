@@ -22,7 +22,7 @@ export const getStatus: RequestHandler = async (req, res) => {
       .values()
       .map(async ({ key, dependents, description, destructive }) => ({
         key,
-        description,
+        description: description?.(),
         destructive,
         dependents: map(dependents, "key"),
         status: await get(key),

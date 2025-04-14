@@ -8,6 +8,7 @@ import { stage as updateSubmissionsWithOngoingSubmissions } from "./stages/updat
 import { stage as updateInstancesSubmissionHistory } from "./stages/updateInstancesSubmissionHistory";
 import { stage as pruneOngoingSubmissions } from "./stages/pruneOngoingSubmissions";
 import { stage as updateSubmissionBestFlags } from "./stages/updateSubmissionBestFlags";
+import { stage as precomputeQueries } from "./stages/precomputeQueries";
 import {
   mockStageA,
   mockStageB,
@@ -25,6 +26,7 @@ export const stages = {
   updateInstancesSubmissionHistory,
   pruneOngoingSubmissions,
   updateSubmissionBestFlags,
+  precomputeQueries,
   mockStageA,
   mockStageB,
   mockStageCExpectError,

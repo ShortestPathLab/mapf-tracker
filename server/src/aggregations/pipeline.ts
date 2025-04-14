@@ -14,7 +14,7 @@ export type PipelineStage<
   destructive?: boolean;
   run: (a?: T) => Promise<{ result: any; variables?: R }>;
   dependents: PipelineStage<R>[];
-  description?: string;
+  description?: () => string;
 };
 
 type StatusType = "invalidated" | "done" | "running" | "error" | "pending";

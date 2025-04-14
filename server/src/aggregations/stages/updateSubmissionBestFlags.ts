@@ -66,5 +66,5 @@ export const stage: PipelineStage = {
     result: await updateSubmissionBestFlags(),
   }),
   dependents: [],
-  description: ``,
+  description: () => ``,
 };

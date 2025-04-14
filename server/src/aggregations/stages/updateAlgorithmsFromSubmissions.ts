@@ -146,7 +146,7 @@ export const stage: PipelineStage = {
     result: await updateAlgorithmsFromSubmissions(),
   }),
   dependents: [updateInstancesSubmissionHistoryFromSubmissions],
-  description: `
+  description: () => `
 This pipeline aggregates all submissions for each algorithm and updates the
 algorithm model with the following information:
 - best_lower: The number of instances where the submission has the best lower

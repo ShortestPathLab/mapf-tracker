@@ -36,7 +36,13 @@ async function run({
     : [];
   return await Promise.all(
     zip(instances, solutions).map(async ([instance, s1]) => {
-      const { solution_algos, solution_path_id } = instance!;
+      const {
+        solution_algos,
+        solution_path_id,
+        agents,
+        lower_cost,
+        solution_cost,
+      } = instance!;
       const id =
         solution_path_id?.toString() ??
         last(solution_algos)?.submission_id?.toString();
@@ -44,7 +50,9 @@ async function run({
         map_name: map!.map_name,
         scen_type: scenario!.scen_type,
         type_id: scenario!.type_id,
-        ...pick(instance!.toJSON(), "agents", "lower_cost", "solution_cost"),
+        agents: agents,
+        lower_cost: lower_cost ?? null,
+        solution_cost: solution_cost ?? null,
         ...(id &&
           includeSolutions && {
             flip_up_down: true,

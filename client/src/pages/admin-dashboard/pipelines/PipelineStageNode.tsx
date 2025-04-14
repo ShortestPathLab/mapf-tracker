@@ -3,6 +3,7 @@ import TouchRipple, {
   TouchRippleActions,
 } from "@mui/material/ButtonBase/TouchRipple";
 import { Handle, Position } from "@xyflow/react";
+import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface/useSurface";
 import { SyntheticEvent, useRef } from "react";
 import { StageStatus } from "./StageStatus";
@@ -35,8 +36,11 @@ export function PipelineStageNode({
 }: {
   data?: { stage?: string };
 }) {
+  const sm = useSm();
   const { dialog, open } = useSurface(StageStatusDialog, {
     title: "Stage details",
+    variant: sm ? "sheet" : "fullscreen",
+    slotProps: { modal: { scrollable: true } },
   });
   const { ripple, bindCapture } = useRipple();
   return (

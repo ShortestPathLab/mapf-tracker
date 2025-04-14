@@ -36,7 +36,7 @@ export const stage: PipelineStage = {
   }),
   dependents: [],
   destructive: true,
-  description: `
+  description: () => `
 **Warning:** This is a destructive action. Before running this pipeline, ensure that you have merged ongoing_submissions into submissions.
 
 Aggregation pipeline that removes all ongoing submissions that have a status that is "submitted".

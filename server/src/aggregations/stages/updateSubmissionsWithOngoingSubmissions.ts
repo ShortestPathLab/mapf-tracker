@@ -102,7 +102,7 @@ export const stage: PipelineStage = {
     result: await updateSubmissionsWithOngoingSubmissions(),
   }),
   dependents: [updateInstances, updateSolutionPaths],
-  description: `
+  description: () => `
 Aggregation pipeline that groups by unique combination of
 api key, map id, scenario id, and agent count, and sums up
 the lower and solution costs. It also selects the latest

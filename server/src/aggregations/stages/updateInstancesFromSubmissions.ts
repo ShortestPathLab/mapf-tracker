@@ -48,7 +48,7 @@ export const stage: PipelineStage = {
   key: "updateInstancesFromSubmissions",
   run: async () => ({ result: await updateInstancesFromSubmissions() }),
   dependents: [updateScenarios, updateAlgorithms],
-  description: `
+  description: () => `
 This pipeline aggregates all submissions for each instance and updates the
 instance model with the best lower and solution costs.
 

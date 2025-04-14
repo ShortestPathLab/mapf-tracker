@@ -61,7 +61,7 @@ export const CodeBlock = ({
         <Button
           size="small"
           sx={{ minWidth: 0, px: 1, py: 0.5 }}
-          variant="contained"
+          variant="outlined"
           onClick={() => {
             navigator?.clipboard?.writeText(children);
             setIsCopied(true);

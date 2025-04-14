@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import { restore as restoreOngoingSubmission } from "controllers/ongoingSubmission";
 import { restore as restorePipeline } from "controllers/pipeline";
+import { restore as restorePrecompute } from "query/withDiskCache";
 import cors from "cors";
 import express, { urlencoded } from "express";
 import { csvParser, yamlParser } from "./body-parsers";
@@ -57,6 +58,10 @@ log.info(
 
 log.info("Restoring");
 
-for (const f of [restoreOngoingSubmission, restorePipeline]) {
+for (const f of [
+  restoreOngoingSubmission,
+  restorePipeline,
+  restorePrecompute,
+]) {
   f();
 }

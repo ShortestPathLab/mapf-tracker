@@ -140,7 +140,7 @@ export const stage: PipelineStage = {
     result: await updateInstancesSubmissionHistory(),
   }),
   dependents: [updateSubmissionBestFlags],
-  description: `
+  description: () => `
 This pipeline aggregates all submissions for each instance and updates the
 instance model with the following information:
 - lower_algos: The submissions that at one point held the best lower bound.

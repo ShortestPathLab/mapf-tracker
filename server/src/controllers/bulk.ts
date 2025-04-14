@@ -1,12 +1,7 @@
 import { Application, Router } from "express";
 import { route } from "query";
 import { z } from "zod";
-import {
-  precompute as precomputeBulkAsync,
-  handler as bulkAsync,
-} from "./bulk.worker";
-
-precomputeBulkAsync?.();
+import { handler as bulkAsync } from "./bulk.worker";
 
 export const use = (app: Application, path = "/api/bulk") =>
   app.use(

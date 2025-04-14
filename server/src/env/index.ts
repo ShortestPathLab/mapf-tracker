@@ -23,6 +23,7 @@ export const env = z
     VALIDATOR_BATCH_COUNT: z.coerce.number().default(1),
     VALIDATOR_CONCURRENCY_COUNT: z.coerce.number().default(1),
     CACHE_DIRECTORY: z.string().default(`/var/tmp/${appId}/`),
+    PRECOMPUTE_ON_START: z.coerce.number().default(0),
   })
   .parse(process.env);
 

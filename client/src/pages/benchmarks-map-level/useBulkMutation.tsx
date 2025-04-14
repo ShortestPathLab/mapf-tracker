@@ -6,27 +6,24 @@ import {
   ZipWriterConstructorOptions,
 } from "@zip.js/zip.js";
 import { queryClient } from "App";
-import { APIConfig } from "core/config";
 import { AlgorithmDetails, Map, Scenario } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
 import {
-  ceil,
   delay,
   find,
   flatMap,
+  has,
   kebabCase,
   keyBy,
   last,
   once,
-  range,
   sumBy,
 } from "lodash";
 import { nanoid } from "nanoid";
 import prettyBytes from "pretty-bytes";
 import { parallel } from "promise-tools";
-import { post } from "queries/mutation";
-import { text, toJson } from "queries/query";
+import { text } from "queries/query";
 import {
   algorithmDetailsQuery,
   algorithmScenarioQuery,
@@ -40,6 +37,7 @@ import {
 } from "react";
 import { CHUNK_SIZE_B, useBenchmarksAll } from "./DownloadOptions";
 import { decodeAlgorithmResource } from "./encodeAlgorithmResource";
+import bulkWorkerUrl from "./bulkResults.worker?worker&url";
 
 type UseBulkMutationArgs = {
   maps?: string[];
@@ -49,32 +47,6 @@ type UseBulkMutationArgs = {
   downloadInParts?: boolean;
 };
 const PARALLEL_LIMIT = 5;
-const CHUNK_LIMIT = 500;
-
-const resultQuery = (
-  id: string,
-  limit: number,
-  solutions: boolean,
-  onProgress?: (p: number) => void
-) => ({
-  queryKey: ["bulk-results", id, solutions],
-  enabled: !!id,
-  queryFn: async () => {
-    const all = [];
-    const chunks = ceil(limit / CHUNK_LIMIT);
-    for (const c of range(chunks)) {
-      const res = await post(`${APIConfig.apiUrl}/bulk/results`, {
-        scenario: id,
-        solutions,
-        limit: CHUNK_LIMIT,
-        skip: c * CHUNK_LIMIT,
-      }).then(toJson);
-      all.push(...res);
-      onProgress?.(chunks ? (c + 1) / chunks : 0);
-    }
-    return all;
-  },
-});
 
 export function useIndexAll() {
   const { data: all, isLoading } = useBenchmarksAll();
@@ -113,8 +85,8 @@ class Zip {
     );
   });
 
-  async write(path: string, reader: TextReader) {
-    this.size += reader.size;
+  async write(path: string, reader: TextReader | ReadableStream) {
+    this.size += "size" in reader ? reader.size : Infinity;
     const job = this.writer.add(path, reader);
     this.jobs.push(job);
     return await job;
@@ -155,11 +127,15 @@ function createZipWriter({
     const reader = new TextReader(contents);
     return await zip.write(path, reader);
   };
+  const streamOne = async (path: string, contents: ReadableStream) => {
+    const zip = await acquire();
+    return await zip.write(path, contents);
+  };
 
   const close = async () => {
     await parallel(zips.map((z) => () => z.flush()));
   };
-  return { writeOne, close };
+  return { writeOne, close, streamOne };
 }
 
 export const bulkDownloadAlgorithms = async (
@@ -198,12 +174,10 @@ export const bulkDownloadAlgorithms = async (
         label: `${details.algo_name}.csv`,
         status: "Downloading",
       });
+
+      set({ progress: 0.75, status: "Compressing" });
       const meta = await writeOne(`summary/${getAlgoName(details)}.csv`, csv);
-      set({
-        progress: 0.75,
-        status: `Compressing, ${prettyBytes(meta.compressedSize)}`,
-      });
-      set({ progress: 1, status: "Done" });
+      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
     }),
     PARALLEL_LIMIT
   );
@@ -231,12 +205,7 @@ export const bulkDownloadAlgorithms = async (
         `submission/${getAlgoName(details)}/${fullName}`,
         csv
       );
-      set({
-        progress: 0.75,
-        status: `Compressing, ${prettyBytes(meta.compressedSize)}`,
-      });
-      set({ progress: 1, status: "Done" });
-      return { id, result };
+      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
     }),
     PARALLEL_LIMIT
   );
@@ -256,7 +225,7 @@ export const bulkDownloadMaps = async (
   scensIndex: Record<string, Scenario>,
   addJob: R2
 ) => {
-  const { writeOne, close } = createZipWriter({
+  const { writeOne, close, streamOne } = createZipWriter({
     chunkSize: CHUNK_SIZE_B,
     inParts: downloadInParts,
     name: `bulk-${nanoid(6)}`,
@@ -269,10 +238,19 @@ export const bulkDownloadMaps = async (
     mapNames.map((name) => async () => {
       const fullName = `${name}.map`;
       const { set } = addJob({ label: fullName, status: "Downloading" });
-      const contents = await text<string>(`/assets/maps/${fullName}`);
-      set({ progress: 0.75, status: "Compressing" });
-      const meta = await writeOne(`maps/${fullName}`, contents);
-      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
+      try {
+        const contents = await text<string>(`/assets/maps/${fullName}`);
+        set({ progress: 0.75, status: "Compressing" });
+        const meta = await writeOne(`maps/${fullName}`, contents);
+        set({
+          progress: 1,
+          status: `Done, ${prettyBytes(meta.compressedSize)}`,
+        });
+      } catch (e) {
+        set({
+          status: `Error: ${has(e, "message") ? e.message : "unknown error"}`,
+        });
+      }
     }),
     PARALLEL_LIMIT
   );
@@ -288,10 +266,19 @@ export const bulkDownloadMaps = async (
         label: fullName,
         status: "Downloading",
       });
-      const contents = await text(`./assets/scens/${fullName}`);
-      set({ progress: 0.75, status: "Compressing" });
-      const meta = await writeOne(`scenarios/${fullName}`, contents);
-      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
+      try {
+        const contents = await text(`./assets/scens/${fullName}`);
+        set({ progress: 0.75, status: "Compressing" });
+        const meta = await writeOne(`scenarios/${fullName}`, contents);
+        set({
+          progress: 1,
+          status: `Done, ${prettyBytes(meta.compressedSize)}`,
+        });
+      } catch (e) {
+        set({
+          status: `Error: ${has(e, "message") ? e.message : "unknown error"}`,
+        });
+      }
     }),
     PARALLEL_LIMIT
   );
@@ -305,20 +292,42 @@ export const bulkDownloadMaps = async (
       const fullName = `${map.map_name}-${scen.scen_type}-${scen.type_id}.csv`;
       const { set } = addJob({
         label: fullName,
-        status: "Downloading",
+        status: "Queued",
       });
-      const results = await queryClient.fetchQuery(
-        resultQuery(name, scen.instances, includeSolutions, (d) => {
-          set({ progress: 0.25 + d / 2, status: "Downloading" });
-        })
-      );
-      const csv = json2csv(results, { emptyFieldValue: "" });
-      set({ progress: 0.8, status: "Compressing" });
-      const meta = await writeOne(`results/${fullName}`, csv);
-      set({
-        progress: 1,
-        status: `Done, ${prettyBytes(meta.compressedSize)}`,
-      });
+      try {
+        const stream = new ReadableStream<ArrayBufferLike>({
+          start: async (c) => {
+            const worker = new Worker(bulkWorkerUrl, { type: "module" });
+            worker.postMessage({
+              name,
+              limit: scen.instances,
+              includeSolutions,
+            });
+            worker.onmessage = (e) => {
+              switch (e.data.type) {
+                case "progress":
+                  set(e.data.payload);
+                  break;
+                case "data":
+                  c.enqueue(e.data.payload);
+                  break;
+                case "done":
+                  c.close();
+                  worker.terminate();
+              }
+            };
+          },
+        });
+        const meta = await streamOne(`results/${fullName}`, stream);
+        set({
+          progress: 1,
+          status: `Done, ${prettyBytes(meta.compressedSize)}`,
+        });
+      } catch (e) {
+        set({
+          status: `Error: ${has(e, "message") ? e.message : "unknown error"}`,
+        });
+      }
     }),
     PARALLEL_LIMIT
   );
@@ -352,7 +361,7 @@ function useBulkMutationProvider() {
       const id = nanoid();
       dispatch((p) => [
         ...p,
-        { id, label: "Job", status: "Waiting", progress: 0.1, ...s },
+        { id, label: "Job", status: "Queued", progress: 0.1, ...s },
       ]);
       return {
         id,

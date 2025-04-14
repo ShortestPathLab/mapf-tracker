@@ -1,25 +1,31 @@
 import { connectToDatabase } from "connection";
 import { once } from "lodash";
-import {
-  usingWorkerTask,
-  usingTaskMessageHandler,
-  usingWorkerTaskReusable,
-} from "queue/usingWorker";
-import memoize from "p-memoize";
-import { getSolutionPath } from "./solutionPath";
 import { Infer, Instance, Map, Scenario } from "models";
-import { findInstance, findMap, findScenario } from "./findMemo";
-import { getMap, getScenario } from "resources";
+import memoize from "p-memoize";
+import { parseMap, parseMapMeta, parseScenarioMeta } from "parser";
+import { createPrecomputeHandler } from "query/withDiskCache";
+import { usingTaskMessageHandler } from "queue/usingWorker";
 import React from "react";
 import { renderToString } from "react-dom/server";
-import { parseMap, parseMapMeta, parseScenarioMeta } from "parser";
+import { getMap, getScenario } from "resources";
+import { findInstance, findMap, findScenario } from "./findMemo";
 import { optimiseGridMap } from "./optimiseGridMap";
 
-export const createPreviewAsync = memoize(
-  usingWorkerTaskReusable<CreatePreviewData, string>(
-    () => new Worker(import.meta.path)
-  ),
-  { cacheKey: JSON.stringify }
+export const { precompute, handler } = createPrecomputeHandler(
+  import.meta.path,
+  "map-preview",
+  (p) => run(p),
+  {
+    precompute: async () => {
+      const scenarios = await Scenario.find({}, { _id: 1 });
+      const maps = await Map.find({}, { _id: 1 });
+
+      return [
+        ...scenarios.map(({ _id }) => [{ scenario: _id.toString() }]),
+        ...maps.map(({ _id }) => [{ map: _id.toString() }]),
+      ] as [{ scenario?: string; map?: string }][];
+    },
+  }
 );
 
 const connect = once(connectToDatabase);
@@ -64,54 +70,51 @@ async function getSources({ map, instance, scenario }: CreatePreviewData) {
   return sources;
 }
 
-const run = memoize(
-  async (params: CreatePreviewData) => {
-    const { map, scenario, instance } = await getSources(params);
-    if (!map) return <svg />;
-    const { meta, bounds } = await processMap(await getMap({ map }));
-    const { sources } = scenario
-      ? await processScenario(
-          await getScenario({ map, scenario }),
-          instance?.agents
-        )
-      : { sources: [] };
-    const preview = (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
+const run = async (params: CreatePreviewData) => {
+  const { map, scenario, instance } = await getSources(params);
+  if (!map) return <svg />;
+  const { meta, bounds } = await processMap(await getMap({ map }));
+  const { sources } = scenario
+    ? await processScenario(
+        await getScenario({ map, scenario }),
+        instance?.agents
+      )
+    : { sources: [] };
+  const preview = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={meta.width}
+      height={meta.height}
+    >
+      <rect
+        x="0"
+        y="0"
         width={meta.width}
         height={meta.height}
-      >
+        fill="var(--background)"
+      />
+      {bounds.map((bounds, i) => (
         <rect
-          x="0"
-          y="0"
-          width={meta.width}
-          height={meta.height}
-          fill="var(--background)"
+          key={i}
+          {...bounds}
+          fill="var(--obstacle)"
+          shapeRendering="optimizeSpeed"
         />
-        {bounds.map((bounds, i) => (
-          <rect
-            key={i}
-            {...bounds}
-            fill="var(--obstacle)"
-            shapeRendering="optimizeSpeed"
-          />
-        ))}
-        {sources.map((source, i) => (
-          <rect
-            key={i}
-            {...source}
-            width={1}
-            height={1}
-            fill="var(--agent)"
-            shapeRendering="optimizeSpeed"
-          />
-        ))}
-      </svg>
-    );
-    return renderToString(preview);
-  },
-  { cacheKey: JSON.stringify }
-);
+      ))}
+      {sources.map((source, i) => (
+        <rect
+          key={i}
+          {...source}
+          width={1}
+          height={1}
+          fill="var(--agent)"
+          shapeRendering="optimizeSpeed"
+        />
+      ))}
+    </svg>
+  );
+  return renderToString(preview);
+};
 
 type CreatePreviewData = {
   map?: string;

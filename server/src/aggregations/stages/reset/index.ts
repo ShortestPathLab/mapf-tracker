@@ -95,7 +95,7 @@ export const stage: PipelineStage = {
     result: await reset(),
   }),
   dependents: [updateInstances],
-  description: `
+  description: () => `
 **Warning:** This is a destructive action. This deletes all content in the database. This action also takes several minutes to complete.
 
 This pipeline resets the database by deleting all content, and rebuilding them with the maps and scenarios from the original files. The original files are read from \`${resourcesPath}\`.`,
