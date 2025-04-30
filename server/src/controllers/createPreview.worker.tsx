@@ -72,7 +72,7 @@ async function getSources({ map, instance, scenario }: CreatePreviewData) {
 
 const run = async (params: CreatePreviewData) => {
   const { map, scenario, instance } = await getSources(params);
-  if (!map) return <svg />;
+  if (!map) return renderToString(<svg />);
   const { meta, bounds } = await processMap(await getMap({ map }));
   const { sources } = scenario
     ? await processScenario(
