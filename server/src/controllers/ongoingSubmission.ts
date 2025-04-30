@@ -2,7 +2,7 @@ import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
 import { RequestHandler } from "express";
-import { chain as _, map, pick } from "lodash";
+import { chain as _, filter, map, pick, values } from "lodash";
 import { context } from "logging";
 import { Instance, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
@@ -204,11 +204,8 @@ export const status = route(
 export const statusByApiKey = route(
   z.object({ apiKey: z.string() }),
   async ({ apiKey }) =>
-    _(submissionTickets.pool.tickets)
-      .values()
-      .filter((c) => c.apiKey === apiKey)
-      .slice(-30)
-      .value(),
+    filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === apiKey),
+
   { source: "params" }
 );
 
