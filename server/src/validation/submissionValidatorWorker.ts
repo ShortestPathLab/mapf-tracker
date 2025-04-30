@@ -205,7 +205,7 @@ async function setSolutionCost(
     }
   } else {
     // No cost specified, use real cost
-    await submission.set("solutionCost", realCost).save();
+    await submission.set("cost", realCost).save();
   }
   // At this point the submission's cost is correct
   const lowerBound = isNumber(submission.lowerBound)
