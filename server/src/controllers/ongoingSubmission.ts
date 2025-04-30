@@ -204,7 +204,10 @@ export const status = route(
 export const statusByApiKey = route(
   z.object({ apiKey: z.string() }),
   async ({ apiKey }) =>
-    filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === apiKey),
+    filter(
+      values(submissionTickets.pool.tickets),
+      (c) => c.apiKey === apiKey
+    ).slice(-30),
   { source: "params" }
 );
 
