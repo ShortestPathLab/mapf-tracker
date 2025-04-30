@@ -2,14 +2,14 @@ import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
 import { RequestHandler } from "express";
-import { filter, map, pick, values } from "lodash";
+import { chain as _, map, pick } from "lodash";
 import { context } from "logging";
 import { Instance, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
 import { toString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
 import { queryClient, route } from "query";
-import { usingWorkerTask, usingWorkerTaskReusable } from "queue/usingWorker";
+import { usingWorkerTaskReusable } from "queue/usingWorker";
 import { ResultTicketStatus, createPool } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import {
@@ -204,10 +204,11 @@ export const status = route(
 export const statusByApiKey = route(
   z.object({ apiKey: z.string() }),
   async ({ apiKey }) =>
-    filter(
-      values(submissionTickets.pool.tickets),
-      (c) => c.apiKey === apiKey
-    ).slice(-30),
+    _(submissionTickets.pool.tickets)
+      .values()
+      .filter((c) => c.apiKey === apiKey)
+      .slice(-30)
+      .value(),
   { source: "params" }
 );
 
