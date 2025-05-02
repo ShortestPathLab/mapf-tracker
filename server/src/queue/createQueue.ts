@@ -18,11 +18,11 @@ class Queue<
   ResultType = any,
   NameType extends string = string
 > {
-  server: RedisMemoryServer;
-  queue: BullMqQueue<DataType, ResultType, NameType>;
-  host: string;
-  port: number;
-  events: QueueEvents;
+  server?: RedisMemoryServer;
+  queue?: BullMqQueue<DataType, ResultType, NameType>;
+  host?: string;
+  port?: number;
+  events?: QueueEvents;
   constructor(private options: QueueOptions) {}
   async setup() {
     this.server = new RedisMemoryServer(this.options.server);
@@ -40,9 +40,8 @@ class Queue<
     this.queue.on("error", log.error);
   }
   async close() {
-    if (!this.server) return;
-    await this.queue.close();
-    await this.server.stop();
+    if (this.queue) await this.queue.close();
+    if (this.server) await this.server.stop();
     log.info(`Queue '${this.options.name}' closed`);
   }
 }
