@@ -2,7 +2,6 @@ import { loadAll } from "js-yaml";
 import { head } from "lodash";
 import {
   usingTaskMessageHandler,
-  usingWorkerTask,
   usingWorkerTaskReusable,
 } from "queue/usingWorker";
 export type YamlParserWorkerParams = string;

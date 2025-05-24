@@ -1,8 +1,8 @@
-import { Infer, Map, Scenario } from "models";
+import { InferRaw, Map, Scenario } from "models";
+import memoize from "p-memoize";
+import { join } from "path";
 import { resourcesDevPath } from "./dev";
 import { resourcesProductionPath } from "./production";
-import { join } from "path";
-import memoize from "p-memoize";
 
 export const resourcesPath =
   false && process.env.NODE_ENV === "development"
@@ -13,8 +13,8 @@ const contentCacheKey = ([{ map, scenario }]: [Data]) =>
   `${map?.map_name}-${scenario?.scen_type}-${scenario?.type_id}`;
 
 type Data = {
-  map: Infer<typeof Map>;
-  scenario?: Infer<typeof Scenario>;
+  map: InferRaw<typeof Map>;
+  scenario?: InferRaw<typeof Scenario>;
 };
 
 export const getScenario = memoize(

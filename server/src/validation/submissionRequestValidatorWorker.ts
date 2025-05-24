@@ -13,7 +13,7 @@ import Validator, {
 } from "fastest-validator";
 import { context } from "logging";
 import { map } from "promise-tools";
-import { findInstance } from "./findInstance";
+import { findInstanceByAgentScenario } from "./findInstance";
 
 const log = context("Schema Validator");
 
@@ -147,7 +147,7 @@ export const transformOne = async (v: One) => {
     type_id: v.type_id,
   });
   if (!scenario) throw "Scenario not found";
-  const instance = await findInstance({
+  const instance = await findInstanceByAgentScenario({
     agents: v.agent_count,
     scen_id: scenario._id,
   });

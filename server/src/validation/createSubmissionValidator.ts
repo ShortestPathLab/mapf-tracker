@@ -1,5 +1,5 @@
-import { chunk, head, throttle, ThrottleSettingsLeading, times } from "lodash";
-import stringHash from "string-hash";
+import { chunk, times } from "lodash";
+import { assert } from "utils/assert";
 import { createPair } from "../queue/createPair";
 import { usingWorkerTaskReusable } from "../queue/usingWorker";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
@@ -30,7 +30,9 @@ export const createSubmissionValidator = async ({
           ? +process.env.VALIDATOR_BATCH_COUNT || 64
           : 64
       )) {
-        instances[i % workerCount].server.queue.add("validate", c);
+        const q = instances[i % workerCount].server.queue;
+        assert(q, "Instance is not initialised");
+        q.add("validate", c);
         i++;
       }
     },

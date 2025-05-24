@@ -118,7 +118,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     title: "Submission details",
     slotProps: { paper: { sx: { maxWidth: "min(max(50vw, 720px), 100%)" } } },
   });
-  const { data, isFetched } = useOngoingSubmissionSummaryQuery(apiKey);
+  const { data } = useOngoingSubmissionSummaryQuery(apiKey);
   const { mutateAsync: deleteByScenarioIndex } =
     useDeleteOngoingSubmissionByScenarioIndexMutation(apiKey);
   const { mutate: deleteSubmissions } =
@@ -423,7 +423,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
               variant="modal"
               trigger={(state) => (
                 <Button
-                  disabled={!sumBy(data?.maps, "count.total")}
+                  disabled={!sumBy(data?.processed?.maps, "count.total")}
                   color="error"
                   startIcon={<DeleteRounded />}
                   {...bindTrigger(state)}
@@ -480,9 +480,8 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
           }
           expanded={expanded}
           onExpandedChange={setExpanded}
-          isLoading={!isFetched}
           columns={columns}
-          rows={data?.maps}
+          rows={data?.processed?.maps}
         />
       </FlatCard>
       {dialog}

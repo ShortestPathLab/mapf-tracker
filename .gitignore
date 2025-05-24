@@ -5,3 +5,4 @@ dist
 lib
 /data
 .env.*
+dump.archive

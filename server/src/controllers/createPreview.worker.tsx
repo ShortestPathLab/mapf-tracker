@@ -8,8 +8,9 @@ import { usingTaskMessageHandler } from "queue/usingWorker";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { getMap, getScenario } from "resources";
-import { findInstance, findMap, findScenario } from "./findMemo";
+import { findInstance, findMapMemo, findScenarioMemo } from "./findMemo";
 import { optimiseGridMap } from "./optimiseGridMap";
+import { required } from "utils/assert";
 
 export const { precompute, handler } = createPrecomputeHandler(
   import.meta.path,
@@ -54,17 +55,17 @@ async function getSources({ map, instance, scenario }: CreatePreviewData) {
   };
   // Get instance
   if (instance) {
-    sources.instance = await findInstance(instance);
+    sources.instance = required(await findInstance(instance)).toObject();
   }
   // Get scenario
-  if (sources.instance || scenario) {
-    sources.scenario = await findScenario(
-      scenario ?? sources.instance!.scen_id.toString()
-    );
+  const scenId = scenario ?? sources.instance?.scen_id;
+  if (scenId) {
+    sources.scenario = required(await findScenarioMemo(scenId)).toObject();
   }
   // Get map
-  if (sources.scenario || map) {
-    sources.map = await findMap(map ?? sources.scenario!.map_id.toString());
+  const mapId = map ?? sources.scenario?.map_id;
+  if (mapId) {
+    sources.map = required(await findMapMemo(mapId)).toObject();
   }
 
   return sources;

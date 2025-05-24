@@ -22,6 +22,8 @@ services:
       - proxy
     extra_hosts:
       - host.docker.internal:host-gateway
+    depends_on:
+      - mongo
   mapf-tracker-legacy:
     container_name: mapf-tracker-legacy
     image: alpine/socat
@@ -35,6 +37,8 @@ services:
       - 80
     networks:
       - proxy
+    depends_on:
+      - mongo
   nginx-proxy:
     image: bbtsoftwareag/nginx-proxy-unrestricted-requestsize:alpine
     container_name: nginx-proxy
@@ -76,6 +80,25 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true # Only watch containers with specific labels
     command: --interval 300 # Check for updates every 300 seconds (5 minutes)
+  mongo:
+    image: mongo:6.0.21
+    container_name: mongo
+    ports:
+      - 8987:8987
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
+      - MONGO_REPLSET_NAME=rs0
+      - MONGO_REPLSET_PORT=8987
+    command: mongod --replSet rs0 --port 8987 --bind_ip_all
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: 16
+          memory: 64g
 networks:
   proxy:
     driver: bridge

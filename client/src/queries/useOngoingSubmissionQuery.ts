@@ -3,24 +3,12 @@ import { queryClient as client } from "App";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { SummaryResult } from "core/types";
-import {
-  cloneDeep,
-  head,
-  keyBy,
-  map,
-  max,
-  mergeWith,
-  range,
-  some,
-  values,
-} from "lodash";
+import { cloneDeep, head, keyBy, map, mergeWith, values } from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
-import { useEffect, useState } from "react";
-import {
-  REFETCH_MS,
-  useRoundRobinQueries,
-} from "../hooks/useRoundRobinQueries";
+import { useRoundRobinQueries } from "../hooks/useRoundRobinQueries";
+
+const REFETCH_MS = 5000;
 
 function mergeArray<T>(
   xs: T[],
@@ -131,52 +119,27 @@ const summaryQuery = (key: string | number, i: number = 0) => ({
       `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`
     ),
   enabled: !!key,
-  refetchInterval: REFETCH_MS,
+  refetchInterval: false,
+  refetchOnReconnect: false,
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
 });
 
 export function useOngoingSubmissionSummaryQuery(key?: string | number) {
-  const [length, setLength] = useState(0);
-  const { data, lengths, isFetched, isLoading, isPending } =
-    useRoundRobinQueries({
-      queries: range(length + 1).map((i) => summaryQuery(key, i)),
-      combine: (results) => ({
-        length: results.length,
-        lengths: map(results, (d) => d.data?.maps?.length ?? 0),
-        isFetched: some(results, "isFetched"),
-        isLoading: some(results, "isLoading"),
-        isPending: some(results, "isPending"),
-        data: mergeWith(
-          {},
-          ...map(results, "data"),
-          mergeValues
-        ) as SummaryResult,
-      }),
-    });
-  const shouldContract =
-    lengths.length >= 2 &&
-    lengths[lengths.length - 1] === 0 &&
-    lengths[lengths.length - 2] === 0;
-  const shouldExpand = lengths.length >= 1 && lengths[lengths.length - 1] > 0;
-  // Resize
-  useEffect(() => {
-    // The last chunk is not empty
-    if (!isPending) {
-      if (shouldExpand) {
-        setLength((i) => i + 1);
-        return;
-      }
-      if (shouldContract) {
-        setLength((i) => max([i - 1, 0]));
-        return;
-      }
+  return useRoundRobinQueries<
+    SummaryResult,
+    { lengths: number[]; processed: SummaryResult }
+  >(
+    `ongoing-submissions-${key}`,
+    (i) => summaryQuery(key, i),
+    (d) => d?.maps?.length ?? 0,
+    (results) => {
+      return {
+        lengths: map(results, (d) => d?.maps?.length ?? 0),
+        processed: mergeWith({}, ...results, mergeValues) as SummaryResult,
+      };
     }
-  }, [isPending, shouldContract, shouldExpand, data]);
-  return {
-    data,
-    isLoading,
-    isFetched,
-    incomplete: isFetched && (shouldExpand || isPending),
-  };
+  );
 }
 
 export type SubmissionTicket = {

@@ -1,5 +1,6 @@
 import {
   chain,
+  has,
   isInteger,
   isNumber,
   join,
@@ -33,7 +34,12 @@ import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 import memoize from "memoizee";
 import { asyncMap } from "utils/waitMap";
-import { findInstance, findMap, findScenario } from "controllers/findMemo";
+import {
+  findInstance,
+  findMapMemo,
+  findScenarioMemo,
+} from "controllers/findMemo";
+import { required } from "utils/assert";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
@@ -81,9 +87,9 @@ function createSolutionCostChecker(expected: number = 0) {
 }
 
 async function getMeta(instanceId: Types.ObjectId) {
-  const instance = await findInstance(instanceId.toString())!;
-  const map = await findMap(instance!.map_id!.toString())!;
-  const scenario = await findScenario(instance!.scen_id!.toString())!;
+  const instance = required(await findInstance(instanceId));
+  const map = required(await findMapMemo(instance.map_id));
+  const scenario = required(await findScenarioMemo(instance.scen_id));
   const mapContent = await getMap({ map, scenario });
   const scenarioContent = await getScenario({ map, scenario });
   return { map, scenario, mapContent, scenarioContent };
@@ -309,7 +315,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
       result: { outcome: errors?.length ? "invalid" : "valid", errors },
     };
   } catch (e) {
-    log.error("General error", { message: e.message });
+    log.error("General error", { message: has(e, "message") ? e.message : e });
     return {
       result: { outcome: "error", errors: [{ label: "General error" }] },
     };

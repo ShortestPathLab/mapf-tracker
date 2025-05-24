@@ -1,8 +1,8 @@
 import { connectToDatabase } from "connection";
-import { flatMap, last, pick, range, zip } from "lodash";
+import { flatMap, last, range, zip } from "lodash";
 import { Instance, Scenario } from "models";
 import { createPrecomputeHandler } from "query/withDiskCache";
-import { findMap, findScenario } from "./findMemo";
+import { findMapMemo, findScenarioMemo } from "./findMemo";
 import { getSolutionPathsRaw } from "./solutionPath";
 
 export type BulkOptions = {
@@ -22,8 +22,8 @@ async function run({
   const instances = await Instance.find({ scen_id: id })
     .skip(skip)
     .limit(limit);
-  const scenario = await findScenario(id);
-  const map = await findMap(scenario!.map_id!.toString());
+  const scenario = await findScenarioMemo(id);
+  const map = await findMapMemo(scenario!.map_id!.toString());
   const solutions = includeSolutions
     ? await getSolutionPathsRaw(
         instances.map((i) => {

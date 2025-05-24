@@ -37,7 +37,7 @@ const hintText =
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
-  const { data, incomplete: summaryIncomplete } =
+  const { data, isFirstRun: summaryIncomplete } =
     useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
@@ -124,17 +124,20 @@ export default function SubmissionSummaryPage() {
         {
           label: "Progress",
           values: [
-            { name: "Received", count: sumBy(data?.maps, "count.total") },
+            {
+              name: "Received",
+              count: sumBy(data?.processed?.maps, "count.total"),
+            },
             {
               name: "Running",
-              count: sumBy(data?.maps, "count.queued"),
+              count: sumBy(data?.processed?.maps, "count.queued"),
             },
             {
               name: "Run",
               count:
-                sumBy(data?.maps, "count.valid") +
-                sumBy(data?.maps, "count.invalid") +
-                sumBy(data?.maps, "count.outdated"),
+                sumBy(data?.processed?.maps, "count.valid") +
+                sumBy(data?.processed?.maps, "count.invalid") +
+                sumBy(data?.processed?.maps, "count.outdated"),
             },
           ],
         },
@@ -143,15 +146,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Valid",
-              count: sumBy(data?.maps, "count.valid"),
+              count: sumBy(data?.processed?.maps, "count.valid"),
             },
             {
               name: "Invalid",
-              count: sumBy(data?.maps, "count.invalid"),
+              count: sumBy(data?.processed?.maps, "count.invalid"),
             },
             {
               name: "Duplicate",
-              count: sumBy(data?.maps, "count.outdated"),
+              count: sumBy(data?.processed?.maps, "count.outdated"),
             },
           ],
         },
@@ -160,15 +163,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Best",
-              count: sumBy(data?.maps, "count.best"),
+              count: sumBy(data?.processed?.maps, "count.best"),
             },
             {
               name: "Tie",
-              count: sumBy(data?.maps, "count.tie"),
+              count: sumBy(data?.processed?.maps, "count.tie"),
             },
             {
               name: "Dominated",
-              count: sumBy(data?.maps, "count.dominated"),
+              count: sumBy(data?.processed?.maps, "count.dominated"),
             },
           ],
         },

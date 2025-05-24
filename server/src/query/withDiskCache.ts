@@ -31,15 +31,6 @@ type DiskCacheOptions<T extends any[]> = {
   precompute?: () => Promise<T[]>;
 };
 
-export function d1<T extends any[], U>(
-  name: string,
-  f: (...args: T) => Promise<U>
-) {
-  const g = diskCached(name, f);
-
-  return g;
-}
-
 export function diskCached<T extends any[], U>(
   name: string,
   f: (...args: T) => Promise<U>,

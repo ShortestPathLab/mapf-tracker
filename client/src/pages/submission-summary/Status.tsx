@@ -14,7 +14,7 @@ export function Status({ apiKey }: { apiKey?: string | number }) {
   const someIsPending = filter(isPending, (p) => p.status === "pending");
   const { data: s } = useOngoingSubmissionSummaryQuery(apiKey);
 
-  const total = (path: string) => sumBy(s?.maps, path);
+  const total = (path: string) => sumBy(s?.processed?.maps, path);
 
   const keyStatus = someIsPending.length
     ? "receiving"
