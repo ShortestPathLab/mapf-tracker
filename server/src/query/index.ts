@@ -7,6 +7,7 @@ import hash from "object-hash";
 import QuickLRU from "quick-lru";
 import { log } from "logging";
 import { has } from "lodash";
+import { diskCached } from "./withDiskCache";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -138,11 +139,14 @@ export const queryClient = <T>(model: Model<T>) => {
       ) => p,
       handler: (q: any) => Promise<any> = async (q) => q
     ): RequestHandler<z.infer<V>> =>
-      createHandler(validate, async (data) => {
-        const q = agg(data, new AggregateBuilder());
-        const docs = await model.aggregate(q.build());
-        return await handler(docs);
-      }),
+      createHandler(
+        validate,
+        diskCached(`aggregate-${model.modelName}`, async (data) => {
+          const q = agg(data, new AggregateBuilder());
+          const docs = await model.aggregate(q.build());
+          return await handler(docs);
+        })
+      ),
   };
 };
 
