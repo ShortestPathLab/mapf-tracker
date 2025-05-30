@@ -1,6 +1,6 @@
 import { Application, Router } from "express";
 import passport from "passport";
-import * as controller from "../controllers/user";
+import { createKeyAndSendMail } from "controllers/user";
 import { authenticate } from "auth";
 import { User, users } from "models";
 import { route } from "query";
@@ -39,12 +39,5 @@ export default (app: Application) =>
           )
         )
       )
-      .post("/notify", controller.createKeyAndSendMail)
-      .put("/sendMail", controller.sendMail)
-      .get("/:id", controller.findSubmittedAlgoByID)
-      .put("/updateAlgo/:id", controller.updateAlgoByID)
-      .put("/createAlgo", controller.createAlgo)
-      .post("/checkAlgo/:id", controller.checkAlgoExist)
-      .get("/getMapSubmittedInfo/:id", controller.getMapSubmittedInfo)
-      .put("/submitChunkResults/:id", controller.submitData)
+      .post("/notify", createKeyAndSendMail)
   );

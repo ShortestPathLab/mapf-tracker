@@ -6,6 +6,7 @@ import { mail } from "mail";
 import { Infer, Request, SubmissionKey } from "models";
 import { queryClient, route } from "query";
 import React from "react";
+import { assert } from "utils/assert";
 import { z } from "zod";
 
 const { query } = queryClient(Request);
@@ -56,6 +57,7 @@ export const findByInstance_id: RequestHandler = (req, res) => {
 
 async function queueMail(args: Infer<typeof Request>) {
   log.info("Preparing mail", args);
+  assert(args.requesterEmail, "Requester email must be defined");
   const a = await render(<RequestConfirmation {...args} />, { pretty: true });
   mail(
     "noreply@pathfinding.ai",
@@ -65,14 +67,14 @@ async function queueMail(args: Infer<typeof Request>) {
   );
 }
 
-export const create = async (req, res) => {
+export const create: RequestHandler = async (req, res) => {
   if (!req.body.requesterName) {
     return res
       .status(400)
       .send({ message: "Requester name can not be empty!" });
   }
 
-  const obj = {
+  const field = {
     requesterName: req.body.requesterName,
     requesterEmail: req.body.requesterEmail,
     requesterAffiliation: req.body.requesterAffiliation,
@@ -86,15 +88,14 @@ export const create = async (req, res) => {
     comments: req.body.comments,
   };
 
-  const request = new Request(obj);
+  const request = new Request(field);
   try {
     const data = await request.save();
-    await queueMail(obj as Infer<typeof Request>);
+    await queueMail(field as Infer<typeof Request>);
     res.send(data);
   } catch (err) {
     res.status(500).send({
-      message:
-        err.message || "Some error occurred while creating the Requester.",
+      message: inferErrorMessage(err),
     });
   }
 };

@@ -3,6 +3,7 @@ import { dispatcher } from "./dispatcher";
 import { Job } from "bullmq";
 import { context } from "logging";
 import { PipelineTaskData, PipelineTaskResult } from "./PipelineTaskData";
+import { assert } from "utils/assert";
 
 const log = context("Pipeline");
 
@@ -57,6 +58,8 @@ export async function run<T extends Record<string, any> | void = void>(
   };
   each(stage.dependents, (d) => l("invalidated", d.key, {}));
   l("pending");
+  assert(dispatcher.server.queue, "Queue is not initialised");
+  assert(dispatcher.server.events, "Events is not initialised");
   const job = await dispatcher.server.queue.add("run", {
     stage: stage.key,
     variables,
@@ -65,10 +68,13 @@ export async function run<T extends Record<string, any> | void = void>(
   const {
     returnvalue: { error, variables: v },
     failedReason,
-  } = await Job.fromId<PipelineTaskData, PipelineTaskResult>(
+  } = (await Job.fromId<PipelineTaskData, PipelineTaskResult>(
     dispatcher.server.queue,
-    job.id
-  );
+    job.id ?? ""
+  )) as {
+    returnvalue: PipelineTaskResult;
+    failedReason?: string;
+  };
   if (failedReason || error) {
     l("error", stage.key, variables, failedReason ?? error);
     return;

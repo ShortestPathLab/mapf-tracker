@@ -17,7 +17,9 @@ async function run({
     await stages[stage as keyof typeof stages].run(variables);
     return {};
   } catch (e) {
-    return { error: `error while running stage ${stage}: ${e?.message}` };
+    return {
+      error: `error while running stage ${stage}: ${inferErrorMessage(e)}`,
+    };
   }
 }
 

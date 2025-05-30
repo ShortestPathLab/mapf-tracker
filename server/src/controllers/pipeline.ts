@@ -1,7 +1,7 @@
 import { Status, run, stages } from "aggregations";
 import { timeStamp } from "console";
 import { RequestHandler } from "express";
-import { chain, map } from "lodash";
+import { chain, has, map } from "lodash";
 import { log } from "logging";
 import { PipelineStatus } from "models";
 import { get, set } from "models/PipelineStatus";
@@ -51,8 +51,8 @@ export const runStage =
       return;
     }
     try {
-      run(
-        stages[data.stage],
+      run<any>(
+        stages[data.stage as keyof typeof stages],
         {},
         {
           one,
@@ -63,8 +63,9 @@ export const runStage =
       );
       res.status(200).send({});
     } catch (err) {
-      log.error("Pipeline error", { message: err?.message });
+      const message = inferErrorMessage(err);
+      log.error("Pipeline error", { message });
       console.error(err);
-      res.status(500).send({ error: err.message });
+      res.status(500).send({ error: message });
     }
   };

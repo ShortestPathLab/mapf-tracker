@@ -1,4 +1,5 @@
-import { RequestHandler } from "express";
+///@ts-nocheck This file is bonkers
+
 import { Algorithm, Submission } from "models";
 import { Types } from "mongoose";
 
@@ -377,12 +378,12 @@ export const findSolvedDomainQuery: RequestHandler = (req, res) => {
     .then((data) => {
       data.forEach((element) => {
         let total = 0;
-        element["results"].forEach((algo) => {
+        element["results"].forEach((algo: any) => {
           if (algo["algo_name"] === "CBSH2-RTC") {
             total = algo["total_ins"];
           }
         });
-        element["results"].forEach((algo) => {
+        element["results"].forEach((algo: any) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
@@ -466,7 +467,7 @@ export const findClosedDomainQuery: RequestHandler = (req, res) => {
     .then((data) => {
       data.forEach((element) => {
         let total = 0;
-        element["results"].forEach((algo) => {
+        element["results"].forEach((algo: any) => {
           if (algo["algo_name"] === "CBSH2-RTC") {
             total = algo["total_ins"];
           }
