@@ -1,14 +1,7 @@
 import { RequestHandler } from "express";
-import { chunk, last, map, split, zipWith } from "lodash";
-import {
-  Instance,
-  OngoingSubmission,
-  Scenario,
-  SolutionPath,
-  Submission,
-} from "models";
+import { chunk, map, split, zipWith } from "lodash";
+import { OngoingSubmissionSolution, SolutionPath, Submission } from "models";
 import { Types } from "mongoose";
-import { route } from "query";
 import { encode } from "validator";
 import { z } from "zod";
 
@@ -19,7 +12,7 @@ export const getSolutionPath = async (
   const data =
     source === "submitted"
       ? await Submission.findOne({ _id: id })
-      : await OngoingSubmission.findOne({ _id: id });
+      : await OngoingSubmissionSolution.findOne({ _id: id });
   if (data?.solutions) {
     return data.solutions;
   } else {

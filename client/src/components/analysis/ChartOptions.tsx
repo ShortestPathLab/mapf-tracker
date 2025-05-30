@@ -128,6 +128,7 @@ export default function ChartOptions({
                 ),
               }}
               label="Submission"
+              placeholder="Select some solvers"
               variant="filled"
               value={selected}
               onChange={

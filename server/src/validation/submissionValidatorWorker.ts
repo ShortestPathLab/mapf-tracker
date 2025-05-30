@@ -12,7 +12,7 @@ import {
   sum,
 } from "lodash";
 import { context } from "logging";
-import { Infer, OngoingSubmission } from "models";
+import { Infer, OngoingSubmission, OngoingSubmissionSolution } from "models";
 import { Document, Types } from "mongoose";
 import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
@@ -132,6 +132,7 @@ async function validateGroup({
   goals,
   submission,
   mode,
+  solutions = [],
 }: {
   cells: boolean[][];
   width: number;
@@ -139,6 +140,7 @@ async function validateGroup({
   sources: Point[];
   goals: Point[];
   submission: OngoingSubmissionDocument;
+  solutions?: string[];
   mode?: SubmissionValidatorData[number]["mode"];
 }) {
   await submission
@@ -149,7 +151,7 @@ async function validateGroup({
     } satisfies OngoingSubmission[typeof validationResultsKey])
     .save();
 
-  const count = submission.solutions.length;
+  const count = solutions.length;
 
   const errors: { label: string; timesteps?: number[]; agents?: number[] }[] =
     [];
@@ -159,7 +161,7 @@ async function validateGroup({
   const timeStart = now();
   validate({
     domain: { cells, width, height },
-    paths: submission.solutions.map((s) => s || "w"),
+    paths: solutions.map((s) => s || "w"),
     sources: sources.slice(0, count),
     checks: [
       checkImmediateCollision,
@@ -297,13 +299,19 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     const cells = parseMapMemo(map);
     const { sources, goals, width, height } = parseScenarioMemo(scenario);
 
+    const { solutions } =
+      (await OngoingSubmissionSolution.findById(submission.solutions)) ?? {};
+
     log.info(
-      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${scenarioMeta.type_id}, agent count ${submission.solutions.length}.`
+      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${
+        scenarioMeta.type_id
+      }, agent count ${solutions?.length ?? 0}.`
     );
 
     const { errors } = await validateGroup({
       sources,
       goals,
+      solutions,
       width,
       height,
       cells,

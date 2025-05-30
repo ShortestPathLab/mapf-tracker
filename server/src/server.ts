@@ -1,16 +1,15 @@
 import bodyParser from "body-parser";
+import compression from "compression";
 import { restore as restoreOngoingSubmission } from "controllers/ongoingSubmission";
 import { restore as restorePipeline } from "controllers/pipeline";
-import { restore as restorePrecompute } from "query/withDiskCache";
 import cors from "cors";
-import express, { urlencoded } from "express";
+import express, { static as serve, urlencoded } from "express";
+import { restore as restorePrecompute } from "query/withDiskCache";
 import { csvParser, yamlParser } from "./body-parsers";
 import { connectToDatabase } from "./connection";
 import { createDevServer as createServer } from "./createDevServer";
 import { createRouters } from "./createRouters";
-import { createStaticRoutes } from "./createStaticRoutes";
 import { log } from "./logging";
-import compression from "compression";
 
 export const app = express();
 
@@ -39,7 +38,7 @@ app.get("/api/heartbeat", (req, res) => {
   res.send("OK");
 });
 
-createStaticRoutes(app);
+app.use("/res", serve(`${import.meta.dir}/resources`));
 
 app.get("/", (req, res) => {
   res.send(process.env.APP_NAME ?? "mapf-tracker-api");

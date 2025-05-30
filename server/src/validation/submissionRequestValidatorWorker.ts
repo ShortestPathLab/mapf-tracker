@@ -1,9 +1,15 @@
 import { connectToDatabase } from "connection";
-import { chain, flatten, now, omit, truncate, values } from "lodash";
+import { chain, flatten, now, omit, truncate, values, map } from "lodash";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { encode } from "validator";
 import { RefinementCtx, z } from "zod";
-import { Map, OngoingSubmission, Scenario, SubmissionKey } from "../models";
+import {
+  Map,
+  OngoingSubmission,
+  OngoingSubmissionSolution,
+  Scenario,
+  SubmissionKey,
+} from "../models";
 import { memoizeAsync } from "../utils/memoizeAsync";
 import { waitMap } from "../utils/waitMap";
 import { fatal } from "../validation/zod";
@@ -12,8 +18,8 @@ import Validator, {
   ValidationSchema,
 } from "fastest-validator";
 import { context } from "logging";
-import { map } from "promise-tools";
 import { findInstanceByAgentScenario } from "./findInstance";
+import { Types } from "mongoose";
 
 const log = context("Schema Validator");
 
@@ -164,21 +170,30 @@ export const transformOne = async (v: One) => {
 
 const submitOne = async (apiKey: string, data: One | One[]) => {
   const id = { apiKey };
-  const result = await OngoingSubmission.collection.insertMany(
-    (data instanceof Array ? data : [data]).map(
-      (data) =>
-        new OngoingSubmission({
-          ...id,
-          instance: data.instance,
-          lowerBound: data.lower_cost,
-          cost: data.solution_cost,
-          solutions: data.solution_plan,
-          options: { skipValidation: data.skip_validation },
-        })
-    )
-  );
 
-  return values(result.insertedIds).map((d) => ({
+  const jobs = (data instanceof Array ? data : [data]).map((data) => {
+    const b1 = new Types.ObjectId();
+    return {
+      id: b1,
+      meta: new OngoingSubmission({
+        ...id,
+        instance: data.instance,
+        lowerBound: data.lower_cost,
+        cost: data.solution_cost,
+        options: { skipValidation: data.skip_validation },
+      }),
+      solution: new OngoingSubmissionSolution({
+        solution: data.solution_plan,
+      }),
+    };
+  });
+
+  await Promise.all([
+    OngoingSubmission.collection.insertMany(map(jobs, "meta")),
+    OngoingSubmissionSolution.collection.insertMany(map(jobs, "solution")),
+  ]);
+
+  return map(jobs, "ids").map((d) => ({
     submissionId: d.toString(),
     ...id,
   }));

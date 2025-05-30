@@ -80,6 +80,7 @@ export function StageStatusDialog({
           items={[
             { label: "Destructive", value: destructive ? "Yes" : "No" },
             { label: "Status", value: status?.type ?? "Never run" },
+            { label: "Errors", value: status?.error ?? "None" },
             {
               label: "Last completed run",
               value: formatDate(status?.timestamp, DATE_TIME_FORMAT),

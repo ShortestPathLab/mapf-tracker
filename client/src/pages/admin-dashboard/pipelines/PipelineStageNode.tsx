@@ -3,7 +3,7 @@ import TouchRipple, {
   TouchRippleActions,
 } from "@mui/material/ButtonBase/TouchRipple";
 import { Handle, Position } from "@xyflow/react";
-import { useSm, useXs } from "components/dialog/useSmallDisplay";
+import { useSm } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface/useSurface";
 import { SyntheticEvent, useRef } from "react";
 import { StageStatus } from "./StageStatus";

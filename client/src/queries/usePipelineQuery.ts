@@ -28,6 +28,7 @@ type Status = {
   stage: string;
   variables: object;
   timestamp: number;
+  error?: string;
 };
 type PipelineStatusResult = {
   destructive?: boolean;

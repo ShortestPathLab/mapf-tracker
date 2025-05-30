@@ -16,7 +16,10 @@ const schema = createSchema(
     },
     lowerBound: Number,
     cost: Number,
-    solutions: [String],
+    solutions: {
+      type: Schema.Types.ObjectId,
+      ref: "ongoing_submission_solution",
+    },
     options: { skipValidation: Schema.Types.Boolean },
     validation: {
       timeTaken: Number,

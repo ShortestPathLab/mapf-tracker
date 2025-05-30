@@ -1,4 +1,3 @@
-import { submitHandler } from "controllers/sync";
 import { Application, Router } from "express";
 import passport from "passport";
 import * as controller from "../controllers/user";
@@ -42,7 +41,6 @@ export default (app: Application) =>
       )
       .post("/notify", controller.createKeyAndSendMail)
       .put("/sendMail", controller.sendMail)
-      .post("/submit", submitHandler)
       .get("/:id", controller.findSubmittedAlgoByID)
       .put("/updateAlgo/:id", controller.updateAlgoByID)
       .put("/createAlgo", controller.createAlgo)

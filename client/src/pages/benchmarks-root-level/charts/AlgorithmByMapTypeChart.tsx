@@ -58,8 +58,26 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useAlgorithmChartData(
     "mapType",
-    selected.filter((a) => a !== stateOfTheArt._id),
+    algorithms.map((c) => c._id),
     find(metrics, (m) => m.key === metric)?.keyAlt
+  );
+  console.log(selected.filter((a) => a !== stateOfTheArt._id));
+  console.log(algorithmSelectorState);
+  console.log(algorithms);
+  console.log(
+    filter(
+      [...algorithms, stateOfTheArt],
+      (a) => !selected.length || selected.includes(a._id)
+    )
+  );
+  console.log(
+    chain(data)
+      .map((c) => ({
+        domain: capitalize(c.id),
+        ...keyBy(c.data, "algorithm"),
+      }))
+      .sortBy("map")
+      .value()
   );
 
   return (
@@ -94,7 +112,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
                   {...(algorithm === stateOfTheArt
                     ? {
                         fill: palette.text.primary,
-                        fillOpacity: 0,
+                        fillOpacity: 0.1,
                         stroke: palette.text.primary,
                         strokeOpacity: 1,
                         strokeWidth: 2,

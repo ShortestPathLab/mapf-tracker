@@ -51,7 +51,7 @@ export default function RequestConfirmation(args: Props) {
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
               We have received your request
             </Heading>
-            {description(args.requesterName)}
+            {description(args.requesterName ?? "User")}
             {entries(args)
               .filter(([, v]) => typeof v === "string")
               .map(([k, v]) =>

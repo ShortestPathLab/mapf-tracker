@@ -7,6 +7,7 @@ export { model as Algorithm, query as algorithms } from "./Algorithm";
 export { model as Instance, query as instances } from "./Instance";
 
 export { model as Map, query as maps } from "./Map";
+export { model as OngoingSubmissionSolution } from "./OngoingSubmissionSolution";
 export { model as OngoingSubmission } from "./OngoingSubmission";
 export { model as PipelineStatus } from "./PipelineStatus";
 export { model as Request, query as requests } from "./Request";
