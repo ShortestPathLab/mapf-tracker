@@ -132,21 +132,24 @@ export const queryClient = <T>(model: Model<T>) => {
         return await handler(docs as any);
       }),
     aggregate: <V extends z.ZodType>(
+      name: string | undefined,
       validate: V = z.any() as any,
       agg: (b: z.infer<V>, pipeline: AggregateBuilder) => AggregateBuilder = (
         _,
         p
       ) => p,
       handler: (q: any) => Promise<any> = async (q) => q
-    ): RequestHandler<z.infer<V>> =>
-      createHandler(
+    ): RequestHandler<z.infer<V>> => {
+      const f = async (data: z.infer<V>) => {
+        const q = agg(data, new AggregateBuilder());
+        const docs = await model.aggregate(q.build());
+        return await handler(docs);
+      };
+      return createHandler(
         validate,
-        diskCached(`aggregate-${model.modelName}`, async (data) => {
-          const q = agg(data, new AggregateBuilder());
-          const docs = await model.aggregate(q.build());
-          return await handler(docs);
-        })
-      ),
+        name ? diskCached(`aggregate-${model.modelName}-${name}`, f) : f
+      );
+    },
   };
 };
 

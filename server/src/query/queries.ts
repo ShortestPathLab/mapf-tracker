@@ -148,6 +148,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
       .get(
         "/algorithms/:metric",
         algorithms.aggregate(
+          "algorithms-metric",
           z.object({ metric: z.enum(metrics) }),
           ({ metric }, p) => p.project({ algo_name: 1, [metric]: 1 })
         )
@@ -155,6 +156,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
       .get(
         "/series/instances/:series",
         instances.aggregate(
+          "series-instances-series",
           z.object({ series: z.enum(series) }),
           ({ series }, p) =>
             p
@@ -175,6 +177,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
       .get(
         "/aggregate",
         instances.aggregate(
+          "aggregate",
           z.object(aggregateOptions),
           createAggregateBase(
             {
@@ -196,6 +199,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
       .get(
         "/aggregate/algorithm/:algorithm?",
         submissions.aggregate(
+          "aggregate-algorithm-algorithm",
           z.object({
             ...aggregateOptions,
             algorithm: z.string().optional(),

@@ -87,6 +87,7 @@ export const summaryByApiKey: RequestHandler<
 const joinedData = "joinedData";
 
 export const findByScenario = aggregate(
+  undefined,
   z.object({ apiKey: z.string(), scenario: z.string() }),
   ({ apiKey, scenario }, p) =>
     p
