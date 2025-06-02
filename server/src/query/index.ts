@@ -68,6 +68,7 @@ export const queryClient = <T>(model: Model<T>) => {
         res.status(500).json({
           error: `Error occurred in ${model.modelName} query handler: ${e}`,
         });
+        console.log(e);
       }
     };
   };

@@ -41,27 +41,27 @@ export function diskCached<T extends any[], U>(
     async (...args: T) => {
       const directory = `${env.CACHE_DIRECTORY}/${name}`;
       const glob = new Glob(`${directory}/*`);
-      const files = new Set(
-        [...glob.scanSync({ absolute: true })].map((p) => basename(p))
-      );
       const filename = hash({
         args: resolver?.(...args),
       });
       const path = `${directory}/${filename}`;
-      if (files.has(filename)) {
-        if (precompute) return;
-        try {
+      try {
+        const files = new Set(
+          [...glob.scanSync({ absolute: true })].map((p) => basename(p))
+        );
+        if (files.has(filename)) {
+          if (precompute) return;
           const cacheFile = file(path);
           // This line can fail if the file doesn't exist
           const buffer = cacheFile.arrayBuffer();
           const decoder = new TextDecoder();
           const text = decoder.decode(gunzipSync(await buffer));
           return JSON.parse(text);
-        } catch {
-          // If error, something's wrong with the cached file.
-          // This includes if the file doesn't exist.
-          // Run the handler again.
         }
+      } catch {
+        // If error, something's wrong with the cached file.
+        // This includes if the file doesn't exist.
+        // Run the handler again.
       }
       const next = await f(...args);
       await write(path, gzipSync(JSON.stringify(next)), { createPath: true });
