@@ -31,13 +31,14 @@ const schema = createSchema(
           timesteps: { type: [Number], required: false },
         },
       ],
-      outcome: String,
+      outcome: { type: String, index: true },
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
 schema.index({ apiKey: 1, instance: 1, createdAt: 1 });
+schema.index({ apiKey: 1, "validation.outcome": 1 });
 schema.index({ createdAt: 1 });
 
 export const model = createModel("ongoing_submission", schema);

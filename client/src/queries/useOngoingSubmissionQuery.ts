@@ -67,13 +67,15 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
   });
 }
 
-export function useOngoingSubmissionQuery(key?: string | number) {
+export function useOngoingSubmissionCountQuery(key?: string | number) {
   return useQuery({
-    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key],
-    queryFn: () =>
-      json<OngoingSubmission[]>(
-        `${APIConfig.apiUrl}/ongoing_submission/${key}`
-      ),
+    queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "general", key],
+    queryFn: async () =>
+      (
+        await json<{ count: number }[]>(
+          `${APIConfig.apiUrl}/ongoing_submission/${key}`
+        )
+      )[0],
     enabled: !!key,
     refetchInterval: REFETCH_MS,
   });

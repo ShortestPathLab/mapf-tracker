@@ -50,27 +50,6 @@ export const findById = query(z.object({ id: z.string() }), ({ id }) => [
   },
 ]);
 
-/**
- * Find all OngoingSubmission entries with a given api_key
- */
-export const findByApiKey = query(
-  z.object({ apiKey: z.string() }),
-  ({ apiKey }) => [{ apiKey }],
-  async (docs) =>
-    map(docs, (d) =>
-      pick(d.toJSON(), [
-        "id",
-        "createdAt",
-        "lowerBound",
-        "cost",
-        "instance",
-        "apiKey",
-        "updatedAt",
-        "validation",
-      ])
-    )
-);
-
 const summaryByApiKeyWorker = usingWorkerTaskReusable<
   unknown,
   SummaryByApiKeyResult
@@ -84,35 +63,41 @@ export const summaryByApiKey: RequestHandler<
   res.json(await summaryByApiKeyWorker(req.params));
 };
 
-const joinedData = "joinedData";
+export const summaryByApiKeyGeneral = aggregate(
+  undefined,
+  z.object({ apiKey: z.string() }),
+  ({ apiKey }, p) => p.match({ apiKey }).count("count")
+);
 
 export const findByScenario = cached(
   [OngoingSubmission, Instance],
   z.object({ apiKey: z.string(), scenario: z.string() }),
   async ({ apiKey, scenario }) => {
-    const out = await Instance.aggregate(
+    const ids = await Instance.aggregate(
       new AggregateBuilder()
         .match({ scen_id: new Types.ObjectId(scenario) })
         .project({ _id: 1 })
         .build()
     );
-    const v2 = new AggregateBuilder()
-      .match({
-        instance: { $in: out.map((c) => new Types.ObjectId(c._id)) },
-        apiKey,
-      })
-      .addFields(toString("_id", "id"))
-      .project({
-        createAt: 1,
-        lowerBound: 1,
-        cost: 1,
-        instance: 1,
-        apiKey: 1,
-        updatedAt: 1,
-        validation: 1,
-        id: 1,
-      });
-    return OngoingSubmission.aggregate(v2.build());
+    return OngoingSubmission.aggregate(
+      new AggregateBuilder()
+        .match({
+          instance: { $in: ids.map((c) => new Types.ObjectId(c._id)) },
+          apiKey,
+        })
+        .addFields(toString("_id", "id"))
+        .project({
+          createAt: 1,
+          lowerBound: 1,
+          cost: 1,
+          instance: 1,
+          apiKey: 1,
+          updatedAt: 1,
+          validation: 1,
+          id: 1,
+        })
+        .build()
+    );
   }
 );
 

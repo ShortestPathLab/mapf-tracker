@@ -19,6 +19,7 @@ import { filter, sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   useFinaliseOngoingSubmissionMutation,
+  useOngoingSubmissionCountQuery,
   useOngoingSubmissionSummaryQuery,
   useOngoingSubmissionTicketQuery,
 } from "queries/useOngoingSubmissionQuery";
@@ -43,6 +44,7 @@ export default function SubmissionSummaryPage() {
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
+  const { data: total } = useOngoingSubmissionCountQuery(apiKey);
   const someIsPending = !!filter(isPending, (p) => p.status === "pending")
     .length;
   const { open, close, dialog } = useSurface(ConfirmDialog, {
@@ -126,7 +128,7 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Received",
-              count: sumBy(data?.processed?.maps, "count.total"),
+              count: total?.count ?? 0,
             },
             {
               name: "Running",

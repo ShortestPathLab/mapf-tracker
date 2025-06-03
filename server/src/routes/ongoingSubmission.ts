@@ -2,7 +2,7 @@ import { Application, Router } from "express";
 import {
   create,
   findAll,
-  findByApiKey,
+  summaryByApiKeyGeneral,
   findById,
   deleteById,
   finalise,
@@ -21,7 +21,7 @@ export default (app: Application) => {
   router.get("/status/:apiKey", statusByApiKey);
   router.delete("/:apiKey", deleteByApiKey);
   router.get("/summary/:apiKey/:page?", summaryByApiKey);
-  router.get("/:apiKey", findByApiKey);
+  router.get("/:apiKey", summaryByApiKeyGeneral);
   router.get("/scenario/:apiKey/:scenario", findByScenario);
   router.get("/finalise/:key", finalise);
   router.post("/create/:apiKey/:label?", create);

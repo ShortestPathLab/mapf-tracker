@@ -30,7 +30,7 @@ const generateIndexes = once(async () => {
   };
 });
 
-const CHUNK = 2 ** 14;
+const CHUNK = 2 ** 15;
 
 const run = async (params: unknown) => {
   const indexes = await generateIndexes();
