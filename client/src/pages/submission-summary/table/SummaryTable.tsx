@@ -73,11 +73,13 @@ function getSubmissionInfoText(
         const isTie = instance.solution_cost === submission.cost;
         return [
           isTie ? "Tie" : isImprovement ? "New record" : "Dominated",
-          `(yours: ${submission.cost}, best: ${instance.solution_cost})`,
+          `(yours: ${submission.cost ?? "--"}, best: ${
+            instance.solution_cost
+          })`,
         ].join(" ");
       }
 
-      return `New record (${submission.cost}, no previous claims)`;
+      return `New record (${submission.cost ?? "--"}, no previous claims)`;
     })();
 
     return capitalize(

@@ -18,6 +18,8 @@ const roundRobinControllers: Record<
   { stop: () => void; refCount: number }
 > = {};
 
+const chunks: Record<string, unknown[]> = {};
+
 export function useRoundRobinQueries<TChunkResult, TCombined>(
   key: string,
   createQuery: (i: number) => {
@@ -37,7 +39,6 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
 
   const fetchChunks = async () => {
     let i = 0;
-    const chunks: TChunkResult[] = [];
 
     while (mountedRef.current) {
       const { queryKey, queryFn } = createQuery(i);
@@ -46,14 +47,17 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
         const data = await queryClient.fetchQuery({
           queryKey,
           queryFn,
-          staleTime: 1000,
+          staleTime: Infinity,
         });
 
         if (getLength(data) === 0) break;
 
-        chunks[i] = data;
-        chunksRef.current = [...chunks]; // update ref
-        queryClient.setQueryData(fullKey, combine(chunks));
+        if (!chunks[key]) {
+          chunks[key] = [];
+        }
+        chunks[key][i] = data;
+        chunksRef.current = chunks[key] as TChunkResult[]; // update ref
+        queryClient.setQueryData(fullKey, combine(chunksRef.current));
 
         i++;
 

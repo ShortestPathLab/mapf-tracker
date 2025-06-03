@@ -4,11 +4,11 @@ import { randomUUIDv7 } from "bun";
 import { RequestHandler } from "express";
 import { chain as _, filter, map, pick, values } from "lodash";
 import { context } from "logging";
-import { Instance, OngoingSubmission } from "models";
+import { Instance, instances, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
-import { toString } from "mongodb-aggregate-builder";
+import { AggregateBuilder, toString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
-import { queryClient, route } from "query";
+import { cached, queryClient, route } from "query";
 import { usingWorkerTaskReusable } from "queue/usingWorker";
 import { ResultTicketStatus, createPool } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
@@ -86,31 +86,33 @@ export const summaryByApiKey: RequestHandler<
 
 const joinedData = "joinedData";
 
-export const findByScenario = aggregate(
-  undefined,
+export const findByScenario = cached(
+  [OngoingSubmission, Instance],
   z.object({ apiKey: z.string(), scenario: z.string() }),
-  ({ apiKey, scenario }, p) =>
-    p
-      .match({ apiKey })
-      .lookup(Instance.collection.collectionName, "instance", "_id", joinedData)
-      .match({
-        [`${joinedData}.scen_id`]: new Types.ObjectId(scenario),
-      })
-      .addFields({ ...toString("_id", "id") })
-      .project({ [joinedData]: 0 }),
-  async (docs) => {
-    return map(docs, (d) =>
-      pick(d, [
-        "id",
-        "createdAt",
-        "lowerBound",
-        "cost",
-        "instance",
-        "apiKey",
-        "updatedAt",
-        "validation",
-      ])
+  async ({ apiKey, scenario }) => {
+    const out = await Instance.aggregate(
+      new AggregateBuilder()
+        .match({ scen_id: new Types.ObjectId(scenario) })
+        .project({ _id: 1 })
+        .build()
     );
+    const v2 = new AggregateBuilder()
+      .match({
+        instance: { $in: out.map((c) => new Types.ObjectId(c._id)) },
+        apiKey,
+      })
+      .addFields(toString("_id", "id"))
+      .project({
+        createAt: 1,
+        lowerBound: 1,
+        cost: 1,
+        instance: 1,
+        apiKey: 1,
+        updatedAt: 1,
+        validation: 1,
+        id: 1,
+      });
+    return OngoingSubmission.aggregate(v2.build());
   }
 );
 

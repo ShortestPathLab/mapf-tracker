@@ -97,7 +97,6 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 24
           memory: 64g
 networks:
   proxy:
