@@ -9,6 +9,7 @@ import {
   min,
   now,
   once,
+  split,
   sum,
 } from "lodash";
 import { context } from "logging";
@@ -311,7 +312,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     const { errors } = await validateGroup({
       sources,
       goals,
-      solutions,
+      solutions: split(solutions, "\n"),
       width,
       height,
       cells,

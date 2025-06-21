@@ -17,7 +17,7 @@ const schema = createSchema(
      * @deprecated
      */
     best_solution: Boolean,
-    solutions: [String],
+    solutions: String,
     date: { type: Date, index: true },
     scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
     agents: { type: Number, index: "asc" },

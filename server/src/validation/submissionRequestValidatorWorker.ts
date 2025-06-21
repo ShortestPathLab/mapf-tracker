@@ -1,14 +1,11 @@
 import { connectToDatabase } from "connection";
-import {
-  chain,
-  flatten,
-  now,
-  omit,
-  truncate,
-  values,
-  map,
-  trimEnd,
-} from "lodash";
+import Validator, {
+  ValidationError,
+  ValidationSchema,
+} from "fastest-validator";
+import { map, trimEnd, truncate } from "lodash";
+import { context } from "logging";
+import { Types } from "mongoose";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { encode } from "validator";
 import { RefinementCtx, z } from "zod";
@@ -20,15 +17,8 @@ import {
   SubmissionKey,
 } from "../models";
 import { memoizeAsync } from "../utils/memoizeAsync";
-import { waitMap } from "../utils/waitMap";
 import { fatal } from "../validation/zod";
-import Validator, {
-  ValidationError,
-  ValidationSchema,
-} from "fastest-validator";
-import { context } from "logging";
 import { findInstanceByAgentScenario } from "./findInstance";
-import { Types } from "mongoose";
 
 const log = context("Schema Validator");
 
@@ -179,6 +169,7 @@ export const transformOne = async (v: One) => {
   v.solution_plan = v.solution_plan.map((s) =>
     s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
   );
+  v.solution_plan.join("\n");
   return v;
 };
 

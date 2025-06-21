@@ -14,7 +14,7 @@ export const getSolutionPath = async (
       ? await Submission.findOne({ _id: id })
       : await OngoingSubmissionSolution.findOne({ _id: id });
   if (data?.solutions) {
-    return data.solutions;
+    return split(data.solutions, "\n");
   } else {
     // Legacy solution path storage handling
     const path = (await SolutionPath.findOne({ _id: id }))?.solution_path;
@@ -43,7 +43,7 @@ export async function getSolutionPathsRaw(ids: string[]) {
     const x = zipWith(
       data,
       dataLegacy,
-      (a, b) => a?.solutions?.join("\n") ?? encode(b?.solution_path ?? "")
+      (a, b) => a?.solutions ?? encode(b?.solution_path ?? "")
     );
     all.push(...x);
   }
