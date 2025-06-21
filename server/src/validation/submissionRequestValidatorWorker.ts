@@ -1,5 +1,14 @@
 import { connectToDatabase } from "connection";
-import { chain, flatten, now, omit, truncate, values, map } from "lodash";
+import {
+  chain,
+  flatten,
+  now,
+  omit,
+  truncate,
+  values,
+  map,
+  trimEnd,
+} from "lodash";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { encode } from "validator";
 import { RefinementCtx, z } from "zod";
@@ -122,6 +131,11 @@ const findScenario = memoizeAsync((a) => Scenario.findOne(a, { _id: 1 }), {
   cacheKey: JSON.stringify,
 });
 
+function processSolution(s: string) {
+  // Trim trailing waits
+  return trimEnd(s, "w1234567890");
+}
+
 export const transformOne = async (v: One) => {
   // ─── Coerce Solution Plan ────────────────────────────────────────────
   v.solution_plan =
@@ -161,7 +175,7 @@ export const transformOne = async (v: One) => {
   v.instance = instance._id.toString();
   if (v.skip_validation) return v;
   // ─── Coerce Solution Plan ────────────────────────────────────────────
-  v.solution_plan = v.solution_plan.map(encode);
+  v.solution_plan = v.solution_plan.map(encode).map(processSolution);
   v.solution_plan = v.solution_plan.map((s) =>
     s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
   );
