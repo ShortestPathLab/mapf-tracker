@@ -5,6 +5,7 @@ import { chain, has, map } from "lodash";
 import { log } from "logging";
 import { PipelineStatus } from "models";
 import { get, set } from "models/PipelineStatus";
+import { inferErrorMessage } from "utils/error";
 import z from "zod";
 
 export async function restore() {

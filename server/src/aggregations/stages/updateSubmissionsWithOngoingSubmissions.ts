@@ -1,7 +1,6 @@
 import { OngoingSubmission } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateInstances } from "./updateInstancesFromSubmissions";
-import { stage as updateSolutionPaths } from "./updateSolutionPathsFromSubmissions";
 
 /**
  * Aggregation pipeline that groups by unique combination of
@@ -75,6 +74,7 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
           lower_cost: "$lowerBound",
           solution_cost: "$cost",
           map_id: { $first: "$instanceData.map_id" },
+          ongoing_submission_id: "$_id",
           scen_id: { $first: "$instanceData.scen_id" },
           agents: { $first: "$instanceData.agents" },
           instance_id: "$instance",
@@ -100,7 +100,7 @@ export const stage: PipelineStage = {
   run: async () => ({
     result: await updateSubmissionsWithOngoingSubmissions(),
   }),
-  dependents: [updateInstances, updateSolutionPaths],
+  dependents: [updateInstances],
   description: () => `
 Aggregation pipeline that groups by unique combination of
 api key, map id, scenario id, and agent count, and sums up

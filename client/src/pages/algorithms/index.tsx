@@ -146,7 +146,7 @@ function Table() {
 
 export default function AlgorithmsPage() {
   const { open: openDialog, dialog } = useSurface(AlgorithmDownloadOptions, {
-    title: "Export instances",
+    title: "Export claims",
     variant: "fullscreen",
   });
   const { data: algorithms } = useAlgorithmDetailsData();
@@ -180,7 +180,7 @@ export default function AlgorithmsPage() {
         options: [
           {
             icon: <FolderZipRounded />,
-            label: "Bulk export instances",
+            label: "Bulk export claims",
             action: () => openDialog(),
             primary: true,
           },

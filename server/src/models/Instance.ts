@@ -5,6 +5,12 @@ const schema = createSchema({
   map_id: { type: Schema.Types.ObjectId, ref: "map", index: true },
   scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
   agents: { type: Number, index: "asc" },
+  // ─── Computed ────────────────────────────────────────────────────────
+  map_name: { type: String, index: true },
+  map_type: { type: String, index: true },
+  scenario_type: { type: String, index: true },
+  scenario_type_id: { type: Number, index: true },
+  // ─────────────────────────────────────────────────────────────────────
   lower_cost: Number,
   lower_algos: [
     {

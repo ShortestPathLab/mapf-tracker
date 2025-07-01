@@ -29,12 +29,17 @@ export const diskCaches = createCache();
 type DiskCacheOptions<T extends any[]> = {
   resolver?: (...args: T) => any;
   precompute?: () => Promise<T[]>;
+  invalidationKey?: (...args: T) => any;
 };
 
 export function diskCached<T extends any[], U>(
   name: string,
   f: (...args: T) => Promise<U>,
-  { precompute, resolver = (...args) => args[0] }: DiskCacheOptions<T> = {}
+  {
+    precompute,
+    resolver = (...args) => args[0],
+    invalidationKey = () => ({}),
+  }: DiskCacheOptions<T> = {}
 ) {
   const g =
     (precompute = false) =>
@@ -45,18 +50,31 @@ export function diskCached<T extends any[], U>(
         args: resolver?.(...args),
       });
       const path = `${directory}/${filename}`;
+      const currentVersion = hash(invalidationKey(...args));
       try {
         const files = new Set(
           [...glob.scanSync({ absolute: true })].map((p) => basename(p))
         );
         if (files.has(filename)) {
           if (precompute) return;
-          const cacheFile = file(path);
-          // This line can fail if the file doesn't exist
-          const buffer = cacheFile.arrayBuffer();
-          const decoder = new TextDecoder();
-          const text = decoder.decode(gunzipSync(await buffer));
-          return JSON.parse(text);
+          if (!files.has(`${filename}.version`)) {
+            // If the cache file exists but the version file does not,
+            // we assume the cache is fine and write the current version.
+            log.warn(`Cache file ${path} exists but version file does not.`);
+            await write(`${path}.version`, currentVersion, {
+              createPath: true,
+            });
+          }
+          const v = file(`${path}.version`);
+          const version = await v.text();
+          if (version === currentVersion) {
+            const cacheFile = file(path);
+            // This line can fail if the file doesn't exist
+            const buffer = cacheFile.arrayBuffer();
+            const decoder = new TextDecoder();
+            const text = decoder.decode(gunzipSync(await buffer));
+            return JSON.parse(text);
+          }
         }
       } catch {
         // If error, something's wrong with the cached file.
@@ -64,7 +82,12 @@ export function diskCached<T extends any[], U>(
         // Run the handler again.
       }
       const next = await f(...args);
-      await write(path, gzipSync(JSON.stringify(next)), { createPath: true });
+      try {
+        await write(path, gzipSync(JSON.stringify(next)), { createPath: true });
+        await write(`${path}.version`, currentVersion, { createPath: true });
+      } catch {
+        // It's ok if the write fails, we just won't cache the result.
+      }
       return precompute ? undefined : next;
     };
   let controller: AbortController | undefined;

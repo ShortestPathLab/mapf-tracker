@@ -301,7 +301,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     const { sources, goals, width, height } = parseScenarioMemo(scenario);
 
     const { solutions } =
-      (await OngoingSubmissionSolution.findById(submission.solutions)) ?? {};
+      (await OngoingSubmissionSolution.findById(submission._id)) ?? {};
 
     log.info(
       `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${

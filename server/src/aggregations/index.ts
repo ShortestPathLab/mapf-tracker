@@ -9,6 +9,8 @@ import { stage as updateInstancesSubmissionHistory } from "./stages/updateInstan
 import { stage as pruneOngoingSubmissions } from "./stages/pruneOngoingSubmissions";
 import { stage as updateSubmissionBestFlags } from "./stages/updateSubmissionBestFlags";
 import { stage as precomputeQueries } from "./stages/precomputeQueries";
+import { stage as generateIndexableFields } from "./stages/generateIndexableFields";
+import { stage as invalidateQueryCache } from "./stages/invalidateQueryCache";
 import {
   mockStageA,
   mockStageB,
@@ -17,6 +19,8 @@ import {
 
 export const stages = {
   reset,
+  invalidateQueryCache,
+  generateIndexableFields,
   updateMapsFromScenarios,
   updateScenariosFromInstances,
   updateInstancesFromSubmissions,

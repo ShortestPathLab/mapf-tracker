@@ -170,6 +170,14 @@ export function AlgorithmDownloadOptions({
         algorithms: map(rows, "id"),
         scens: map(flatMap(flatMap(rows, "maps"), "scenarios"), "id"),
       },
+      {
+        label: "All summaries",
+        algorithms: map(rows, "id"),
+      },
+      {
+        label: "All submissions",
+        scens: map(flatMap(flatMap(rows, "maps"), "scenarios"), "id"),
+      },
       ...entries(mapTypes).map(([type, { scens }]) => ({
         label: `Domain: ${startCase(type)}`,
         scens,

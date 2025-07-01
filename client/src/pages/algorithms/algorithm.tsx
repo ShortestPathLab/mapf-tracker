@@ -23,7 +23,7 @@ export function AlgorithmPage() {
   const { data } = useAlgorithmDetailData(params?.id);
 
   const { open, dialog } = useSurface(AlgorithmDownloadOptions, {
-    title: `${data ? data?.algo_name : "--"} - Export instances`,
+    title: `${data ? data?.algo_name : "--"} - Export claims`,
     variant: "fullscreen",
   });
   if (!params?.id) redirect("/");
@@ -62,7 +62,7 @@ export function AlgorithmPage() {
           {
             action: () => open({ algorithm: params?.id }),
             icon: <TableRounded />,
-            label: "Export instances",
+            label: "Export claims",
             primary: true,
           },
         ],

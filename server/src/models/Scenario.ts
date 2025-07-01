@@ -3,8 +3,12 @@ import { createSchema } from "./createSchema";
 
 const schema = createSchema({
   map_id: { type: Schema.Types.ObjectId, ref: "map" },
-  scen_type: String,
-  type_id: Number,
+  type_id: { type: Number, index: true },
+  scen_type: { type: String, index: true },
+  // ─── Computed ────────────────────────────────────────────────────────
+  map_name: { type: String, index: true },
+  map_type: { type: String, index: true },
+  // ─────────────────────────────────────────────────────────────────────
   instances: Number,
   instances_closed: Number,
   instances_solved: Number,

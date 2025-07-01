@@ -143,9 +143,11 @@ export function DetailsDialog({
                     {
                       label: "Validation time taken",
                       value: isNumber(submission?.validation?.timeTaken)
-                        ? formatDuration({
-                            seconds: submission.validation.timeTaken / 1000,
-                          })
+                        ? submission.validation.timeTaken
+                          ? formatDuration({
+                              seconds: submission.validation.timeTaken / 1000,
+                            })
+                          : "0 seconds"
                         : "N/A",
                     },
                   ]}

@@ -13,6 +13,7 @@ import { useList } from "react-use";
 import { formatPercentage } from "utils/format";
 import { MapPicker } from "./MapPicker";
 import { useAlgorithmChartData } from "./useAlgorithmChartData";
+import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 
 export const slices = [
   {
@@ -28,6 +29,8 @@ export const slices = [
 ] satisfies Slice[];
 
 export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
+  const { data: algorithms = [] } = useAlgorithmsData();
+
   const algorithmSelectorState = useSliceSelector(
     slices,
     undefined,
@@ -37,7 +40,9 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useAlgorithmChartData(
     "map",
-    selected.filter((a) => a !== stateOfTheArt._id),
+    selected.length
+      ? selected.filter((a) => a !== stateOfTheArt._id)
+      : algorithms.map((c) => c._id),
     find(metrics, (m) => m.key === metric)?.keyAlt
   );
   const { data: mapInfo, isLoading: isInfoLoading } = useMapsData();

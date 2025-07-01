@@ -1,4 +1,4 @@
-function inferErrorMessage(error: unknown): string {
+export function inferErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }

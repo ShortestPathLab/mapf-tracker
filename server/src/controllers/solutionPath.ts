@@ -17,7 +17,9 @@ export const getSolutionPath = async (
     return split(data.solutions, "\n");
   } else {
     // Legacy solution path storage handling
-    const path = (await SolutionPath.findOne({ _id: id }))?.solution_path;
+    const path =
+      (await SolutionPath.findOne({ _id: id }))?.solution_path ??
+      (await SolutionPath.findOne({ instance_id: id }))?.solution_path;
     if (path) {
       return split(
         path.replaceAll("u", "_").replaceAll("d", "u").replaceAll("_", "d"),
@@ -36,16 +38,11 @@ export async function getSolutionPathsRaw(ids: string[]) {
         $in: map(c, (id) => new Types.ObjectId(id)),
       },
     };
-    const [dataLegacy, data] = await Promise.all([
-      SolutionPath.find(q, { solution_path: 1 }),
-      Submission.find(q, { solutions: 1 }),
-    ]);
-    const x = zipWith(
-      data,
-      dataLegacy,
-      (a, b) => a?.solutions ?? encode(b?.solution_path ?? "")
+    all.push(
+      ...(await SolutionPath.find(q, { solution_path: 1 })).map((b) =>
+        encode(b?.solution_path ?? "")
+      )
     );
-    all.push(...x);
   }
   return all;
 }

@@ -1,47 +1,43 @@
-import { SolutionPath } from "models";
+import { OngoingSubmissionSolution, SolutionPath, Submission } from "models";
 import { PipelineStage } from "../pipeline";
 
-/**
- * This aggregation pipeline creates a new collection "solution_path" with the best solution path for each instance.
- * The pipeline is as follows:
- * 1. Look up all submissions for each instance and add them to the submissions array.
- * 2. Unwind the submissions array so that each submission becomes a separate document.
- * 3. Filter the results to only include submissions where best_solution is true.
- * 4. Project the results to only include the solution_path field from the submission.
- * 5. Write the results to a new collection called "solution_path".
- */
 export const updateSolutionPathsFromSubmissions = () => {
-  throw new Error("Not implemented");
-  return SolutionPath.aggregate([
+  return Submission.aggregate([
+    {
+      $match: {
+        best_solution: true, // Only consider submissions with best_solution flag
+      },
+    },
     //TODO: Add a filter for only running this for specified subset of submissions
     {
       $lookup: {
-        from: "submissions",
-        localField: "instance_id",
-        foreignField: "instance_id",
-        as: "submissions",
+        from: OngoingSubmissionSolution.collection.collectionName,
+        localField: "ongoing_submission_id",
+        foreignField: "_id",
+        as: "ongoing_submission_solution",
       },
     },
     {
-      $unwind: {
-        path: "$submissions",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $match: {
-        "submissions.best_solution": true,
+      $addFields: {
+        solution_path: {
+          $first: "$ongoing_submission_solution.solutions",
+        },
       },
     },
     {
       $project: {
-        _id: 0,
-        //FIXME: Currently submission doesn't have solution path
-        solution_path: "$submissions.solution_path",
+        _id: 1,
+        instance_id: 1,
+        solution_path: 1,
       },
     },
     {
-      $out: "solution_path",
+      $merge: {
+        into: SolutionPath.collection.collectionName,
+        on: "_id",
+        whenMatched: "merge",
+        whenNotMatched: "insert",
+      },
     },
   ]);
 };

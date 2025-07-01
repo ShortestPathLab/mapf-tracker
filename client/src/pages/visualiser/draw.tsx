@@ -87,8 +87,11 @@ export const $agentDiagnostics = memoizee(
       g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
       g.drawCircle(goal.x + 0.5, goal.y + 0.5, 0.5);
       each(diagnostics, ({ t, ...rest }) => {
-        const { x, y } = isUndefined(t) ? rest : path[t];
-        error(x, y, diagnosticColor)(g);
+        const point = isUndefined(t) ? rest : path[t];
+        if (point) {
+          const { x, y } = point;
+          error(x, y, diagnosticColor)(g);
+        }
       });
     },
   { normalizer: JSON.stringify }

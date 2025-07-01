@@ -90,20 +90,6 @@ const createAggregateBase =
     p: AggregateBuilder = new AggregateBuilder()
   ) =>
     p
-      .mergeAggregationWithCurrent([
-        scenarioType
-          ? new AggregateBuilder()
-              .lookup(
-                Scenario.collection.collectionName,
-                "scen_id",
-                "_id",
-                "scenario"
-              )
-              .match({ "scenarios.scen_type": scenarioType })
-              .project({ scenarios: 0 })
-              .build()
-          : [],
-      ])
       .match(
         omitBy(
           {
@@ -114,24 +100,6 @@ const createAggregateBase =
           isUndefined
         )
       )
-      .mergeAggregationWithCurrent([
-        groupBy === "scenarioType"
-          ? new AggregateBuilder()
-              .lookup(
-                Scenario.collection.collectionName,
-                "scen_id",
-                "_id",
-                "scenario"
-              )
-              .addFields({ scenario: { $first: "$scenario" } })
-              .build()
-          : groupBy === "mapType"
-          ? new AggregateBuilder()
-              .lookup(Map.collection.collectionName, "map_id", "_id", "map")
-              .addFields({ map: { $first: "$map" } })
-              .build()
-          : [],
-      ])
       .group({
         _id: groupBySelectors[groupBy],
         all: operations[o](undefined, `$${v}`),
@@ -186,8 +154,8 @@ export const use = (app: Application, path: string = "/api/queries") => {
               all: () => undefined,
             },
             {
-              mapType: "$map.map_type",
-              scenarioType: "$scenario.scen_type",
+              mapType: "$map_type",
+              scenarioType: "$scenario_type",
               scenario: "$scen_id",
               map: "$map_id",
               agents: "$agents",
@@ -234,8 +202,8 @@ export const use = (app: Application, path: string = "/api/queries") => {
                     all: () => undefined,
                   },
                   {
-                    mapType: "$map.map_type",
-                    scenarioType: "$scenario.scen_type",
+                    mapType: "$map_type",
+                    scenarioType: "$scenario_type",
                     scenario: "$scen_id",
                     map: "$map_id",
                     agents: "$agents",

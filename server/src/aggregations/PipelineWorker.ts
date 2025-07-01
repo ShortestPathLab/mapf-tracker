@@ -1,9 +1,10 @@
 import { connectToDatabase } from "connection";
+import { now } from "lodash";
+import { set } from "models/PipelineStatus";
+import { inferErrorMessage } from "utils/error";
 import { stages } from "../aggregations";
 import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { PipelineTaskData, PipelineTaskResult } from "./PipelineTaskData";
-import { set } from "models/PipelineStatus";
-import { now } from "lodash";
 
 async function run({
   stage,

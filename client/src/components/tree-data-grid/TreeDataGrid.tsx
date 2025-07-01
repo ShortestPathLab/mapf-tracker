@@ -2,7 +2,7 @@ import { GridValidRowModel } from "@mui/x-data-grid";
 import { DataGrid } from "components/data-grid";
 import { DataGridProps } from "components/data-grid/DataGrid";
 import { flatMap, isUndefined } from "lodash";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type BooleanMap = { [K in string]?: boolean };
 
@@ -49,6 +49,12 @@ export function TreeDataGrid<T extends GridValidRowModel>({
     };
     return flatMap(rows, f);
   }, [rows, toggled, getChildren, shouldIncludeItem, defaultExpanded]);
+  // Open the first row if there is only one row
+  useEffect(() => {
+    if (rows?.length === 1) {
+      onExpandedChange?.({ [rows[0].id]: true });
+    }
+  }, [rows, getChildren]);
   return (
     <DataGrid
       {...props}

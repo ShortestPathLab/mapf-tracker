@@ -1,5 +1,6 @@
 import { Map } from "models";
 import { PipelineStage } from "../pipeline";
+import { stage as generateIndexableFields } from "./generateIndexableFields";
 
 /**
  * Updates the maps collection with the number of instances, instances closed,
@@ -61,5 +62,5 @@ export const updateMapsFromScenarios = () =>
 export const stage: PipelineStage = {
   key: "updateMapsFromScenarios",
   run: async () => ({ result: await updateMapsFromScenarios() }),
-  dependents: [],
+  dependents: [generateIndexableFields],
 };

@@ -4,7 +4,7 @@ import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
 import { DialogContentProps } from "hooks/useDialog";
 import { Prose } from "layout";
-import { find } from "lodash";
+import { find, startCase } from "lodash";
 import {
   usePipelineRunMutation,
   usePipelineStatus,
@@ -79,7 +79,7 @@ export function StageStatusDialog({
           sx={{ m: -2 }}
           items={[
             { label: "Destructive", value: destructive ? "Yes" : "No" },
-            { label: "Status", value: status?.type ?? "Never run" },
+            { label: "Status", value: startCase(status?.type) ?? "Never run" },
             { label: "Errors", value: status?.error ?? "None" },
             {
               label: "Last completed run",

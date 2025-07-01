@@ -35,9 +35,9 @@ import {
   useMemo,
   useState,
 } from "react";
+import bulkWorkerUrl from "./bulkResults.worker?worker&url";
 import { CHUNK_SIZE_B, useBenchmarksAll } from "./DownloadOptions";
 import { decodeAlgorithmResource } from "./encodeAlgorithmResource";
-import bulkWorkerUrl from "./bulkResults.worker?worker&url";
 
 type UseBulkMutationArgs = {
   maps?: string[];
@@ -174,21 +174,17 @@ export const bulkDownloadAlgorithms = async (
   const getAlgoName = (a: AlgorithmDetails) =>
     `${kebabCase(a.algo_name)}-${a.id}`;
 
-  await parallel(
-    summaries.map((id) => async () => {
-      const details = find(algorithmsDetails, { id });
-      const csv = json2csv([details], { emptyFieldValue: "" });
-      const { set } = addJob({
-        label: `${details.algo_name}.csv`,
-        status: "Downloading",
-      });
+  const details = summaries.flatMap((id) => find(algorithmsDetails, { id }));
 
-      set({ progress: 0.75, status: "Compressing" });
-      const meta = await writeOne(`summary/${getAlgoName(details)}.csv`, csv);
-      set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
-    }),
-    PARALLEL_LIMIT
-  );
+  const csv = json2csv(details, { emptyFieldValue: "" });
+  const { set } = addJob({
+    label: `summary.csv`,
+    status: "Downloading",
+  });
+
+  set({ progress: 0.75, status: "Compressing" });
+  const meta = await writeOne(`summary.csv`, csv);
+  set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
 
   // ─── Export Submissions ────────────────────────────────────────────────
 

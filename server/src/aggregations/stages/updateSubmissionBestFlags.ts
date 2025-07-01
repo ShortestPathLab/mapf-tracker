@@ -1,6 +1,12 @@
 import { map } from "lodash";
 import { Instance, Submission } from "models";
 import { PipelineStage } from "../pipeline";
+import { stage as updateSolutionPathsFromSubmissions } from "./updateSolutionPathsFromSubmissions";
+import { stage as invalidateQueryCache } from "./invalidateQueryCache";
+
+const $if = (condition: any) => ({
+  $cond: [condition, true, false],
+});
 
 export const updateSubmissionBestFlags = async () =>
   await Promise.all(
@@ -17,37 +23,25 @@ export const updateSubmissionBestFlags = async () =>
         },
         {
           $addFields: {
-            best_solution: {
-              $cond: [
+            best_solution: $if({
+              $and: [
+                { $ne: ["$solution_cost", null] },
                 {
-                  $and: [
-                    { $ne: ["$solution_cost", null] },
-                    {
-                      $eq: [
-                        "$solution_cost",
-                        { $first: "$instance.solution_cost" },
-                      ],
-                    },
+                  $eq: [
+                    "$solution_cost",
+                    { $first: "$instance.solution_cost" },
                   ],
                 },
-                true,
-                false,
               ],
-            },
-            best_lower: {
-              $cond: [
+            }),
+            best_lower: $if({
+              $and: [
+                { $ne: ["$lower_cost", null] },
                 {
-                  $and: [
-                    { $ne: ["$lower_cost", null] },
-                    {
-                      $eq: ["$lower_cost", { $first: "$instance.lower_cost" }],
-                    },
-                  ],
+                  $eq: ["$lower_cost", { $first: "$instance.lower_cost" }],
                 },
-                true,
-                false,
               ],
-            },
+            }),
           },
         },
         { $project: { instance: 0 } },
@@ -65,6 +59,6 @@ export const stage: PipelineStage = {
   run: async () => ({
     result: await updateSubmissionBestFlags(),
   }),
-  dependents: [],
+  dependents: [updateSolutionPathsFromSubmissions, invalidateQueryCache],
   description: () => ``,
 };

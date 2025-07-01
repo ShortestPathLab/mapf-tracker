@@ -40,7 +40,7 @@ services:
     depends_on:
       - mongo
   nginx-proxy:
-    image: bbtsoftwareag/nginx-proxy-unrestricted-requestsize:alpine
+    image: jwilder/nginx-proxy
     container_name: nginx-proxy
     ports:
       - 80:80
@@ -50,6 +50,7 @@ services:
       - ./data/certs:/etc/nginx/certs:ro
       - ./data/vhost:/etc/nginx/vhost.d
       - ./data/html:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
     environment:
       - DEFAULT_HOST=tracker.pathfinding.ai
     networks:

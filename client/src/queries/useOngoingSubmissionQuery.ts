@@ -8,7 +8,7 @@ import { del, post } from "queries/mutation";
 import { json } from "queries/query";
 import { useRoundRobinQueries } from "../hooks/useRoundRobinQueries";
 
-const REFETCH_MS = 5000;
+const REFETCH_MS = 1000;
 
 function mergeArray<T>(
   xs: T[],
@@ -75,9 +75,10 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
         await json<{ count: number }[]>(
           `${APIConfig.apiUrl}/ongoing_submission/${key}`
         )
-      )[0],
+      )[0] ?? { count: 0 },
     enabled: !!key,
     refetchInterval: REFETCH_MS,
+    staleTime: 0,
   });
 }
 
@@ -119,7 +120,7 @@ const summaryQuery = (key: string | number, i: number = 0) => ({
   queryFn: () =>
     json<SummaryResult>(
       `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`
-    ),
+    ) ?? null,
   enabled: !!key,
   refetchInterval: false,
   refetchOnReconnect: false,

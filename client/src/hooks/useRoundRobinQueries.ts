@@ -47,10 +47,8 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
         const data = await queryClient.fetchQuery({
           queryKey,
           queryFn,
-          staleTime: Infinity,
+          staleTime: 0,
         });
-
-        if (getLength(data) === 0) break;
 
         if (!chunks[key]) {
           chunks[key] = [];
@@ -58,6 +56,8 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
         chunks[key][i] = data;
         chunksRef.current = chunks[key] as TChunkResult[]; // update ref
         queryClient.setQueryData(fullKey, combine(chunksRef.current));
+
+        if (getLength(data) === 0) break;
 
         i++;
 

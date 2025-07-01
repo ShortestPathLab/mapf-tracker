@@ -116,7 +116,7 @@ export function DownloadOptionsBase<
   const xs = useXs();
   const sm = useSm();
 
-  const [expanded, setExpanded] = useBooleanMap({ root: true });
+  const [expanded, setExpanded] = useBooleanMap();
 
   const { scrollRef, contentRef, scrollToBottom } = useStickToBottom();
 
@@ -373,7 +373,7 @@ export function DownloadOptionsBase<
                   </Scroll>
                 </Stack>
               )}
-              <Floating>
+              <Floating sx={{ position: "sticky", bottom: 0 }}>
                 <Button
                   fullWidth
                   color="secondary"

@@ -71,6 +71,7 @@ export default function ChartOptions({
   disableMetrics?: boolean;
 } & Partial<ReturnType<typeof useSliceSelector>>) {
   const { data: algorithms = [] } = useAlgorithmsData();
+  console.log(algorithms);
   const combinedAlgorithms = stateOfTheArtEnabled
     ? [stateOfTheArt, ...algorithms]
     : algorithms;

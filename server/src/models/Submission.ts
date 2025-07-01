@@ -4,7 +4,11 @@ import { queryClient } from "query";
 
 const schema = createSchema(
   {
-    map_id: { type: Schema.Types.ObjectId, ref: "map", index: true },
+    ongoing_submission_id: {
+      type: Schema.Types.ObjectId,
+      ref: "ongoing_submission",
+      index: true,
+    },
     instance_id: { type: Schema.Types.ObjectId, ref: "instance", index: true },
     algo_id: { type: Schema.Types.ObjectId, ref: "algorithm", index: true },
     lower_cost: { type: Number, index: "asc" },
@@ -19,8 +23,14 @@ const schema = createSchema(
     best_solution: Boolean,
     solutions: String,
     date: { type: Date, index: true },
+    // ─── Computed ────────────────────────────────────────────────────────
+    map_id: { type: Schema.Types.ObjectId, ref: "map", index: true },
     scen_id: { type: Schema.Types.ObjectId, ref: "scenario", index: true },
     agents: { type: Number, index: "asc" },
+    map_name: { type: String, index: true },
+    map_type: { type: String, index: true },
+    scenario_type: { type: String },
+    scenario_type_id: { type: Number },
   },
   { versionKey: false }
 );

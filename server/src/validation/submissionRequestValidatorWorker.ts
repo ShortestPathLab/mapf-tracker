@@ -4,6 +4,7 @@ import Validator, {
   ValidationSchema,
 } from "fastest-validator";
 import { map, trimEnd, truncate } from "lodash";
+import { map as pMap } from "promise-tools";
 import { context } from "logging";
 import { Types } from "mongoose";
 import { usingTaskMessageHandler } from "queue/usingWorker";
@@ -169,18 +170,23 @@ export const transformOne = async (v: One) => {
   v.solution_plan = v.solution_plan.map((s) =>
     s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
   );
-  v.solution_plan.join("\n");
+  v.solution_plan = v.solution_plan.join("\n");
   return v;
 };
 
-const submitOne = async (apiKey: string, data: One | One[]) => {
+const submitOne = async (
+  apiKey: string,
+  data: Promise<One> | Promise<One>[] | One | One[]
+) => {
   const id = { apiKey };
 
-  const jobs = (data instanceof Array ? data : [data]).map((data) => {
+  const jobs = await pMap(data instanceof Array ? data : [data], async (d) => {
+    const data = await d;
     const b1 = new Types.ObjectId();
     return {
       id: b1,
       meta: new OngoingSubmission({
+        _id: b1,
         ...id,
         instance: data.instance,
         lowerBound: data.lower_cost,
@@ -188,7 +194,8 @@ const submitOne = async (apiKey: string, data: One | One[]) => {
         options: { skipValidation: data.skip_validation },
       }),
       solution: new OngoingSubmissionSolution({
-        solution: data.solution_plan,
+        _id: b1,
+        solutions: data.solution_plan,
       }),
     };
   });
@@ -198,7 +205,7 @@ const submitOne = async (apiKey: string, data: One | One[]) => {
     OngoingSubmissionSolution.collection.insertMany(map(jobs, "solution")),
   ]);
 
-  return map(jobs, "ids").map((d) => ({
+  return map(jobs, "id").map((d) => ({
     submissionId: d.toString(),
     ...id,
   }));
@@ -235,7 +242,7 @@ export async function run({
         log.info("Schema validation complete");
         const transformed = await transformer(d as One & One[]);
         log.info("Transform complete");
-        const output = await handler(apiKey, transformed as any);
+        const output = await handler(apiKey, transformed);
         log.info("Transform complete");
         return { ids: output, error: undefined };
       }

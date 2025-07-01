@@ -6,7 +6,7 @@ import memo, { AnyAsyncFunction } from "p-memoize";
 import hash from "object-hash";
 import QuickLRU from "quick-lru";
 import { log } from "logging";
-import { has } from "lodash";
+import { debounce, has } from "lodash";
 import { diskCached } from "./withDiskCache";
 
 export const toJson = (r: Response) => r.json();
@@ -33,8 +33,9 @@ export function cached<V extends z.ZodType>(
   source: "body" | "params" = "params"
 ) {
   const [g, cache] = createCache(handler);
+  const clear = debounce(() => cache.clear(), 1000);
   for (const w of watch) {
-    w.watch().on("change", () => cache.clear());
+    w.watch().on("change", clear);
   }
   return (async (req, res) => {
     try {
@@ -55,7 +56,8 @@ export const queryClient = <T>(model: Model<T>) => {
     f: (data: z.infer<V>) => Promise<U>
   ): RequestHandler<z.infer<V>> => {
     const [g, cache] = createCache(f);
-    model.watch().on("change", () => cache.clear());
+    const clear = debounce(() => cache.clear(), 1000);
+    model.watch().on("change", clear);
     return async (req, res) => {
       const { success, data, error } = await validate.safeParseAsync({
         ...req.params,

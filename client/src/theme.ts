@@ -18,6 +18,21 @@ export const fontFamily = '"Geist", "Inter", "Helvetica", "Arial", sans-serif';
 
 export const theme = (t: "light" | "dark") =>
   createTheme({
+    breakpoints: {
+      values: {
+        // extra-small
+        xs: 0,
+        // small
+        sm: 600,
+        // medium
+        md: 700,
+        // large
+        lg: 900,
+        // extra-large
+        xl: 1200,
+      },
+    },
+
     palette: {
       text: {
         primary: t === "light" ? "#000000" : "#f4f4f5",

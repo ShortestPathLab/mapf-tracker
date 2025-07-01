@@ -7,6 +7,7 @@ import { Infer, Request, SubmissionKey } from "models";
 import { queryClient, route } from "query";
 import React from "react";
 import { assert } from "utils/assert";
+import { inferErrorMessage } from "utils/error";
 import { z } from "zod";
 
 const { query } = queryClient(Request);

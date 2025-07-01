@@ -22,8 +22,6 @@ async function run({
   const instances = await Instance.find({ scen_id: id })
     .skip(skip)
     .limit(limit);
-  const scenario = await findScenarioMemo(id);
-  const map = await findMapMemo(scenario!.map_id!.toString());
   const solutions = includeSolutions
     ? await getSolutionPathsRaw(
         instances.map((i) => {
@@ -42,15 +40,18 @@ async function run({
         agents,
         lower_cost,
         solution_cost,
+        map_name,
+        scenario_type,
+        scenario_type_id,
       } = instance!;
       const id =
         solution_path_id?.toString() ??
         last(solution_algos)?.submission_id?.toString();
       return {
-        map_name: map!.map_name,
-        scen_type: scenario!.scen_type,
-        type_id: scenario!.type_id,
-        agents: agents,
+        map_name,
+        scen_type: scenario_type,
+        type_id: scenario_type_id,
+        agents,
         lower_cost: lower_cost ?? null,
         solution_cost: solution_cost ?? null,
         ...(id &&
