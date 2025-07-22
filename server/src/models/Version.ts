@@ -1,7 +1,8 @@
 import { Status } from "aggregations";
 import { model as createModel, Schema } from "mongoose";
 import { createSchema } from "./createSchema";
-import memoizee from "memoizee";
+import memoize from "p-memoize";
+import ExpiryMap from "expiry-map";
 
 const schema = createSchema({
   _id: String,
@@ -10,12 +11,9 @@ const schema = createSchema({
 
 export const model = createModel("version", schema);
 
-export const get = memoizee(
+export const get = memoize(
   async (key: string) => (await model.findOne({ _id: key }))?.version ?? 0,
-  {
-    maxAge: 1000 * 60, // Clear cache every minute
-    promise: true,
-  }
+  { cache: new ExpiryMap(1000 * 60) }
 );
 
 export const set = async (key: string, version: number) => {

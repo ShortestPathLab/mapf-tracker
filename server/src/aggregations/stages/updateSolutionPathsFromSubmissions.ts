@@ -25,6 +25,22 @@ export const updateSolutionPathsFromSubmissions = () => {
       },
     },
     {
+      $addFields: {
+        solution_path: {
+          $function: {
+            args: ["$solution_path"],
+            lang: "js",
+
+            body: function (v) {
+              return v
+                ? v.replace("u", "_").replace("d", "u").replace("_", "d")
+                : v;
+            },
+          },
+        },
+      },
+    },
+    {
       $project: {
         _id: 1,
         instance_id: 1,

@@ -5,26 +5,25 @@ import { Types } from "mongoose";
 import { encode } from "validator";
 import { z } from "zod";
 
+const flip = (path: string) =>
+  path.replaceAll("u", "_").replaceAll("d", "u").replaceAll("_", "d");
+
 export const getSolutionPath = async (
   id: string,
   source: "ongoing" | "submitted"
 ) => {
-  const data =
-    source === "submitted"
-      ? await Submission.findOne({ _id: id })
-      : await OngoingSubmissionSolution.findOne({ _id: id });
-  if (data?.solutions) {
-    return split(data.solutions, "\n");
+  if (source === "ongoing") {
+    const data = await OngoingSubmissionSolution.findOne({ _id: id });
+    if (data?.solutions) {
+      return split(data.solutions, "\n");
+    }
   } else {
     // Legacy solution path storage handling
     const path =
       (await SolutionPath.findOne({ _id: id }))?.solution_path ??
       (await SolutionPath.findOne({ instance_id: id }))?.solution_path;
     if (path) {
-      return split(
-        path.replaceAll("u", "_").replaceAll("d", "u").replaceAll("_", "d"),
-        "\n"
-      );
+      return split(flip(path), "\n");
     }
   }
 };
