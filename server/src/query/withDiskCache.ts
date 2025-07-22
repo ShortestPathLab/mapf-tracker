@@ -29,7 +29,8 @@ export const diskCaches = createCache();
 type DiskCacheOptions<T extends any[]> = {
   resolver?: (...args: T) => any;
   precompute?: () => Promise<T[]>;
-  invalidationKey?: (...args: T) => any;
+  precomputeInterval?: number;
+  invalidationKey?: (...args: T) => Promise<any>;
 };
 
 export function diskCached<T extends any[], U>(
@@ -37,8 +38,9 @@ export function diskCached<T extends any[], U>(
   f: (...args: T) => Promise<U>,
   {
     precompute,
+    precomputeInterval,
     resolver = (...args) => args[0],
-    invalidationKey = () => ({}),
+    invalidationKey = async () => ({}),
   }: DiskCacheOptions<T> = {}
 ) {
   const g =
@@ -50,7 +52,7 @@ export function diskCached<T extends any[], U>(
         args: resolver?.(...args),
       });
       const path = `${directory}/${filename}`;
-      const currentVersion = hash(invalidationKey(...args));
+      const currentVersion = hash(await invalidationKey(...args));
       try {
         const files = new Set(
           [...glob.scanSync({ absolute: true })].map((p) => basename(p))

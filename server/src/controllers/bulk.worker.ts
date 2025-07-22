@@ -2,8 +2,8 @@ import { connectToDatabase } from "connection";
 import { flatMap, last, range, zip } from "lodash";
 import { Instance, Scenario } from "models";
 import { createPrecomputeHandler } from "query/withDiskCache";
-import { findMapMemo, findScenarioMemo } from "./findMemo";
 import { getSolutionPathsRaw } from "./solutionPath";
+import { get } from "models/Version";
 
 export type BulkOptions = {
   scenario: string;
@@ -69,6 +69,7 @@ export const { precompute, handler } = createPrecomputeHandler(
   "bulk-results",
   (p) => run(p),
   {
+    invalidationKey: () => get("diskCache"),
     precompute: async () => {
       await connectToDatabase(32);
       const scenarios = await Scenario.find({}, { _id: 1, instances: 1 });

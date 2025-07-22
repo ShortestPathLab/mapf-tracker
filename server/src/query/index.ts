@@ -8,6 +8,7 @@ import QuickLRU from "quick-lru";
 import { log } from "logging";
 import { debounce, has } from "lodash";
 import { diskCached } from "./withDiskCache";
+import { get } from "models/Version";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -150,7 +151,11 @@ export const queryClient = <T>(model: Model<T>) => {
       };
       return createHandler(
         validate,
-        name ? diskCached(`aggregate-${model.modelName}-${name}`, f) : f
+        name
+          ? diskCached(`aggregate-${model.modelName}-${name}`, f, {
+              invalidationKey: () => get("diskCache"),
+            })
+          : f
       );
     },
   };
