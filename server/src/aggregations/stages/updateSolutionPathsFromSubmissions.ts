@@ -31,9 +31,9 @@ export const updateSolutionPathsFromSubmissions = () => {
             args: ["$solution_path"],
             lang: "js",
 
-            body: function (v) {
+            body: function (v: string) {
               return v
-                ? v.replace("u", "_").replace("d", "u").replace("_", "d")
+                ? v.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
                 : v;
             },
           },

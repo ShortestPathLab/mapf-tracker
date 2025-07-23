@@ -6,7 +6,7 @@ import { encode } from "validator";
 import { z } from "zod";
 
 const flip = (path: string) =>
-  path.replaceAll("u", "_").replaceAll("d", "u").replaceAll("_", "d");
+  path.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d");
 
 export const getSolutionPath = async (
   id: string,
