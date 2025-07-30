@@ -34,7 +34,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
   const algorithmSelectorState = useSliceSelector(
     slices,
     undefined,
-    algorithm ? [stateOfTheArt._id, algorithm] : []
+    algorithm ? [algorithm] : []
   );
   const [maps, { set: setMaps }] = useList<string>();
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
@@ -76,7 +76,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
               ...keyBy(collection.data, "algorithm"),
             };
           })
-          .sortBy("type")
+          .sortBy("type", "map")
           .value()}
         render={
           <SliceChart

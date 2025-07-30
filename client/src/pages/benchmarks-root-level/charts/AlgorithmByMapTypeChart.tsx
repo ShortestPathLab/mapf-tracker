@@ -25,18 +25,18 @@ import { useAlgorithmChartData } from "./useAlgorithmChartData";
 
 export const slices = [
   {
-    key: "proportion",
-    dataKey: "proportion",
-    name: "Proportion",
-    formatter: (v) => formatPercentage(+v, 0),
-    domain: [0, 1],
-  },
-  {
     key: "proportion-extents",
     dataKey: "proportion",
     name: "Proportion (extents)",
     formatter: (v) => formatPercentage(+v, 0),
     domain: [0, "auto"],
+  },
+  {
+    key: "proportion",
+    dataKey: "proportion",
+    name: "Proportion",
+    formatter: (v) => formatPercentage(+v, 0),
+    domain: [0, 1],
   },
   {
     key: "count",
@@ -53,7 +53,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
   const algorithmSelectorState = useSliceSelector(
     slices,
     undefined,
-    algorithm ? [algorithm, stateOfTheArt._id] : []
+    algorithm ? [algorithm] : []
   );
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useAlgorithmChartData(
@@ -103,10 +103,11 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
                         opacity: 1,
                       }
                     : {
+                        opacity: 1,
                         strokeOpacity: 1,
                         strokeWidth: 2,
                         fill: toneBy(palette.mode, i),
-                        fillOpacity: 0.2,
+                        fillOpacity: 0.05,
                         stroke: toneBy(palette.mode, i),
                       })}
                 />

@@ -1,2 +1,2 @@
 export const appId = "com.shortestpathlab.tracker";
-export const version = "0.2.16";
+export const version = "0.2.16-1";
