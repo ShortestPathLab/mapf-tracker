@@ -57,12 +57,4 @@ export const pages = () => [
     description:
       "Quick-start guide on how to submit your results to the platform",
   }),
-  {
-    label: "About",
-    value: "about",
-    icon: <BookRounded />,
-    content: <AboutPage />,
-    description: "About this project",
-    cover: undefined,
-  },
 ];

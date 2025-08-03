@@ -13,16 +13,9 @@ import Content from "./about.md";
 import { people } from "./people";
 import { ArticleLayout } from "layout/ArticleLayout";
 
-export default function Page() {
+export function About() {
   return (
-    <ArticleLayout
-      title="About"
-      subtitle="About the MAPF Tracker"
-      path={[
-        { name: "Home", url: "/" },
-        { name: "Docs", url: "/docs" },
-      ]}
-    >
+    <>
       <Prose>
         <Content />
       </Prose>
@@ -43,6 +36,21 @@ export default function Page() {
           </List>
         </Card>
       ))}
+    </>
+  );
+}
+
+export default function Page() {
+  return (
+    <ArticleLayout
+      title="About"
+      subtitle="About the MAPF Tracker"
+      path={[
+        { name: "Home", url: "/" },
+        { name: "Docs", url: "/docs" },
+      ]}
+    >
+      <About />
     </ArticleLayout>
   );
 }

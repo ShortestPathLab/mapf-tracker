@@ -8,6 +8,7 @@ import {
   DarkModeRounded,
   HomeFilledRounded,
   HomeRounded,
+  InfoRounded,
   LightModeRounded,
   LightOffRounded,
   LightbulbRounded,
@@ -122,6 +123,12 @@ export function useNavigationContent() {
           icon: <BookRounded />,
           selectedIcon: <BookFilledRounded />,
           description: "View the documentation",
+        },
+        {
+          label: "About",
+          url: "/about",
+          icon: <InfoRounded />,
+          description: "Learn more about the MAPF Tracker",
         },
         {
           label: "Github",
