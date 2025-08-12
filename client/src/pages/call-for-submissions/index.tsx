@@ -14,6 +14,7 @@ export default function Page() {
   const navigate = useNavigate();
   return (
     <Layout
+      disablePadding
       title="Call for submissions"
       render={RenderChildrenOnly}
       path={

@@ -406,7 +406,9 @@ export function Visualisation({
                         {!sm && (
                           <>
                             <Typography sx={{ px: 1 }}>
-                              {step} / {timespan ?? "0"}
+                              <code>
+                                {step} / {timespan ?? "0"}
+                              </code>
                             </Typography>
                             <Divider orientation="vertical" flexItem />
                           </>
