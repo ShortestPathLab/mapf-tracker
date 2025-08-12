@@ -8,7 +8,7 @@ import {
 } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { sample } from "components/charts/sample";
-import { scenarioMetrics } from "core/metrics";
+import { metrics, scenarioMetrics } from "core/metrics";
 import { chain, keyBy, map } from "lodash";
 import { useInstancesByScenario } from "queries/useMapQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
@@ -73,7 +73,10 @@ export function LowerBoundComparisonChart({
   map: string;
   scenario: string | number;
 }) {
-  const algorithmSelectorState = useSliceSelector(slices, scenarioMetrics);
+  const algorithmSelectorState = useSliceSelector<
+    (typeof metrics)[number],
+    (typeof slices)[number]
+  >(slices, scenarioMetrics);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useScenarioOnAgentGapData(metric, map, scenario);
   return (

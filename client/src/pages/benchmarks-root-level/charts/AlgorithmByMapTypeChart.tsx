@@ -75,7 +75,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
             domain: capitalize(c.id),
             ...keyBy(c.data, "algorithm"),
           }))
-          .sortBy("map")
+          .sortBy("domain")
           .value()}
         render={
           <RadarChart>

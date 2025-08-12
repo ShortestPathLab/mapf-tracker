@@ -1,13 +1,11 @@
 import {
   AnimationRounded,
-  BookRounded,
   CampaignRounded,
   EmojiEventsRounded,
   ShapeLineRounded,
   UploadFileRounded,
 } from "@mui-symbols-material/w400";
 import { find } from "lodash";
-import AboutPage from "./about";
 import { createArticlePage } from "./createArticlePage";
 import DemoPage from "./docs-demo.mdx";
 import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
