@@ -10,6 +10,8 @@ import {
   PlayArrowRounded,
   ReplayRounded,
   SettingsRounded,
+  ZoomInRounded,
+  ZoomOutRounded,
 } from "@mui-symbols-material/w400";
 import {
   Box,
@@ -83,6 +85,7 @@ import { proportionOf } from "./proportionOf";
 import { usePlayback } from "./usePlayback";
 import { useThrottleState } from "./useThrottleState";
 import { within } from "./within";
+import { Scroll } from "components/dialog/Scrollbars";
 
 const defaultGetAgentPath = () => [{ x: 0, y: 0, action: "w" }];
 const defaultGetAgentPositions = () => [{ x: 0, y: 0 }];
@@ -399,153 +402,188 @@ export function Visualisation({
                   // p: 4,
                 }}
               >
-                <Card sx={{ py: 1, m: 2, px: 2, ...paper() }} ref={setToolbar}>
-                  <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
-                    {!disablePlayback && (
-                      <>
-                        {!sm && (
+                <Card sx={{ ...paper(), m: 2 }} ref={setToolbar}>
+                  <Scroll x>
+                    <Stack
+                      sx={{
+                        py: 1,
+                        px: 2,
+                        width: "fit-content",
+                        minWidth: 320,
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        sx={{ gap: 2, alignItems: "center" }}
+                      >
+                        {!disablePlayback && (
                           <>
-                            <Typography sx={{ px: 1 }}>
-                              <code>
-                                {step} / {timespan ?? "0"}
-                              </code>
-                            </Typography>
+                            {!sm && (
+                              <>
+                                <Typography sx={{ px: 1 }}>
+                                  <code>
+                                    {step} / {timespan ?? "0"}
+                                  </code>
+                                </Typography>
+                                <Divider orientation="vertical" flexItem />
+                              </>
+                            )}
+                            {filter([
+                              !sm && {
+                                name: "Step back",
+                                icon: <ChevronLeftRounded />,
+                                action: backwards,
+                              },
+                              {
+                                name: paused ? "Play" : "Pause",
+                                icon: paused ? (
+                                  <PlayArrowRounded
+                                    sx={{ color: "secondary.main" }}
+                                  />
+                                ) : (
+                                  <PauseRounded
+                                    sx={{ color: "secondary.main" }}
+                                  />
+                                ),
+                                action: paused ? play : pause,
+                              },
+                              !sm && {
+                                name: "Step forward",
+                                icon: <ChevronRightRounded />,
+                                action: forwards,
+                              },
+                              {
+                                name: "Restart",
+                                icon: <ReplayRounded />,
+                                action: restart,
+                                disabled: step === 0,
+                              },
+                            ]).map(({ name, icon, action, disabled }) => (
+                              <Tooltip title={name} key={name} placement="top">
+                                <IconButton
+                                  disabled={disabled}
+                                  onClick={action}
+                                >
+                                  {icon}
+                                </IconButton>
+                              </Tooltip>
+                            ))}
                             <Divider orientation="vertical" flexItem />
+                            <Slider
+                              value={step}
+                              onChange={(_, n) => seek(+n)}
+                              min={0}
+                              max={timespan}
+                              step={1}
+                              sx={{
+                                "& *": { transition: "none !important" },
+                                mx: 2,
+                                width: 240,
+                                flex: 1,
+                                ".MuiSlider-rail": {
+                                  opacity: 1,
+                                  bgcolor: (t) =>
+                                    alpha(t.palette.primary.main, 0.38),
+                                  backgroundImage: (t) => {
+                                    const ts = map(diagnostics, "t")
+                                      .filter((c) => !isUndefined(c))
+                                      .map((c) => c / timespan);
+                                    return `linear-gradient(to right, ${map(
+                                      ts,
+                                      (c) =>
+                                        `transparent ${c * 100 - 0.5}%, ${
+                                          t.palette.error.main
+                                        } ${c * 100 - 0.5}%, ${
+                                          t.palette.error.main
+                                        } ${c * 100 + 0.5}%, transparent ${
+                                          c * 100 + 0.5
+                                        }%`
+                                    ).join(", ")})`;
+                                  },
+                                },
+                              }}
+                            />
                           </>
                         )}
-                        {filter([
-                          !sm && {
-                            name: "Step back",
-                            icon: <ChevronLeftRounded />,
-                            action: backwards,
-                          },
-                          {
-                            name: paused ? "Play" : "Pause",
-                            icon: paused ? (
-                              <PlayArrowRounded
-                                sx={{ color: "secondary.main" }}
-                              />
-                            ) : (
-                              <PauseRounded sx={{ color: "secondary.main" }} />
-                            ),
-                            action: paused ? play : pause,
-                          },
-                          !sm && {
-                            name: "Step forward",
-                            icon: <ChevronRightRounded />,
-                            action: forwards,
-                          },
-                          {
-                            name: "Restart",
-                            icon: <ReplayRounded />,
-                            action: restart,
-                            disabled: step === 0,
-                          },
-                        ]).map(({ name, icon, action, disabled }) => (
-                          <Tooltip title={name} key={name} placement="top">
-                            <IconButton disabled={disabled} onClick={action}>
-                              {icon}
-                            </IconButton>
-                          </Tooltip>
-                        ))}
-                        <Divider orientation="vertical" flexItem />
-                        <Slider
-                          value={step}
-                          onChange={(_, n) => seek(+n)}
-                          min={0}
-                          max={timespan}
-                          step={1}
-                          sx={{
-                            "& *": { transition: "none !important" },
-                            mx: 2,
-                            width: 240,
-                            flex: 1,
-                            ".MuiSlider-rail": {
-                              opacity: 1,
-                              bgcolor: (t) =>
-                                alpha(t.palette.primary.main, 0.38),
-                              backgroundImage: (t) => {
-                                const ts = map(diagnostics, "t")
-                                  .filter((c) => !isUndefined(c))
-                                  .map((c) => c / timespan);
-                                return `linear-gradient(to right, ${map(
-                                  ts,
-                                  (c) =>
-                                    `transparent ${c * 100 - 0.5}%, ${
-                                      t.palette.error.main
-                                    } ${c * 100 - 0.5}%, ${
-                                      t.palette.error.main
-                                    } ${c * 100 + 0.5}%, transparent ${
-                                      c * 100 + 0.5
-                                    }%`
-                                ).join(", ")})`;
-                              },
-                            },
-                          }}
-                        />
-                      </>
-                    )}
-                    {!sm && !disablePlayback && (
-                      <Divider orientation="vertical" flexItem />
-                    )}
-                    {!sm && (
-                      <>
-                        <Tooltip title="Toggle fullscreen" placement="top">
-                          <IconButton
-                            onClick={() => {
-                              toggle();
-                            }}
-                          >
-                            {isFullscreen ? (
-                              <FullscreenExitRounded />
-                            ) : (
-                              <FullscreenRounded />
-                            )}
-                          </IconButton>
-                        </Tooltip>
-                        <PopupState variant="popover">
-                          {(popupState) => (
-                            <>
-                              <IconButton {...bindTrigger(popupState)}>
-                                <SettingsRounded />
-                              </IconButton>
-                              <Menu
-                                {...bindMenu(popupState)}
-                                anchorEl={toolbar}
-                                anchorOrigin={{
-                                  vertical: -8,
-                                  horizontal: "right",
-                                }}
-                                transformOrigin={{
-                                  vertical: "bottom",
-                                  horizontal: "right",
+                        {!sm && !disablePlayback && (
+                          <Divider orientation="vertical" flexItem />
+                        )}
+                        {!sm && (
+                          <>
+                            <Tooltip title="Toggle fullscreen" placement="top">
+                              <IconButton
+                                onClick={() => {
+                                  toggle();
                                 }}
                               >
-                                <MenuItem
-                                  onClick={() => {
-                                    popupState.close();
-                                    if (viewport) {
-                                      viewport.animate({
-                                        time: 300,
-                                        scale:
+                                {isFullscreen ? (
+                                  <FullscreenExitRounded />
+                                ) : (
+                                  <FullscreenRounded />
+                                )}
+                              </IconButton>
+                            </Tooltip>
+                            <PopupState variant="popover">
+                              {(popupState) => (
+                                <>
+                                  <IconButton {...bindTrigger(popupState)}>
+                                    <SettingsRounded />
+                                  </IconButton>
+                                  <Menu
+                                    {...bindMenu(popupState)}
+                                    anchorEl={toolbar}
+                                    anchorOrigin={{
+                                      vertical: -8,
+                                      horizontal: "right",
+                                    }}
+                                    transformOrigin={{
+                                      vertical: "bottom",
+                                      horizontal: "right",
+                                    }}
+                                  >
+                                    {[
+                                      {
+                                        getScale: () => viewport.scale.x * 1.2,
+                                        label: "Zoom in",
+                                        icon: <ZoomInRounded />,
+                                      },
+                                      {
+                                        getScale: () => viewport.scale.x * 0.8,
+                                        label: "Zoom out",
+                                        icon: <ZoomOutRounded />,
+                                      },
+                                      {
+                                        getScale: () =>
                                           viewport.findFit(width, height) * 0.9,
-                                        ease: "easeInOutQuint",
-                                      });
-                                    }
-                                  }}
-                                >
-                                  <ListItemIcon>
-                                    <FitScreenRounded />
-                                  </ListItemIcon>
-                                  <ListItemText>Fit to screen</ListItemText>
-                                </MenuItem>
-                              </Menu>
-                            </>
-                          )}
-                        </PopupState>
-                      </>
-                    )}
-                  </Stack>
+                                        label: "Fit to screen",
+                                        icon: <FitScreenRounded />,
+                                      },
+                                    ].map(({ getScale, label, icon }) => (
+                                      <MenuItem
+                                        key={label}
+                                        onClick={() => {
+                                          if (viewport) {
+                                            viewport.animate({
+                                              time: 300,
+                                              scale: getScale(),
+                                              ease: "easeInOutQuint",
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        <ListItemIcon>{icon}</ListItemIcon>
+                                        <ListItemText>{label}</ListItemText>
+                                      </MenuItem>
+                                    ))}
+                                  </Menu>
+                                </>
+                              )}
+                            </PopupState>
+                          </>
+                        )}
+                      </Stack>
+                    </Stack>
+                  </Scroll>
                 </Card>
               </Stack>
               <Enter in={selection.show} axis="X" key={selection.agent}>
