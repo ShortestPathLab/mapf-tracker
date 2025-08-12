@@ -1,3 +1,4 @@
+import { CheckRounded } from "@mui-symbols-material/w400";
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
 } from "@mui/material";
 import { BottomBarContext } from "App";
 import { FlatCard } from "components/FlatCard";
-import { Floating } from "components/Floating";
 import { Item } from "components/Item";
 import { useSnackbarAction } from "components/Snackbar";
 import { Tip } from "components/Tip";
@@ -29,12 +29,11 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { PopupState as State } from "material-ui-popup-state/hooks";
 import { Arrow } from "pages/submission-summary/table/Arrow";
 import { ReactNode, useEffect } from "react";
+import { useThrottle } from "react-use";
 import { paper } from "theme";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { useBenchmarksAll } from "./DownloadOptions";
 import { Job } from "./useBulkMutation";
-import { useThrottle } from "react-use";
-import { CheckRounded } from "@mui-symbols-material/w400";
 
 export type Models = {
   all: { maps: Models["map"][]; id: string };
@@ -373,25 +372,33 @@ export function DownloadOptionsBase<
                   </Scroll>
                 </Stack>
               )}
-              <Floating sx={{ position: "sticky", bottom: 0 }}>
-                <Button
-                  fullWidth
-                  color="secondary"
-                  variant="contained"
-                  sx={{ width: "100%" }}
-                  disabled={isRunning || disabled}
-                  onClick={notify(() => onSubmit?.(), {
-                    start: "Exporting selection",
-                    end: "Exported selection",
-                  })}
+              <Box sx={{ position: "sticky", bottom: 0 }}>
+                <Box
+                  sx={{
+                    bgcolor: "background.paper",
+                    width: "100%",
+                    borderRadius: 1,
+                  }}
                 >
-                  {isRunning
-                    ? `Exporting ${floor(progress.current)} of ${
-                        progress.total
-                      }`
-                    : "Export selection"}
-                </Button>
-              </Floating>
+                  <Button
+                    fullWidth
+                    color="secondary"
+                    variant="contained"
+                    sx={{ width: "100%" }}
+                    disabled={isRunning || disabled}
+                    onClick={notify(() => onSubmit?.(), {
+                      start: "Exporting selection",
+                      end: "Exported selection",
+                    })}
+                  >
+                    {isRunning
+                      ? `Exporting ${floor(progress.current)} of ${
+                          progress.total
+                        }`
+                      : "Export selection"}
+                  </Button>
+                </Box>
+              </Box>
             </Stack>
           </Scroll>
         </Stack>

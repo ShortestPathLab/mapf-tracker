@@ -5,8 +5,10 @@ import { ReactNode } from "react";
 export function Floating({
   children,
   always,
+  disableSpacer,
   ...props
 }: {
+  disableSpacer?: boolean;
   children?: ReactNode;
   always?: boolean;
 } & BoxProps) {
@@ -30,16 +32,18 @@ export function Floating({
       >
         {children}
       </Box>
-      <Box
-        {...props}
-        sx={{
-          visibility: floating ? "hidden" : "visible",
-          display: "flex",
-          ...props.sx,
-        }}
-      >
-        {children}
-      </Box>
+      {!disableSpacer && (
+        <Box
+          {...props}
+          sx={{
+            visibility: floating ? "hidden" : "visible",
+            display: "flex",
+            ...props.sx,
+          }}
+        >
+          {children}
+        </Box>
+      )}
     </>
   );
 }
