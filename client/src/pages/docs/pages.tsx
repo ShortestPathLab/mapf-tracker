@@ -1,6 +1,5 @@
 import {
   AnimationRounded,
-  CampaignRounded,
   EmojiEventsRounded,
   ShapeLineRounded,
   UploadFileRounded,
@@ -9,7 +8,6 @@ import { find } from "lodash";
 import { createArticlePage } from "./createArticlePage";
 import DemoPage from "./docs-demo.mdx";
 import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
-import MotivationsPage from "./docs-motivations.mdx";
 import ProblemDefinitionPage from "./docs-problem-definition.md";
 import SolutionFormatPage from "./docs-solution-format.mdx";
 
@@ -25,13 +23,6 @@ export const pages = () => [
     icon: <AnimationRounded />,
     content: <DemoPage />,
     description: "Take 5 minutes to watch our ICAPS 2023 system demonstration",
-  }),
-  createArticlePage({
-    key: "motivations",
-    title: "Call for submissions",
-    icon: <CampaignRounded />,
-    content: <MotivationsPage />,
-    description: "Calling for all MAPF researchers to share your work with us",
   }),
   createArticlePage({
     key: "problem-definition",

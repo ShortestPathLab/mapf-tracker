@@ -17,6 +17,7 @@ import DocsPage from "./pages/docs";
 import TrackSubmission from "./pages/submissions";
 import Visualiser from "./pages/visualiser";
 import AboutPage from "./pages/about";
+import MotivationsPage from "./pages/call-for-submissions";
 
 function MorePage() {
   const md = useMd();
@@ -96,6 +97,10 @@ const nestedRoutes: NestedRoute[] = [
       },
       { path: "/sudo/:section?", content: <SudoPage /> },
       { path: "/docs/:article?", content: <DocsPage /> },
+      {
+        path: "/call-for-submissions",
+        content: <MotivationsPage />,
+      },
       {
         path: "/about",
         content: <AboutPage />,

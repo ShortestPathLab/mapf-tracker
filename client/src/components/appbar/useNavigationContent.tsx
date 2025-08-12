@@ -3,6 +3,8 @@ import {
   AddRounded,
   BookFilledRounded,
   BookRounded,
+  CampaignFilledRounded,
+  CampaignRounded,
   ConversionPathFilledRounded,
   ConversionPathRounded,
   DarkModeRounded,
@@ -92,6 +94,16 @@ export function useNavigationContent() {
       label: "Make a submission",
       defaultOpen: true,
       items: [
+        {
+          primary: true,
+          label: "Call for submissions",
+          url: "/call-for-submissions",
+          icon: <CampaignRounded />,
+          labelShort: "Call",
+          selectedIcon: <CampaignFilledRounded />,
+          description:
+            "Calling for all MAPF researchers to share your work with us",
+        },
         {
           primary: true,
           label: "New submission request",

@@ -23,6 +23,7 @@ import { useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
 import { ReactNode } from "react";
 import { SectionContent } from "./Section";
+import { RenderChildrenOnly } from "layout/Layout";
 type BulletProps = {
   index?: number;
   icon?: ReactNode;
@@ -35,12 +36,6 @@ function Bullet({ icon }: BulletProps) {
     </Stack>
   );
 }
-const RenderChildrenOnly = ({
-  children,
-}: {
-  header?: ReactNode;
-  children?: ReactNode;
-}): ReactNode => children;
 export default function index() {
   const navigate = useNavigate();
 

@@ -21,6 +21,12 @@ import { last, merge } from "lodash";
 import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
+export const RenderChildrenOnly = ({
+  children,
+}: {
+  header?: ReactNode;
+  children?: ReactNode;
+}): ReactNode => children;
 
 export type LayoutRenderProps = {
   header?: ReactNode;
