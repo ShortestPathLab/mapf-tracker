@@ -278,6 +278,8 @@ export default function Hero({ children }: { children?: ReactNode }) {
                 ...[find(pages(), { value: "system-demo" })].map((v) => ({
                   ...v,
                   value: `/docs/${v.value}`,
+                  icon: undefined,
+                  cover: "/assets/demo.png",
                 })),
               ],
               (page) => (
