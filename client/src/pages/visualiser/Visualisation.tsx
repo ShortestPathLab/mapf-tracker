@@ -408,8 +408,8 @@ export function Visualisation({
                       sx={{
                         py: 1,
                         px: 2,
-                        width: "fit-content",
-                        minWidth: 320,
+                        width: sm ? undefined : "fit-content",
+                        minWidth: sm ? 0 : 320,
                       }}
                     >
                       <Stack
