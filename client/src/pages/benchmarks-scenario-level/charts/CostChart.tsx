@@ -45,7 +45,6 @@ function RenderChart({
         }}
       />
       <YAxis
-        scale="sqrt"
         tick={{ fill: theme.palette.text.secondary }}
         label={
           <Label
