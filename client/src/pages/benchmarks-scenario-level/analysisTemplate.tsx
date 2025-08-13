@@ -1,10 +1,10 @@
 import { ShowChartRounded } from "@mui-symbols-material/w400";
 import { Map, Scenario } from "core/types";
+import { CostChart } from "./charts/CostChart";
 import {
   LowerBoundChart,
   LowerBoundComparisonChart,
 } from "./charts/LowerBoundChart";
-import { SuccessRateOnAgentsChart } from "pages/benchmarks-map-level/charts/SuccessRateChart";
 
 export function analysisTemplate(scenarioData?: Scenario) {
   return [
@@ -13,13 +13,8 @@ export function analysisTemplate(scenarioData?: Scenario) {
       icon: <ShowChartRounded />,
       variants: [
         {
-          name: "Completion by agent count",
-          render: () => (
-            <SuccessRateOnAgentsChart
-              scenario={scenarioData?.id}
-              map={scenarioData?.map_id}
-            />
-          ),
+          name: "Cost by agent count",
+          render: () => <CostChart scenario={scenarioData?.id} />,
         },
         {
           name: "Percent suboptimality",
