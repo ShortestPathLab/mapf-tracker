@@ -56,7 +56,7 @@ function RenderChart({
             position="insideLeft"
           />
         }
-        width={50}
+        width={100}
       />
       {map(
         [
