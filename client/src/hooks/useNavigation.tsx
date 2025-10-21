@@ -3,6 +3,7 @@ import {
   filter,
   findIndex,
   isNaN,
+  isNull,
   isUndefined,
   map,
   mapValues,
@@ -145,7 +146,7 @@ export function useNavigate() {
       navigate(
         items.length
           ? `${url}?${map(
-              filter(items, ([, v]) => !isUndefined(v)),
+              filter(items, ([, v]) => !isUndefined(v) && !isNull(v)),
               ([k, v]) => `${k}=${v}`
             ).join("&")}`
           : url,
@@ -179,7 +180,7 @@ export function useLocationStateSeparate<
   return useMemo(() => {
     const params = Object.fromEntries(new URLSearchParams(location.search));
     return {
-      params: mapValues(params, (v) => (isNaN(+v) ? v : +v)) ?? {},
+      params: mapValues(params, (v) => (isNaN(+v) ? v : +v)),
       saved: location.state?.saved ?? {},
       session: location.state?.session ?? {},
     };
