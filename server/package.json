@@ -58,6 +58,7 @@
     "mongodb": "^6.14.2",
     "mongodb-aggregate-builder": "^1.0.2",
     "mongoose": "7",
+    "nanoid": "^5.1.6",
     "neat-csv": "^7.0.0",
     "object-hash": "^3.0.0",
     "object-sizeof": "^2.6.5",
