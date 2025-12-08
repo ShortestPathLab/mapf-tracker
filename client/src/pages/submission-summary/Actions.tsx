@@ -67,7 +67,7 @@ const getFileType = (name: string) => {
       "application/yaml": [".yaml", ".yml"],
     },
     (extensions) =>
-      some(extensions, (extension) => name.toLowerCase().endsWith(extension))
+      some(extensions, (extension) => name.toLowerCase().endsWith(extension)),
   );
 };
 
@@ -143,19 +143,19 @@ export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
     RestApiDialog,
     {
       title: "Submit via REST API",
-    }
+    },
   );
   const { open: openJsonApiDialog, dialog: jsonApiDialog } = useSurface(
     JsonApiDialog,
     {
       title: "Submit via copy and paste",
-    }
+    },
   );
   const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useSurface(
     FileUploadDialog,
     {
       title: "Submit via upload",
-    }
+    },
   );
   return (
     <>

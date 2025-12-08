@@ -6,80 +6,75 @@ MAPF Tracker accepts submissions in JSON, YAML, and CSV, as long as they include
 
 ###### Properties
 
-| Property  | Type | Description |
-|-|-|-|
-| `map_name` | `string` (Required) | The name of the map |
-| `scen_type` | `string` (Required) | Scenario type e.g.`even`, `random` |
-| `type_id` | `number` (Required) | The scenario variant number |
-| `agents` | `number` (Required) | The total number of agents |
+| Property        | Type                | Description                                                                                                                                               |
+| --------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `map_name`      | `string` (Required) | The name of the map                                                                                                                                       |
+| `scen_type`     | `string` (Required) | Scenario type e.g.`even`, `random`                                                                                                                        |
+| `type_id`       | `number` (Required) | The scenario variant number                                                                                                                               |
+| `agents`        | `number` (Required) | The total number of agents                                                                                                                                |
 | `solution_plan` | `string` (Required) | Your solution. This can be a list of path strings, or a single string with the path of each agent delimited by newlines. Paths can be run length encoded. |
-| `lower_cost` | `number` | Theoretical lower-bound cost reported by your solver. If unknown, leave empty. |
-| `solution_cost` | `number` | The cost of your solution. This is optional. If provided, this will be checked during validation. |
-| `flip_up_down` | `number` | Reverses the coordinate system such that (0, 0) is in the bottom left corner of the map instead of the top left corner. |
+| `lower_cost`    | `number`            | Theoretical lower-bound cost reported by your solver. If unknown, leave empty.                                                                            |
+| `solution_cost` | `number`            | The cost of your solution. This is optional. If provided, this will be checked during validation.                                                         |
+| `flip_up_down`  | `number`            | Reverses the coordinate system such that (0, 0) is in the bottom left corner of the map instead of the top left corner.                                   |
 
 ##### File formats
 
-You can submit data to the tracker in a few formats. When you download solutions, they'll be available in CSV. 
+You can submit data to the tracker in a few formats. When you download solutions, they'll be available in CSV.
 
 ###### JSON
 
 You can submit single solutions as JSON objects. Solutions can be a list of strings or a newline-delimited string. In JSON, newlines must be represented by the `\n` escape sequence.
 
 <CodeBlock language="json">
-  {
-  `
+  {`
   {
     "map_name": "empty-8-8", 
     "scen_type": "even",
     "type_id": 0, 
-    "agents": 1, 
+    "agent_count": 1, 
     "solution_plan": "5r2d3w4d"  
   }
-`.trim()
-  }
+`.trim()}
 </CodeBlock>
 
 You can also submit a list of JSON objects.
 
 <CodeBlock language="json">
-  {
-  `
+  {`
   [
     {
       "map_name": "empty-8-8", 
       "scen_type": "even",
       "type_id": 0, 
-      "agents": 1, 
+      "agent_count": 1, 
       "solution_plan": "5r2d3w4d"
     },
     {
       "map_name": "empty-8-8", 
       "scen_type": "even",
       "type_id": 0, 
-      "agents": 2, 
+      "agent_count": 2, 
       "solution_plan": "5r2d3w4d\\n5r2d3w4d"
     }
   ]
-`.trim()
-  }
+`.trim()}
 </CodeBlock>
 
 ###### CSV
 
 We accept comma-delimited CSVs, which may be easier to output for some solvers. There must be a header row. Each line of the file represents a solution. Solutions must be newline-delimited strings, Windows (CRLF) or Unix (LF) style. Booleans must be the string literals `TRUE` or `FALSE`.
 
-<Box component="div" sx={{color: 'warning.main'}}>
-  Large solutions may open in Microsoft Excel incorrectly, since Excel has a limit of 65,535 characters per cell.
+<Box component="div" sx={{ color: "warning.main" }}>
+  Large solutions may open in Microsoft Excel incorrectly, since Excel has a
+  limit of 65,535 characters per cell.
 </Box>
 
 <CodeBlock language="csv-with-heading">
-  {
-  `
-  map_name,scen_type,type_id,agents,solution_plan,flip_up_down
+  {`
+  map_name,scen_type,type_id,agent_count,solution_plan,flip_up_down
   "empty-8-8",even,0,1,"5r2d3w4d",FALSE
   "empty-8-8",even,0,2,"5r2d3w4d↵5r2d3w4d",FALSE
-`.trim()
-  }
+`.trim()}
 </CodeBlock>
 
 ###### YAML
@@ -89,14 +84,13 @@ We also accept YAML, which may be easier to output for some solvers. Solutions c
 Multiple solutions can be batched into one YAML file, as either a list of objects or a multi-document YAML file.
 
 <CodeBlock language="yaml">
-  {
-  `
+  {`
   ---
   # One submission
   map_name: "empty-8-8"
   scen_type: even
   type_id: 0
-  agents: 1
+  agent_count: 1
   solution_plan: 
     - 5r2d3w4d
   ---
@@ -104,10 +98,9 @@ Multiple solutions can be batched into one YAML file, as either a list of object
   map_name: "empty-8-8"
   scen_type: even
   type_id: 0
-  agents: 2
+  agent_count: 2
   solution_plan: 
     - 5r2d3w4d
     - 5r2d3w4d
-`.trim()
-  }
+`.trim()}
 </CodeBlock>

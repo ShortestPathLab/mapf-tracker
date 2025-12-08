@@ -31,7 +31,8 @@ export function useSubmissionMutation({
         }`,
         content,
         "post",
-        type
+        type,
+        true,
       ),
     onMutate: async ({ label, size = 0 }) => {
       const optimistic = {

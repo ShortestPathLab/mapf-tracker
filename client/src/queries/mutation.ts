@@ -16,11 +16,17 @@ export const request = async <T = null>(
   p: string,
   body: T = undefined,
   method = "post",
-  type = "application/json"
+  type = "application/json",
+  raw = false,
 ) => {
   const req = await fetch(p, {
     method,
-    body: type === "application/json" ? JSON.stringify(body) : `${body}`,
+    body:
+      type === "application/json"
+        ? raw
+          ? `${body}`
+          : JSON.stringify(body)
+        : `${body}`,
     headers: { "Content-Type": type, ...getAuth() },
   });
   if (req.ok) {
