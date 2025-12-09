@@ -4,6 +4,7 @@ import { AlgorithmByMapTypeChart } from "./charts/AlgorithmByMapTypeChart";
 import { MapProportionByDomainChart } from "./charts/MapProportionByDomainChart";
 import { MapProportionChart } from "./charts/MapProportionChart";
 import { CompletionByAgentCountChart } from "components/charts/CompletionByAgentCountChart";
+import { AlgorithmByAgentCountChart } from "./charts/AlgorithmByAgentCountChart";
 
 export const analysisTemplate = [
   {
@@ -40,6 +41,10 @@ export const compareTemplate = [
       {
         name: "Algorithm by individual maps",
         render: () => <AlgorithmByMapChart />,
+      },
+      {
+        name: "Algorithm by agent count",
+        render: () => <AlgorithmByAgentCountChart />,
       },
     ],
   },

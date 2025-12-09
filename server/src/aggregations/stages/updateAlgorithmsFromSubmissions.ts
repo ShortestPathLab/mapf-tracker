@@ -75,7 +75,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
               { $count: "count" },
             ],
             instances_solved: [
-              { $match: { solution_cost: { $ne: null } } },
+              { $match: { solution_cost: { $nin: [null, Infinity, 0] } } },
               { $count: "count" },
             ],
             instances: [{ $count: "count" }],

@@ -9,9 +9,9 @@ import {
 import { useMemo } from "react";
 
 export function useAlgorithmChartData(
-  type: "map" | "mapType",
+  type: "map" | "mapType" | "agents",
   algorithms: string[],
-  metric: AggregateAlgorithmQuery["filterBy"]
+  metric: AggregateAlgorithmQuery["filterBy"],
 ) {
   const { data: qs, isLoading: qsLoading } = useQueries({
     queries: algorithms.map((a) =>
@@ -19,7 +19,7 @@ export function useAlgorithmChartData(
         algorithm: a,
         groupBy: type,
         filterBy: metric,
-      })
+      }),
     ),
     combine: (result) => ({
       isLoading: some(result, "isLoading"),
@@ -47,7 +47,7 @@ export function useAlgorithmChartData(
           map(d.data, (r) => ({
             algorithm: d._id,
             ...r,
-          }))
+          })),
         )
         .groupBy("_id")
         .toPairs()
@@ -59,7 +59,7 @@ export function useAlgorithmChartData(
           })),
         }))
         .value(),
-    [sota, qs, is]
+    [sota, qs, is],
   );
   return {
     isLoading: qsLoading || sotaLoading,
