@@ -1,6 +1,7 @@
 import { OngoingSubmission } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateInstances } from "./updateInstancesFromSubmissions";
+import { constants } from "buffer";
 
 /**
  * Aggregation pipeline that groups by unique combination of
@@ -42,17 +43,17 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
       {
         $addFields: {
           lower_cost: "$lowerBound",
-          solution_cost: { $ifNull: ["$cost", Infinity] },
+          cost: { $ifNull: ["$cost", Infinity] },
           last_updated: { $max: "$updatedAt" },
         },
       },
       {
         $addFields: {
-          solution_cost: {
+          cost: {
             $cond: {
-              if: { $eq: ["$solution_cost", 0] },
+              if: { $eq: ["$cost", 0] },
               then: Infinity,
-              else: "$solution_cost",
+              else: "$cost",
             },
           },
         },
