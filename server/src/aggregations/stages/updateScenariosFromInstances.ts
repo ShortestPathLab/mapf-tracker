@@ -11,7 +11,13 @@ export const isClosedCond = (solution: string, lower: string) => ({
   ],
 });
 
-export const isSolvedCond = (solution: string) => ({ $ne: [solution, null] });
+export const isSolvedCond = (solution: string) => ({
+  $and: [
+    { $ne: [solution, null] },
+    { $ne: [solution, Infinity] },
+    { $ne: [solution, 0] },
+  ],
+});
 
 /**
  * Updates the scenario documents with the number of closed and solved instances.
@@ -38,7 +44,7 @@ export const updateScenariosFromInstances = () =>
               as: "instance",
               cond: isClosedCond(
                 "$$instance.solution_cost",
-                "$$instance.lower_cost"
+                "$$instance.lower_cost",
               ),
             },
           },
