@@ -85,7 +85,7 @@ function RenderChart({
             strokeWidth={stroke ? 2 : 0}
             strokeOpacity={1}
           />
-        )
+        ),
       )}
     </AreaChart>
   );
@@ -98,7 +98,7 @@ export function CostChart({ scenario }: { scenario: string }) {
       groupBy: "agents",
       value: "solution_cost",
       operation: "max",
-    }
+    },
   );
   const { data: lowerCosts, isLoading: lowerCostsLoading } = useAggregate({
     scenario,
@@ -108,8 +108,8 @@ export function CostChart({ scenario }: { scenario: string }) {
   });
   const { data } = useMemo(() => {
     const data = _(zip(sortBy(solutionCosts, "_id"), sortBy(lowerCosts, "_id")))
-      .map(([c, s]) => ({
-        _id: c?._id,
+      .map(([s, c]) => ({
+        _id: s?._id,
         solutionCost: s?.result,
         lowerCost: c?.result,
       }))
