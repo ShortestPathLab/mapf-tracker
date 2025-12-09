@@ -42,10 +42,8 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
       {
         $addFields: {
           lower_cost: "$lowerBound",
-          solution_cost: "$cost",
-          last_updated: {
-            $max: "$updatedAt",
-          },
+          solution_cost: { $ifNull: ["$cost", Infinity] },
+          last_updated: { $max: "$updatedAt" },
         },
       },
       {
