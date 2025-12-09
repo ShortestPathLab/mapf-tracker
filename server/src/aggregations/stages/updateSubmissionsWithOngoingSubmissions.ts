@@ -49,6 +49,17 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
         },
       },
       {
+        $addFields: {
+          solution_cost: {
+            $cond: {
+              if: { $eq: ["$solution_cost", 0] },
+              then: Infinity,
+              else: "$solution_cost",
+            },
+          },
+        },
+      },
+      {
         $lookup: {
           from: "instances",
           localField: "instance",
@@ -92,7 +103,7 @@ export const updateSubmissionsWithOngoingSubmissions = () =>
         },
       },
     ],
-    { allowDiskUse: true }
+    { allowDiskUse: true },
   );
 
 export const stage: PipelineStage = {
