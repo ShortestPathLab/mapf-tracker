@@ -126,6 +126,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
             authors: "$request.authorName",
             papers: "$request.paperReference",
             github: "$request.githubLink",
+            comments: "$request.comments",
           },
         },
         { $project: { request: 0, requestId: 0 } },
@@ -136,8 +137,8 @@ export const updateAlgorithmsFromSubmissions = async () =>
             whenNotMatched: "insert",
           },
         },
-      ])
-    )
+      ]),
+    ),
   );
 
 export const stage: PipelineStage = {
