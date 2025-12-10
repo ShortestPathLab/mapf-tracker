@@ -10,8 +10,8 @@ type UseRoundRobinQueriesResult<TCombined> = {
   isFirstRun: boolean;
 };
 
-const INTERVAL_LOOP_MS = 2000;
-const INTERVAL_SLOW_MS = 1000;
+const INTERVAL_LOOP_MS = 1000 / 24;
+const INTERVAL_SLOW_MS = 1000 / 30;
 
 const roundRobinControllers: Record<
   string,
@@ -27,7 +27,7 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
     queryFn: () => Promise<TChunkResult>;
   },
   getLength: (result: TChunkResult) => number,
-  combine: (chunks: TChunkResult[]) => TCombined
+  combine: (chunks: TChunkResult[]) => TCombined,
 ): UseRoundRobinQueriesResult<TCombined> {
   const queryClient = useQueryClient();
   const chunksRef = useRef<TChunkResult[]>([]);
@@ -37,10 +37,10 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
 
   const fullKey = ["round-robin", key];
 
-  const fetchChunks = async () => {
+  const fetchChunks = async (signal: AbortSignal) => {
     let i = 0;
 
-    while (mountedRef.current) {
+    while (mountedRef.current && !signal.aborted) {
       const { queryKey, queryFn } = createQuery(i);
 
       try {
@@ -79,23 +79,17 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
     mountedRef.current = true;
 
     if (!roundRobinControllers[key]) {
-      let stopped = false;
-
-      const loop = async () => {
-        while (!stopped && mountedRef.current) {
-          await fetchChunks();
-          await new Promise((r) => setTimeout(r, INTERVAL_LOOP_MS));
-        }
-      };
-
-      loop();
+      const controller = new AbortController();
 
       roundRobinControllers[key] = {
         stop: () => {
-          stopped = true;
+          console.log(roundRobinControllers);
+          console.log("stopping");
+          controller.abort();
         },
         refCount: 1,
       };
+      fetchChunks(controller.signal);
     } else {
       roundRobinControllers[key].refCount++;
     }
@@ -103,6 +97,7 @@ export function useRoundRobinQueries<TChunkResult, TCombined>(
     return () => {
       mountedRef.current = false;
       const controller = roundRobinControllers[key];
+      console.log(controller?.refCount);
       if (controller) {
         controller.refCount--;
         if (controller.refCount === 0) {

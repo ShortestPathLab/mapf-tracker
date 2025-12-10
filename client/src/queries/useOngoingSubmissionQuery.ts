@@ -1,12 +1,21 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 import { queryClient as client } from "App";
+import { Semaphore } from "async-mutex";
 import { useSnackbar } from "components/Snackbar";
 import { APIConfig } from "core/config";
 import { SummaryResult } from "core/types";
-import { cloneDeep, head, keyBy, map, mergeWith, values } from "lodash";
+import {
+  cloneDeep,
+  head,
+  keyBy,
+  memoize,
+  mergeWith,
+  now,
+  range,
+  values,
+} from "lodash";
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
-import { useRoundRobinQueries } from "../hooks/useRoundRobinQueries";
 
 const REFETCH_MS = 1000;
 
@@ -14,7 +23,7 @@ function mergeArray<T>(
   xs: T[],
   ys: T[],
   key: (t: T) => string,
-  f: (a: T, b: T) => T
+  f: (a: T, b: T) => T,
 ) {
   return values(mergeWith(keyBy(xs, key), keyBy(ys, key), f));
 }
@@ -70,12 +79,18 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
 export function useOngoingSubmissionCountQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "general", key],
-    queryFn: async () =>
-      (
-        await json<{ count: number }[]>(
-          `${APIConfig.apiUrl}/ongoing_submission/${key}`
-        )
-      )[0] ?? { count: 0 },
+    queryFn: async () => ({
+      running: 0,
+      valid: 0,
+      invalid: 0,
+      duplicate: 0,
+      ...(await json<{
+        running: number;
+        valid: number;
+        invalid: number;
+        duplicate: number;
+      }>(`${APIConfig.apiUrl}/ongoing_submission/${key}`)),
+    }),
     enabled: !!key,
     refetchInterval: REFETCH_MS,
     staleTime: 0,
@@ -88,8 +103,8 @@ export function useOngoingSubmissionByIdQuery(id?: string | number) {
     queryFn: async () =>
       head(
         await json<OngoingSubmission[]>(
-          `${APIConfig.apiUrl}/ongoing_submission/id/${id}`
-        )
+          `${APIConfig.apiUrl}/ongoing_submission/id/${id}`,
+        ),
       ),
     enabled: !!id,
   });
@@ -97,15 +112,15 @@ export function useOngoingSubmissionByIdQuery(id?: string | number) {
 
 export const ongoingSubmissionScenarioQueryFn = (
   key: string | number,
-  scenario: string | number
+  scenario: string | number,
 ) =>
   json<OngoingSubmission[]>(
-    `${APIConfig.apiUrl}/ongoing_submission/scenario/${key}/${scenario}`
+    `${APIConfig.apiUrl}/ongoing_submission/scenario/${key}/${scenario}`,
   );
 
 export function useOngoingSubmissionScenarioQuery(
   key?: string | number,
-  scenario?: string | number
+  scenario?: string | number,
 ) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key, scenario],
@@ -115,34 +130,58 @@ export function useOngoingSubmissionScenarioQuery(
   });
 }
 
+const summaryPageCountQuery = (key?: string | number) => ({
+  queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary-pagecount", key],
+  queryFn: () =>
+    json<number>(
+      `${APIConfig.apiUrl}/ongoing_submission/summary-pagecount/${key}`,
+    ),
+  enabled: !!key,
+  refetchInterval: REFETCH_MS,
+  staleTime: 0,
+});
+
+const MAX_TASKS = 4;
+const mutexes = memoize((_: string | number) => new Semaphore(MAX_TASKS));
+
 const summaryQuery = (key: string | number, i: number = 0) => ({
   queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary", key, i],
   queryFn: () =>
-    json<SummaryResult>(
-      `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`
-    ) ?? null,
+    mutexes(key).runExclusive(
+      async () =>
+        json<SummaryResult>(
+          `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`,
+        ) ?? null,
+      // Each task has a weight of 1
+      1,
+      // FIFO
+      -now(),
+    ),
   enabled: !!key,
-  refetchInterval: false,
   refetchOnReconnect: false,
   refetchOnMount: false,
   refetchOnWindowFocus: false,
 });
 
 export function useOngoingSubmissionSummaryQuery(key?: string | number) {
-  return useRoundRobinQueries<
-    SummaryResult,
-    { lengths: number[]; processed: SummaryResult }
-  >(
-    `ongoing-submissions-${key}`,
-    (i) => summaryQuery(key, i),
-    (d) => d?.maps?.length ?? 0,
-    (results) => {
+  const { data: pageCount = 0 } = useQuery(summaryPageCountQuery(key));
+  return useQueries({
+    queries: range(pageCount).map((i) => summaryQuery(key, i)),
+    combine: (results) => {
+      const dataResults = results.map((r) => r.data);
       return {
-        lengths: map(results, (d) => d?.maps?.length ?? 0),
-        processed: mergeWith({}, ...results, mergeValues) as SummaryResult,
+        data: {
+          lengths: dataResults.map((d) => d?.maps?.length ?? 0),
+          processed: mergeWith(
+            {},
+            ...dataResults,
+            mergeValues,
+          ) as SummaryResult,
+        },
+        isFirstRun: false,
       };
-    }
-  );
+    },
+  });
 }
 
 export type SubmissionTicket = {
@@ -161,7 +200,7 @@ export function useOngoingSubmissionTicketQuery(key?: string | number) {
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
     queryFn: async () => [
       ...(await json<SubmissionTicket[]>(
-        `${APIConfig.apiUrl}/ongoing_submission/status/${key}`
+        `${APIConfig.apiUrl}/ongoing_submission/status/${key}`,
       )),
       ...cloneDeep(Array.from(optimisticQueue)),
     ],
@@ -184,7 +223,7 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
       client.setQueryData<OngoingSubmission[]>(
         [ONGOING_SUBMISSION_QUERY_KEY, key],
-        (old) => old?.filter?.((x) => x.id !== k)
+        (old) => old?.filter?.((x) => x.id !== k),
       );
     },
     onSettled: async () => {

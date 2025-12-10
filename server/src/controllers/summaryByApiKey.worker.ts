@@ -9,6 +9,7 @@ import {
   mapValues,
   once,
 } from "lodash";
+import { log } from "logging";
 import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { z } from "zod";
@@ -18,19 +19,22 @@ export const path = import.meta.path;
 const connect = once(connectToDatabase);
 
 const generateIndexes = once(async () => {
+  log.info("Generating indexes for the first time");
   await connectToDatabase();
-  const maps = await Map.find({}, { _id: 1, map_name: 1 });
+  const maps = Map.find({}, { _id: 1, map_name: 1 });
   const scenarios = Scenario.find(
     {},
-    { _id: 1, map_id: 1, type_id: 1, scen_type: 1 }
+    { _id: 1, map_id: 1, type_id: 1, scen_type: 1 },
   );
+  const instances = Instance.find({}, { _id: 1, scen_id: 1, solution_cost: 1 });
   return {
-    maps: keyBy(maps, "_id"),
+    maps: keyBy(await maps, "_id"),
     scenarios: keyBy(await scenarios, "_id"),
+    instances: keyBy(await instances, "_id"),
   };
 });
 
-const CHUNK = 2 ** 15;
+export const CHUNK = 2 ** 16;
 
 const run = async (params: unknown) => {
   const indexes = await generateIndexes();
@@ -44,51 +48,31 @@ const run = async (params: unknown) => {
         .default(0),
     })
     .parse(params);
-  const docs: (Pick<Infer<typeof OngoingSubmission>, "validation" | "cost"> & {
-    expected: number;
-    scen_id: string;
-  })[] = await OngoingSubmission.aggregate(
+  const docs: Pick<
+    Infer<typeof OngoingSubmission>,
+    "validation" | "cost" | "instance"
+  >[] = await OngoingSubmission.aggregate(
     [
       { $match: { apiKey: data.apiKey } },
       { $skip: data.page * CHUNK },
       { $limit: CHUNK },
       {
         $project: {
-          validation: 1,
+          "validation.outcome": 1,
           instance: 1,
           cost: 1,
         },
       },
-      {
-        $lookup: {
-          from: Instance.collection.collectionName,
-          localField: "instance",
-          foreignField: "_id",
-          as: "instance",
-        },
-      },
-      {
-        $addFields: {
-          scen_id: { $first: "$instance.scen_id" },
-          expected: { $first: "$instance.solution_cost" },
-        },
-      },
-      {
-        $project: {
-          validation: 1,
-          cost: 1,
-          expected: 1,
-          scen_id: 1,
-        },
-      },
     ],
-    { allowDiskUse: true }
+    { allowDiskUse: true },
   );
   const submissions = docs.map((d) => {
-    const scenario = indexes.scenarios[d.scen_id!.toString()];
+    const instance = indexes.instances[d.instance!.toString()];
+    if (!instance) throw "Instance not found";
+    const scenario = indexes.scenarios[instance.scen_id!.toString()];
     if (!scenario) throw "Scenario not found";
     const map = indexes.maps[scenario.map_id!.toString()];
-    return { submission: d, scenario, map };
+    return { submission: d, scenario, map, instance };
   });
   const novelty = (c: typeof submissions) =>
     mapValues(
@@ -98,14 +82,14 @@ const run = async (params: unknown) => {
           isUndefined(d.submission.cost)
             ? "unknown"
             : d.submission.cost <
-              (d.submission.expected ?? Number.MAX_SAFE_INTEGER)
-            ? "best"
-            : d.submission.cost ===
-              (d.submission.expected ?? Number.MAX_SAFE_INTEGER)
-            ? "tie"
-            : "dominated"
+                (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+              ? "best"
+              : d.submission.cost ===
+                  (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+                ? "tie"
+                : "dominated",
       ),
-      "length"
+      "length",
     );
 
   const count = (c: typeof submissions) => ({

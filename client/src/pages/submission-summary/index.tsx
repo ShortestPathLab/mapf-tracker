@@ -15,7 +15,7 @@ import { useSurface } from "components/surface/useSurface";
 import { useNavigate } from "hooks/useNavigation";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
-import { filter, sumBy } from "lodash";
+import { filter, sum, sumBy, values } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   useFinaliseOngoingSubmissionMutation,
@@ -128,18 +128,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Received",
-              count: total?.count ?? 0,
+              count: sum(values(total)),
             },
             {
               name: "Running",
-              count: sumBy(data?.processed?.maps, "count.queued"),
+              count: total?.running,
             },
             {
               name: "Run",
-              count:
-                sumBy(data?.processed?.maps, "count.valid") +
-                sumBy(data?.processed?.maps, "count.invalid") +
-                sumBy(data?.processed?.maps, "count.outdated"),
+              count: total?.valid + total?.invalid + total?.duplicate,
             },
           ],
         },
@@ -148,15 +145,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Valid",
-              count: sumBy(data?.processed?.maps, "count.valid"),
+              count: total?.valid,
             },
             {
               name: "Invalid",
-              count: sumBy(data?.processed?.maps, "count.invalid"),
+              count: total?.invalid,
             },
             {
               name: "Duplicate",
-              count: sumBy(data?.processed?.maps, "count.outdated"),
+              count: total?.duplicate,
             },
           ],
         },

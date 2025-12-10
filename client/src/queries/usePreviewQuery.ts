@@ -20,6 +20,7 @@ export const usePreviewData = ({
   const key = ["visualisation-preview", map, instance, scenario];
   return useQuery({
     queryKey: key,
+    staleTime: Infinity,
     queryFn: async ({ signal }) => {
       return await mutex.runExclusive(async () => {
         if (signal.aborted) return queryClient.cancelQueries({ queryKey: key });

@@ -2,7 +2,17 @@ import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
 import { RequestHandler } from "express";
-import { chain as _, filter, map, pick, values } from "lodash";
+import {
+  chain as _,
+  ceil,
+  chain,
+  filter,
+  map,
+  mergeWith,
+  pick,
+  reduce,
+  values,
+} from "lodash";
 import { context } from "logging";
 import { Instance, instances, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
@@ -22,6 +32,7 @@ import {
 import { z } from "zod";
 import { estimateSizeAsync } from "./estimateSize.worker";
 import {
+  CHUNK,
   SummaryByApiKeyResult,
   path as summaryByApiKeyWorkerPath,
 } from "./summaryByApiKey.worker";
@@ -50,6 +61,13 @@ export const findById = query(z.object({ id: z.string() }), ({ id }) => [
   },
 ]);
 
+export const summaryPageCountByApiKeyGeneral = aggregate(
+  undefined,
+  z.object({ apiKey: z.string() }),
+  ({ apiKey }, p) => p.match({ apiKey }).count("count"),
+  async (p: [{ count: number }]) => ceil(p[0].count / CHUNK),
+);
+
 const summaryByApiKeyWorker = usingWorkerTaskReusable<
   unknown,
   SummaryByApiKeyResult
@@ -66,7 +84,15 @@ export const summaryByApiKey: RequestHandler<
 export const summaryByApiKeyGeneral = aggregate(
   undefined,
   z.object({ apiKey: z.string() }),
-  ({ apiKey }, p) => p.match({ apiKey }).count("count")
+  ({ apiKey }, p) =>
+    p
+      .match({ apiKey })
+      .project({
+        "validation.outcome": { $ifNull: ["$validation.outcome", "running"] },
+      })
+      .group({ _id: "$validation.outcome", count: { $sum: 1 } }),
+  async (p: { _id: string; count: number }[]) =>
+    reduce(p, (prev, { _id, count }) => ({ ...prev, [_id]: count }), {}),
 );
 
 export const findByScenario = cached(
@@ -77,7 +103,7 @@ export const findByScenario = cached(
       new AggregateBuilder()
         .match({ scen_id: new Types.ObjectId(scenario) })
         .project({ _id: 1 })
-        .build()
+        .build(),
     );
     return OngoingSubmission.aggregate(
       new AggregateBuilder()
@@ -96,9 +122,9 @@ export const findByScenario = cached(
           validation: 1,
           id: 1,
         })
-        .build()
+        .build(),
     );
-  }
+  },
 );
 
 export const instanceByApiKey = undefined;
@@ -120,7 +146,7 @@ export const deleteById = route(
     });
 
     return { count: out.deletedCount };
-  }
+  },
 );
 
 /**
@@ -132,7 +158,7 @@ export const deleteByApiKey = route(
     const out = await OngoingSubmission.deleteMany({ apiKey });
     return { count: out.deletedCount };
   },
-  { source: "params" }
+  { source: "params" },
 );
 
 // ─── Submission Handlers ─────────────────────────────────────────────────────
@@ -149,7 +175,7 @@ export const finalise = route(
       onProgress: (args) => set(args.stage, args),
     });
   },
-  { source: "params" }
+  { source: "params" },
 );
 
 const validateSubmissionRequestAsync = usingWorkerTaskReusable<
@@ -159,7 +185,7 @@ const validateSubmissionRequestAsync = usingWorkerTaskReusable<
 
 const processSubmission = async (
   d: unknown,
-  apiKey: string
+  apiKey: string,
 ): Promise<ResultTicketStatus> => {
   log.info("Validating submission with schema...");
   const result = await validateSubmissionRequestAsync({ apiKey, data: d });
@@ -186,7 +212,7 @@ const submissionTickets = createPool<{
 export const status = route(
   z.object({ ticket: z.string() }),
   async ({ ticket }) =>
-    submissionTickets.pool.tickets[ticket] || { status: "unknown" }
+    submissionTickets.pool.tickets[ticket] || { status: "unknown" },
 );
 
 export const statusByApiKey = route(
@@ -194,7 +220,7 @@ export const statusByApiKey = route(
   async ({ apiKey }) =>
     filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === apiKey),
 
-  { source: "params" }
+  { source: "params" },
 );
 
 export const create = route(z.any(), async (d, req) => {
@@ -209,7 +235,7 @@ export const create = route(z.any(), async (d, req) => {
       apiKey: apiKey.api_key!,
       size: await estimateSizeAsync(d),
       label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
-    }
+    },
   );
   return { message: "submission received", ticket: key };
 });
@@ -234,6 +260,6 @@ export async function restore() {
     docs.map((b) => ({
       apiKey: b.apiKey,
       submissionId: b._id.toString(),
-    }))
+    })),
   );
 }

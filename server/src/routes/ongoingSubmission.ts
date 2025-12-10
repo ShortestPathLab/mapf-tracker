@@ -11,6 +11,7 @@ import {
   summaryByApiKey,
   findByScenario,
   statusByApiKey,
+  summaryPageCountByApiKeyGeneral,
 } from "../controllers/ongoingSubmission";
 
 export default (app: Application) => {
@@ -20,6 +21,7 @@ export default (app: Application) => {
   router.post("/delete", deleteById);
   router.get("/status/:apiKey", statusByApiKey);
   router.delete("/:apiKey", deleteByApiKey);
+  router.get("/summary-pagecount/:apiKey", summaryPageCountByApiKeyGeneral);
   router.get("/summary/:apiKey/:page?", summaryByApiKey);
   router.get("/:apiKey", summaryByApiKeyGeneral);
   router.get("/scenario/:apiKey/:scenario", findByScenario);
