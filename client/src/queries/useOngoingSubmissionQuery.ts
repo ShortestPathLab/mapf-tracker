@@ -76,14 +76,18 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
   });
 }
 
+const defaults = {
+  running: 0,
+  valid: 0,
+  invalid: 0,
+  duplicate: 0,
+};
+
 export function useOngoingSubmissionCountQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "general", key],
     queryFn: async () => ({
-      running: 0,
-      valid: 0,
-      invalid: 0,
-      duplicate: 0,
+      ...defaults,
       ...(await json<{
         running: number;
         valid: number;
@@ -94,6 +98,7 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
     enabled: !!key,
     refetchInterval: REFETCH_MS,
     staleTime: 0,
+    initialData: defaults,
   });
 }
 
