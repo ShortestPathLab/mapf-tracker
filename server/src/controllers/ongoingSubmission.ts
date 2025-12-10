@@ -65,7 +65,7 @@ export const summaryPageCountByApiKeyGeneral = aggregate(
   undefined,
   z.object({ apiKey: z.string() }),
   ({ apiKey }, p) => p.match({ apiKey }).count("count"),
-  async (p: [{ count: number }]) => ceil(p[0].count / CHUNK),
+  async (p: [{ count: number }]) => ceil((p[0]?.count ?? 0) / CHUNK),
 );
 
 const summaryByApiKeyWorker = usingWorkerTaskReusable<
