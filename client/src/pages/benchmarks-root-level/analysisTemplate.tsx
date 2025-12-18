@@ -5,6 +5,7 @@ import { MapProportionByDomainChart } from "./charts/MapProportionByDomainChart"
 import { MapProportionChart } from "./charts/MapProportionChart";
 import { CompletionByAgentCountChart } from "components/charts/CompletionByAgentCountChart";
 import { AlgorithmByAgentCountChart } from "./charts/AlgorithmByAgentCountChart";
+import { SuboptimalityByAgentCountChart } from "components/charts/SuboptimalityByAgentCountChart";
 
 export const analysisTemplate = [
   {
@@ -25,6 +26,11 @@ export const analysisTemplate = [
         name: "Completion by individual maps",
         description: "Instances solved, closed, and open across maps",
         render: () => <MapProportionByDomainChart />,
+      },
+      {
+        name: "Suboptimality by agent count",
+        description: "Range of suboptimality across agent counts",
+        render: () => <SuboptimalityByAgentCountChart />,
       },
     ],
   },

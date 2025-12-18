@@ -12,7 +12,7 @@ type Result = {
 
 export type AggregateQuery = {
   operation?: "count" | "sum" | "max" | "min" | "avg";
-  value?: "solution_cost" | "lower_cost";
+  value?: "solution_cost" | "lower_cost" | "suboptimality";
   map?: string;
   scenario?: string;
   scenarioType?: string;
@@ -50,7 +50,7 @@ function aggregateQueryKey(params: AggregateQuery): string[] {
 function aggregate(params: AggregateQuery) {
   const search = new URLSearchParams(mapValues(params, toString));
   return json<Result[]>(
-    `${APIConfig.apiUrl}/queries/aggregate?${search.toString()}`
+    `${APIConfig.apiUrl}/queries/aggregate?${search.toString()}`,
   );
 }
 
@@ -66,7 +66,7 @@ export type AggregateAlgorithmQuery = Omit<
 function aggregateAlgorithm(params: AggregateAlgorithmQuery) {
   const search = new URLSearchParams(mapValues(params, toString));
   return json<Result[]>(
-    `${APIConfig.apiUrl}/queries/aggregate/algorithm?${search.toString()}`
+    `${APIConfig.apiUrl}/queries/aggregate/algorithm?${search.toString()}`,
   );
 }
 

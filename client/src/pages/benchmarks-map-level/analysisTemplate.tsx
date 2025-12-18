@@ -6,6 +6,7 @@ import {
   SuccessRateChart,
   SuccessRateOnAgentsChart,
 } from "./charts/SuccessRateChart";
+import { SuboptimalityByAgentCountChart } from "components/charts/SuboptimalityByAgentCountChart";
 
 export function compareTemplate(mapData: Map) {
   return [
@@ -38,6 +39,10 @@ export function analysisTemplate(mapData: Map) {
         {
           name: "Completion by agent count",
           render: () => <SuccessRateOnAgentsChart map={mapData?.id} />,
+        },
+        {
+          name: "Suboptimality by agent count",
+          render: () => <SuboptimalityByAgentCountChart map={mapData?.id} />,
         },
       ],
     },

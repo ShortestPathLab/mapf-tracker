@@ -158,7 +158,7 @@ export default function SubmissionSummaryPage() {
           ],
         },
         {
-          label: "Novelty",
+          label: "Solution novelty",
           values: [
             {
               name: "Best",
@@ -171,6 +171,23 @@ export default function SubmissionSummaryPage() {
             {
               name: "Dominated",
               count: sumBy(data?.processed?.maps, "count.dominated"),
+            },
+          ],
+        },
+        {
+          label: "Lower-bound novelty",
+          values: [
+            {
+              name: "Best",
+              count: sumBy(data?.processed?.maps, "count.lb_best"),
+            },
+            {
+              name: "Tie",
+              count: sumBy(data?.processed?.maps, "count.lb_tie"),
+            },
+            {
+              name: "Dominated",
+              count: sumBy(data?.processed?.maps, "count.lb_dominated"),
             },
           ],
         },

@@ -79,6 +79,9 @@ export type SummarySlice = {
   tie: number;
   dominated: number;
   best: number;
+  lb_tie: number;
+  lb_dominated: number;
+  lb_best: number;
   total: number;
 };
 

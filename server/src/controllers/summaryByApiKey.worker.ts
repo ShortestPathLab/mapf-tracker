@@ -26,7 +26,10 @@ const generateIndexes = once(async () => {
     {},
     { _id: 1, map_id: 1, type_id: 1, scen_type: 1 },
   );
-  const instances = Instance.find({}, { _id: 1, scen_id: 1, solution_cost: 1 });
+  const instances = Instance.find(
+    {},
+    { _id: 1, scen_id: 1, solution_cost: 1, lower_cost: 1 },
+  );
   return {
     maps: keyBy(await maps, "_id"),
     scenarios: keyBy(await scenarios, "_id"),
@@ -50,7 +53,7 @@ const run = async (params: unknown) => {
     .parse(params);
   const docs: Pick<
     Infer<typeof OngoingSubmission>,
-    "validation" | "cost" | "instance"
+    "validation" | "cost" | "instance" | "lowerBound"
   >[] = await OngoingSubmission.aggregate(
     [
       { $match: { apiKey: data.apiKey } },
@@ -61,6 +64,7 @@ const run = async (params: unknown) => {
           "validation.outcome": 1,
           instance: 1,
           cost: 1,
+          lowerBound: 1,
         },
       },
     ],
@@ -74,29 +78,44 @@ const run = async (params: unknown) => {
     const map = indexes.maps[scenario.map_id!.toString()];
     return { submission: d, scenario, map, instance };
   });
-  const novelty = (c: typeof submissions) =>
-    mapValues(
-      groupBy(
-        c.filter((d) => d.submission.validation?.outcome === "valid"),
-        (d) =>
-          isUndefined(d.submission.cost)
-            ? "unknown"
-            : d.submission.cost <
-                (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
-              ? "best"
-              : d.submission.cost ===
-                  (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
-                ? "tie"
-                : "dominated",
-      ),
-      "length",
+  const novelty = (c: typeof submissions) => {
+    const validSubmissions = c.filter(
+      (d) => d.submission.validation?.outcome === "valid",
     );
+    const solutionNovelty = groupBy(validSubmissions, (d) =>
+      isUndefined(d.submission.cost)
+        ? "unknown"
+        : d.submission.cost <
+            (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+          ? "best"
+          : d.submission.cost ===
+              (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+            ? "tie"
+            : "dominated",
+    );
+    const lbNovelty = groupBy(validSubmissions, (d) =>
+      isUndefined(d.submission.lowerBound)
+        ? "unknown"
+        : d.submission.lowerBound > (d.instance.lower_cost ?? -1)
+          ? "lb_best"
+          : d.submission.lowerBound === (d.instance.lower_cost ?? -1)
+            ? "lb_tie"
+            : "lb_dominated",
+    );
+    return {
+      ...mapValues(solutionNovelty, "length"),
+      ...mapValues(lbNovelty, "length"),
+    };
+  };
 
   const count = (c: typeof submissions) => ({
     valid: 0,
     invalid: 0,
     queued: 0,
     outdated: 0,
+    lb_best: 0,
+    lb_tie: 0,
+    lb_dominated: 0,
     ...countBy(c, (d) => d.submission.validation?.outcome),
     ...novelty(c),
     total: c.length,

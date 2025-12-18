@@ -71,7 +71,6 @@ export default function ChartOptions({
   disableMetrics?: boolean;
 } & Partial<ReturnType<typeof useSliceSelector>>) {
   const { data: algorithms = [] } = useAlgorithmsData();
-  console.log(algorithms);
   const combinedAlgorithms = stateOfTheArtEnabled
     ? [stateOfTheArt, ...algorithms]
     : algorithms;
@@ -125,7 +124,7 @@ export default function ChartOptions({
               SelectProps={{
                 multiple: true,
                 renderValue: renderSelectChip(
-                  (id) => find(combinedAlgorithms, { _id: id })?.algo_name
+                  (id) => find(combinedAlgorithms, { _id: id })?.algo_name,
                 ),
               }}
               label="Submission"

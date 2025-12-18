@@ -25,7 +25,9 @@ const aggregateOptions = {
   //
   // ─── Select ──────────────────────────────────────────────────────────
 
-  value: z.enum(["solution_cost", "lower_cost"]).default("solution_cost"),
+  value: z
+    .enum(["solution_cost", "lower_cost", "suboptimality"])
+    .default("solution_cost"),
 
   // ─── Aggregate ───────────────────────────────────────────────────────
 
@@ -58,7 +60,7 @@ type BaseAggregateOptions = z.infer<z.ZodObject<typeof aggregateOptions>>;
 
 type AggregateOptions<
   Filters extends string = never,
-  Groups extends string = never
+  Groups extends string = never,
 > = Omit<BaseAggregateOptions, "filterBy" | "groupBy"> & {
   filterBy: BaseAggregateOptions["filterBy"] | Filters;
   groupBy: BaseAggregateOptions["groupBy"] | Groups;
@@ -71,10 +73,10 @@ const createAggregateBase =
     U extends AggregateOptions<Filters, Groups> = AggregateOptions<
       Filters,
       Groups
-    >
+    >,
   >(
     filters: Record<U["filterBy"], (a: string, b: string) => any>,
-    groupBySelectors: Record<U["groupBy"], string | null>
+    groupBySelectors: Record<U["groupBy"], string | null>,
   ) =>
   (
     {
@@ -87,7 +89,7 @@ const createAggregateBase =
       value: v,
       filterBy: f,
     }: U,
-    p: AggregateBuilder = new AggregateBuilder()
+    p: AggregateBuilder = new AggregateBuilder(),
   ) =>
     p
       .match(
@@ -97,15 +99,17 @@ const createAggregateBase =
             scen_id: scenario ? new Types.ObjectId(scenario) : undefined,
             agents,
           },
-          isUndefined
-        )
+          isUndefined,
+        ),
       )
       .group({
         _id: groupBySelectors[groupBy],
-        all: operations[o](undefined, `$${v}`),
+        all: operations[o](undefined, v === "suboptimality" ? 1 : `$${v}`),
         result: operations[o](
           filters[f]("$solution_cost", "$lower_cost"),
-          `$${v}`
+          v === "suboptimality"
+            ? { $divide: ["$solution_cost", { $max: ["$lower_cost", 1] }] }
+            : `$${v}`,
         ),
       });
 
@@ -118,8 +122,8 @@ export const use = (app: Application, path: string = "/api/queries") => {
         algorithms.aggregate(
           "algorithms-metric",
           z.object({ metric: z.enum(metrics) }),
-          ({ metric }, p) => p.project({ algo_name: 1, [metric]: 1 })
-        )
+          ({ metric }, p) => p.project({ algo_name: 1, [metric]: 1 }),
+        ),
       )
       .get(
         "/series/instances/:series",
@@ -139,8 +143,8 @@ export const use = (app: Application, path: string = "/api/queries") => {
                 },
                 count: { $count: {} },
               })
-              .sort({ _id: 1 })
-        )
+              .sort({ _id: 1 }),
+        ),
       )
       .get(
         "/aggregate",
@@ -160,9 +164,9 @@ export const use = (app: Application, path: string = "/api/queries") => {
               map: "$map_id",
               agents: "$agents",
               all: null,
-            }
-          )
-        )
+            },
+          ),
+        ),
       )
       .get(
         "/aggregate/algorithm/:algorithm?",
@@ -172,7 +176,7 @@ export const use = (app: Application, path: string = "/api/queries") => {
             ...aggregateOptions,
             algorithm: z.string().optional(),
             filterBy: aggregateOptions.filterBy.or(
-              z.enum(["best_lower", "best_solution"])
+              z.enum(["best_lower", "best_solution"]),
             ),
             groupBy: aggregateOptions.groupBy.or(z.enum(["algorithm"])),
           }),
@@ -185,8 +189,8 @@ export const use = (app: Application, path: string = "/api/queries") => {
                       ? new Types.ObjectId(algorithm)
                       : undefined,
                   },
-                  isUndefined
-                )
+                  isUndefined,
+                ),
               )
               .mergeAggregationWithCurrent([
                 createAggregateBase<typeof rest.filterBy, typeof rest.groupBy>(
@@ -209,10 +213,10 @@ export const use = (app: Application, path: string = "/api/queries") => {
                     agents: "$agents",
                     algorithm: "$algo_id",
                     all: null,
-                  }
+                  },
                 )(rest).build(),
-              ])
-        )
-      )
+              ]),
+        ),
+      ),
   );
 };
