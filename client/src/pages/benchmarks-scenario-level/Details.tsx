@@ -2,7 +2,7 @@ import {
   ConversionPathRounded,
   Stat1Rounded,
   StatMinus1Rounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Timeline,
   TimelineConnector,
@@ -72,7 +72,7 @@ export default function Details({ id }: { id?: string }) {
                   [
                     instance.solution_cost ? "solved" : "unsolved",
                     isClosed ? "closed" : "open",
-                  ].join(", ")
+                  ].join(", "),
                 )}
               </>
             ),

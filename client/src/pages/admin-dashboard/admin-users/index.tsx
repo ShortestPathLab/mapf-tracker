@@ -3,7 +3,7 @@ import {
   DeleteRounded,
   EditOutlined,
   PersonRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { ActionBar } from "components/ActionBar";
 import {
@@ -204,7 +204,7 @@ export default function index() {
                     {
                       start: "Creating",
                       end: "Created",
-                    }
+                    },
                   )();
                   changePassword.close();
                 },

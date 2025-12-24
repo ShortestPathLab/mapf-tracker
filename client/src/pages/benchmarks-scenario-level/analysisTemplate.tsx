@@ -1,4 +1,4 @@
-import { ShowChartRounded } from "@mui-symbols-material/w400";
+import { ShowChartRounded } from "@mui-symbols-material/w300";
 import { Map, Scenario } from "core/types";
 import { CostChart } from "./charts/CostChart";
 import {

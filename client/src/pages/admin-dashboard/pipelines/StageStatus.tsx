@@ -3,7 +3,7 @@ import {
   ErrorRounded,
   PendingRounded,
   RemoveRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   CircularProgress,
   ListItem,

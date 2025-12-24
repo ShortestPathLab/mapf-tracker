@@ -1,7 +1,7 @@
 import {
   KeyboardArrowDownRounded,
   SendRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Button,
   ButtonGroup,
@@ -41,7 +41,7 @@ export function ReviewRequestDialog({
     ConfirmNotifyDialog,
     {
       title: "Respond to request",
-    }
+    },
   );
   const { mutateAsync: updateRequest } = useRequestsUpdateElevatedMutation();
   return (
@@ -117,7 +117,7 @@ export function ReviewRequestDialog({
                         onClose: () =>
                           delay(
                             () => onClose?.(),
-                            transitions.duration.shortest
+                            transitions.duration.shortest,
                           ),
                       });
                     }}

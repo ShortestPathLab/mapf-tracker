@@ -2,7 +2,7 @@ import {
   AddRounded,
   DeleteRounded,
   KeyRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { Box } from "@mui/material";
 import { ActionBar } from "components/ActionBar";
 import {
@@ -138,7 +138,7 @@ export default function index() {
             icon: <AddRounded />,
             action: () =>
               notify(
-                "Generate an API key in Manage -> Submission key requests -> Choose a request -> More options -> Generate API key"
+                "Generate an API key in Manage -> Submission key requests -> Choose a request -> More options -> Generate API key",
               ),
           },
         ]}

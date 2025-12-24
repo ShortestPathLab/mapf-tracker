@@ -1,4 +1,4 @@
-import { KeyboardArrowDownRounded } from "@mui-symbols-material/w400";
+import { KeyboardArrowDownRounded } from "@mui-symbols-material/w300";
 import {
   AccordionDetails,
   AccordionSummary,
@@ -28,13 +28,13 @@ export default function Accordion({
       <AccordionSummary
         {...merge(
           { expandIcon: <KeyboardArrowDownRounded />, sx: { px: 0, py: 2 } },
-          slotProps?.summary
+          slotProps?.summary,
         )}
       >
         <Typography
           {...merge(
             { variant: sm ? "body1" : "h6", sx: { mr: 2 } },
-            slotProps?.label
+            slotProps?.label,
           )}
         >
           {label}

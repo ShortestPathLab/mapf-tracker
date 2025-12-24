@@ -1,4 +1,4 @@
-import { FolderZipRounded } from "@mui-symbols-material/w400";
+import { FolderZipRounded } from "@mui-symbols-material/w300";
 import { Button, Stack } from "@mui/material";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";

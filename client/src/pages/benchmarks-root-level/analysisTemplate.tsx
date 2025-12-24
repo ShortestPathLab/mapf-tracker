@@ -1,4 +1,4 @@
-import { ShowChartRounded } from "@mui-symbols-material/w400";
+import { ShowChartRounded } from "@mui-symbols-material/w300";
 import { AlgorithmByMapChart } from "./charts/AlgorithmByMapChart";
 import { AlgorithmByMapTypeChart } from "./charts/AlgorithmByMapTypeChart";
 import { MapProportionByDomainChart } from "./charts/MapProportionByDomainChart";

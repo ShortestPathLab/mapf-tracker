@@ -1,4 +1,4 @@
-import { DownloadRounded, RefreshRounded } from "@mui-symbols-material/w400";
+import { DownloadRounded, RefreshRounded } from "@mui-symbols-material/w300";
 import { Button, Chip } from "@mui/material";
 
 export const defaultExtras = [

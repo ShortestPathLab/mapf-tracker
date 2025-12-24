@@ -1,4 +1,4 @@
-import { RouteRounded } from "@mui-symbols-material/w400";
+import { RouteRounded } from "@mui-symbols-material/w300";
 import {
   ButtonBase,
   Collapse,

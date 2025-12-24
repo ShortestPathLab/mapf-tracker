@@ -4,7 +4,7 @@ import {
   EditRounded,
   KeyRounded,
   SendRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { Box } from "@mui/material";
 import { FlatCard } from "components/FlatCard";
 import { IconCard } from "components/IconCard";
@@ -38,13 +38,13 @@ export default function index() {
     {
       title: "Review submission key request",
       slotProps: { paper: { sx: { maxWidth: "min(max(70vw, 640px), 100%)" } } },
-    }
+    },
   );
   const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
     ConfirmNotifyDialog,
     {
       title: "Respond to request",
-    }
+    },
   );
 
   const actions = useDataGridActions<RequestWithReviewOutcome>({
@@ -73,7 +73,7 @@ export default function index() {
                   {
                     start: "Creating key",
                     end: "Key created, check Manage -> API keys",
-                  }
+                  },
                 )}
               />
             )}

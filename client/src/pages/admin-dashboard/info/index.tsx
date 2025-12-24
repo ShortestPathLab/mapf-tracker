@@ -31,7 +31,7 @@ import { tryChain } from "utils/tryChain";
 import {
   ChevronRightRounded,
   DescriptionRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { Dot } from "components/Dot";
 import { useSurface } from "components/surface";
@@ -136,8 +136,8 @@ function Logs() {
                     >
                       {l}
                     </Box>
-                  )
-                )
+                  ),
+                ),
               )}
             </Stack>
           </Scroll>
@@ -153,8 +153,8 @@ export default function index() {
   const s = offline
     ? { label: "Offline", color: "text.secondary" }
     : disconnected
-    ? { label: "Disconnected", color: "error.main" }
-    : { label: "Connected", color: "success.main" };
+      ? { label: "Disconnected", color: "error.main" }
+      : { label: "Connected", color: "success.main" };
 
   const { data: info, isLoading: isInfoLoading } = useEnvironment();
   const { data: general, isLoading: isInfoLoading2 } = useInfo();
@@ -166,7 +166,7 @@ export default function index() {
   const renderSection = (
     title: string,
     items: { label: string; value: ReactNode }[],
-    loading?: boolean
+    loading?: boolean,
   ) => (
     <Stack sx={{ gap: 0 }}>
       <Title sticky>{title}</Title>
@@ -220,12 +220,12 @@ export default function index() {
             value: `${v}`,
           })),
         ],
-        isInfoLoading2
+        isInfoLoading2,
       )}
       {renderSection(
         "Environment variables",
         toPairs(info).map(([k, v]) => ({ label: k, value: `${v}` })),
-        isInfoLoading
+        isInfoLoading,
       )}
       <Stack sx={{ gap: 2 }}>
         <Title sticky>More</Title>

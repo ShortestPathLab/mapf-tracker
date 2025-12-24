@@ -1,4 +1,4 @@
-import { ChevronRightRounded } from "@mui-symbols-material/w400";
+import { ChevronRightRounded } from "@mui-symbols-material/w300";
 import {
   Button,
   Card,
@@ -79,7 +79,7 @@ export default function index() {
                       </Button>
                     </Stack>
                   </Card>
-                )
+                ),
             )}
           </Grid>
         </Stack>

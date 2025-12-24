@@ -9,6 +9,8 @@ const schema = createSchema(
     authors: String,
     papers: String,
     github: String,
+    dblp: String,
+    google_scholar: String,
     comments: String,
     user_id: { type: Schema.Types.ObjectId, ref: "user" },
     best_lower: Number,
@@ -20,7 +22,7 @@ const schema = createSchema(
   {
     timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" },
     versionKey: false,
-  }
+  },
 );
 
 export const model = createModel("algorithm", schema);

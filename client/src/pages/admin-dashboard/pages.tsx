@@ -5,7 +5,7 @@ import {
   PersonRounded,
   SpaceDashboardRounded,
   VpnKeyRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { once } from "lodash";
 import AdminUsersPage from "./admin-users";
 import ApiKeysPage from "./api-keys";

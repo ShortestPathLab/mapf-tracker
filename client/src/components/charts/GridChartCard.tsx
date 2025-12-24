@@ -1,4 +1,4 @@
-import { ExpandContentRounded } from "@mui-symbols-material/w400";
+import { ExpandContentRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   IconButton,
@@ -61,7 +61,7 @@ function ChartCard({
       sx={{
         [`& .${cls}`]: { opacity: finePointer ? 0 : 1 },
         [`&:hover .${cls}`]: { opacity: 1 },
-        ...paper(1),
+        ...paper(1, false),
         ...props.sx,
       }}
     >

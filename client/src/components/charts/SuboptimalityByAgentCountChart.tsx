@@ -1,7 +1,7 @@
 import { useTheme } from "@mui/material";
 import { useQueries } from "@tanstack/react-query";
 import { Chart } from "components/analysis/Chart";
-import { aggregateQuery } from "queries/useAggregateQuery";
+import { aggregateQuery, algorithmQuery } from "queries/useAggregateQuery";
 import {
   Area,
   AreaChart,
@@ -17,24 +17,33 @@ import { formatPercentage } from "utils/format";
 import _, { max, range } from "lodash";
 import { accentColors, colors, tone } from "utils/colors";
 
-export function SuboptimalityByAgentCountChart({ map }: { map?: string }) {
+export function SuboptimalityByAgentCountChart({
+  map,
+  algorithm,
+}: {
+  map?: string;
+  algorithm?: string;
+}) {
   const { palette } = useTheme();
+
+  const queryFn = algorithm ? algorithmQuery : aggregateQuery;
+  const commonParams = {
+    groupBy: "agents" as const,
+    value: "suboptimality" as const,
+    filterBy: "solved" as const,
+    map,
+    algorithm,
+  };
 
   const results = useQueries({
     queries: [
-      aggregateQuery({
-        groupBy: "agents",
+      queryFn({
+        ...commonParams,
         operation: "min",
-        value: "suboptimality",
-        filterBy: "solved", // Only solved instances have solution cost
-        map,
       }),
-      aggregateQuery({
-        groupBy: "agents",
+      queryFn({
+        ...commonParams,
         operation: "max",
-        value: "suboptimality",
-        filterBy: "solved",
-        map,
       }),
     ],
     combine: (results) => {

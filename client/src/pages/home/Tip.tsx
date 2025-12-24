@@ -2,7 +2,7 @@ import {
   BookRounded,
   TableRounded,
   UploadRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { alpha, Button, Stack, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";

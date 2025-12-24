@@ -1,4 +1,4 @@
-import { CheckRounded } from "@mui-symbols-material/w400";
+import { CheckRounded } from "@mui-symbols-material/w300";
 import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useSnackbar } from "components/Snackbar";

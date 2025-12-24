@@ -50,8 +50,8 @@ export const theme = (t: "light" | "dark") =>
       mode: t,
       background:
         t === "light"
-          ? { default: "#fafafa", paper: "#ffffff" }
-          : { default: "#18181b", paper: "#111113" },
+          ? { default: "#f4f4f6", paper: "#ffffff" }
+          : { default: "#18181b", paper: "#101012" },
     },
     shape: { borderRadius: 12 },
     transitions: {
@@ -65,17 +65,18 @@ export const theme = (t: "light" | "dark") =>
     typography: {
       fontFamily,
       allVariants: {
+        fontSize: 14,
         fontFamily,
         letterSpacing: "-.025em",
         fontWeight: 450,
       },
       overline: { fontWeight: 450, textTransform: "none", fontSize: 14 },
-      h1: { fontWeight: 550, fontSize: 42 },
-      h2: { fontWeight: 550, fontSize: 36 },
+      h1: { fontWeight: 550, fontSize: 32 },
+      h2: { fontWeight: 550, fontSize: 28 },
       h3: { fontWeight: 550, fontSize: 24 },
       h4: { fontWeight: 500, fontSize: 20 },
-      h5: { fontWeight: 500, fontSize: 19 },
-      h6: { fontWeight: 550, fontSize: 18, lineHeight: 1.25 },
+      h5: { fontWeight: 500, fontSize: 18 },
+      h6: { fontWeight: 550, fontSize: 15, lineHeight: 1.25 },
       body2: { letterSpacing: "0" },
       button: { textTransform: "none", fontWeight: 550 },
     },
@@ -93,7 +94,7 @@ export const theme = (t: "light" | "dark") =>
         },
         styleOverrides: {
           root: {
-            backgroundColor: t === "light" ? "#ffffff" : "#111113",
+            backgroundColor: t === "light" ? "#ffffff" : "#101012",
           },
         },
       },
@@ -105,7 +106,7 @@ export const theme = (t: "light" | "dark") =>
           elevation: {
             border: `1px solid ${alpha(
               t === "light" ? "#000000" : "#f4f4f5",
-              0.12
+              0.12,
             )}`,
           },
           elevation1: { backdropFilter: "blur(16px)" },
@@ -141,11 +142,11 @@ export function useAcrylic(color?: string): SxProps<Theme> {
 
 const solid = (b: string) => `linear-gradient(to bottom, ${b}, ${b})`;
 
-export const paper = (elevation: number = 1) =>
+export const paper = (elevation: number = 1, backdropFilter: boolean = false) =>
   ({
     boxSizing: "border-box",
     borderRadius: 1,
-    backdropFilter: "blur(16px)",
+    backdropFilter: backdropFilter ? "blur(16px)" : "none",
     transition: ({ transitions }) =>
       transitions.create(["background-color", "box-shadow"]),
     boxShadow: ({ shadows }) => shadows[elevation],
@@ -153,17 +154,17 @@ export const paper = (elevation: number = 1) =>
       `${solid(
         palette.mode === "dark"
           ? alpha(palette.action.disabledBackground, elevation * 0.01)
-          : palette.background.paper
+          : palette.background.paper,
       )}, ${solid(
         palette.mode === "dark"
           ? alpha(palette.background.default, 0.25)
-          : palette.background.paper
+          : palette.background.paper,
       )}`,
     border: ({ palette }) =>
       palette.mode === "dark"
         ? `1px solid ${alpha(palette.text.primary, 0.06 + elevation * 0.04)}`
         : `1px solid ${alpha(palette.text.primary, 0.08 + elevation * 0.01)}`,
-  } satisfies SxProps<Theme>);
+  }) satisfies SxProps<Theme>;
 export function usePaper(): (e?: number) => SxProps<Theme> {
   return paper;
 }

@@ -2,11 +2,13 @@ import {
   entries,
   filter,
   findIndex,
+  fromPairs,
   isNaN,
   isNull,
   isUndefined,
   map,
   mapValues,
+  startsWith,
 } from "lodash";
 import {
   createContext,
@@ -18,10 +20,14 @@ import {
   useState,
 } from "react";
 import {
+  createSearchParams,
   Location,
+  NavigateOptions,
   useLocation,
+  useParams,
   useLocation as useRouterLocation,
   useNavigate as useRouterNavigate,
+  useSearchParams,
 } from "react-router-dom";
 import { useList, usePreviousDistinct } from "react-use";
 function isValidHttpUrl(string: string) {
@@ -125,11 +131,12 @@ export function useHistory() {
 
 export function useNavigate() {
   const navigate = useRouterNavigate();
+  const [, setParams] = useSearchParams();
   return useCallback(
     <T extends object = object, U extends object = object>(
       url: string | number,
       state?: T,
-      session?: U & Reason
+      session?: U & Reason,
     ) => {
       if (typeof url === "number") {
         navigate(url);
@@ -140,49 +147,62 @@ export function useNavigate() {
         return;
       }
       const items = entries(state);
-      const a = {
-        state: { saved: state, session: { reason: "unknown", ...session } },
-      };
       navigate(
-        items.length
-          ? `${url}?${map(
-              filter(items, ([, v]) => !isUndefined(v) && !isNull(v)),
-              ([k, v]) => `${k}=${v}`
-            ).join("&")}`
-          : url,
-        a
+        {
+          pathname: url,
+          search: createSearchParams(
+            fromPairs(
+              filter(
+                items,
+                ([k, v]) =>
+                  !startsWith(k, "hidden-") && !isUndefined(v) && !isNull(v),
+              ),
+            ),
+          ).toString(),
+        },
+        {
+          state: {
+            saved: state,
+            session: { "hidden-reason": "unknown", ...session },
+          },
+        },
       );
     },
-    [navigate]
+    [navigate],
   );
 }
 
 export function useLocationState<
   T extends object = object,
-  U extends object = object
+  U extends object = object,
 >() {
   const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
+  const [params] = useSearchParams();
   return useMemo(() => {
-    const params = Object.fromEntries(new URLSearchParams(location.search));
     return {
-      ...mapValues(params, (v) => (isNaN(+v) ? v : +v)),
+      ...mapValues(fromPairs(Array.from(params.entries())), (v) =>
+        isNaN(+v) ? v : +v,
+      ),
       ...location.state?.saved,
       ...location.state?.session,
     };
-  }, [location]);
+  }, [location, params]);
 }
 
 export function useLocationStateSeparate<
   T extends object = object,
-  U extends object = object
+  U extends object = object,
 >() {
   const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
+  const [params] = useSearchParams();
   return useMemo(() => {
-    const params = Object.fromEntries(new URLSearchParams(location.search));
     return {
-      params: mapValues(params, (v) => (isNaN(+v) ? v : +v)),
       saved: location.state?.saved ?? {},
+      params:
+        mapValues(fromPairs(Array.from(params.entries())), (v) =>
+          isNaN(+v) ? v : +v,
+        ) ?? {},
       session: location.state?.session ?? {},
     };
-  }, [location]);
+  }, [location, params]);
 }

@@ -3,7 +3,7 @@ import {
   EmojiEventsRounded,
   ShapeLineRounded,
   UploadFileRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { find } from "lodash";
 import { createArticlePage } from "./createArticlePage";
 import DemoPage from "./docs-demo.mdx";

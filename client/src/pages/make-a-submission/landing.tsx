@@ -5,7 +5,7 @@ import {
   PendingRounded,
   TimerRounded,
   UploadRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Button,
   Chip,

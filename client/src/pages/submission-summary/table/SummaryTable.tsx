@@ -6,7 +6,7 @@ import {
   HourglassEmptyRounded,
   PlayArrowRounded,
   StopRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Box,
   Button,
@@ -57,7 +57,7 @@ import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOn
 
 function getSubmissionInfoText(
   submission: OngoingSubmission,
-  instance: Instance
+  instance: Instance,
 ) {
   if (
     submission?.validation?.isValidationRun &&
@@ -88,7 +88,7 @@ function getSubmissionInfoText(
         showImprovement && improvement,
       ]
         .filter(identity)
-        .join("\n")
+        .join("\n"),
     );
   }
 
@@ -162,7 +162,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     row.count.invalid ? (
       <Tooltip
         title={`${pluralize("instance", row.count.invalid, true)} of ${total(
-          row
+          row,
         )} invalid`}
       >
         <CloseRounded color="error" fontSize="small" />
@@ -463,7 +463,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                     scenario: row.id,
                     index: i,
                   })),
-                  placeholder(row.id)
+                  placeholder(row.id),
                 ),
               instance: () => undefined,
             })

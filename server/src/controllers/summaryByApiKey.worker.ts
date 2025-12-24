@@ -9,33 +9,14 @@ import {
   mapValues,
   once,
 } from "lodash";
-import { log } from "logging";
-import { Infer, Instance, Map, OngoingSubmission, Scenario } from "models";
+import { Infer, OngoingSubmission, Scenario } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { z } from "zod";
+import { generateIndexes } from "./generateIndexes";
 
 export const path = import.meta.path;
 
 const connect = once(connectToDatabase);
-
-const generateIndexes = once(async () => {
-  log.info("Generating indexes for the first time");
-  await connectToDatabase();
-  const maps = Map.find({}, { _id: 1, map_name: 1 });
-  const scenarios = Scenario.find(
-    {},
-    { _id: 1, map_id: 1, type_id: 1, scen_type: 1 },
-  );
-  const instances = Instance.find(
-    {},
-    { _id: 1, scen_id: 1, solution_cost: 1, lower_cost: 1 },
-  );
-  return {
-    maps: keyBy(await maps, "_id"),
-    scenarios: keyBy(await scenarios, "_id"),
-    instances: keyBy(await instances, "_id"),
-  };
-});
 
 export const CHUNK = 2 ** 16;
 

@@ -12,7 +12,7 @@ import {
   SettingsRounded,
   ZoomInRounded,
   ZoomOutRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Box,
   Card,
@@ -51,7 +51,7 @@ import {
 } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { Viewport as PixiViewport } from "pixi-viewport";
-import { FederatedPointerEvent, Rectangle } from "pixi.js";
+import { DisplayObjectEvents, FederatedPointerEvent, Rectangle } from "pixi.js";
 import pluralize from "pluralize";
 import {
   Reducer,
@@ -142,7 +142,7 @@ export function Visualisation({
   };
   const [selection, setSelection] = useReducer<Reducer<Selection, Selection>>(
     (a, b) => ({ ...a, ...b }),
-    {}
+    {},
   );
 
   // ─────────────────────────────────────────────────────────────────────
@@ -152,12 +152,12 @@ export function Visualisation({
 
   const drawGrid = useMemo(
     () => $grid({ x: width, y: height }, dark ? WHITE : BLACK),
-    [width, height, dark]
+    [width, height, dark],
   );
 
   const drawBox = useMemo(
     () => $box({ x: width, y: height }, dark ? WHITE : BLACK),
-    [width, height, dark]
+    [width, height, dark],
   );
 
   const drawAgent = useMemo(
@@ -168,7 +168,7 @@ export function Visualisation({
         getAgentPath?.(selection.agent),
         goals?.[selection.agent],
         diagnostics?.filter?.((x) => x.agents.includes(selection.agent)),
-        theme.palette.error.main
+        theme.palette.error.main,
       ),
     [
       diagnostics,
@@ -179,12 +179,12 @@ export function Visualisation({
       goals,
       dark,
       theme.palette.error.main,
-    ]
+    ],
   );
 
   const drawMap = useMemo(
     () => $map(optimisedMap, dark ? WHITE : BLACK),
-    [optimisedMap, dark]
+    [optimisedMap, dark],
   );
 
   const [t0, t1, t2] = [floor(time), floor(time) + 1, floor(time) + 2];
@@ -201,7 +201,7 @@ export function Visualisation({
           color: getAgentColor(i),
         }))
         .filter((position) => within(position, bounds)),
-      selection.show ? selection.agent : undefined
+      selection.show ? selection.agent : undefined,
     );
   };
 
@@ -240,11 +240,11 @@ export function Visualisation({
 
   useEffect(() => {
     if (viewport && container.current) {
-      const f = (e: FederatedPointerEvent) => {
+      const f: (...args: DisplayObjectEvents["mousemove"]) => void = (e) => {
         const position = mapValues(viewport.toWorld(e.screen), (x) => floor(x));
         const agent = find(
           getAgentPositions(step),
-          (a) => a.x === position.x && a.y === position.y
+          (a) => a.x === position.x && a.y === position.y,
         );
         container.current.style.cursor = agent ? "pointer" : "default";
       };
@@ -255,11 +255,11 @@ export function Visualisation({
 
   useEffect(() => {
     if (viewport) {
-      const f = (e: { world: { x: number; y: number } }) => {
-        const position = mapValues(e.world, (x) => floor(x));
+      const f: (...args: DisplayObjectEvents["clicked"]) => void = (e) => {
+        const position = mapValues(e.world, (x) => floor(+x));
         const agent = findIndex(
           getAgentPositions(step),
-          (a) => a.x === position.x && a.y === position.y
+          (a) => a.x === position.x && a.y === position.y,
         );
         if (agent === -1) return;
         setSelection({ agent, show: true });
@@ -336,7 +336,7 @@ export function Visualisation({
                         draw={$bg(
                           theme.palette.background.paper,
                           size.width,
-                          size.height
+                          size.height,
                         )}
                       />
                       <Viewport {...size} onViewport={setViewport}>
@@ -348,7 +348,7 @@ export function Visualisation({
                             zip(
                               getAgentPositions(t0),
                               getAgentPositions(t1),
-                              getAgentPositions(t2)
+                              getAgentPositions(t2),
                             ).map(([p0, p1, p2], i) => {
                               const [nextDidMove, prevDidMove] = [
                                 p2.x !== p1.x || p2.y !== p1.y,
@@ -378,7 +378,7 @@ export function Visualisation({
                                     rotation={lerpCircle(
                                       prevDidMove ? prevAngle : nextAngle,
                                       nextDidMove ? nextAngle : prevAngle,
-                                      dt
+                                      dt,
                                     )}
                                     key={i}
                                   />
@@ -497,7 +497,7 @@ export function Visualisation({
                                           t.palette.error.main
                                         } ${c * 100 + 0.5}%, transparent ${
                                           c * 100 + 0.5
-                                        }%`
+                                        }%`,
                                     ).join(", ")})`;
                                   },
                                 },
@@ -589,7 +589,7 @@ export function Visualisation({
               <Enter in={selection.show} axis="X" key={selection.agent}>
                 <Stack
                   sx={{
-                    ...paper(1),
+                    ...paper(1, true),
                     position: "absolute",
                     top: 0,
                     right: 0,
@@ -631,7 +631,7 @@ export function Visualisation({
                           invert
                           primary={thru(
                             getAgentPositions(step)[selection.agent],
-                            (p) => (p ? `(${p.x}, ${p.y})` : "--")
+                            (p) => (p ? `(${p.x}, ${p.y})` : "--"),
                           )}
                           secondary="Position"
                         />
@@ -646,7 +646,7 @@ export function Visualisation({
                                 d: "Down",
                                 l: "Left",
                                 r: "Right",
-                              }[p?.action] ?? "--")
+                              })[p?.action] ?? "--",
                           )}
                           secondary="Action"
                         />
@@ -655,14 +655,14 @@ export function Visualisation({
                             name: "Moving",
                             value: proportionOf(
                               getAgentPath(selection.agent),
-                              (p) => p.action !== "w"
+                              (p) => p.action !== "w",
                             ),
                           },
                           {
                             name: "Waiting",
                             value: proportionOf(
                               getAgentPath(selection.agent),
-                              (p) => p.action === "w"
+                              (p) => p.action === "w",
                             ),
                           },
                         ].map(({ name, value }) => (
@@ -685,7 +685,7 @@ export function Visualisation({
                         ))}
                         {(() => {
                           const errors = filter(diagnostics, ({ agents }) =>
-                            agents.includes(selection.agent)
+                            agents.includes(selection.agent),
                           );
                           return (
                             !!errors?.length && (
@@ -730,7 +730,7 @@ export function Visualisation({
         >
           {contents}
         </Box>,
-        root.current
+        root.current,
       )
     : contents;
 }

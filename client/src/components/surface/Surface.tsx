@@ -30,7 +30,10 @@ export type SurfaceProps = SurfaceGeneralProps & {
 
 export function useSurfaceHistory(state: PopupState) {
   const navigate = useNavigate();
-  const [id, newId] = useReducer(() => nanoid(), nanoid());
+  const [id, newId] = useReducer(
+    () => `hidden-${nanoid()}`,
+    `hidden-${nanoid()}`,
+  );
   const { params, saved, session } = useLocationStateSeparate();
   const previouslyOpen = usePrevious(state.isOpen);
   // Sync close state
@@ -53,7 +56,7 @@ export function useSurfaceHistory(state: PopupState) {
       navigate(
         location.pathname,
         { ...params, ...saved },
-        { ...session, [id]: 1 }
+        { ...session, [id]: 1 },
       );
     }
   }, [state.isOpen, previouslyOpen]);

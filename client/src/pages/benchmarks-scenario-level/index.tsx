@@ -2,7 +2,7 @@ import {
   ListRounded,
   MapRounded,
   TableRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { CardActionArea, Stack, Tooltip } from "@mui/material";
 import { Analysis } from "components/analysis/Analysis";
 import { PreviewCard } from "components/PreviewCard";
@@ -48,7 +48,7 @@ export default function Page() {
           },
         },
       },
-    }
+    },
   );
   return (
     <GalleryLayout
@@ -100,7 +100,7 @@ export default function Page() {
               {
                 start: "Preparing...",
                 end: "Done",
-              }
+              },
             ),
             icon: <ListRounded />,
           },
@@ -119,7 +119,7 @@ export default function Page() {
               {
                 start: "Preparing",
                 end: "Done",
-              }
+              },
             ),
             icon: <TableRounded />,
           },

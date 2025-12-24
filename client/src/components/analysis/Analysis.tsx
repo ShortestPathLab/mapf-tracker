@@ -1,4 +1,4 @@
-import { ExpandFilledRounded } from "@mui-symbols-material/w400";
+import { ExpandFilledRounded } from "@mui-symbols-material/w300";
 import {
   Button,
   ListItemIcon,

@@ -1,4 +1,4 @@
-import { CheckRounded } from "@mui-symbols-material/w400";
+import { CheckRounded } from "@mui-symbols-material/w300";
 import { Box, Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Floating } from "components/Floating";
@@ -54,7 +54,7 @@ export function SubmitRequestForm({
                 open({
                   hintText: hintText(
                     values.algorithmName,
-                    values.requesterEmail
+                    values.requesterEmail,
                   ),
                   acceptLabel: "Submit request",
                   acceptProps: { color: "primary" },

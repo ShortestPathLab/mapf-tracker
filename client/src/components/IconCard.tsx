@@ -1,4 +1,4 @@
-import { FolderRounded } from "@mui-symbols-material/w400";
+import { FolderRounded } from "@mui-symbols-material/w300";
 import { Stack } from "@mui/material";
 import { ReactNode } from "react";
 

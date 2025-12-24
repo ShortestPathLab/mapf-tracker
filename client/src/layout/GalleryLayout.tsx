@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 import Layout, { LayoutProps, LayoutRenderProps } from "./Layout";
 import { ActionSheetProps } from "components/ActionSheet";
 import { ActionBar } from "components/ActionBar";
-import { InfoRounded } from "@mui-symbols-material/w400";
+import { InfoRounded } from "@mui-symbols-material/w300";
 import { useSurface } from "components/surface";
 
 const RenderSm = ({
@@ -52,7 +52,7 @@ function Sidebar({
         wordWrap: "break-word",
         width: sidebarWidth,
         minWidth: sidebarWidth,
-        gap: 4,
+        gap: 2,
         position: "sticky",
         height: "max-content",
         top: (t) => t.spacing(3),
@@ -62,6 +62,7 @@ function Sidebar({
         <Stack
           sx={{
             width: "60%",
+            mb: 2,
             "> *": { width: "100%" },
           }}
         >
@@ -97,7 +98,7 @@ const RenderLg = ({
   sidebarWidth = 280,
   actions,
 }: LayoutRenderProps & GalleryLayoutProps) => (
-  <Stack direction="row" sx={{ gap: 8 }}>
+  <Stack direction="row" sx={{ gap: 4 }}>
     <Sidebar
       cover={cover}
       header={header}

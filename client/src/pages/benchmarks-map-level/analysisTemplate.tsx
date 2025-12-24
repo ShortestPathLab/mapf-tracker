@@ -1,4 +1,4 @@
-import { ShowChartRounded } from "@mui-symbols-material/w400";
+import { ShowChartRounded } from "@mui-symbols-material/w300";
 import { Map } from "core/types";
 import { AlgorithmByAgentChart } from "./charts/AlgorithmByAgentChart";
 import { AlgorithmByScenarioChart } from "./charts/AlgorithmByScenarioChart";

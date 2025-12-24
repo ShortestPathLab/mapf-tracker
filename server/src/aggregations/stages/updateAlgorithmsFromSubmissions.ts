@@ -126,6 +126,8 @@ export const updateAlgorithmsFromSubmissions = async () =>
             authors: "$request.authorName",
             papers: "$request.paperReference",
             github: "$request.githubLink",
+            dblp: "$request.dblp",
+            google_scholar: "$request.googleScholar",
             comments: "$request.comments",
           },
         },

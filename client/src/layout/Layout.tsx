@@ -1,4 +1,4 @@
-import { ArrowBackRounded } from "@mui-symbols-material/w400";
+import { ArrowBackRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   Fade,
@@ -21,6 +21,10 @@ import { last, merge } from "lodash";
 import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
+import {
+  useStableLocationState,
+  useStableLocationStateSeparate,
+} from "hooks/useStableLocationState";
 export const RenderChildrenOnly = ({
   children,
 }: {
@@ -76,11 +80,15 @@ export default function Layout({
   const md = useXs();
   const xs = useXs();
   const { location, action } = useHistory();
+  const stableLocation = useStableLocationStateSeparate();
   const [, isTop, isAbsoluteTop, panel, setPanel] = useScrollState(
-    appbarHeight(lg)
+    appbarHeight(lg),
   );
   useEffect(() => {
-    if (location.state?.session?.reason === "top" && action === "forward") {
+    if (
+      location.state?.session?.["hidden-reason"] === "top" &&
+      action === "forward"
+    ) {
       panel?.scrollTo?.({ top: 0, behavior: "smooth" });
     }
   }, [location, action]);
@@ -99,7 +107,7 @@ export default function Layout({
             mx: "auto",
           },
         },
-        slotProps?.content
+        slotProps?.content,
       )}
     >
       {createElement(
@@ -108,7 +116,7 @@ export default function Layout({
           header: !lg || collapse ? header : undefined,
           ...props,
         },
-        children
+        children,
       )}
     </Stack>
   );
@@ -173,7 +181,7 @@ export default function Layout({
           {md ? (
             content
           ) : (
-            <Enter in distance={4}>
+            <Enter in distance={4} key={JSON.stringify(stableLocation.params)}>
               {content}
             </Enter>
           )}

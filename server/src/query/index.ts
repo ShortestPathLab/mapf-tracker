@@ -18,7 +18,7 @@ export const json = <T>(p: string) => fetch(p).then(toJson) as Promise<T>;
 export const text = (p: string) => fetch(p).then(toText);
 export const blob = (p: string) => fetch(p).then(toBlob);
 
-const createCache = <T extends AnyAsyncFunction>(f: T) => {
+export const createCache = <T extends AnyAsyncFunction>(f: T) => {
   const cache = new QuickLRU<string, Awaited<ReturnType<T>>>({ maxSize: 1000 });
   const g = memo(f, {
     cache,
@@ -31,7 +31,7 @@ export function cached<V extends z.ZodType>(
   watch: Model<any>[],
   validate: V = z.any() as any,
   handler: (req: z.infer<V>) => Promise<any>,
-  source: "body" | "params" = "params"
+  source: "body" | "params" = "params",
 ) {
   const [g, cache] = createCache(handler);
   const clear = debounce(() => cache.clear(), 1000);
@@ -54,7 +54,7 @@ export function cached<V extends z.ZodType>(
 export const queryClient = <T>(model: Model<T>) => {
   const createHandler = <V extends z.ZodType, U>(
     validate: V = z.any() as any,
-    f: (data: z.infer<V>) => Promise<U>
+    f: (data: z.infer<V>) => Promise<U>,
   ): RequestHandler<z.infer<V>> => {
     const [g, cache] = createCache(f);
     const clear = debounce(() => cache.clear(), 1000);
@@ -81,7 +81,7 @@ export const queryClient = <T>(model: Model<T>) => {
       router
         .get(
           "/",
-          createHandler(z.unknown(), async () => model.find())
+          createHandler(z.unknown(), async () => model.find()),
         )
         .get(
           "/:id",
@@ -89,8 +89,8 @@ export const queryClient = <T>(model: Model<T>) => {
             z.object({
               id: z.string(),
             }),
-            async ({ id }) => model.findById(id)
-          )
+            async ({ id }) => model.findById(id),
+          ),
         )
         .post(
           "/write",
@@ -105,12 +105,12 @@ export const queryClient = <T>(model: Model<T>) => {
                 { $set: data },
                 {
                   upsert: true,
-                }
+                },
               );
               return { id: result?.id?.toString?.() };
             },
-            { source: "body" }
-          )
+            { source: "body" },
+          ),
         )
         .post(
           "/delete",
@@ -120,15 +120,15 @@ export const queryClient = <T>(model: Model<T>) => {
               await model.findByIdAndDelete(id);
               return { id };
             },
-            { source: "body" }
-          )
+            { source: "body" },
+          ),
         ),
     query: <V extends z.ZodType>(
       validate: V = z.any() as any,
       query: (
-        b: z.infer<V>
+        b: z.infer<V>,
       ) => [FilterQuery<T>] | [FilterQuery<T>, ProjectionType<T>] = () => [{}],
-      handler: (q: (Document<T> & T)[]) => Promise<any> = async (q) => q
+      handler: (q: (Document<T> & T)[]) => Promise<any> = async (q) => q,
     ): RequestHandler<z.infer<V>> =>
       createHandler(validate, async (data) => {
         const [q, p] = query(data);
@@ -140,9 +140,9 @@ export const queryClient = <T>(model: Model<T>) => {
       validate: V = z.any() as any,
       agg: (b: z.infer<V>, pipeline: AggregateBuilder) => AggregateBuilder = (
         _,
-        p
+        p,
       ) => p,
-      handler: (q: any) => Promise<any> = async (q) => q
+      handler: (q: any) => Promise<any> = async (q) => q,
     ): RequestHandler<z.infer<V>> => {
       const f = async (data: z.infer<V>) => {
         const q = agg(data, new AggregateBuilder());
@@ -155,7 +155,7 @@ export const queryClient = <T>(model: Model<T>) => {
           ? diskCached(`aggregate-${model.modelName}-${name}`, f, {
               invalidationKey: () => get("diskCache"),
             })
-          : f
+          : f,
       );
     },
   };
@@ -165,7 +165,7 @@ export const route = <T extends z.ZodType, R>(
   validate: T = z.any() as any,
   f: (data: z.infer<T>, req: Request) => Promise<R | undefined> = async () =>
     undefined,
-  { source = "body" }: { source?: "body" | "params" } = {}
+  { source = "body" }: { source?: "body" | "params" } = {},
 ): RequestHandler<z.infer<T>, {}, R> => {
   return async (req, res) => {
     const { success, data, error } = await validate.safeParseAsync(req[source]);

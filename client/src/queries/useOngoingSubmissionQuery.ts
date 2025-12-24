@@ -12,6 +12,7 @@ import {
   mergeWith,
   now,
   range,
+  some,
   values,
 } from "lodash";
 import { del, post } from "queries/mutation";
@@ -169,7 +170,9 @@ const summaryQuery = (key: string | number, i: number = 0) => ({
 });
 
 export function useOngoingSubmissionSummaryQuery(key?: string | number) {
-  const { data: pageCount = 0 } = useQuery(summaryPageCountQuery(key));
+  const { data: pageCount = 0, isLoading: isLoadingPageCount } = useQuery(
+    summaryPageCountQuery(key),
+  );
   return useQueries({
     queries: range(pageCount).map((i) => summaryQuery(key, i)),
     combine: (results) => {
@@ -183,7 +186,7 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
             mergeValues,
           ) as SummaryResult,
         },
-        isFirstRun: false,
+        isLoading: isLoadingPageCount || some(results, (r) => r.isLoading),
       };
     },
   });

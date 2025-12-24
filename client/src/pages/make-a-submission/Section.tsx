@@ -1,4 +1,4 @@
-import { ArrowBackRounded } from "@mui-symbols-material/w400";
+import { ArrowBackRounded } from "@mui-symbols-material/w300";
 import { IconButton, Stack } from "@mui/material";
 import { appbarHeight } from "components/appbar";
 import { useMd, useSm, useXs } from "components/dialog/useSmallDisplay";

@@ -1,4 +1,4 @@
-import { EditRounded } from "@mui-symbols-material/w400";
+import { EditRounded } from "@mui-symbols-material/w300";
 import { Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
@@ -21,7 +21,7 @@ export const SubmissionRequestGlance = ({
     SubmissionKeyRequestFormDialog,
     {
       title: "Edit request details",
-    }
+    },
   );
   const { data: request } = useRequestData(apiKey);
   const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);

@@ -9,6 +9,9 @@ import { pages } from "pages/docs/pages";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { useMapsData } from "queries/useMapQuery";
+import { SearchRounded } from "@mui-symbols-material/w300";
+import { useStableLocationStateSeparate } from "hooks/useStableLocationState";
+import { useRef, useState } from "react";
 
 export function QuickNavigation() {
   const { data: maps = [] } = useMapsData();
@@ -53,7 +56,7 @@ export function QuickNavigation() {
               />
             ),
             navigate: () => navigate(page.url),
-          })
+          }),
         ),
         ...map(pages(), (page) => ({
           type: "docs",
@@ -78,7 +81,7 @@ export function QuickNavigation() {
           bgcolor: (t) =>
             alpha(
               t.palette.background.default,
-              t.palette.mode === "dark" ? 0.5 : 1
+              t.palette.mode === "dark" ? 0.5 : 1,
             ),
         },
       }}
@@ -97,7 +100,7 @@ export function QuickNavigation() {
       )}
       renderInput={(props) => (
         <TextField
-          label={`Search for anything...`}
+          label={`Search...`}
           variant="outlined"
           size="small"
           fullWidth

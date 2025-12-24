@@ -1,4 +1,4 @@
-import { ChevronRightRounded } from "@mui-symbols-material/w400";
+import { ChevronRightRounded } from "@mui-symbols-material/w300";
 import {
   alpha,
   AppBar,
@@ -41,7 +41,7 @@ export default function index(props: AppBarProps) {
     (url?: string, action?: () => void, close?: () => void) => () => {
       if (url) {
         const same = url === pathname;
-        navigate(url, {}, { reason: same ? "top" : "appbar" });
+        navigate(url, {}, { "hidden-reason": same ? "top" : "appbar" });
         close?.();
         setOptions({ sidebarOpenMobile: false });
       } else {
@@ -147,14 +147,14 @@ export default function index(props: AppBarProps) {
                                             bgcolor: (t) =>
                                               alpha(
                                                 t.palette.text.primary,
-                                                0.05
+                                                0.05,
                                               ),
                                           },
                                         }}
                                         onClick={clickHandler(
                                           url,
                                           action,
-                                          state.close
+                                          state.close,
                                         )}
                                       >
                                         <ListItemIcon
@@ -175,7 +175,9 @@ export default function index(props: AppBarProps) {
                                                 fontWeight: 450,
                                                 fontSize: xs
                                                   ? undefined
-                                                  : "0.9rem",
+                                                  : (t) =>
+                                                      t.typography.body2
+                                                        .fontSize,
                                                 color: "text.primary",
                                                 opacity: 0.8,
                                               }}
@@ -186,7 +188,7 @@ export default function index(props: AppBarProps) {
                                         />
                                       </ListItemButton>
                                     );
-                                  }
+                                  },
                                 )}
                               </List>
                             </Collapse>

@@ -1,11 +1,19 @@
-import { Divider, Link, Stack } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Divider,
+  Link,
+  Stack,
+  Tooltip,
+} from "@mui/material";
 import { GridChartCard } from "components/charts/GridChartCard";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { AlgorithmByMapChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapChart";
 import { AlgorithmByMapTypeChart } from "pages/benchmarks-root-level/charts/AlgorithmByMapTypeChart";
+import { SuboptimalityByAgentCountChart } from "components/charts/SuboptimalityByAgentCountChart";
 
-import { TableRounded } from "@mui-symbols-material/w400";
+import { TableRounded } from "@mui-symbols-material/w300";
 import { Title } from "components/StickyTitle";
 import { useSurface } from "components/surface";
 import { AlgorithmDownloadOptions } from "pages/benchmarks-map-level/AlgorithmDownloadOptions";
@@ -14,6 +22,11 @@ import { matchPath, redirect } from "react-router-dom";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import { Table } from "./Table";
 import { inferOptimality } from "./inferOptimality";
+import { Item } from "components/Item";
+import { isUndefined } from "lodash";
+import { useAggregateOne } from "queries/useAggregateQuery";
+import { formatPercentage } from "utils/format";
+import { ItemGrid } from "components/ItemGrid";
 
 export function AlgorithmPage() {
   const sm = useSm();
@@ -21,6 +34,7 @@ export function AlgorithmPage() {
     matchPath("/submissions/:id", window.location.pathname) ?? {};
 
   const { data } = useAlgorithmDetailData(params?.id);
+  const { data: general } = useAggregateOne({});
 
   const { open, dialog } = useSurface(AlgorithmDownloadOptions, {
     title: `${data ? data?.algo_name : "--"} - Export claims`,
@@ -38,23 +52,27 @@ export function AlgorithmPage() {
         { name: "Submissions", url: "/submissions" },
       ]}
       items={[
-        ...(data?.github
-          ? [
-              {
-                value: <Link href={data.github}>{data.github}</Link>,
-                label: "GitHub",
-              },
-            ]
-          : []),
+        ...(
+          [
+            { key: "github", label: "GitHub" },
+            { key: "dblp", label: "DBLP" },
+            { key: "google_scholar", label: "Google Scholar" },
+          ] as const
+        )
+          .filter(({ key }) => !!data?.[key])
+          .map(({ key, label }) => ({
+            value: (
+              <Link href={data?.[key]}>
+                {data?.[key]?.replace("https://", "")}
+              </Link>
+            ),
+            label,
+          })),
         { value: data?.papers, label: "Papers" },
         {
           value: data && inferOptimality(data) ? "Optimal" : "Suboptimal",
           label: "Optimality",
         },
-        { value: data?.instances_solved, label: "Instances solved" },
-        { value: data?.instances_closed, label: "Instances closed" },
-        { value: data?.best_solution, label: "Best solution" },
-        { value: data?.best_lower, label: "Best lower-bound" },
         { value: data?.comments, label: "Comments" },
       ]}
       actions={{
@@ -69,6 +87,57 @@ export function AlgorithmPage() {
       }}
     >
       <Divider />
+      <ItemGrid
+        items={[
+          { value: data?.instances_solved, label: "Instances solved" },
+          { value: data?.instances_closed, label: "Instances closed" },
+          { value: data?.best_solution, label: "Best solution" },
+          { value: data?.best_lower, label: "Best lower-bound" },
+        ].map(({ value, label }) => {
+          const displayValue = isUndefined(value)
+            ? "--"
+            : value.toLocaleString();
+          const percentage = (value ?? 0) / (general?.all ?? 1);
+          const color = percentage < 1 ? "info.main" : "success.main";
+          return (
+            <>
+              <Item
+                key={label}
+                primary={displayValue}
+                secondary={label}
+                invert
+              ></Item>
+              <Tooltip
+                title={`${label}: ${displayValue} (${formatPercentage(percentage)})`}
+              >
+                <Box
+                  sx={{
+                    display: "grid",
+                    grid: "1fr / 1fr",
+                    "> *": {
+                      gridArea: "1 / 1",
+                    },
+                  }}
+                >
+                  <CircularProgress
+                    variant="determinate"
+                    size={24}
+                    sx={{ color: "text.secondary", opacity: 0.3 }}
+                    value={100}
+                  />
+                  <CircularProgress
+                    size={24}
+                    sx={{ color }}
+                    variant="determinate"
+                    value={100 * percentage}
+                  />
+                </Box>
+              </Tooltip>
+            </>
+          );
+        })}
+        width={230}
+      />
       <Title sticky>Algorithm performance</Title>
       <Stack sx={{ gap: 2 }}>
         <GridChartCard
@@ -84,6 +153,16 @@ export function AlgorithmPage() {
           secondaryLabel="Instances closed and solved across maps"
           height={560}
           content={!!data?.id && <AlgorithmByMapChart algorithm={data?.id} />}
+        />
+        <GridChartCard
+          primaryLabel="Suboptimality by agent count"
+          secondaryLabel="Suboptimality range across agent counts"
+          height={560}
+          content={
+            !!data?.id && (
+              <SuboptimalityByAgentCountChart algorithm={data?.id} />
+            )
+          }
         />
       </Stack>
       <Title sticky>Submitted instances</Title>

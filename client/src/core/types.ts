@@ -54,6 +54,8 @@ export type AlgorithmDetails = Algorithm &
     best_lower: number;
     best_solution: number;
     github?: string;
+    dblp?: string;
+    google_scholar?: string;
     instances_closed: number;
     instances_solved: number;
     papers?: string;

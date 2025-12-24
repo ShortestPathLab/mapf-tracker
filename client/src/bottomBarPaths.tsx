@@ -7,7 +7,7 @@ import {
   MoreHorizRounded,
   TableFilledRounded,
   TableRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 
 export const bottomBarPaths = [
   {

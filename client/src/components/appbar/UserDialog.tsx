@@ -9,12 +9,9 @@ import {
 import { DialogContentProps } from "hooks/useDialog";
 import { useSnackbar } from "../Snackbar";
 import { paper } from "theme";
-import {
-  useCredentials,
-  useLogInMutation,
-  Credentials,
-} from "../../queries/useLogInQuery";
+import { useCredentials, useLogInMutation } from "../../queries/useLogInQuery";
 import { useNavigate } from "hooks/useNavigation";
+import BoringAvatar from "boring-avatars";
 
 export function UserDialog({ onClose }: DialogContentProps) {
   const { data: credentials } = useCredentials();
@@ -27,7 +24,9 @@ export function UserDialog({ onClose }: DialogContentProps) {
     <Stack sx={{ gap: 4 }}>
       <ListItem sx={paper()}>
         <ListItemAvatar>
-          <Avatar src={getAvatar(credentials)} />
+          <Avatar>
+            <BoringAvatar name={credentials?.username} variant="ring" />
+          </Avatar>
         </ListItemAvatar>
         <ListItemText primary={credentials?.username} secondary="Logged in" />
       </ListItem>
@@ -46,7 +45,4 @@ export function UserDialog({ onClose }: DialogContentProps) {
       </Button>
     </Stack>
   );
-}
-export function getAvatar(credentials?: Credentials): string {
-  return `https://api.dicebear.com/9.x/dylan/svg?seed=${credentials?.username}`;
 }

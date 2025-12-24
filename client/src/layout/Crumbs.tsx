@@ -3,9 +3,8 @@ import {
   ArrowForwardRounded,
   ArrowUpwardRounded,
   ChevronRightRounded,
-  DockToRightFilledRounded,
   DockToRightRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Box,
   Breadcrumbs,
@@ -28,7 +27,6 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
   const navigate = useNavigate();
   const [{ hideSidebar, sidebarOpenMobile }, setOptions] = useOptions();
   const md = useMd();
-  const isSidebarOpen = md ? sidebarOpenMobile : !hideSidebar;
   return (
     <>
       <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
@@ -43,15 +41,11 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
                     }
                   : {
                       hideSidebar: !hideSidebar,
-                    }
+                    },
               );
             }}
           >
-            {isSidebarOpen ? (
-              <DockToRightFilledRounded fontSize="small" />
-            ) : (
-              <DockToRightRounded fontSize="small" />
-            )}
+            <DockToRightRounded fontSize="small" />
           </IconButton>
         </Box>
         <Divider
@@ -62,7 +56,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
         <Scroll x fadeX>
           <Breadcrumbs
             separator={<ChevronRightRounded fontSize="small" />}
-            sx={{ minWidth: "max-content", p: 3, pl: 0, py: 2, flex: 1 }}
+            sx={{ minWidth: "max-content", p: 3, pl: 0, py: 1.5, flex: 1 }}
           >
             {path.map(({ name, url, state }) => (
               <Link
@@ -90,8 +84,8 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
           direction="row"
           sx={{
             p: 1,
-            py: 2,
-            gap: 1,
+            py: 1.5,
+            gap: 0.5,
           }}
         >
           <IconButton

@@ -1,4 +1,4 @@
-import { ChevronRightRounded } from "@mui-symbols-material/w400";
+import { ChevronRightRounded } from "@mui-symbols-material/w300";
 import { ComponentProps } from "react";
 
 export function Arrow({

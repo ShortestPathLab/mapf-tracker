@@ -1,4 +1,4 @@
-import { CloseRounded as CloseIcon } from "@mui-symbols-material/w400";
+import { CloseRounded as CloseIcon } from "@mui-symbols-material/w300";
 import { Button, IconButton, Snackbar } from "@mui/material";
 import { noop } from "lodash";
 import {
@@ -19,7 +19,7 @@ type A = (
     error?: boolean;
     action?: () => void;
     actionLabel?: string;
-  }
+  },
 ) => () => void;
 
 const SnackbarContext = createContext<A>(() => noop);
@@ -45,7 +45,10 @@ export function useSnackbarAction<T extends []>() {
   const push = useSnackbar();
   return (
       f: (...args: T) => Promise<unknown>,
-      { start = "Preparing...", end = "Done" }: { start?: string; end?: string }
+      {
+        start = "Preparing...",
+        end = "Done",
+      }: { start?: string; end?: string },
     ) =>
     async (...params: T) => {
       if (start) push(start);
@@ -64,7 +67,7 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
   const [snackPack, setSnackPack] = useState<readonly SnackbarMessage[]>([]);
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState<SnackbarMessage | undefined>(
-    undefined
+    undefined,
   );
 
   useEffect(() => {
@@ -94,7 +97,7 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
       }
       return () => handleClose("");
     }) as A,
-    [setSnackPack]
+    [setSnackPack],
   );
 
   const handleClose = (_: unknown, reason?: string) => {

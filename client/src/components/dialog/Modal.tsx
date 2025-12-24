@@ -1,4 +1,4 @@
-import { ArrowBackRounded } from "@mui-symbols-material/w400";
+import { ArrowBackRounded } from "@mui-symbols-material/w300";
 import {
   alpha,
   AppBar,
@@ -81,7 +81,7 @@ export function ModalAppBar({
   useEffect(() => {
     if (ref.current) {
       const panel = ref.current.closest(
-        ".scrollbars div[data-overlayscrollbars-contents]"
+        ".scrollbars div[data-overlayscrollbars-contents]",
       );
       if (panel && panel instanceof HTMLDivElement) setTarget(panel);
     }
@@ -263,7 +263,7 @@ export default function Modal({
       const doesOverflow = window.innerHeight - 64 < contentRef.offsetHeight;
       setHasOverflowingChildren(doesOverflow);
       setChildHeight(
-        contentRef.offsetHeight <= 1 ? 0 : Math.ceil(contentRef.offsetHeight)
+        contentRef.offsetHeight <= 1 ? 0 : Math.ceil(contentRef.offsetHeight),
       );
     };
     window.addEventListener("resize", callback);
@@ -313,10 +313,10 @@ export default function Modal({
             height && !sm
               ? height
               : sm
-              ? `${mt}vh`
-              : hasOverflowingChildren
-              ? "100%"
-              : childHeight || "fit-content",
+                ? `${mt}vh`
+                : hasOverflowingChildren
+                  ? "100%"
+                  : childHeight || "fit-content",
           position: "relative",
           maxWidth: "none",
           marginTop: sm ? `${100 - mt}vh` : 0,
@@ -397,7 +397,7 @@ export function ManagedModal({
   options?: ComponentProps<typeof Modal>;
   trigger?: (
     onClick: (e: SyntheticEvent<Element, Event>) => void,
-    isOpen: boolean
+    isOpen: boolean,
   ) => ReactNode;
   appBar?: ModalAppBarProps;
   children?: ((state: State) => ReactNode) | ReactNode;
@@ -462,13 +462,13 @@ export function ManagedModal({
                       },
                     },
                   },
-                  slotProps?.popover
+                  slotProps?.popover,
                 )}
               >
                 <Box
                   {...merge(
                     { sx: { width: 360, ...acrylic, ...paper(1) } },
-                    slotProps?.paper
+                    slotProps?.paper,
                   )}
                 >
                   {!!title && showTitleInPopover && (

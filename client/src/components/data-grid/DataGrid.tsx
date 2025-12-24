@@ -1,4 +1,4 @@
-import { SearchRounded } from "@mui-symbols-material/w400";
+import { SearchRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   ButtonBase,
@@ -39,7 +39,7 @@ import { paper } from "theme";
 function smoothScrollTo(
   element: HTMLElement,
   yPosition: number,
-  duration: number
+  duration: number,
 ): void {
   const startY = element.scrollTop;
   const difference = yPosition - startY;
@@ -101,7 +101,7 @@ function ButtonRow(props: GridRowProps) {
       const offset = props.offsetTop + rootOffset;
       setVisible(
         offset + props.dimensions.rowHeight + padding > 0 &&
-          offset - padding < window.innerHeight
+          offset - padding < window.innerHeight,
       );
     }, 150);
     addEventListener("resize", listener, {
@@ -157,7 +157,7 @@ function useDebouncedInput(defaultValue: string = "") {
 const PAGE_SIZE = 100;
 
 export default function DataGrid<
-  T extends GridValidRowModel = { [K: string | symbol]: unknown }
+  T extends GridValidRowModel = { [K: string | symbol]: unknown },
 >({
   clickable,
   columns,
@@ -194,7 +194,7 @@ export default function DataGrid<
           obj[actualPath] as unknown as never,
           obj,
           column,
-          null
+          null,
         );
       return `${get(obj, actualPath)}`;
     },
@@ -202,7 +202,7 @@ export default function DataGrid<
 
   const allRows = filter(
     input ? fuse.search(input).map((r) => r.item) : rows,
-    shouldIncludeItem
+    shouldIncludeItem,
   );
   return (
     <Stack>
@@ -289,7 +289,7 @@ export default function DataGrid<
                   },
                 }),
                 "& .MuiDataGrid-footerContainer": {
-                  ...paper(),
+                  ...paper(1, true),
                   mt: 5,
                   mr: xs ? 2 : 0,
                   ml: "auto",
@@ -317,7 +317,7 @@ export default function DataGrid<
                   headerAlign: "left",
                   cellClassName: center,
                   ...c,
-                })
+                }),
               )}
               rows={allRows}
             />

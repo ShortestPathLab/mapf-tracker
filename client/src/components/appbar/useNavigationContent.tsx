@@ -20,7 +20,7 @@ import {
   TableFilledRounded,
   TableRounded,
   UploadRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { GitHub } from "@mui/icons-material";
 import { useSurface } from "components/surface";
 import { ReactNode } from "react";

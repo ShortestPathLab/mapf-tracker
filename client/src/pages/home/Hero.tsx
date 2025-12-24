@@ -29,7 +29,7 @@ import { ReactNode } from "react";
 import { paper } from "theme";
 
 const TEMP_HARDCODED_SOLUTION_PATH =
-  "/visualization?mapId=63761f265d814f08ecdbf3bf&reason=unknown&scenId=63761f275d814f08ecdbf96d&instanceId=63761f275d814f08ecdc0a42&solutionId=64111c7aa77d79716559c10f&source=submitted";
+  "/visualization?mapId=63761f265d814f08ecdbf3bf&hidden-reason=unknown&scenId=63761f275d814f08ecdbf96d&instanceId=63761f275d814f08ecdc0a42&solutionId=64111c7aa77d79716559c10f&source=submitted";
 
 export default function Hero({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
     label: string,
     description: string,
     buttonLabel: string,
-    onClick: () => void
+    onClick: () => void,
   ) => (
     <Stack
       direction="row"
@@ -121,7 +121,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
             "Trends",
             "Explore trends in the dataset",
             "See more trends",
-            () => navigate("/benchmarks", { t: "analysis" })
+            () => navigate("/benchmarks", { t: "analysis" }),
           )}
           <Stack
             direction="row"
@@ -148,7 +148,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
             "Benchmarks",
             "Browse benchmarks and solutions via maps",
             "See all benchmarks",
-            () => navigate("/benchmarks")
+            () => navigate("/benchmarks"),
           )}
 
           <Scroll x fadeX style={{ width: "calc(100% + 8px)", margin: -8 }}>
@@ -188,7 +188,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                           {`${m.map_size}, ${pluralize(
                             "instance",
                             m.instances ?? 0,
-                            true
+                            true,
                           )}`}
                           <br />
                           {`${m.proportion_instances_solved * 100}% solved`}
@@ -204,7 +204,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
             "Submissions",
             "These are the algorithms researchers have submitted solutions for",
             "See all submissions",
-            () => navigate("/submissions")
+            () => navigate("/submissions"),
           )}
           <Scroll x fadeX style={{ width: "calc(100% + 8px)", margin: -8 }}>
             <Stack
@@ -240,7 +240,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                           <br />
                           {`${formatLargeNumber(m.instances ?? 0)} ${pluralize(
                             "instance",
-                            m.instances ?? 0
+                            m.instances ?? 0,
                           )} submitted`}
                         </Box>
                       }
@@ -287,7 +287,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                   page={page}
                   onClick={() => navigate(page?.value)}
                 />
-              )
+              ),
             )}
           </Grid>
         </Stack>

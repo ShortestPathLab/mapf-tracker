@@ -1,4 +1,4 @@
-import { CheckRounded } from "@mui-symbols-material/w400";
+import { CheckRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   Button,
@@ -47,7 +47,7 @@ export function disambiguate<R>(
   m: Model,
   options: {
     [K in keyof Models]?: (m: Models[K]) => R;
-  }
+  },
 ) {
   if ("maps" in m) return options?.all?.(m);
   if ("scenarios" in m) return options?.map?.(m);
@@ -75,7 +75,7 @@ function placeholder(id: string) {
 
 export function DownloadOptionsBase<
   T extends ReturnType<typeof useBenchmarksAll>["data"][number],
-  U extends { label: string }
+  U extends { label: string },
 >({
   rows: data,
   columns,
@@ -174,7 +174,7 @@ export function DownloadOptionsBase<
       gap={2}
       sx={{
         height: `calc(calc(100dvh - ${appbarHeight(md)}px) - ${theme.spacing(
-          (xs ? 2 : 3) * 2
+          (xs ? 2 : 3) * 2,
         )})`,
       }}
     >

@@ -1,4 +1,4 @@
-import { MoreVertRounded } from "@mui-symbols-material/w400";
+import { MoreVertRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   IconButton,
@@ -69,10 +69,10 @@ export function useDataGridActions<T>({
                   row,
                   <IconButton onClick={() => action?.(row)}>
                     <Tooltip title={name}>{icon}</Tooltip>
-                  </IconButton>
+                  </IconButton>,
                 )}
               </Box>
-            )
+            ),
           )}
           {!!filteredStoredItems?.length && (
             <PopupState variant="popover">
@@ -107,8 +107,8 @@ export function useDataGridActions<T>({
                             >
                               <ListItemIcon>{icon}</ListItemIcon>
                               <ListItemText>{name}</ListItemText>
-                            </MenuItem>
-                          )
+                            </MenuItem>,
+                          ),
                       )}
                     </MenuList>
                   </Menu>

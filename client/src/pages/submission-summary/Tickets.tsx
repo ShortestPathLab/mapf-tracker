@@ -2,7 +2,7 @@ import {
   CancelRounded,
   CheckCircleRounded,
   PendingRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import {
   Box,
   CircularProgress,
@@ -50,7 +50,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                       {[
                         `${prettyBytes(size)}, ${format(
                           dateReceived,
-                          "MMM dd HH:mm aaa"
+                          "MMM dd HH:mm aaa",
                         )}`,
                         {
                           done: pluralize("entry", result?.count, true),
@@ -86,7 +86,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                 />
               </ListItem>
             </Enter>
-          )
+          ),
         )
       ) : (
         <Typography color="text.secondary">

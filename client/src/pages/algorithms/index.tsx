@@ -1,4 +1,4 @@
-import { FolderZipRounded } from "@mui-symbols-material/w400";
+import { FolderZipRounded } from "@mui-symbols-material/w300";
 import { Button, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { Tip } from "components/Tip";
@@ -41,7 +41,7 @@ function Table() {
       renderCell: ({ value, row }) => (
         <Item
           icon={<AlgorithmPreview id={row.id} />}
-          primary={startCase(value)}
+          primary={value}
           secondary={row.authors}
         />
       ),
@@ -77,7 +77,7 @@ function Table() {
         <Stack sx={{ gap: 1, width: "100%" }}>
           <Typography variant="body2" color="text.secondary">
             {`${formatLargeNumber(
-              row[closed]
+              row[closed],
             )} ${bestLabel} / ${formatLargeNumber(row[solved])} ${totalLabel}`}
           </Typography>
           <Bar

@@ -20,14 +20,14 @@ export default function PageHeader({
   return (
     <Stack
       sx={{
-        gap: 2,
+        gap: 1,
         mb: sm ? -1 : 0,
       }}
     >
       <Typography
         variant="h2"
         sx={{
-          fontSize: sm ? "2rem" : "2.25rem",
+          fontSize: "2rem",
           pt: sm ? 0 : 0,
         }}
       >

@@ -1,4 +1,4 @@
-import { CheckRounded, WarningRounded } from "@mui-symbols-material/w400";
+import { CheckRounded, WarningRounded } from "@mui-symbols-material/w300";
 import {
   alpha,
   Box,
@@ -38,7 +38,7 @@ const hintText =
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
-  const { data, isFirstRun: summaryIncomplete } =
+  const { data, isLoading: summaryIncomplete } =
     useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
@@ -90,7 +90,7 @@ export default function SubmissionSummaryPage() {
           onAccept: () => {
             finalise();
             close();
-            navigate("/upload");
+            navigate("/track");
           },
           onClose: close,
         })

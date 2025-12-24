@@ -12,7 +12,11 @@ import {
   instances,
   submissions,
 } from "models";
-import { AggregateBuilder, dateToString } from "mongodb-aggregate-builder";
+import {
+  AggregateBuilder,
+  dateToString,
+  first,
+} from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
 import { z } from "zod";
 import { operations } from "./aggregate";
@@ -79,16 +83,7 @@ const createAggregateBase =
     groupBySelectors: Record<U["groupBy"], string | null>,
   ) =>
   (
-    {
-      map,
-      scenario,
-      agents,
-      scenarioType,
-      groupBy,
-      operation: o,
-      value: v,
-      filterBy: f,
-    }: U,
+    { map, scenario, agents, groupBy, operation: o, value: v, filterBy: f }: U,
     p: AggregateBuilder = new AggregateBuilder(),
   ) =>
     p
@@ -191,6 +186,26 @@ export const use = (app: Application, path: string = "/api/queries") => {
                   },
                   isUndefined,
                 ),
+              )
+              .mergeAggregationWithCurrent(
+                rest.value === "suboptimality"
+                  ? [
+                      new AggregateBuilder()
+                        .lookup(
+                          Instance.collection.collectionName,
+                          "instance_id",
+                          "_id",
+                          "instance",
+                        )
+                        .addFields({
+                          lower_cost: { $first: "$instance.lower_cost" },
+                        })
+                        .project({
+                          instance: 0,
+                        })
+                        .build(),
+                    ]
+                  : [],
               )
               .mergeAggregationWithCurrent([
                 createAggregateBase<typeof rest.filterBy, typeof rest.groupBy>(

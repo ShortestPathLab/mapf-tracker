@@ -1,7 +1,7 @@
 import {
   ArrowUploadProgressRounded,
   DeleteRounded,
-} from "@mui-symbols-material/w400";
+} from "@mui-symbols-material/w300";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useMutation } from "@tanstack/react-query";
