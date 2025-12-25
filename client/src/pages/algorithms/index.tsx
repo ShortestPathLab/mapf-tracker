@@ -11,13 +11,23 @@ import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { DataInspectorLayout, Prose } from "layout";
 import { GalleryLayout } from "layout/GalleryLayout";
-import { capitalize, flatMap, map, max, maxBy, startCase, sum } from "lodash";
+import {
+  capitalize,
+  flatMap,
+  isUndefined,
+  map,
+  max,
+  maxBy,
+  startCase,
+  sum,
+} from "lodash";
 import { AlgorithmDownloadOptions } from "pages/benchmarks-map-level/AlgorithmDownloadOptions";
 import { compareTemplate } from "pages/benchmarks-root-level/analysisTemplate";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
 import { AlgorithmPreview } from "./AlgorithmPreview";
 import Description from "./description.md";
 import { inferOptimality } from "./inferOptimality";
+import { formatDate } from "utils/format";
 
 const g = [
   "instances_solved",
@@ -37,7 +47,7 @@ function Table() {
       headerName: "Submission",
       sortable: true,
       maxWidth: 360,
-      flex: 1,
+      flex: 2,
       renderCell: ({ value, row }) => (
         <Item
           icon={<AlgorithmPreview id={row.id} />}
@@ -132,6 +142,15 @@ function Table() {
       ),
       fold: true,
     })),
+    {
+      flex: 2,
+      field: "submittedAt",
+      headerName: "Submitted at",
+      sortable: true,
+      type: "date" as const,
+      fold: true,
+      valueFormatter: (v) => (isUndefined(v) ? "N/A" : formatDate(v)),
+    },
   ];
   return (
     <DataGrid

@@ -17,6 +17,7 @@ const schema = createSchema(
     best_solution: Number,
     instances_closed: Number,
     instances_solved: Number,
+    submittedAt: Date,
     requestId: { type: Types.ObjectId, ref: "users" },
   },
   {

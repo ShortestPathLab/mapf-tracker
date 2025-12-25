@@ -25,7 +25,7 @@ import { inferOptimality } from "./inferOptimality";
 import { Item } from "components/Item";
 import { isUndefined } from "lodash";
 import { useAggregateOne } from "queries/useAggregateQuery";
-import { formatPercentage } from "utils/format";
+import { formatDate, formatPercentage } from "utils/format";
 import { ItemGrid } from "components/ItemGrid";
 
 export function AlgorithmPage() {
@@ -74,6 +74,11 @@ export function AlgorithmPage() {
           label: "Optimality",
         },
         { value: data?.comments, label: "Comments" },
+        {
+          label: "Submitted at",
+          value: data?.submittedAt ? formatDate(data?.submittedAt) : undefined,
+        },
+        { label: "Submitted by", value: data?.requesterName },
       ]}
       actions={{
         options: [

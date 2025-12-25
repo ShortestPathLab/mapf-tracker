@@ -60,6 +60,8 @@ export type AlgorithmDetails = Algorithm &
     instances_solved: number;
     papers?: string;
     request_id: string;
+    submittedAt: string;
+    requesterName: string;
   };
 
 export type AlgorithmCollectionCount = Algorithm & {

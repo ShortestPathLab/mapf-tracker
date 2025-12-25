@@ -48,6 +48,7 @@ function Sidebar({
   return (
     <Stack
       sx={{
+        maxHeight: "calc(100vh - 56px)",
         overflowX: "hidden",
         wordWrap: "break-word",
         width: sidebarWidth,

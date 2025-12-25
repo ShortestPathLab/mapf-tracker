@@ -19,6 +19,14 @@ export const updateAlgorithmsFromSubmissions = async () =>
         },
         {
           $facet: {
+            submittedAt: [
+              {
+                $group: {
+                  _id: null,
+                  value: { $max: "$date" },
+                },
+              },
+            ],
             best_lower: [
               {
                 $match: {
@@ -84,6 +92,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
         {
           $addFields: {
             _id: { $toObjectId: document._id },
+            submittedAt: { $first: "$submittedAt.value" },
             best_lower: { $first: "$best_lower.count" },
             best_solution: { $first: "$best_solution.count" },
             instances_closed: { $first: "$instances_closed.count" },
@@ -128,6 +137,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
             github: "$request.githubLink",
             dblp: "$request.dblp",
             google_scholar: "$request.googleScholar",
+            requesterName: "$request.requesterName",
             comments: "$request.comments",
           },
         },
