@@ -103,6 +103,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
         {
           $project: {
             _id: 1,
+            submittedAt: 1,
             best_lower: { $ifNull: ["$best_lower", 0] },
             best_solution: { $ifNull: ["$best_solution", 0] },
             instances_closed: { $ifNull: ["$instances_closed", 0] },
