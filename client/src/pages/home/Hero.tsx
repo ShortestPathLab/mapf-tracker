@@ -28,9 +28,6 @@ import { useMapsData } from "queries/useMapQuery";
 import { ReactNode } from "react";
 import { paper } from "theme";
 
-const TEMP_HARDCODED_SOLUTION_PATH =
-  "/visualization?mapId=63761f265d814f08ecdbf3bf&hidden-reason=unknown&scenId=63761f275d814f08ecdbf96d&instanceId=63761f275d814f08ecdc0a42&solutionId=64111c7aa77d79716559c10f&source=submitted";
-
 export default function Hero({ children }: { children?: ReactNode }) {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -270,7 +267,15 @@ export default function Hero({ children }: { children?: ReactNode }) {
                   label: "See a solution for 4000 agents on ORZ 900 D",
                   description:
                     "Multi-agent pathfinding is difficult. We have algorithms that can solve this problem, yet you can clearly where there's room for improvement.",
-                  value: TEMP_HARDCODED_SOLUTION_PATH,
+                  value: "/visualization",
+                  search: {
+                    mapId: "63761f265d814f08ecdbf3bf",
+                    hiddenReason: "unknown",
+                    scenId: "63761f275d814f08ecdbf96d",
+                    instanceId: "63761f275d814f08ecdc0a42",
+                    solutionId: "64111c7aa77d79716559c10f",
+                    source: "submitted",
+                  },
                   icon: undefined,
                   content: undefined,
                   cover: "/assets/visualisation.png",
@@ -278,6 +283,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                 ...[find(pages(), { value: "system-demo" })].map((v) => ({
                   ...v,
                   value: `/docs/${v.value}`,
+                  search: {},
                   icon: undefined,
                   cover: "/assets/demo.png",
                 })),
@@ -285,7 +291,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
               (page) => (
                 <ArticleCard
                   page={page}
-                  onClick={() => navigate(page?.value)}
+                  onClick={() => navigate(page?.value, page?.search)}
                 />
               ),
             )}

@@ -110,69 +110,72 @@ export default function Details({ id }: { id?: string }) {
             {collection?.length ? (
               <Timeline
                 sx={{
-                  m: -2,
+                  mx: -2,
+                  my: -1,
                   [`& .${timelineItemClasses.root}::before`]: {
                     flex: 0,
                     p: 0,
                   },
                 }}
               >
-                {collection.map(({ algo_name, date, value }, i, xs) => {
-                  const previous = i === 0 ? undefined : xs[i - 1]?.value;
-                  return (
-                    <TimelineItem color="text.secondary" key={i}>
-                      <TimelineSeparator>
-                        <TimelineDot variant="outlined" />
-                        {i !== xs.length - 1 && <TimelineConnector />}
-                      </TimelineSeparator>
-                      <TimelineContent>
-                        <ListItem sx={{ m: -2 }}>
-                          <ListItemText
-                            secondary={
-                              <>
-                                {algo_name}
-                                {" at "}
-                                {formatDate(date)}
-                              </>
-                            }
-                            primary={
-                              <>
-                                {value ?? "0"}
-                                {isDefined(previous) && previous !== value ? (
-                                  previous < value ? (
-                                    <Stat1Rounded
-                                      sx={{
-                                        ml: 0.5,
-                                        transform: "translateY(4px)",
-                                      }}
-                                      fontSize="small"
-                                      color={
-                                        best === "max" ? "success" : "error"
-                                      }
-                                    />
+                {collection
+                  .filter(({ value }) => !!value)
+                  .map(({ algo_name, date, value }, i, xs) => {
+                    const previous = i === 0 ? undefined : xs[i - 1]?.value;
+                    return (
+                      <TimelineItem color="text.secondary" key={i}>
+                        <TimelineSeparator>
+                          <TimelineDot variant="outlined" />
+                          {i !== xs.length - 1 && <TimelineConnector />}
+                        </TimelineSeparator>
+                        <TimelineContent>
+                          <ListItem sx={{ m: -2 }}>
+                            <ListItemText
+                              secondary={
+                                <>
+                                  {algo_name}
+                                  {" at "}
+                                  {formatDate(date)}
+                                </>
+                              }
+                              primary={
+                                <>
+                                  {value?.toLocaleString?.() ?? "0"}
+                                  {isDefined(previous) && previous !== value ? (
+                                    previous < value ? (
+                                      <Stat1Rounded
+                                        sx={{
+                                          ml: 0.5,
+                                          transform: "translateY(4px)",
+                                        }}
+                                        fontSize="small"
+                                        color={
+                                          best === "max" ? "success" : "error"
+                                        }
+                                      />
+                                    ) : (
+                                      <StatMinus1Rounded
+                                        sx={{
+                                          ml: 0.5,
+                                          transform: "translateY(4px)",
+                                        }}
+                                        fontSize="small"
+                                        color={
+                                          best === "max" ? "error" : "success"
+                                        }
+                                      />
+                                    )
                                   ) : (
-                                    <StatMinus1Rounded
-                                      sx={{
-                                        ml: 0.5,
-                                        transform: "translateY(4px)",
-                                      }}
-                                      fontSize="small"
-                                      color={
-                                        best === "max" ? "error" : "success"
-                                      }
-                                    />
-                                  )
-                                ) : (
-                                  ""
-                                )}
-                              </>
-                            }
-                          />
-                        </ListItem>
-                      </TimelineContent>
-                    </TimelineItem>
-                  );
-                })}
+                                    ""
+                                  )}
+                                </>
+                              }
+                            />
+                          </ListItem>
+                        </TimelineContent>
+                      </TimelineItem>
+                    );
+                  })}
               </Timeline>
             ) : (
               <Typography color="text.secondary">No record claims</Typography>
