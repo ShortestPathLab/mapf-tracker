@@ -81,7 +81,7 @@ const defaults = {
   running: 0,
   valid: 0,
   invalid: 0,
-  duplicate: 0,
+  outdated: 0,
 };
 
 export function useOngoingSubmissionCountQuery(key?: string | number) {
@@ -93,7 +93,7 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
         running: number;
         valid: number;
         invalid: number;
-        duplicate: number;
+        outdated: number;
       }>(`${APIConfig.apiUrl}/ongoing_submission/${key}`)),
     }),
     enabled: !!key,

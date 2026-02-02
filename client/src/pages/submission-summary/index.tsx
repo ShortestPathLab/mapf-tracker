@@ -136,7 +136,7 @@ export default function SubmissionSummaryPage() {
             },
             {
               name: "Run",
-              count: total?.valid + total?.invalid + total?.duplicate,
+              count: total?.valid + total?.invalid + total?.outdated,
             },
           ],
         },
@@ -153,7 +153,7 @@ export default function SubmissionSummaryPage() {
             },
             {
               name: "Duplicate",
-              count: total?.duplicate,
+              count: total?.outdated,
             },
           ],
         },
