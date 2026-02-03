@@ -18,7 +18,7 @@ import { Instance, instances, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
 import { AggregateBuilder, toString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
-import { cached, queryClient, route } from "query";
+import { cached, createCache, queryClient, route } from "query";
 import { usingWorkerTaskReusable } from "queue/usingWorker";
 import { ResultTicketStatus, createPool } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
@@ -73,13 +73,14 @@ const summaryByApiKeyWorker = usingWorkerTaskReusable<
   SummaryByApiKeyResult
 >(() => new Worker(summaryByApiKeyWorkerPath));
 
-export const summaryByApiKey: RequestHandler<
-  {},
-  unknown,
-  { apiKey: string }
-> = async (req, res) => {
-  res.json(await summaryByApiKeyWorker(req.params));
-};
+
+export const summaryByApiKey = cached(
+  [],
+  z.unknown(),
+  (params) => summaryByApiKeyWorker(params),
+  "params",
+  { maxAge: 10 * 1000, maxSize: 1000 }
+)
 
 export const summaryByApiKeyGeneral = aggregate(
   undefined,

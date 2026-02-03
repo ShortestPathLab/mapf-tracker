@@ -32,13 +32,14 @@ import SubmissionSummary from "./SubmissionSummary";
 import { Tickets } from "./Tickets";
 import { parseApiKeyStatus } from "./parseApiKeyStatus";
 import SummaryTable from "./table/SummaryTable";
+import { Loading } from "components/LoadingLong";
 
 const hintText =
   "You will not be able to edit this submission after it has been submitted. To make a new submission, you must request a new submission key. \n\nInvalid or dominated entries will be ignored.";
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
-  const { data, isLoading: summaryIncomplete } =
+  const { data, isLoading: summaryIncomplete, isEmpty: summaryEmpty } =
     useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
@@ -100,9 +101,10 @@ export default function SubmissionSummaryPage() {
     </Button>,
   ];
 
+  const isIncomplete = summaryIncomplete || someIsPending;
   const contentRight = [
     <Fragment key="incomplete">
-      {(summaryIncomplete || someIsPending) && (
+      {isIncomplete && (
         <Stack
           direction="row"
           sx={{
@@ -205,7 +207,7 @@ export default function SubmissionSummaryPage() {
       >
         <Title>Details</Title>
         {/* <DataGrid clickable columns={columns} rows={data} /> */}
-        <SummaryTable apiKey={apiKey} />
+        {!(isIncomplete && summaryEmpty) ? <SummaryTable apiKey={apiKey} /> : <Loading />}
       </Stack>
     </SubmissionSummary>,
     <Box key="gap" sx={{ height: "100dvh" }} />,

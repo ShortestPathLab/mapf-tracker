@@ -217,9 +217,9 @@ export default function TrackSubmission() {
       path={
         xs
           ? [
-              { name: "Home", url: "/" },
-              { name: "More", url: "/more" },
-            ]
+            { name: "Home", url: "/" },
+            { name: "More", url: "/more" },
+          ]
           : [{ name: "Home", url: "/" }]
       }
     >
@@ -227,7 +227,6 @@ export default function TrackSubmission() {
       <Typography variant="h5">Previously used keys</Typography>
       <FlatCard>
         <DataGrid
-          loading={isLoading}
           clickable
           columns={columns}
           rows={rows}

@@ -1,5 +1,6 @@
 import { Box, useTheme } from "@mui/material";
-import { Chart, Loading } from "components/analysis/Chart";
+import { Chart } from "components/analysis/Chart";
+import { Loading } from "components/LoadingLong";
 import { Slice } from "components/analysis/useAlgorithmSelector";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useNavigate } from "hooks/useNavigation";

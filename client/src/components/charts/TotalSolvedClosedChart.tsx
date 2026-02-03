@@ -1,6 +1,8 @@
 import { alpha, Stack, useTheme } from "@mui/material";
 import { useQueries } from "@tanstack/react-query";
-import { Chart, Loading } from "components/analysis/Chart";
+import { Chart, } from "components/analysis/Chart";
+
+import { Loading } from "components/LoadingLong";
 import { Bar } from "components/data-grid";
 import { map } from "lodash";
 import { aggregateQueryOne } from "queries/useAggregateQuery";

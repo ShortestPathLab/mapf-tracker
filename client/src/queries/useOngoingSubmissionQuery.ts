@@ -177,15 +177,17 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
     queries: range(pageCount).map((i) => summaryQuery(key, i)),
     combine: (results) => {
       const dataResults = results.map((r) => r.data);
+      const lengths = dataResults.map((d) => d?.maps?.length ?? 0);
       return {
         data: {
-          lengths: dataResults.map((d) => d?.maps?.length ?? 0),
+          lengths,
           processed: mergeWith(
             {},
             ...dataResults,
             mergeValues,
           ) as SummaryResult,
         },
+        isEmpty: lengths.every((l) => !l),
         isLoading: isLoadingPageCount || some(results, (r) => r.isLoading),
       };
     },

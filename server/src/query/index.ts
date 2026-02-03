@@ -4,7 +4,7 @@ import { Document, FilterQuery, Model, ProjectionType, Types } from "mongoose";
 import z from "zod";
 import memo, { AnyAsyncFunction } from "p-memoize";
 import hash from "object-hash";
-import QuickLRU from "quick-lru";
+import QuickLRU, { Options } from "quick-lru";
 import { log } from "logging";
 import { debounce, has } from "lodash";
 import { diskCached } from "./withDiskCache";
@@ -18,8 +18,13 @@ export const json = <T>(p: string) => fetch(p).then(toJson) as Promise<T>;
 export const text = (p: string) => fetch(p).then(toText);
 export const blob = (p: string) => fetch(p).then(toBlob);
 
-export const createCache = <T extends AnyAsyncFunction>(f: T) => {
-  const cache = new QuickLRU<string, Awaited<ReturnType<T>>>({ maxSize: 1000 });
+export const createCache = <T extends AnyAsyncFunction>(
+  f: T,
+  opts: Options<string, Awaited<ReturnType<T>>> = {
+    maxSize: 1000,
+  },
+) => {
+  const cache = new QuickLRU<string, Awaited<ReturnType<T>>>(opts);
   const g = memo(f, {
     cache,
     cacheKey: ([a]) => hash(a ?? ""),
@@ -32,8 +37,11 @@ export function cached<V extends z.ZodType>(
   validate: V = z.any() as any,
   handler: (req: z.infer<V>) => Promise<any>,
   source: "body" | "params" = "params",
+  cacheOptions: Options<string, Awaited<ReturnType<typeof handler>>> = {
+    maxSize: 1000,
+  },
 ) {
-  const [g, cache] = createCache(handler);
+  const [g, cache] = createCache(handler, cacheOptions);
   const clear = debounce(() => cache.clear(), 1000);
   for (const w of watch) {
     w.watch().on("change", clear);
@@ -44,6 +52,7 @@ export function cached<V extends z.ZodType>(
       const out = await g(request);
       return res.json(out);
     } catch (e) {
+      log.error(e, e)
       res.status(500).json({
         error: `Error occurred: ${e}`,
       });
@@ -68,10 +77,10 @@ export const queryClient = <T>(model: Model<T>) => {
       try {
         res.json(await g(data));
       } catch (e) {
+        log.error(e, e)
         res.status(500).json({
           error: `Error occurred in ${model.modelName} query handler: ${e}`,
         });
-        console.log(e);
       }
     };
   };
@@ -153,8 +162,8 @@ export const queryClient = <T>(model: Model<T>) => {
         validate,
         name
           ? diskCached(`aggregate-${model.modelName}-${name}`, f, {
-              invalidationKey: () => get("diskCache"),
-            })
+            invalidationKey: () => get("diskCache"),
+          })
           : f,
       );
     },

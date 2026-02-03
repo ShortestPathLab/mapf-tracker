@@ -18,7 +18,7 @@ export const path = import.meta.path;
 
 const connect = once(connectToDatabase);
 
-export const CHUNK = 2 ** 16;
+export const CHUNK = 2 ** 15;
 
 const run = async (params: unknown) => {
   const indexes = await generateIndexes();
@@ -49,7 +49,7 @@ const run = async (params: unknown) => {
         },
       },
     ],
-    { allowDiskUse: true },
+    { allowDiskUse: true, batchSize: Number.MAX_SAFE_INTEGER, },
   );
   const submissions = docs.map((d) => {
     const instance = indexes.instances[d.instance!.toString()];
@@ -67,10 +67,10 @@ const run = async (params: unknown) => {
       isUndefined(d.submission.cost)
         ? "unknown"
         : d.submission.cost <
-            (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+          (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
           ? "best"
           : d.submission.cost ===
-              (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+            (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
             ? "tie"
             : "dominated",
     );
