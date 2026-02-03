@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  assign,
   clamp,
   entries,
+  fill,
   floor,
   head,
   last,
@@ -29,6 +31,12 @@ import {
 } from "validator";
 import { optimiseGridMap } from "./optimiseGridMap";
 import { text } from "queries/query";
+
+function padArray<T>(arr: T[], size: number, value: T) {
+  if (arr.length >= size) return arr;
+  const padding = fill(new Array(size - arr.length), value);
+  return [...arr, ...padding];
+}
 
 export function processAgent(agent: string) {
   const reader = new Reader(agent);
@@ -204,8 +212,12 @@ export function useSolution({
   const { sources, paths, timespan } = result ?? {};
 
   const getters = useMemo(
-    () => createAgentPositionGetter(sources ?? [], paths ?? [], timespan),
-    [sources, paths, timespan]
+    () => createAgentPositionGetter(sources ?? [], padArray(
+      paths ?? [],
+      instance?.agents ?? 0,
+      ""
+    ), timespan),
+    [sources, paths, timespan, instance?.agents]
   );
 
   return {
