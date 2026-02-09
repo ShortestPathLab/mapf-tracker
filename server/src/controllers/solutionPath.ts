@@ -1,7 +1,8 @@
 import { RequestHandler } from "express";
-import { chunk, map, split, zipWith } from "lodash";
-import { OngoingSubmissionSolution, SolutionPath, Submission } from "models";
+import { chunk, map, split } from "lodash";
+import { OngoingSubmissionSolution, SolutionPath } from "models";
 import { Types } from "mongoose";
+import { isDefined } from "utils/isDefined";
 import { encode } from "validator";
 import { z } from "zod";
 
@@ -14,7 +15,7 @@ export const getSolutionPath = async (
 ) => {
   if (source === "ongoing") {
     const data = await OngoingSubmissionSolution.findOne({ _id: id });
-    if (data?.solutions) {
+    if (isDefined(data?.solutions)) {
       return split(data.solutions, "\n");
     }
   } else {

@@ -269,7 +269,7 @@ export function Visualisation({
     }
   }, [viewport, getAgentPositions, step, setSelection]);
 
-  const noVisualisation = !isLoading && (disablePlayback ? false : !timespan);
+  const noVisualisation = !isLoading && (disablePlayback ? false : false);
 
   // ─── Toggle Fullscreen ───────────────────────────────────────────────
 
@@ -655,7 +655,7 @@ export function Visualisation({
                             name: "Moving",
                             value: proportionOf(
                               getAgentPath(selection.agent),
-                              (p) => p.action !== "w",
+                              (p) => ["u", "d", "l", "r"].includes(p.action),
                             ),
                           },
                           {

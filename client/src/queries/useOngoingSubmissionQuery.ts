@@ -18,7 +18,7 @@ import {
 import { del, post } from "queries/mutation";
 import { json } from "queries/query";
 
-const REFETCH_MS = 1000;
+const REFETCH_MS = 2500;
 
 function mergeArray<T>(
   xs: T[],
@@ -145,6 +145,9 @@ const summaryPageCountQuery = (key?: string | number) => ({
   enabled: !!key,
   refetchInterval: REFETCH_MS,
   staleTime: 0,
+  refetchOnReconnect: false,
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
 });
 
 const MAX_TASKS = 4;
@@ -164,6 +167,8 @@ const summaryQuery = (key: string | number, i: number = 0) => ({
       -now(),
     ),
   enabled: !!key,
+  staleTime: 0,
+  refetchInterval: REFETCH_MS,
   refetchOnReconnect: false,
   refetchOnMount: false,
   refetchOnWindowFocus: false,

@@ -162,7 +162,7 @@ async function validateGroup({
   const timeStart = now();
   validate({
     domain: { cells, width, height },
-    paths: solutions.map((s) => s || "w"),
+    paths: solutions.map((s) => s ?? ""),
     sources: sources.slice(0, count),
     checks: [
       checkImmediateCollision,
@@ -240,8 +240,7 @@ function logOutcome(
       .value();
     if (mode === "comprehensive" && isInteger(a) && a > 0)
       log.warn(
-        `Errors began on agent ${a}, it's possible that ${
-          a - 1
+        `Errors began on agent ${a}, it's possible that ${a - 1
         } agents constitutes a valid solution.`
       );
     return;
@@ -304,8 +303,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
       (await OngoingSubmissionSolution.findById(submission._id)) ?? {};
 
     log.info(
-      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${
-        scenarioMeta.type_id
+      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${scenarioMeta.type_id
       }, agent count ${solutions?.length ?? 0}.`
     );
 

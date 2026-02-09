@@ -103,7 +103,7 @@ function createAgentPositionGetter(
     }
   );
 
-  const bs = paths.map((c) => processAgentSimple(c || "w"));
+  const bs = paths.map((c) => processAgentSimple(c ?? ""));
   const getAgentPosition = memoize(
     (n: number): { action?: string; x: number; y: number }[] => {
       let t = 0;
@@ -113,8 +113,9 @@ function createAgentPositionGetter(
           [pick(last(path), "x", "y")],
           createOffsetMap(createActionMap(t, [bs[n]]), defaultOffsetMap)
         );
-        if (!offset.x && !offset.y) continue;
-        path.push({ ...offset, action: bs[n].seek(t) });
+        if (offset.x || offset.y) {
+          path.push({ ...offset, action: bs[n].seek(t) });
+        }
         t++;
       }
       return path;
