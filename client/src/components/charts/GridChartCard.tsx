@@ -1,4 +1,4 @@
-import { ExpandContentRounded } from "@mui-symbols-material/w300";
+import { ExpandContentRounded, HelpRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   IconButton,
@@ -14,6 +14,7 @@ import { ComponentProps, ReactNode } from "react";
 import { useCss } from "react-use";
 import Size from "react-virtualized-auto-sizer";
 import { paper } from "theme";
+import { Prose } from "layout";
 
 function FullScreenCard({ primary, label }: ChartCardProps) {
   const xs = useXs();
@@ -37,22 +38,35 @@ function FullScreenCard({ primary, label }: ChartCardProps) {
   );
 }
 
+function DocumentationDialog({ documentation }: { documentation: ReactNode }) {
+  return (
+    <Prose>
+      {documentation}
+    </Prose>
+  );
+}
+
 type ChartCardProps = {
   label?: ReactNode;
   extras?: ReactNode;
   primary?: ReactNode;
+  documentation?: ReactNode;
 };
 
 function ChartCard({
   label,
   extras,
   primary,
+  documentation,
   ...props
 }: ChartCardProps & StackProps) {
   const finePointer = useMediaQuery("(pointer: fine)");
   const { dialog, open } = useSurface(FullScreenCard, {
     title: "Chart details",
     variant: "fullscreen",
+  });
+  const { dialog: docDialog, open: openDoc } = useSurface(DocumentationDialog, {
+    title: "Chart info",
   });
   const cls = useCss({});
   return (
@@ -68,8 +82,19 @@ function ChartCard({
       <Stack sx={{ p: 2, gap: 2, height: "100%", flex: 1 }}>
         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
           {label}
-          <Stack direction="row" sx={{ alignItems: "flex-start" }}>
+          <Stack direction="row" sx={{ alignItems: "flex-start",gap:1 }}>
             {extras}
+            {documentation && (
+              <Tooltip title="Documentation">
+                <IconButton
+                  className={cls}
+                  onClick={() => openDoc({ documentation })}
+                  sx={{ mr: -1, mt: -1 }}
+                >
+                  <HelpRounded />
+                </IconButton>
+              </Tooltip>
+            )}
             <Tooltip title="Enlarge">
               <IconButton
                 className={cls}
@@ -90,6 +115,7 @@ function ChartCard({
         </Box>
       </Stack>
       {dialog}
+      {docDialog}
     </Stack>
   );
 }
@@ -100,6 +126,7 @@ export const GridChartCard = ({
   secondaryLabel,
   extras,
   content,
+  documentation,
   ...props
 }: {
   columns?: number;
@@ -108,6 +135,7 @@ export const GridChartCard = ({
   secondaryLabel?: string;
   extras?: ReactNode;
   content?: ReactNode;
+  documentation?: ReactNode;
 } & Omit<ComponentProps<typeof ChartCard>, "content">) => (
   <ChartCard
     label={
@@ -115,6 +143,7 @@ export const GridChartCard = ({
     }
     extras={extras}
     primary={content}
+    documentation={documentation}
     {...props}
     sx={{ gridColumn: `span ${columns}`, height, ...props.sx }}
   />

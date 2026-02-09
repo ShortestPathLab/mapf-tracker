@@ -5,6 +5,9 @@ import {
   LowerBoundChart,
   LowerBoundComparisonChart,
 } from "./charts/LowerBoundChart";
+import CostDoc from "docs/charts/Cost.md";
+import LowerBoundDoc from "docs/charts/LowerBound.md";
+import LowerBoundComparisonDoc from "docs/charts/LowerBoundComparison.md";
 
 export function analysisTemplate(scenarioData?: Scenario) {
   return [
@@ -15,12 +18,14 @@ export function analysisTemplate(scenarioData?: Scenario) {
         {
           name: "Cost by agent count",
           render: () => <CostChart scenario={scenarioData?.id} />,
+          documentation: <CostDoc />,
         },
         {
           name: "Percent suboptimality",
           description:
             "Percent difference between best solution and lower-bound",
           render: () => <LowerBoundChart scenario={scenarioData?.id} />,
+          documentation: <LowerBoundDoc />,
         },
       ],
     },
@@ -40,6 +45,7 @@ export function compareTemplate(scenarioData?: Scenario, mapData?: Map) {
               scenario={scenarioData?.id}
             />
           ),
+          documentation: <LowerBoundComparisonDoc />,
         },
       ],
     },

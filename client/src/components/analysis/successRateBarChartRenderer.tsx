@@ -89,7 +89,7 @@ export const SuccessRateBarChart = ({
           {
             color: accentColors.orange,
             key: proportionSolvedKey,
-            name: "Open",
+            name: "Solved but not closed",
           },
           {
             color: accentColors.red,

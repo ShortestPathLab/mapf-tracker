@@ -18,6 +18,7 @@ import { paper } from "theme";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
 import { GridChartCard } from "./GridChartCard";
+import Documentation from "docs/charts/CompletionByAgentCount.md";
 import { sample } from "./sample";
 
 export const slices = [
@@ -154,5 +155,11 @@ export function CompletionByAgentCountChart({
 export function CompletionByAgentCountChartCard(
   props: ComponentProps<typeof GridChartCard>
 ) {
-  return <GridChartCard {...props} content={<CompletionByAgentCountChart />} />;
+  return (
+    <GridChartCard
+      {...props}
+      content={<CompletionByAgentCountChart />}
+      documentation={<Documentation />}
+    />
+  );
 }

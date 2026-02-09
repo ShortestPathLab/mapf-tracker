@@ -22,6 +22,8 @@ import {
 import { paper } from "theme";
 import { toneBy } from "utils/colors";
 import { GridChartCard } from "./GridChartCard";
+import Documentation from "docs/charts/CompletionByAlgorithm.md";
+
 
 export const slices = [
   {
@@ -211,5 +213,11 @@ function CompletionByAlgorithmChart() {
 export function CompletionByAlgorithmChartCard(
   props: ComponentProps<typeof GridChartCard>
 ) {
-  return <GridChartCard {...props} content={<CompletionByAlgorithmChart />} />;
+  return (
+    <GridChartCard
+      {...props}
+      content={<CompletionByAlgorithmChart />}
+      documentation={<Documentation />}
+    />
+  );
 }

@@ -27,6 +27,9 @@ import { isUndefined } from "lodash";
 import { useAggregateOne } from "queries/useAggregateQuery";
 import { formatDate, formatPercentage } from "utils/format";
 import { ItemGrid } from "components/ItemGrid";
+import AlgorithmByMapTypeDoc from "docs/charts/AlgorithmByMapType.md";
+import AlgorithmByMapDoc from "docs/charts/AlgorithmByMap.md";
+import SuboptimalityByAgentCountDoc from "docs/charts/SuboptimalityByAgentCount.md";
 
 export function AlgorithmPage() {
   const sm = useSm();
@@ -149,6 +152,7 @@ export function AlgorithmPage() {
           primaryLabel="Completion by domain"
           secondaryLabel="Instances closed and solved across domains"
           height={560}
+          documentation={<AlgorithmByMapTypeDoc />}
           content={
             !!data?.id && <AlgorithmByMapTypeChart algorithm={data?.id} />
           }
@@ -157,12 +161,14 @@ export function AlgorithmPage() {
           primaryLabel="Completion by map"
           secondaryLabel="Instances closed and solved across maps"
           height={560}
+          documentation={<AlgorithmByMapDoc />}
           content={!!data?.id && <AlgorithmByMapChart algorithm={data?.id} />}
         />
         <GridChartCard
           primaryLabel="Suboptimality by agent count"
           secondaryLabel="Suboptimality range across agent counts"
           height={560}
+          documentation={<SuboptimalityByAgentCountDoc />}
           content={
             !!data?.id && (
               <SuboptimalityByAgentCountChart algorithm={data?.id} />

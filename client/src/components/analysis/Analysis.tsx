@@ -20,6 +20,7 @@ type Variant = {
   name: string;
   description?: string;
   render: () => ReactNode;
+  documentation?: ReactNode;
 };
 
 type Template = {
@@ -140,6 +141,7 @@ function Chart({ data }: { data: Variant[] }) {
             columns={1}
             height={height}
             content={render?.()}
+            documentation={data?.find((v) => v.name === name)?.documentation}
           />
         ))}
       </Stack>

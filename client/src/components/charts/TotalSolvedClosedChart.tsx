@@ -18,10 +18,20 @@ import {
 } from "recharts";
 import { formatPercentage } from "utils/format";
 import { GridChartCard } from "./GridChartCard";
+import Documentation from "docs/charts/TotalSolvedClosed.md";
 
-export function TotalSolvedClosedChart(
+export function TotalSolvedClosedChartCard(
   props: ComponentProps<typeof GridChartCard>
 ) {
+  return (
+    <GridChartCard
+      {...props}
+      content={<TotalSolvedClosedChart />}
+      documentation={<Documentation />}
+    />
+  );
+}
+export function TotalSolvedClosedChart() {
   const theme = useTheme();
   const [
     { data: { result: closed = 0 } = {} },
@@ -36,7 +46,6 @@ export function TotalSolvedClosedChart(
     <GridChartCard
       primaryLabel="Total completion"
       secondaryLabel={`${solved.toLocaleString()} solved / ${closed.toLocaleString()} closed / ${total.toLocaleString()} total`}
-      {...props}
       content={
         <Bar
           sx={{ height: "100%" }}
@@ -73,6 +82,7 @@ export function TotalSolvedClosedDonutChart(
     <GridChartCard
       primaryLabel="Total completion"
       secondaryLabel={`${solved.toLocaleString()} solved / ${closed.toLocaleString()} closed / ${total.toLocaleString()} total`}
+      documentation={<Documentation />}
       {...props}
       content={
         <Stack
