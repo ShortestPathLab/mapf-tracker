@@ -89,12 +89,12 @@ export const SuccessRateBarChart = ({
           {
             color: accentColors.orange,
             key: proportionSolvedKey,
-            name: "Solved",
+            name: "Open",
           },
           {
             color: accentColors.red,
             key: proportionUnknownKey,
-            name: "Open",
+            name: "Unsolved",
           },
         ],
         ({ key, color, name }) =>
