@@ -25,6 +25,9 @@ const filters: {
   best: (s) => s.validation.outcome === "valid",
   tie: () => false,
   dominated: () => false,
+  lb_tie: () => false,
+  lb_dominated: () => false,
+  lb_best: () => false,
 };
 
 function useSubmissionInstance({
@@ -38,7 +41,7 @@ function useSubmissionInstance({
   const filtered = filter(submissions, filters[slice]);
   const submission = filtered?.[index];
   const { data: instance, isLoading: isInstanceLoading } = useInstance(
-    submission?.instance
+    submission?.instance,
   );
   const isLoading = isSubmissionLoading || isInstanceLoading;
   return {
