@@ -76,6 +76,7 @@
     "react-dom": "^18",
     "react-email": "3.0.1",
     "redis-memory-server": "^0.11.0",
+    "serialize-error": "^13.0.1",
     "serve-index": "^1.9.1",
     "sharp": "^0.33.5",
     "string-hash": "^1.1.3",

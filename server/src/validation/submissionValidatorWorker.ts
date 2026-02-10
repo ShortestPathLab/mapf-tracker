@@ -276,8 +276,8 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
   };
 }> {
   log.info("Received job");
-  await connect();
   try {
+    await connect();
     const { submissionId, mode } = data;
 
     // Can error if submission doesn't exist, this is allowed.

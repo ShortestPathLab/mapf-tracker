@@ -9,6 +9,7 @@ import { log } from "logging";
 import { debounce, has } from "lodash";
 import { diskCached } from "./withDiskCache";
 import { get } from "models/Version";
+import { serializeError } from "serialize-error";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -54,7 +55,8 @@ export function cached<V extends z.ZodType>(
     } catch (e) {
       log.error(e, e)
       res.status(500).json({
-        error: `Error occurred: ${e}`,
+        error: `Error occurred retrieving data.`,
+        details: serializeError(e)
       });
     }
   }) as RequestHandler<unknown>;
@@ -77,9 +79,9 @@ export const queryClient = <T>(model: Model<T>) => {
       try {
         res.json(await g(data));
       } catch (e) {
-        log.error(e, e)
         res.status(500).json({
-          error: `Error occurred in ${model.modelName} query handler: ${e}`,
+          error: `Error occurred processing query for ${model.modelName}.`,
+          details: serializeError(e),
         });
       }
     };
@@ -186,7 +188,8 @@ export const route = <T extends z.ZodType, R>(
       log.error("Query error", { message: has(e, "message") ? e.message : e });
       console.error(e);
       res.status(500).json({
-        error: e,
+        error: `Error occurred processing this request.`,
+        details: serializeError(e),
       });
     }
   };

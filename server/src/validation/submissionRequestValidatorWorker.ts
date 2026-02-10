@@ -25,7 +25,7 @@ const log = context("Schema Validator");
 
 export const getKey = async (
   api_key: string | undefined,
-  ctx: RefinementCtx
+  ctx: RefinementCtx,
 ) => {
   const key = await SubmissionKey.findOne({ api_key });
   if (!key) return fatal(ctx, "API key invalid");
@@ -48,7 +48,7 @@ export const pathSchema = (newline: boolean = false) =>
     .string()
     .regex(
       newline ? /^[lruwd0-9\r\n]*$/ : /^[lruwd0-9]*$/,
-      "Should only contain `l`, `r`, `u`, `d`, `w`"
+      "Should only contain `l`, `r`, `u`, `d`, `w`",
     );
 
 const v = new Validator({ haltOnFirstError: true });
@@ -132,11 +132,11 @@ export const transformOne = async (v: One) => {
   v.solution_plan =
     typeof v.solution_plan === "string"
       ? v.solution_plan.split(/\r\n|\r|\n/)
-      : v.solution_plan ?? [];
+      : (v.solution_plan ?? []);
   v.solution_plan = v.flip_up_down
     ? v.solution_plan.map((s) =>
-        s.replaceAll(/u/g, "_").replaceAll(/d/g, "u").replaceAll(/_/g, "d")
-      )
+      s.replaceAll(/u/g, "_").replaceAll(/d/g, "u").replaceAll(/_/g, "d"),
+    )
     : v.solution_plan;
   // ─── Coerce Agent Count ──────────────────────────────────────────────
   v.agent_count ??= v.agents;
@@ -168,7 +168,7 @@ export const transformOne = async (v: One) => {
   // ─── Coerce Solution Plan ────────────────────────────────────────────
   v.solution_plan = v.solution_plan.map(encode).map(processSolution);
   v.solution_plan = v.solution_plan.map((s) =>
-    s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
+    s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d"),
   );
   v.solution_plan = v.solution_plan.join("\n");
   return v;
@@ -176,7 +176,7 @@ export const transformOne = async (v: One) => {
 
 const submitOne = async (
   apiKey: string,
-  data: Promise<One> | Promise<One>[] | One | One[]
+  data: Promise<One> | Promise<One>[] | One | One[],
 ) => {
   const id = { apiKey };
 
@@ -276,14 +276,14 @@ export type SubmissionRequestValidatorWorkerParams = {
 
 export type SubmissionRequestValidatorWorkerResult =
   | {
-      ids: {
-        submissionId: string;
-        apiKey: string;
-      }[];
-    }
+    ids: {
+      submissionId: string;
+      apiKey: string;
+    }[];
+  }
   | {
-      error: any;
-    };
+    error: any;
+  };
 
 if (!Bun.isMainThread) {
   self.onmessage = usingTaskMessageHandler<
