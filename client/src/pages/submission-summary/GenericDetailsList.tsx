@@ -1,6 +1,7 @@
 import { List, ListItem, ListItemText, ListProps } from "@mui/material";
 import { entries, startCase } from "lodash";
 import { CodeBlock } from "components/CodeBlock";
+import { dump } from "js-yaml";
 
 export default function GenericDetailsList({
   data,
@@ -12,11 +13,7 @@ export default function GenericDetailsList({
         <ListItem key={k} disableGutters>
           <ListItemText
             secondary={startCase(k)}
-            primary={
-              <CodeBlock language="json">
-                {JSON.stringify(v, null, 2)}
-              </CodeBlock>
-            }
+            primary={<CodeBlock language="yaml">{dump(v)}</CodeBlock>}
           />
         </ListItem>
       ))}
