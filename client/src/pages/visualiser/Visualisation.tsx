@@ -409,7 +409,6 @@ export function Visualisation({
                         py: 1,
                         px: 2,
                         width: sm ? undefined : "fit-content",
-                        minWidth: sm ? 0 : 320,
                       }}
                     >
                       <Stack
