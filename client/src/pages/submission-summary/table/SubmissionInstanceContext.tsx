@@ -1,5 +1,5 @@
 import { SummarySlice } from "core/types";
-import { filter } from "lodash";
+import { filter, isUndefined } from "lodash";
 import { useInstance } from "queries/useInstanceQuery";
 import {
   OngoingSubmission,
@@ -22,12 +22,30 @@ const filters: {
   invalid: (s) => s.validation.outcome === "invalid",
   outdated: (s) => s.validation.outcome === "outdated",
   queued: () => false,
-  best: (s) => s.validation.outcome === "valid",
-  tie: () => false,
-  dominated: () => false,
-  lb_tie: () => false,
-  lb_dominated: () => false,
-  lb_best: () => false,
+  best: (s) =>
+    s.validation.outcome === "valid" &&
+    !isUndefined(s.cost) &&
+    s.cost < (s.instance.solution_cost ?? Number.MAX_SAFE_INTEGER),
+  tie: (s) =>
+    s.validation.outcome === "valid" &&
+    !isUndefined(s.cost) &&
+    s.cost === (s.instance.solution_cost ?? Number.MAX_SAFE_INTEGER),
+  dominated: (s) =>
+    s.validation.outcome === "valid" &&
+    !isUndefined(s.cost) &&
+    s.cost > (s.instance.solution_cost ?? Number.MAX_SAFE_INTEGER),
+  lb_tie: (s) =>
+    s.validation.outcome === "valid" &&
+    !isUndefined(s.instance.lower_cost) &&
+    s.lowerBound === (s.instance.lower_cost ?? -1),
+  lb_dominated: (s) =>
+    s.validation.outcome === "valid" &&
+    !isUndefined(s.lowerBound) &&
+    s.lowerBound < (s.instance.lower_cost ?? -1),
+  lb_best: (s) =>
+    s.validation.outcome === "valid" &&
+    !isUndefined(s.lowerBound) &&
+    s.lowerBound > (s.instance.lower_cost ?? -1),
 };
 
 function useSubmissionInstance({
@@ -41,7 +59,7 @@ function useSubmissionInstance({
   const filtered = filter(submissions, filters[slice]);
   const submission = filtered?.[index];
   const { data: instance, isLoading: isInstanceLoading } = useInstance(
-    submission?.instance,
+    submission?.instance?._id,
   );
   const isLoading = isSubmissionLoading || isInstanceLoading;
   return {

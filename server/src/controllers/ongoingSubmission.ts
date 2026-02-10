@@ -36,6 +36,7 @@ import {
   SummaryByApiKeyResult,
   path as summaryByApiKeyWorkerPath,
 } from "./summaryByApiKey.worker";
+import { generateIndexes } from "./generateIndexes";
 
 const log = context("Submission Controller");
 
@@ -100,13 +101,14 @@ export const findByScenario = cached(
   [OngoingSubmission, Instance],
   z.object({ apiKey: z.string(), scenario: z.string() }),
   async ({ apiKey, scenario }) => {
+    const indexes = await generateIndexes();
     const ids = await Instance.aggregate(
       new AggregateBuilder()
         .match({ scen_id: new Types.ObjectId(scenario) })
         .project({ _id: 1 })
         .build(),
     );
-    return OngoingSubmission.aggregate(
+    const result = await OngoingSubmission.aggregate(
       new AggregateBuilder()
         .match({
           instance: { $in: ids.map((c) => new Types.ObjectId(c._id)) },
@@ -125,6 +127,10 @@ export const findByScenario = cached(
         })
         .build(),
     );
+    return result.map((r) => ({
+      ...r,
+      instance: pick(indexes.instances[r.instance], ["_id", "solution_cost", "lower_cost"])
+    }))
   },
 );
 

@@ -5,11 +5,10 @@ import {
   groupBy,
   head,
   isUndefined,
-  keyBy,
   mapValues,
-  once,
+  once
 } from "lodash";
-import { Infer, OngoingSubmission, Scenario } from "models";
+import { Infer, OngoingSubmission } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { z } from "zod";
 import { generateIndexes } from "./generateIndexes";

@@ -56,30 +56,25 @@ import { getOutcomeDisplay } from "./getOutcomeDisplay";
 import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
 
 function getSubmissionInfoText(
-  submission: OngoingSubmission,
-  instance: Instance,
+  { validation, cost, instance }: OngoingSubmission,
+  // instance: Instance,
 ) {
-  if (
-    submission?.validation?.isValidationRun &&
-    submission?.validation?.outcome !== "outdated"
-  ) {
-    const errors = submission?.validation?.errors;
+  if (validation?.isValidationRun && validation?.outcome !== "outdated") {
+    const errors = validation.errors;
     const showErrors = errors?.length;
-    const showImprovement = submission?.validation?.outcome === "valid";
+    const showImprovement = validation.outcome === "valid";
 
     const improvement = (() => {
       if (isNumber(instance?.solution_cost)) {
-        const isImprovement = instance.solution_cost > submission.cost;
-        const isTie = instance.solution_cost === submission.cost;
+        const isImprovement = instance.solution_cost > cost;
+        const isTie = instance.solution_cost === cost;
         return [
           isTie ? "Tie" : isImprovement ? "New record" : "Dominated",
-          `(yours: ${submission.cost ?? "--"}, best: ${
-            instance.solution_cost
-          })`,
+          `(yours: ${cost ?? "--"}, best: ${instance.solution_cost})`,
         ].join(" ");
       }
 
-      return `New record (${submission.cost ?? "--"}, no previous claims)`;
+      return `New record (${cost ?? "--"}, no previous claims)`;
     })();
 
     return capitalize(
@@ -323,7 +318,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
               scenarioId={row.scenario}
               index={row.index}
               slice={slice}
-              render={({ isLoading, submission, instance }) =>
+              render={({ isLoading, submission }) =>
                 isLoading ? (
                   ""
                 ) : (
@@ -336,7 +331,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                       whiteSpace: "pre-line",
                     }}
                   >
-                    {getSubmissionInfoText(submission, instance)}
+                    {getSubmissionInfoText(submission)}
                   </Typography>
                 )
               }
@@ -353,32 +348,35 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   return (
     <>
       <Stack
-        sx={{ gap: 2, alignItems: "center", flexWrap: "wrap" }}
+        sx={{ gap: 1, alignItems: "center", flexWrap: "wrap" }}
         direction="row"
       >
-        <Scroll x style={{ width: "max-content" }}>
-          <Stack
-            sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }}
-            direction="row"
-          >
-            {(
-              [
-                { label: "Valid", key: "valid" },
-                { label: "Invalid", key: "invalid" },
-                { label: "Duplicate", key: "outdated" },
-                { label: "Solution tie", key: "tie" },
-                { label: "Solution dominated", key: "dominated" },
-                { label: "Best solution", key: "best" },
-                { label: "Lower-bound tie", key: "lb_tie" },
-                { label: "Lower-bound dominated", key: "lb_dominated" },
-                { label: "Best lower-bound", key: "lb_best" },
-                { label: "All", key: "total" },
-              ] satisfies { label: string; key: keyof SummarySlice }[]
-            ).map(({ label, key }) => {
-              const selected = key === slice;
-              return (
+        <Stack
+          sx={{
+            display: "block",
+            textWrap: "balance",
+            mb: -1,
+            "> *": { display: "inline-block", mr: 1, mb: 1 },
+          }}
+        >
+          {(
+            [
+              { label: "Valid", key: "valid" },
+              { label: "Invalid", key: "invalid" },
+              { label: "Duplicate", key: "outdated" },
+              { label: "Solution tie", key: "tie" },
+              { label: "Solution dominated", key: "dominated" },
+              { label: "Best solution", key: "best" },
+              { label: "Lower-bound tie", key: "lb_tie" },
+              { label: "Lower-bound dominated", key: "lb_dominated" },
+              { label: "Best lower-bound", key: "lb_best" },
+              { label: "All", key: "total" },
+            ] satisfies { label: string; key: keyof SummarySlice }[]
+          ).map(({ label, key }) => {
+            const selected = key === slice;
+            return (
+              <Box key={key}>
                 <Chip
-                  key={key}
                   sx={{
                     pl: 0.25,
                     border: selected
@@ -401,10 +399,10 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                   variant="outlined"
                   onClick={() => setSlice(key as keyof SummarySlice)}
                 />
-              );
-            })}
-          </Stack>
-        </Scroll>
+              </Box>
+            );
+          })}
+        </Stack>
         <Box sx={{ flex: 1 }} />
         <Scroll fadeX x style={{ width: "max-content" }}>
           <Stack

@@ -51,7 +51,11 @@ export type OngoingSubmission = {
   createdAt: string;
   lowerBound: number;
   cost?: number;
-  instance: string;
+  instance: {
+    _id: string,
+    solution_cost: number,
+    lower_cost: number
+  };
   apiKey: string;
   updatedAt: string;
   validation: ValidationOutcome;
