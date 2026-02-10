@@ -361,12 +361,20 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }}
             direction="row"
           >
-            {[
-              { label: "Valid", key: "valid" },
-              { label: "Invalid", key: "invalid" },
-              { label: "Duplicate", key: "outdated" },
-              { label: "All", key: "total" },
-            ].map(({ label, key }) => {
+            {(
+              [
+                { label: "Valid", key: "valid" },
+                { label: "Invalid", key: "invalid" },
+                { label: "Duplicate", key: "outdated" },
+                { label: "Solution tie", key: "tie" },
+                { label: "Solution dominated", key: "dominated" },
+                { label: "Best solution", key: "best" },
+                { label: "Lower-bound tie", key: "lb_tie" },
+                { label: "Lower-bound dominated", key: "lb_dominated" },
+                { label: "Best lower-bound", key: "lb_best" },
+                { label: "All", key: "total" },
+              ] satisfies { label: string; key: keyof SummarySlice }[]
+            ).map(({ label, key }) => {
               const selected = key === slice;
               return (
                 <Chip
