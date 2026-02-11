@@ -109,6 +109,19 @@ function renderPlaceholder() {
   );
 }
 
+const filters = [
+  { label: "Valid", key: "valid" },
+  { label: "Invalid", key: "invalid" },
+  { label: "Duplicate", key: "outdated" },
+  { label: "Solution tie", key: "tie" },
+  { label: "Solution dominated", key: "dominated" },
+  { label: "Best solution", key: "best" },
+  { label: "Lower-bound tie", key: "lb_tie" },
+  { label: "Lower-bound dominated", key: "lb_dominated" },
+  { label: "Best lower-bound", key: "lb_best" },
+  { label: "All", key: "total" },
+] satisfies { label: string; key: keyof SummarySlice }[];
+
 export default function Table({ apiKey }: { apiKey?: string | number }) {
   const theme = useTheme();
   const { dialog, open } = useSurface(DetailsDialog, {
@@ -122,6 +135,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     useDeleteOngoingSubmissionMutation(apiKey);
 
   const [expanded, setExpanded] = useBooleanMap();
+  console.log(expanded);
   const [slice, setSlice] = useState<keyof SummarySlice>("total");
 
   const actions = useDataGridActions<Model>({
@@ -351,7 +365,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         sx={{ gap: 1, alignItems: "center", flexWrap: "wrap" }}
         direction="row"
       >
-        <Stack
+        <Box
           sx={{
             display: "block",
             textWrap: "balance",
@@ -359,20 +373,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
             "> *": { display: "inline-block", mr: 1, mb: 1 },
           }}
         >
-          {(
-            [
-              { label: "Valid", key: "valid" },
-              { label: "Invalid", key: "invalid" },
-              { label: "Duplicate", key: "outdated" },
-              { label: "Solution tie", key: "tie" },
-              { label: "Solution dominated", key: "dominated" },
-              { label: "Best solution", key: "best" },
-              { label: "Lower-bound tie", key: "lb_tie" },
-              { label: "Lower-bound dominated", key: "lb_dominated" },
-              { label: "Best lower-bound", key: "lb_best" },
-              { label: "All", key: "total" },
-            ] satisfies { label: string; key: keyof SummarySlice }[]
-          ).map(({ label, key }) => {
+          {filters.map(({ label, key }) => {
             const selected = key === slice;
             return (
               <Box key={key}>
@@ -402,7 +403,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
               </Box>
             );
           })}
-        </Stack>
+        </Box>
         <Box sx={{ flex: 1 }} />
         <Scroll fadeX x style={{ width: "max-content" }}>
           <Stack
