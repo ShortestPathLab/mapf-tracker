@@ -135,7 +135,6 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     useDeleteOngoingSubmissionMutation(apiKey);
 
   const [expanded, setExpanded] = useBooleanMap();
-  console.log(expanded);
   const [slice, setSlice] = useState<keyof SummarySlice>("total");
 
   const actions = useDataGridActions<Model>({
