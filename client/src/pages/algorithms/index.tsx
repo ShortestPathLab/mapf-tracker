@@ -4,7 +4,12 @@ import { Item } from "components/Item";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
-import { Bar, DataGrid, cellRendererChip } from "components/data-grid";
+import {
+  Bar,
+  DataGrid,
+  cellRendererChip,
+  cellRendererText,
+} from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { useSurface } from "components/surface";
 import { AlgorithmDetails } from "core/types";
@@ -149,6 +154,7 @@ function Table() {
       sortable: true,
       type: "date" as const,
       fold: true,
+      renderCell: cellRendererText,
       valueFormatter: (v) => (isUndefined(v) ? "N/A" : formatDate(v)),
     },
   ];
