@@ -56,7 +56,7 @@ import { getOutcomeDisplay } from "./getOutcomeDisplay";
 import { useDeleteOngoingSubmissionByScenarioIndexMutation } from "./useDeleteOngoingSubmissionByScenarioIndexMutation";
 
 function getSubmissionInfoText(
-  { validation, cost, instance }: OngoingSubmission,
+  { validation, cost, instance }: Partial<OngoingSubmission> = {},
   // instance: Instance,
 ) {
   if (validation?.isValidationRun && validation?.outcome !== "outdated") {
