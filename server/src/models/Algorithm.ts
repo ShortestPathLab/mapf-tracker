@@ -2,6 +2,7 @@ import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 import { Types } from "mongoose";
 import { queryClient } from "query";
+import { algorithmCommon } from "./Algorithm.common";
 
 const schema = createSchema(
   {
@@ -18,6 +19,7 @@ const schema = createSchema(
     instances_closed: Number,
     instances_solved: Number,
     submittedAt: Date,
+    ...algorithmCommon,
     requestId: { type: Types.ObjectId, ref: "users" },
   },
   {

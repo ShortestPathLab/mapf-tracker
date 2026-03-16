@@ -44,7 +44,7 @@ const g = [
 function Table() {
   const { data: algorithms } = useAlgorithmDetailsData();
   const theme = useTheme();
-  const total = max(flatMap(g, (c) => map(algorithms, c) || 1)) * 1.5;
+  const total = max(flatMap(g, (c) => map(algorithms, c) || 1));
   const navigate = useNavigate();
   const columns: GridColDef<AlgorithmDetails>[] = [
     {

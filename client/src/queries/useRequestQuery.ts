@@ -1,13 +1,14 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { APIConfig } from "core/config";
 import { map } from "lodash";
-import { InferType, object, string } from "yup";
+import { boolean, InferType, object, string } from "yup";
 import { json } from "./query";
 import { RequestWithReviewOutcome } from "./useRequestsQuery";
 
 export type Request = InferType<typeof requestSchema> & { id?: string };
 
 export const requestSchema = object({
+  isOptimal: boolean().default(false),
   requesterName: string().required("Requester name is required."),
   requesterEmail: string()
     .email("Please enter a valid email address.")
@@ -40,7 +41,7 @@ export const useRequestsData = (keys: string[]) =>
 
 export const requestByEmailQueryFn = (email: string) => async () =>
   await json<RequestWithReviewOutcome[]>(
-    `${APIConfig.apiUrl}/request/email/${email}`
+    `${APIConfig.apiUrl}/request/email/${email}`,
   );
 
 export const useRequestByEmailData = (email: string) =>

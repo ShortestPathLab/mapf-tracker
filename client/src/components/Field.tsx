@@ -1,7 +1,11 @@
 import {
   AutocompleteProps,
+  CheckboxProps,
   Autocomplete as MuiAutocomplete,
   SxProps,
+  Checkbox as MuiCheckbox,
+  FormControlLabel,
+  FormControlLabelProps,
 } from "@mui/material";
 import Box, { BoxProps } from "@mui/material/Box";
 import FormHelperText, {
@@ -18,11 +22,11 @@ import { ComponentProps, ComponentType, Ref, forwardRef } from "react";
 import { paper } from "theme";
 
 export function Field<
-  Schema extends Record<string, string | number | object> = Record<
+  Schema extends Record<string, string | number | object | boolean> = Record<
     string,
-    string | number | object
+    string | number | object | boolean
   >,
-  T extends ComponentType<object> = typeof TextField
+  T extends ComponentType<object> = typeof TextField,
 >({
   slotProps = {},
   as,
@@ -79,7 +83,28 @@ export const Select = forwardRef(
       }}
       ref={ref}
     />
-  )
+  ),
+);
+
+export const Checkbox = forwardRef(
+  (props: Partial<FormControlLabelProps>, ref: Ref<HTMLButtonElement>) => {
+    const form = useFormikContext();
+    return (
+      <FormControlLabel
+        label="No label"
+        {...props}
+        ref={ref}
+        control={
+          <MuiCheckbox
+            defaultChecked={!!props.value}
+            onChange={(v) => {
+              form.setFieldValue(props.name, v.target.checked);
+            }}
+          />
+        }
+      />
+    );
+  },
 );
 
 export const Autocomplete = forwardRef(function <
@@ -87,7 +112,7 @@ export const Autocomplete = forwardRef(function <
   Multiple extends boolean | undefined,
   DisableClearable extends boolean | undefined,
   FreeSolo extends boolean | undefined,
-  ChipComponent extends React.ElementType = "div"
+  ChipComponent extends React.ElementType = "div",
 >(
   {
     autoCompleteProps,
@@ -105,7 +130,7 @@ export const Autocomplete = forwardRef(function <
       "renderInput"
     >;
   } & TextFieldProps,
-  ref: Ref<HTMLDivElement>
+  ref: Ref<HTMLDivElement>,
 ) {
   const form = useFormikContext();
   return (

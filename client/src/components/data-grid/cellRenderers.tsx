@@ -134,7 +134,7 @@ export const Bar = ({
             gap: 1,
           },
         },
-        props
+        props,
       )}
     >
       <Stack direction="row" sx={{ flex: 1 }}>
@@ -149,7 +149,9 @@ export const Bar = ({
                 bgcolor: "transparent",
                 transition: `flex 2s ${easeCircle}`,
                 flex: value,
-                "> .MuiLinearProgress-bar": { bgcolor: color ?? "info.main" },
+                "> .MuiLinearProgress-bar": {
+                  bgcolor: color ?? "info.main",
+                },
               }}
               value={100}
               variant="determinate"

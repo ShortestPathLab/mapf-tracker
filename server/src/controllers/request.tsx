@@ -18,7 +18,7 @@ export const findByEmail = query(
     {
       requesterEmail: email,
     },
-  ]
+  ],
 );
 
 export const findAll: RequestHandler = (req, res) => {
@@ -64,7 +64,7 @@ async function queueMail(args: Infer<typeof Request>) {
     "noreply@pathfinding.ai",
     args.requesterEmail,
     "We have received your request",
-    a
+    a,
   );
 }
 
@@ -76,6 +76,7 @@ export const create: RequestHandler = async (req, res) => {
   }
 
   const field = {
+    isOptimal: req.body.isOptimal,
     requesterName: req.body.requesterName,
     requesterEmail: req.body.requesterEmail,
     requesterAffiliation: req.body.requesterAffiliation,
@@ -103,6 +104,7 @@ export const create: RequestHandler = async (req, res) => {
 
 const requestSchema = {
   id: z.string(),
+  isOptimal: z.boolean(),
   requesterName: z.string(),
   requesterEmail: z.string().email(),
   requesterAffiliation: z.string(),
@@ -127,7 +129,7 @@ const handleRequestUpdate = async ({
 
 export const updateRequest = route(
   z.object(requestSchema),
-  handleRequestUpdate
+  handleRequestUpdate,
 );
 
 export const updateRequestElevated = route(z.any(), handleRequestUpdate);

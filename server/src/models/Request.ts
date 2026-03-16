@@ -1,6 +1,7 @@
 import { Schema, model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 import { queryClient } from "query";
+import { algorithmCommon } from "./Algorithm.common";
 
 const schema = createSchema({
   requesterName: String,
@@ -15,6 +16,7 @@ const schema = createSchema({
   githubLink: String,
   comments: String,
   isApproved: Boolean,
+  ...algorithmCommon,
   reviewStatus: {
     type: {
       status: {

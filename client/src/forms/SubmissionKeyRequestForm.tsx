@@ -1,6 +1,6 @@
 import { createFilterOptions, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { Autocomplete, Field } from "components/Field";
+import { Autocomplete, Checkbox, Field } from "components/Field";
 import { Form, Formik, FormikConfig, FormikProps } from "formik";
 import { chain, noop, once } from "lodash";
 import { toJson } from "queries/query";
@@ -133,11 +133,11 @@ export function SubmissionKeyRequestForm({
                 label="Affiliation"
                 placeholder="Monash University"
                 required
-              />
+              />,
             )}
             {renderLabel(
               "About your algorithm",
-              "Tell us about this algorithm you would like to submit results for."
+              "Tell us about this algorithm you would like to submit results for.",
             )}
             {renderRow(
               <Field<Request>
@@ -153,7 +153,7 @@ export function SubmissionKeyRequestForm({
                 label="Authors"
                 placeholder="John Doe, Wei Zhang, Joe Smith"
                 required
-              />
+              />,
             )}
             <Field<Request>
               name="paperReference"
@@ -164,9 +164,15 @@ export function SubmissionKeyRequestForm({
               minRows={3}
               required
             />
+            <Field<Request, typeof Checkbox>
+              name="isOptimal"
+              disabled={disabled || disabledValues?.isOptimal}
+              label="My algorithm is optimal"
+              as={Checkbox}
+            />
             {renderLabel(
               "Where your algorithm is published",
-              "Make it easier for people to find your work once we list your results on our platform."
+              "Make it easier for people to find your work once we list your results on our platform.",
             )}
             <Field<Request>
               name="googleScholar"
@@ -188,7 +194,7 @@ export function SubmissionKeyRequestForm({
             />
             {renderLabel(
               "Other info",
-              "Let us know why you would like to submit your algorithm to our tracker, as well as any other helpful information."
+              "Let us know why you would like to submit your algorithm to our tracker, as well as any other helpful information.",
             )}
             <Field<Request>
               multiline
