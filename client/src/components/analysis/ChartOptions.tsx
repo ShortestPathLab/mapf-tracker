@@ -45,7 +45,7 @@ export function CheckboxItem({ selected, children, ...props }: MenuItemProps) {
 }
 
 export const stateOfTheArt = {
-  algo_name: "(State of the art)",
+  algo_name: "(Virtual best)",
   _id: "state-of-the-art",
 };
 

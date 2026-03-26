@@ -101,7 +101,7 @@ export function InstanceDetails({
             </Stack>{" "}
             <Stack sx={{ gap: 2 }}>
               <Typography variant="subtitle2" color="text.secondary">
-                State-of-the-art for this instance
+                Best for this instance
               </Typography>
               <Grid width={120}>
                 {["solution_cost", "lower_cost"].map((cost) => (
