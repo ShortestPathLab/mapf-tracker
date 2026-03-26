@@ -14,7 +14,7 @@ import {
 } from "recharts";
 import { paper } from "theme";
 import { formatPercentage } from "utils/format";
-import _, { max, range } from "lodash";
+import _, { isNil, max, range } from "lodash";
 import { accentColors, colors, tone } from "utils/colors";
 
 export function SuboptimalityByAgentCountChart({
@@ -58,13 +58,20 @@ export function SuboptimalityByAgentCountChart({
 
       return {
         isLoading: minQuery.isLoading || maxQuery.isLoading,
-        data: range(agents).map((agent) => ({
-          agentCount: agent,
-          range: [
-            minData[agent]?.result ?? 1, // default to 1 if missing
-            maxData[agent]?.result ?? 1,
-          ],
-        })),
+        data: range(agents).flatMap((agent) => {
+          if (
+            !isNil(minData[agent]?.result) &&
+            !isNil(maxData[agent]?.result)
+          ) {
+            return [
+              {
+                agentCount: agent,
+                range: [minData[agent]?.result, maxData[agent]?.result],
+              },
+            ];
+          }
+          return [];
+        }),
       };
     },
   });

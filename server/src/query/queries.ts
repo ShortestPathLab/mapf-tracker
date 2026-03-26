@@ -103,7 +103,12 @@ const createAggregateBase =
         result: operations[o](
           filters[f]("$solution_cost", "$lower_cost"),
           v === "suboptimality"
-            ? { $divide: ["$solution_cost", { $max: ["$lower_cost", 1] }] }
+            ? {
+                $divide: [
+                  { $subtract: ["$solution_cost", "$lower_cost"] },
+                  { $max: ["$lower_cost", 1] },
+                ],
+              }
             : `$${v}`,
         ),
       });
