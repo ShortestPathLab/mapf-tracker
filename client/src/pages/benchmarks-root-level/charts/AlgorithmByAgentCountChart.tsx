@@ -14,6 +14,7 @@ import { formatPercentage } from "utils/format";
 import { MapPicker } from "./MapPicker";
 import { useAlgorithmChartData } from "./useAlgorithmChartData";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
+import { sample } from "components/charts/sample";
 
 export const slices = [
   {
@@ -65,6 +66,7 @@ export function AlgorithmByAgentCountChart({
             ...keyBy(collection.data, "algorithm"),
           }))
           .sortBy("agentCount")
+          .thru(sample(500))
           .value()}
         render={
           <SliceChart
