@@ -16,6 +16,7 @@ import { paper } from "theme";
 import { formatPercentage } from "utils/format";
 import _, { isNil, max, range } from "lodash";
 import { accentColors, colors, tone } from "utils/colors";
+import { sample } from "./sample";
 
 export function SuboptimalityByAgentCountChart({
   map,
@@ -78,7 +79,7 @@ export function SuboptimalityByAgentCountChart({
   return (
     <Chart
       isLoading={results.isLoading}
-      data={results.data}
+      data={sample(500)(results.data)}
       render={
         <AreaChart margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
           <CartesianGrid stroke={palette.divider} />

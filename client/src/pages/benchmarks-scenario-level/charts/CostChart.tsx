@@ -113,7 +113,7 @@ export function CostChart({ scenario }: { scenario: string }) {
         solutionCost: s?.result,
         lowerCost: c?.result,
       }))
-      .thru(sample(250))
+      .thru(sample(500))
       .value();
     return {
       data,

@@ -107,7 +107,7 @@ function RenderChart({
             strokeWidth={stroke ? 2 : 0}
             strokeOpacity={1}
           />
-        )
+        ),
       )}
     </AreaChart>
   );
@@ -136,7 +136,7 @@ export function CompletionByAgentCountChart({
         solved: s?.result,
         closed: c?.result,
       }))
-      .thru(sample(250))
+      .thru(sample(500))
       .value();
     return {
       data,
@@ -153,7 +153,7 @@ export function CompletionByAgentCountChart({
 }
 
 export function CompletionByAgentCountChartCard(
-  props: ComponentProps<typeof GridChartCard>
+  props: ComponentProps<typeof GridChartCard>,
 ) {
   return (
     <GridChartCard
