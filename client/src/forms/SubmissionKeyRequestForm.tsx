@@ -178,19 +178,19 @@ export function SubmissionKeyRequestForm({
               name="googleScholar"
               disabled={disabled || disabledValues?.googleScholar}
               type="url"
-              label="Google Scholar link"
+              label="Google Scholar URL"
             />
             <Field<Request>
               name="dblp"
               type="url"
-              label="DBLP link"
+              label="DBLP URL"
               disabled={disabled || disabledValues?.dblp}
             />
             <Field<Request>
               name="githubLink"
               disabled={disabled || disabledValues?.githubLink}
               type="url"
-              label="GitHub link"
+              label="Repository URL"
             />
             {renderLabel(
               "Other info",

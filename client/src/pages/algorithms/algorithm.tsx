@@ -57,7 +57,7 @@ export function AlgorithmPage() {
       items={[
         ...(
           [
-            { key: "github", label: "GitHub" },
+            { key: "github", label: "Repository" },
             { key: "dblp", label: "DBLP" },
             { key: "google_scholar", label: "Google Scholar" },
           ] as const
