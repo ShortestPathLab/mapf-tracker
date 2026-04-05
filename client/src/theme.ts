@@ -133,6 +133,10 @@ export const theme = (t: "light" | "dark") =>
     },
   });
 
+
+export const lightTheme = theme('light');
+export const darkTheme = theme('dark');
+
 export function useAcrylic(color?: string): SxProps<Theme> {
   return {
     backdropFilter: "blur(16px)",

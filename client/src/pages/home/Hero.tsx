@@ -92,11 +92,10 @@ export default function Hero({ children }: { children?: ReactNode }) {
     <Stack
       sx={{
         gap: 4,
-        m: xs ? 0 : md ? 2 : 4,
+        m: xs ? 0 : md ? 0 : 0,
         maxWidth: "100%",
       }}
     >
-      <Tip />
       <Stack
         direction={md ? "column" : "row"}
         sx={{
@@ -114,6 +113,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
             width: md ? "100%" : 0,
           }}
         >
+          <Tip />
           {renderHeader(
             "Trends",
             "Explore trends in the dataset",

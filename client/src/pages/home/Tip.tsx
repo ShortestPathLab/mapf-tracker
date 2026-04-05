@@ -3,11 +3,12 @@ import {
   TableRounded,
   UploadRounded,
 } from "@mui-symbols-material/w300";
-import { alpha, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, ThemeProvider, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { appName } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
+import { darkTheme, paper } from "theme";
 
 export function Tip() {
   const xs = useXs();
@@ -16,13 +17,34 @@ export function Tip() {
   return (
     <Stack
       sx={{
-        bgcolor: (t) => alpha(t.palette.background.default, 0),
         gap: xs ? 3 : sm ? 3 : 4,
-        py: xs ? 2 : 0,
+        p: xs ? 4 : 6,
+        textWrap: "balance",
+        borderRadius: 1,
+        position: 'relative',
+        overflow: 'hidden',
+        "> *": { zIndex: 1 },
+        border: (t) => `1px solid ${t.palette.divider}`,
+        // backgroundImage: (t) =>
+        //   `linear-gradient(to bottom, ${t.palette.secondary.main}20, transparent)`,
       }}
     >
+      <Box sx={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: t => `linear-gradient(to bottom, ${t.palette.background.default}, ${t.palette.background.default}), url(/assets/6.png)`,
+        backgroundSize: '100% 100%',
+        backgroundBlendMode: 'lighten, normal',
+        zIndex: 0,
+        opacity: 0.3,
+      }} />
       <Stack sx={{ gap: 1 }}>
-        <Typography variant={xs ? "h2" : "h2"}>{appName}</Typography>
+        <Typography
+          variant={xs ? "h2" : "h1"}
+          sx={{ fontWeight: xs ? 400 : 300, fontSize: xs ? '1.5rem' : "2.5rem" }}
+        >
+          {appName}
+        </Typography>
         <Typography
           variant="subtitle1"
           color="text.secondary"
