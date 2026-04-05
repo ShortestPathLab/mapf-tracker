@@ -6,41 +6,103 @@ import {
   useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
 import { sample } from "components/charts/sample";
-import { chain, keyBy } from "lodash";
+import { BaseMetric } from "core/metrics";
+import {
+  chain,
+  flatMap,
+  fromPairs,
+  keyBy,
+  keys,
+  map,
+  max,
+  range,
+  startCase,
+  uniq,
+  zip,
+} from "lodash";
 import { useScenarioOnAgentData } from "queries/useScenarioQuery";
+import {
+  AggregateQuery,
+  algorithmQuery,
+  useAggregate,
+  useAggregateAlgorithm,
+} from "queries/useAggregateQuery";
+import { useQueries } from "@tanstack/react-query";
+import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 
 export const slices = [
   {
     key: "count",
     name: "Instance count",
   },
-] satisfies Slice[];
+] as const satisfies Slice[];
 
-export function AlgorithmByAgentChart({ map }: { map: string }) {
-  const algorithmSelectorState = useSliceSelector(slices);
+export const metrics = [
+  { key: "solved", name: "Instances solved" },
+  { key: "closed", name: "Instances closed" },
+  { key: "best_lower", name: "Best lower-bound" },
+  { key: "best_solution", name: "Best solution" },
+] as const satisfies BaseMetric[];
+
+export function AlgorithmByAgentChart({ map: m }: { map: string }) {
+  const algorithmSelectorState = useSliceSelector<
+    (typeof metrics)[number],
+    (typeof slices)[number]
+  >(slices, metrics);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data, isLoading } = useScenarioOnAgentData(metric, map);
+
+  const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
+    useAlgorithmsData();
+
+  const actualSelected = algorithms.filter(({ _id }) =>
+    selected?.length ? selected.includes(_id) : true,
+  );
+
+  const { data, isLoading } = useQueries({
+    queries: actualSelected.map((a) =>
+      algorithmQuery({
+        algorithm: a._id,
+        map: m,
+        groupBy: "agents",
+        filterBy: metric,
+      }),
+    ),
+    combine: (queries) => {
+      const dictionaries = queries.map((q) => keyBy(q.data, "_id"));
+      const maxA = max(queries.flatMap((q) => q.data?.map?.((d) => +d._id)));
+      const data = range(1, maxA + 1).map((agentCount) => ({
+        agentCount: agentCount,
+        ...fromPairs(
+          actualSelected.map((a, i) => [
+            a._id,
+            { [slice.key]: dictionaries[i][agentCount]?.result },
+          ]),
+        ),
+      }));
+      return {
+        isLoading: queries.some((q) => q.isLoading) || isAlgorithmsLoading,
+        data,
+      };
+    },
+  });
   return (
     <>
-      <ChartOptions {...algorithmSelectorState} slices={slices} />
+      <ChartOptions
+        {...algorithmSelectorState}
+        slices={slices}
+        metrics={metrics}
+      />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}
-        data={chain(data)
-          .map((c, i) => ({
-            agentCount: i + 1,
-            ...keyBy(c.solved_instances, "algo_name"),
-          }))
-          .thru(sample(500))
-          .sortBy("agentCount")
-          .value()}
+        data={data}
         render={
           <SliceChart
             slice={slice}
             selected={selected}
             type="area"
             xAxisDataKey="agentCount"
-            keyType="name"
+            keyType="id"
           />
         }
       />

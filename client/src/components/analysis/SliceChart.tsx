@@ -103,7 +103,7 @@ export const SliceChart = ({
       {map(
         filter(
           algorithmsWithSota,
-          (a) => !selected.length || selected.includes(a._id)
+          (a) => !selected.length || selected.includes(a._id),
         ),
         (algorithm, i) => (
           <Series
@@ -118,7 +118,7 @@ export const SliceChart = ({
                   fill: toneBy(theme.palette.mode, i),
                   stroke: toneBy(theme.palette.mode, i),
                   fillOpacity: {
-                    area: 0.25,
+                    area: 0.2,
                     line: 0,
                     bar: 1,
                   }[type],
@@ -130,7 +130,7 @@ export const SliceChart = ({
             name={algorithm.algo_name}
             stackId={stacked ? "1" : undefined}
           />
-        )
+        ),
       )}
     </Chart>
   );
