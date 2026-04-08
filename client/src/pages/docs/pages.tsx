@@ -53,6 +53,7 @@ export const pages = () => [
     title: "Read and cite the paper",
     icon: <ArticleRounded />,
     content: <CitePage />,
-    description: "Here's how to cite MAPF tracker when you use the system",
+    description:
+      "This technical paper describes the goals and design of the MAPF Tracker",
   }),
 ];
