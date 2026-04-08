@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardActionArea,
   CardMedia,
@@ -8,6 +9,7 @@ import {
 } from "@mui/material";
 import { paper } from "theme";
 import { Page } from "./pages";
+import BoringAvatar from "boring-avatars";
 
 export function ArticleCard({ page, ...props }: { page?: Page } & CardProps) {
   return (
@@ -31,11 +33,28 @@ export function ArticleCard({ page, ...props }: { page?: Page } & CardProps) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "text.secondary",
             backgroundImage: page?.cover ? `url(${page.cover})` : undefined,
+            position: "relative",
           }}
         >
-          {page?.icon}
+          {!page?.cover && (
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                backgroundColor: "rgba(0,0,0,0.5)",
+              }}
+            >
+              <BoringAvatar
+                colors={["#edae49", "#d1495b", "#00798c", "#30638e", "#003d5b"]}
+                preserveAspectRatio="none"
+                square
+                size="100%"
+                name={page?.label || ""}
+              />
+            </Box>
+          )}
+          <Box sx={{ zIndex: 1, color: "white" }}>{page?.icon}</Box>
         </CardMedia>
         <Stack sx={{ p: 2 }}>
           <Typography gutterBottom variant="h6" component="div">

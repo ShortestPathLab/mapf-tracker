@@ -1,5 +1,6 @@
 import {
   AnimationRounded,
+  ArticleRounded,
   EmojiEventsRounded,
   ShapeLineRounded,
   UploadFileRounded,
@@ -7,6 +8,7 @@ import {
 import { find } from "lodash";
 import { createArticlePage } from "./createArticlePage";
 import DemoPage from "./docs-demo.mdx";
+import CitePage from "./docs-cite.mdx";
 import SubmissionInstructionsPage from "./docs-how-to-submit.mdx";
 import ProblemDefinitionPage from "./docs-problem-definition.md";
 import SolutionFormatPage from "./docs-solution-format.mdx";
@@ -17,6 +19,13 @@ export const submissionInstructions = () =>
   find(pages(), { value: "how-to-submit" });
 
 export const pages = () => [
+  createArticlePage({
+    key: "cite",
+    title: "Read and cite the paper",
+    icon: <ArticleRounded />,
+    content: <CitePage />,
+    description: "Here's how to cite MAPF tracker when you use the system",
+  }),
   createArticlePage({
     key: "system-demo",
     title: "Watch our system demo",
