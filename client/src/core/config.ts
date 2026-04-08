@@ -14,6 +14,8 @@ export const appNameShort = "Tracker";
 
 export const publisher = "ShortestPathLab";
 
+export const publisherUrl = "https://pathfinding.ai";
+
 export const appIconUrl = "/favicon.png";
 
 export const APIConfig = {

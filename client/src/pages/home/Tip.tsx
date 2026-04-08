@@ -3,10 +3,18 @@ import {
   TableRounded,
   UploadRounded,
 } from "@mui-symbols-material/w300";
-import { Box, Button, Stack, ThemeProvider, Typography } from "@mui/material";
+import {
+  alpha,
+  Box,
+  Button,
+  Stack,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
-import { appName } from "core/config";
+import { Link } from "@mui/material";
+import { appName, publisher, publisherUrl } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
 import { darkTheme, paper } from "theme";
 
@@ -18,40 +26,50 @@ export function Tip() {
     <Stack
       sx={{
         gap: xs ? 3 : sm ? 3 : 4,
-        p: xs ? 4 : 6,
+        p: xs ? 2 : 6,
         textWrap: "balance",
         borderRadius: 1,
-        position: 'relative',
-        overflow: 'hidden',
+        position: "relative",
+        overflow: "hidden",
         "> *": { zIndex: 1 },
-        border: (t) => `1px solid ${t.palette.divider}`,
-        // backgroundImage: (t) =>
-        //   `linear-gradient(to bottom, ${t.palette.secondary.main}20, transparent)`,
+        border: (t) => `1px solid ${alpha(t.palette.divider, 0.1)}`,
       }}
     >
-      <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: t => `linear-gradient(to bottom, ${t.palette.background.default}, ${t.palette.background.default}), url(/assets/6.png)`,
-        backgroundSize: '100% 100%',
-        backgroundBlendMode: 'lighten, normal',
-        zIndex: 0,
-        opacity: 0.3,
-      }} />
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: (t) =>
+            `linear-gradient(to bottom, ${t.palette.background.default}, ${t.palette.background.default}), url(/assets/6.png)`,
+          backgroundSize: "100% 100%",
+          backgroundBlendMode: "lighten, normal",
+          zIndex: 0,
+          opacity: 0.3,
+        }}
+      />
       <Stack sx={{ gap: 1 }}>
+        <Typography variant="h6" sx={{ mb: 4 }}>
+          <Link
+            sx={{ textDecoration: "none" }}
+            href={publisherUrl}
+            target="_blank"
+          >
+            {publisher}
+          </Link>
+        </Typography>
         <Typography
           variant={xs ? "h2" : "h1"}
-          sx={{ fontWeight: xs ? 400 : 300, fontSize: xs ? '1.5rem' : "2.5rem" }}
+          sx={{
+            fontWeight: xs ? 400 : 300,
+            fontSize: xs ? "2rem" : "2.5rem",
+          }}
         >
           {appName}
         </Typography>
         <Typography
           variant="subtitle1"
           color="text.secondary"
-          sx={{
-            lineHeight: "1.25",
-            mt: -0.5,
-          }}
+          sx={{ lineHeight: "1.25" }}
         >
           Tracking the state-of-the-art of multi-agent pathfinding algorithms
         </Typography>
