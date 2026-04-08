@@ -20,18 +20,19 @@ export const submissionInstructions = () =>
 
 export const pages = () => [
   createArticlePage({
-    key: "cite",
-    title: "Read and cite the paper",
-    icon: <ArticleRounded />,
-    content: <CitePage />,
-    description: "Here's how to cite MAPF tracker when you use the system",
-  }),
-  createArticlePage({
     key: "system-demo",
     title: "Watch our system demo",
     icon: <AnimationRounded />,
     content: <DemoPage />,
     description: "Take 5 minutes to watch our ICAPS 2023 system demonstration",
+  }),
+  createArticlePage({
+    key: "how-to-submit",
+    title: "Submitting data to MAPF Tracker",
+    icon: <UploadFileRounded />,
+    content: <SubmissionInstructionsPage />,
+    description:
+      "Quick-start guide on how to submit your results to the platform",
   }),
   createArticlePage({
     key: "problem-definition",
@@ -48,11 +49,10 @@ export const pages = () => [
     description: "How do I read or write a solution?",
   }),
   createArticlePage({
-    key: "how-to-submit",
-    title: "Submitting data to MAPF Tracker",
-    icon: <UploadFileRounded />,
-    content: <SubmissionInstructionsPage />,
-    description:
-      "Quick-start guide on how to submit your results to the platform",
+    key: "cite",
+    title: "Read and cite the paper",
+    icon: <ArticleRounded />,
+    content: <CitePage />,
+    description: "Here's how to cite MAPF tracker when you use the system",
   }),
 ];

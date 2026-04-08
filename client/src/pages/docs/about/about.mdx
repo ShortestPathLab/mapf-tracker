@@ -1,3 +1,26 @@
+import { CodeBlock } from 'components/CodeBlock';
+import { Link } from 'components/Link';
+
 Multi-Agent Path Finding (MAPF) is a combinatorial problem that asks us to compute collision-free paths for teams of cooperative agents. Many works appear on this topic each year, and a large number of substantial advancements and improvements have been reported. Yet measuring overall progress in MAPF is difficult: there are many potential competitors, and the computational burden for comprehensive experimentation is prohibitively large. Moreover, detailed data from past experimentation is usually unavailable.
 
 This online platform introduces a set of methodological and visualisation tools which can help the community establish clear indicators for state-of-the-art MAPF performance and which can facilitate large-scale comparisons between MAPF solvers. Our objectives are to lower the barrier of entry for new researchers and to further promote the study of MAPF.
+
+### Cite our paper
+
+If you've found this platform useful, please consider citing our paper:
+<CodeBlock>
+{
+`@misc{MAPF_Tracker,
+    doi         = {10.48550/arXiv.2305.08446},
+    url         = {https://arxiv.org/abs/2305.08446},
+    author      = {Bojie Shen
+                   and Zhe Chen
+                   and Muhammad Aamir Cheema
+                   and Daniel D. Harabor
+                   and Peter J. Stuckey},
+    title       = {Tracking Progress in Multi-Agent Path Finding},
+    publisher   = {arXiv},
+    year        = {2023}
+}`.trim()
+}
+</CodeBlock>
