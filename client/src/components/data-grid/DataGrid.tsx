@@ -182,9 +182,9 @@ export default function DataGrid<
   const { input, loading, queueInput } = useDebouncedInput(q);
 
   const fuse = new Fuse(rows ?? [], {
-    useExtendedSearch: true,
+    useExtendedSearch: false,
     keys: columns?.map?.((c) => c.field),
-    threshold: 0.1,
+    threshold: 0.6,
     getFn: (obj, path) => {
       const actualPath = typeof path === "string" ? path : join(path, ".");
       if (typeof actualPath !== "string") return;
