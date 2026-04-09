@@ -13,8 +13,8 @@ import {
   YAxis,
 } from "recharts";
 import { paper } from "theme";
-import { formatPercentage } from "utils/format";
-import _, { isNil, max, range } from "lodash";
+import { formatPercentage, formatScientific } from "utils/format";
+import _, { isNil, max, range, round } from "lodash";
 import { accentColors, colors, tone } from "utils/colors";
 import { sample } from "./sample";
 
@@ -76,6 +76,10 @@ export function SuboptimalityByAgentCountChart({
       };
     },
   });
+
+  const formatValue = (v: number) =>
+    `${Math.abs(v) <= 10 ? round(v * 100, 1) : formatScientific(v * 100)}%`;
+
   return (
     <Chart
       isLoading={results.isLoading}
@@ -92,8 +96,9 @@ export function SuboptimalityByAgentCountChart({
           />
           <YAxis
             type="number"
-            domain={[1, "auto"]}
-            tickFormatter={(v) => `x${v.toFixed(1)}`}
+            width={80}
+            domain={[0, "auto"]}
+            tickFormatter={(v) => `${formatValue(v)}`}
             label={
               <Label
                 position="insideLeft"
@@ -108,7 +113,7 @@ export function SuboptimalityByAgentCountChart({
             formatter={(value: any) => {
               if (Array.isArray(value)) {
                 return [
-                  `${value[0].toFixed(2)} - ${value[1].toFixed(2)}`,
+                  `${formatValue(value[0])} - ${formatValue(value[1])}`,
                   "Range",
                 ];
               }

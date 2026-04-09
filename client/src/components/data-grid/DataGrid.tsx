@@ -182,9 +182,12 @@ export default function DataGrid<
   const { input, loading, queueInput } = useDebouncedInput(q);
 
   const fuse = new Fuse(rows ?? [], {
-    useExtendedSearch: false,
+    useTokenSearch: true,
     keys: columns?.map?.((c) => c.field),
-    threshold: 0.6,
+    threshold: 1,
+    includeScore: true,
+    includeMatches: true,
+    useExtendedSearch: true,
     getFn: (obj, path) => {
       const actualPath = typeof path === "string" ? path : join(path, ".");
       if (typeof actualPath !== "string") return;
@@ -201,7 +204,12 @@ export default function DataGrid<
   });
 
   const allRows = filter(
-    input ? fuse.search(input).map((r) => r.item) : rows,
+    input
+      ? fuse
+          .search(input)
+          .filter((r) => r.score < 0.5)
+          .map((r) => r.item)
+      : rows,
     shouldIncludeItem,
   );
   return (

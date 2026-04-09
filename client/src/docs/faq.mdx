@@ -1,5 +1,9 @@
 import { Link } from "components/Link";
 
+#### Where can I find information on how fast the solvers are?
+
+Unfortunately, we do not record the runtime of solvers, and this is by design. MAPF Tracker mainly answers the question of "how well can we solve the benchmarks?" rather than "how fast are the solvers?". Moreover, the way MAPF Tracker works is that the solvers are run on the submitter's machines, and we only receive the resulting plans. We cannot guarantee that runtime numbers are comparable across algorithms, if we do record them. If you'd like to do some comparison on runtime, you may have to read their respective papers, or run your own experiments. Check out the links to the paper and code for each submission.
+
 ##### What should I do if my API key expires?
 
 You'll need to <Link href="/submit">contact us</Link> to extend your API key's expiry, or request a new one.
