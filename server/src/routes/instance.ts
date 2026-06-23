@@ -4,7 +4,6 @@ import {
   findNonEmptyByScenId,
   findById,
   findAlgosRecord,
-  findPathById,
   downloadRowById,
   downloadNonEmptyByScenId,
   downloadMapByID,
@@ -18,7 +17,6 @@ export default (app: Application) => {
   router.get("/:id", findNonEmptyByScenId);
   router.get("/id/:id", findById);
   router.get("/getAlgo/:id", findAlgosRecord);
-  router.get("/getPath/:id", findPathById);
   router.get("/DownloadRow/:id", downloadRowById);
   router.get("/DownloadInstance/:id", downloadNonEmptyByScenId);
   router.get("/DownloadMapByID/:id", downloadMapByID);

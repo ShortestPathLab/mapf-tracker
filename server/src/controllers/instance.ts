@@ -224,20 +224,6 @@ export const downloadNonEmptyByScenId: RequestHandler = (req, res) => {
     });
 };
 
-export const findPathById: RequestHandler = (req, res) => {
-  const { id } = req.params;
-  Instance.find({ _id: id, empty: false }, { solution_path: 1 })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
-    });
-};
-
 export const downloadRowById: RequestHandler = (req, res) => {
   const id = new Types.ObjectId(req.params.id);
   Instance.aggregate([

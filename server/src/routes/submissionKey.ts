@@ -17,7 +17,6 @@ export default (app: Application) => {
     passport.authenticate("jwt", { session: false }),
     submission_key.create
   );
-  router.get("/find/:request_id", submission_key.findByRequestId);
 
   app.use("/api/submission_key", router);
 };

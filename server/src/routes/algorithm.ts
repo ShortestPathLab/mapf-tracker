@@ -7,20 +7,10 @@ export default (app: Application) => {
   // router.use(cache("1 day"));
   router.get("/", algorithm.findAll);
   router.get("/all_detail", algorithm.findAllDetails);
-  router.get("/algo_detail/:id", algorithm.findOne);
-  router.get("/submissions/:id", algorithm.findOne);
   router.get("/getClosedInfo/", algorithm.findBestClosed);
   router.get("/getLowerInfo/", algorithm.findBestLower);
   router.get("/getSolutionInfo/", algorithm.findBestSolution);
   router.get("/getSolvedInfo/", algorithm.findBestSolved);
-
-  router.get("/getLeadingSolved/", algorithm.LeadingSolvedInfo);
-  router.get("/getLeadingLower/", algorithm.LeadingLowerInfo);
-
-  router.get("/getLowerInfoGroup/:id", algorithm.findBestLowerGroup);
-  router.get("/getSolutionInfoGroup/:id", algorithm.findBestSolutionGroup);
-  router.get("/getSolvedInfoGroup/:id", algorithm.findBestSolvedGroup);
-  router.get("/getClosedInfoGroup/:id", algorithm.findBestClosedGroup);
 
   router.get("/test", algorithm.findBestLowerDomainQuery);
 

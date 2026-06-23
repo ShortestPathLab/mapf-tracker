@@ -9,7 +9,6 @@ import pipelineRoutes from "./routes/pipeline";
 import requestRoutes from "./routes/request";
 import scenarioRoutes from "./routes/scenario";
 import solutionPathRoutes from "./routes/solutionPath";
-import solutionSubmissionRoutes from "./routes/solutionSubmission";
 import submissionRoutes from "./routes/submission";
 import submissionKeyRoutes from "./routes/submissionKey";
 import userRoutes from "./routes/user";
@@ -20,7 +19,6 @@ export const createRouters = (app: Application) => {
   mapRoutes(app);
   instanceRoutes(app);
   submissionRoutes(app);
-  solutionSubmissionRoutes(app);
   scenarioRoutes(app);
   algorithmRoutes(app);
   userRoutes(app);
