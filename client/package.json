@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
+    "@elysiajs/eden": "^1.4.9",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mdx-js/rollup": "^3.0.1",

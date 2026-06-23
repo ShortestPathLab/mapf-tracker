@@ -13,18 +13,12 @@ import { z } from "zod";
 const { verify, hash } = password;
 
 const registrationEnabled = env?.REGISTRATION_ENABLED === "1";
+let passportConfigured = false;
 
 export const authenticate = passport.authenticate("jwt", { session: false });
 
-function signUser(username: string) {
-  assert(isString(env?.JWT_SECRET), "JWT_SECRET not set");
-  return {
-    token: sign({ sub: username }, env.JWT_SECRET),
-    username,
-  };
-}
-
-export const use = (app: Application, path: string = "/api/auth") => {
+export const configurePassport = () => {
+  if (passportConfigured) return;
   assert(isString(env?.JWT_SECRET), "JWT_SECRET not set");
   passport.use(
     new JwtStrategy(
@@ -40,6 +34,19 @@ export const use = (app: Application, path: string = "/api/auth") => {
       }
     )
   );
+  passportConfigured = true;
+};
+
+function signUser(username: string) {
+  assert(isString(env?.JWT_SECRET), "JWT_SECRET not set");
+  return {
+    token: sign({ sub: username }, env.JWT_SECRET),
+    username,
+  };
+}
+
+export const use = (app: Application, path: string = "/api/auth") => {
+  configurePassport();
   app.use(
     path,
     Router()

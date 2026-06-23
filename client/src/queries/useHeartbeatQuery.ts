@@ -1,20 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
+import api, { useQuery } from "hooks/useQuery";
 
 export function useHeartBeatQuery() {
-  return useQuery({
-    queryKey: ["heartbeat"],
-    queryFn: async () => {
-      try {
-        const req = await fetch(`${APIConfig.apiUrl}/heartbeat`, {
-          signal: AbortSignal.timeout(10000),
-        });
-        return req.ok;
-      } catch {
-        return false;
-      }
+  const query = useQuery(
+    ["heartbeat"],
+    () =>
+      api.api.heartbeat.get({
+        fetch: { signal: AbortSignal.timeout(10000) },
+      }),
+    {
+      retry: false,
+      refetchInterval: 10000,
     },
-    retry: false,
-    refetchInterval: 10000,
-  });
+  );
+
+  return {
+    ...query,
+    data: query.data === "OK",
+  };
 }
