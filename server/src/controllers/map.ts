@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
-import { Map } from "models";
-import { route } from "query";
+import { Instance, Map, SolutionPath } from "models";
+import { cached, route } from "query";
 import z from "zod";
 import { handler as createPreviewAsync } from "./createPreview.worker";
+import { getSolutionPath } from "./solutionPath";
 
 export const preview: RequestHandler = route(
   z.object({
@@ -12,6 +13,22 @@ export const preview: RequestHandler = route(
   }),
   createPreviewAsync,
   { source: "body" }
+);
+
+export const makespan: RequestHandler = cached(
+  [Instance, SolutionPath],
+  z.object({
+    instance: z.string().optional(),
+    solutionPath: z.string().optional(),
+  }),
+  async ({ instance, solutionPath }) => {
+    const id = solutionPath ?? instance;
+    if (!id) return null;
+    const paths = await getSolutionPath(id, "submitted");
+    if (!paths) return null;
+    return Math.max(0, ...paths.map((path) => path.replace(/\r$/, "").length));
+  },
+  "body",
 );
 
 export const findAll: RequestHandler = (req, res) => {

@@ -9,8 +9,17 @@ import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/Scen
 import { VisualiserLocationState } from "pages/visualiser/VisualiserLocationState";
 import pluralize from "pluralize";
 import { useInstancesByScenario } from "queries/useMapQuery";
+import { useMakespanData } from "queries/useMakespanQuery";
 import { formatDate } from "utils/format";
 import { PreviewCard } from "../../components/PreviewCard";
+
+function MakespanCell({ row }: { row: Instance }) {
+  const { data } = useMakespanData({
+    instance: row.id,
+    solutionPath: row.solution_path_id,
+  });
+  return <>{data?.toLocaleString?.() ?? "--"}</>;
+}
 
 export default function Table() {
   const state = useStableLocationState<ScenarioLevelLocationState>();
@@ -117,6 +126,18 @@ export default function Table() {
       renderCell: cellRendererText,
     },
     {
+      field: "makespan",
+      headerName: "Makespan",
+      type: "number",
+      sortable: false,
+      align: "left",
+      headerAlign: "left",
+      flex: 1,
+      maxWidth: 100,
+      fold: true,
+      renderCell: ({ row }) => <MakespanCell row={row} />,
+    },
+    {
       field: "solution_algos",
       headerName: "Claims",
       type: "number",
@@ -149,6 +170,7 @@ export default function Table() {
           children: [
             { field: "solution_date" },
             { field: "solution_cost" },
+            { field: "makespan" },
             { field: "solution_algos" },
           ],
         },

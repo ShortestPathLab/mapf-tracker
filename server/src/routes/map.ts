@@ -7,5 +7,6 @@ export default (app: Application) => {
   router.get("/", map.findAll);
   router.get("/:id", map.findOne);
   router.post("/preview", map.preview);
+  router.post("/makespan", map.makespan);
   app.use("/api/map", router);
 };

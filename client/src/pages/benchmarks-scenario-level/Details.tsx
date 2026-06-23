@@ -29,6 +29,7 @@ import { capitalize, head } from "lodash";
 import pluralize from "pluralize";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
 import { useMapData, useScenario } from "queries/useMapQuery";
+import { useMakespanData } from "queries/useMakespanQuery";
 import { useInstance } from "queries/useInstanceQuery";
 import { formatDate } from "utils/format";
 import { downloadRow } from "./download";
@@ -39,6 +40,10 @@ export default function Details({ id }: { id?: string }) {
   const { data: instance } = useInstance(id);
   const { data: scenario } = useScenario(instance?.scen_id);
   const { data: map } = useMapData(instance?.map_id);
+  const { data: makespan } = useMakespanData({
+    instance: id,
+    solutionPath: instance?.solution_path_id,
+  });
   const isClosed =
     instance?.solution_cost && instance.solution_cost === instance.lower_cost;
   return (
@@ -76,6 +81,10 @@ export default function Details({ id }: { id?: string }) {
                 )}
               </>
             ),
+          },
+          {
+            label: "Makespan",
+            value: makespan?.toLocaleString?.() ?? "--",
           },
         ]}
       />

@@ -1,5 +1,6 @@
 {
   "vitest.disableWorkspaceWarning": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "remote.autoForwardPorts": false
+  "remote.autoForwardPorts": false,
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }
