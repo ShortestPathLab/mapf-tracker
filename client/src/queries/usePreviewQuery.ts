@@ -29,7 +29,7 @@ export const usePreviewData = ({
           instance,
           scenario,
         });
-        return JSON.parse(await response.text()) as string;
+        return await response.text();
       });
     },
     enabled: !(!map && !instance && !scenario),
