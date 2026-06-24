@@ -1,0 +1,22 @@
+{
+  "name": "validator-wasm",
+  "version": "1.0.0",
+  "description": "MAPF solution validator — Rust/WebAssembly rewrite of the `validator` package.",
+  "license": "ISC",
+  "type": "module",
+  "main": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    }
+  },
+  "files": [
+    "index.ts",
+    "pkg"
+  ],
+  "scripts": {
+    "build": "wasm-pack build --target nodejs --release",
+    "test": "cargo test"
+  }
+}

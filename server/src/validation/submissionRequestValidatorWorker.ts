@@ -8,7 +8,7 @@ import { map as pMap } from "promise-tools";
 import { context } from "logging";
 import { Types } from "mongoose";
 import { usingTaskMessageHandler } from "queue/usingWorker";
-import { encode } from "validator";
+import { encode } from "validator-wasm";
 import { RefinementCtx, z } from "zod";
 import {
   Map,

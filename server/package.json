@@ -23,6 +23,7 @@
     "concurrently": "^7.6.0"
   },
   "dependencies": {
+    "@elysiajs/swagger": "^1.3.1",
     "@react-email/components": "0.0.23",
     "@types/object-hash": "^3.0.6",
     "@types/passport": "^1.0.17",
@@ -68,6 +69,7 @@
     "treaty": "workspace:*",
     "typescript": "5.4.5",
     "validator": "workspace:*",
+    "validator-wasm": "workspace:*",
     "vite": "^5.4.11",
     "vite-node": "^2.0.4",
     "vite-tsconfig-paths": "^5.1.3",
@@ -83,6 +85,7 @@
     "puppeteer",
     "redis-memory-server",
     "treaty",
-    "validator"
+    "validator",
+    "validator-wasm"
   ]
 }

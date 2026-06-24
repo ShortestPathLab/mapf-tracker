@@ -1,2 +1,7 @@
 /target
-/pkg
+
+# pkg/ (the wasm-pack output) is committed intentionally: the server consumes it
+# at runtime and the Docker image has no Rust toolchain to rebuild it. Run
+# `bun run build` (or `wasm-pack build --target nodejs --release`) to regenerate.
+# Note: wasm-pack drops a `pkg/.gitignore` containing `*` on each build — delete
+# it after rebuilding so the regenerated output stays tracked.

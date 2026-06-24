@@ -1,0 +1,17 @@
+{
+  "name": "validator-wasm",
+  "description": "MAPF solution validator — a Rust/WebAssembly rewrite of the `validator` package.",
+  "version": "1.0.0",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "files": [
+    "validator_wasm_bg.wasm",
+    "validator_wasm.js",
+    "validator_wasm.d.ts"
+  ],
+  "main": "validator_wasm.js",
+  "types": "validator_wasm.d.ts"
+}

@@ -10,7 +10,6 @@ import {
   now,
   once,
   split,
-  sum,
 } from "lodash";
 import { context } from "logging";
 import { Infer, OngoingSubmission, OngoingSubmissionSolution } from "models";
@@ -18,17 +17,7 @@ import { Document, Types } from "mongoose";
 import { customAlphabet } from "nanoid";
 import { parseMap, parseScenarioMeta } from "parser";
 import { getMap, getScenario } from "resources";
-import {
-  CheckParams,
-  CheckResult,
-  Point,
-  checkDomainCollision,
-  checkDomainOutOfBounds,
-  checkEdgeCollision,
-  checkGoalReached,
-  checkImmediateCollision,
-  validate,
-} from "validator";
+import { Point, validate } from "validator-wasm";
 import { connectToDatabase } from "../connection";
 import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { SubmissionValidatorData } from "./SubmissionValidatorData";
@@ -67,25 +56,6 @@ type OngoingSubmissionDocument = Document<
   OngoingSubmission
 > &
   OngoingSubmission;
-
-function createSolutionCostChecker(expected: number = 0) {
-  const actual = { value: 0 };
-  return [
-    (params: CheckParams): CheckResult => {
-      if (params.stage !== "final") return {};
-      const { paths } = params;
-      const cost = sum(paths?.map?.((path) => path.length));
-      actual.value = cost;
-      if (expected && cost !== expected) {
-        return {
-          errors: [`agent cost incorrect, expected ${cost}, got ${expected}`],
-        };
-      }
-      return {};
-    },
-    actual,
-  ] as const;
-}
 
 async function getMeta(instanceId: Types.ObjectId) {
   const instance = required(await findInstance(instanceId));
@@ -158,36 +128,34 @@ async function validateGroup({
     [];
   const errorAgents: number[][] = [];
 
-  const [checkSolutionCost, realCost] = createSolutionCostChecker();
   const timeStart = now();
-  validate({
+  const { errors: checkErrors, cost: realCost } = validate({
     domain: { cells, width, height },
     paths: solutions.map((s) => s ?? ""),
     sources: sources.slice(0, count),
     checks: [
-      checkImmediateCollision,
-      checkDomainOutOfBounds,
-      checkDomainCollision,
-      checkEdgeCollision,
-      checkSolutionCost,
-      checkGoalReached,
+      "immediateCollision",
+      "domainOutOfBounds",
+      "domainCollision",
+      "edgeCollision",
+      "goalReached",
     ],
     goals: goals.slice(0, count),
-    onError: (c) => {
-      errors.push({
-        label: join(c.errors, "\n"),
-        timesteps: c.errorTimesteps ?? [],
-        agents: c.errorAgents ?? [],
-      });
-      return true;
-    },
+    // stopOnFirstError defaults to true, matching the previous onError === true
   });
+  for (const c of checkErrors) {
+    errors.push({
+      label: join(c.errors, "\n"),
+      timesteps: c.errorTimesteps ?? [],
+      agents: c.errorAgents ?? [],
+    });
+  }
 
   const timeTaken = now() - timeStart;
 
   // Update solution cost based on validation results
   // TODO: Refactor for immutability
-  await setSolutionCost(submission, realCost.value, errors);
+  await setSolutionCost(submission, realCost, errors);
 
   logOutcome(errors, errorAgents, mode);
 
