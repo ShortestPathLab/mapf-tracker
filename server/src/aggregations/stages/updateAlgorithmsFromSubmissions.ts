@@ -1,7 +1,6 @@
 import { Algorithm, Instance, Submission } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistory";
-import submission from "routes/submission";
 import { map } from "lodash";
 
 export const updateAlgorithmsFromSubmissions = async () =>

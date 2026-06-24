@@ -1,59 +1,34 @@
 import { render } from "@react-email/components";
+import type { Context } from "elysia";
+import { status } from "elysia";
 import RequestConfirmation from "emails/RequestConfirmation";
-import { RequestHandler } from "express";
 import { log } from "logging";
 import { mail } from "mail";
 import { Infer, Request, SubmissionKey } from "models";
-import { queryClient, route } from "query";
+import { queryClient } from "query";
 import React from "react";
 import { assert } from "utils/assert";
-import { inferErrorMessage } from "utils/error";
 import { z } from "zod";
 
 const { query } = queryClient(Request);
 
-export const findByEmail = query(
-  z.object({ email: z.string() }),
-  ({ email }) => [
-    {
-      requesterEmail: email,
-    },
-  ],
-);
+export const findByEmail = query(({ params }) => [
+  { requesterEmail: params.email },
+]);
 
-export const findAll: RequestHandler = (req, res) => {
-  Request.find({})
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving request.",
-      });
-    });
+export const findAll = async () => Request.find({});
+
+export const findByKey = async ({ params }: Context) => {
+  const { request_id } =
+    (await SubmissionKey.findOne({ api_key: params.key })) ?? {};
+  if (!request_id) return undefined;
+  return (await Request.findById(request_id))?.toJSON();
 };
 
-export const findByKey: RequestHandler = async (req, res) => {
-  const { key } = req.params;
-  const { request_id } = (await SubmissionKey.findOne({ api_key: key })) ?? {};
-  if (!request_id) return res.json(undefined);
-  res.json(await Request.findById(request_id));
-};
-
-export const findByInstance_id: RequestHandler = (req, res) => {
-  const { id } = req.params;
-
-  Request.findById(id)
-    .then((data) => {
-      if (!data)
-        res.status(404).send({ message: `Not found request with id ${id}` });
-      else res.send(data);
-    })
-    .catch((err) => {
-      res
-        .status(500)
-        .send({ message: `Error retrieving request with id=${id}` });
-    });
+export const findByInstance_id = async ({ params }: Context) => {
+  const data = await Request.findById(params.id);
+  if (!data) return status(404, { message: `Not found request with id ${params.id}` });
+  return data.toJSON();
 };
 
 async function queueMail(args: Infer<typeof Request>) {
@@ -68,38 +43,31 @@ async function queueMail(args: Infer<typeof Request>) {
   );
 }
 
-export const create: RequestHandler = async (req, res) => {
-  if (!req.body.requesterName) {
-    return res
-      .status(400)
-      .send({ message: "Requester name can not be empty!" });
+export const create = async ({ body }: Context) => {
+  const b = body as Record<string, unknown>;
+  if (!b.requesterName) {
+    return status(400, { message: "Requester name can not be empty!" });
   }
 
   const field = {
-    isOptimal: req.body.isOptimal,
-    requesterName: req.body.requesterName,
-    requesterEmail: req.body.requesterEmail,
-    requesterAffiliation: req.body.requesterAffiliation,
-    googleScholar: req.body.googleScholar,
-    dblp: req.body.dblp,
-    justification: req.body.justification,
-    algorithmName: req.body.algorithmName,
-    authorName: req.body.authorName,
-    paperReference: req.body.paperReference,
-    githubLink: req.body.githubLink,
-    comments: req.body.comments,
+    isOptimal: b.isOptimal,
+    requesterName: b.requesterName,
+    requesterEmail: b.requesterEmail,
+    requesterAffiliation: b.requesterAffiliation,
+    googleScholar: b.googleScholar,
+    dblp: b.dblp,
+    justification: b.justification,
+    algorithmName: b.algorithmName,
+    authorName: b.authorName,
+    paperReference: b.paperReference,
+    githubLink: b.githubLink,
+    comments: b.comments,
   };
 
   const request = new Request(field);
-  try {
-    const data = await request.save();
-    await queueMail(field as Infer<typeof Request>);
-    res.send(data);
-  } catch (err) {
-    res.status(500).send({
-      message: inferErrorMessage(err),
-    });
-  }
+  const data = await request.save();
+  await queueMail(field as Infer<typeof Request>);
+  return data.toJSON();
 };
 
 const requestSchema = {
@@ -117,6 +85,7 @@ const requestSchema = {
   githubLink: z.string().optional(),
   comments: z.string().optional(),
 };
+
 const handleRequestUpdate = async ({
   id,
   ...data
@@ -127,9 +96,8 @@ const handleRequestUpdate = async ({
   return { id };
 };
 
-export const updateRequest = route(
-  z.object(requestSchema),
-  handleRequestUpdate,
-);
+export const updateRequest = async ({ body }: Context) =>
+  handleRequestUpdate(z.object(requestSchema).parse(body));
 
-export const updateRequestElevated = route(z.any(), handleRequestUpdate);
+export const updateRequestElevated = async ({ body }: Context) =>
+  handleRequestUpdate(body as z.infer<z.ZodObject<typeof requestSchema>>);

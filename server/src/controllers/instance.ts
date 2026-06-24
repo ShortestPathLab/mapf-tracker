@@ -1,92 +1,54 @@
 ///@ts-nocheck This file is bonkers
 
-import { RequestHandler } from "express";
+import type { Context } from "elysia";
 import { first } from "lodash";
 import { Infer, Instance, Scenario } from "models";
 import { Types } from "mongoose";
 import { queryClient } from "query";
-import { z } from "zod";
 
 const { query } = queryClient(Instance);
 
 export const findById = query(
-  z.object({ id: z.string() }),
-  ({ id }) => [
-    {
-      _id: new Types.ObjectId(id),
-    },
-  ],
-  first
+  ({ params }) => [{ _id: new Types.ObjectId(params.id) }],
+  async (docs) => first(docs)?.toJSON(),
 );
 
-export const findAll: RequestHandler = (req, res) => {
-  Instance.find({})
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
-    });
-};
+export const findAll = async () => Instance.find({});
 
-export const findNonEmptyByScenId: RequestHandler = async (req, res) => {
-  try {
-    const data = await Instance.aggregate([
-      {
-        $match: { scen_id: new Types.ObjectId(req.params.id) },
+export const findNonEmptyByScenId = async ({ params }: Context) =>
+  Instance.aggregate([
+    {
+      $match: { scen_id: new Types.ObjectId(params.id) },
+    },
+    {
+      $project: {
+        id: "$_id",
+        agents: 1,
+        solution_path_id: 1,
+        lower_algos: { $size: "$lower_algos" },
+        lower_date: { $last: "$lower_algos.date" },
+        lower_cost: { $last: "$lower_algos.value" },
+        solution_algos: { $size: "$solution_algos" },
+        solution_date: { $last: "$solution_algos.date" },
+        solution_cost: { $last: "$solution_algos.value" },
       },
-      {
-        $project: {
-          id: "$_id",
-          agents: 1,
-          solution_path_id: 1,
-          lower_algos: { $size: "$lower_algos" },
-          lower_date: { $last: "$lower_algos.date" },
-          lower_cost: { $last: "$lower_algos.value" },
-          solution_algos: { $size: "$solution_algos" },
-          solution_date: { $last: "$solution_algos.date" },
-          solution_cost: { $last: "$solution_algos.value" },
+    },
+    {
+      $addFields: {
+        closed: {
+          $and: [
+            { $ne: ["$lower_cost", null] },
+            { $eq: ["$lower_cost", "$solution_cost"] },
+          ],
         },
+        empty: { $eq: ["$solution_algos", 0] },
       },
-      {
-        $addFields: {
-          closed: {
-            $and: [
-              { $ne: ["$lower_cost", null] },
-              { $eq: ["$lower_cost", "$solution_cost"] },
-            ],
-          },
-          empty: { $eq: ["$solution_algos", 0] },
-        },
-      },
-      { $sort: { agents: 1 } },
-    ]);
-    res.send(data);
-  } catch (err) {
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving instances.",
-    });
-  }
-};
+    },
+    { $sort: { agents: 1 } },
+  ]);
 
-export const findAlgosRecord: RequestHandler = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const data = await Instance.find(
-      { _id: id },
-      { lower_algos: 1, solution_algos: 1 }
-    );
-    res.send(data);
-  } catch (err) {
-    res.status(500).send({
-      message: err.message || "Some error occurred while retrieving instances.",
-    });
-  }
-};
+export const findAlgosRecord = async ({ params }: Context) =>
+  Instance.find({ _id: params.id }, { lower_algos: 1, solution_algos: 1 });
 
 function rankingSorter(firstKey, secondKey, thirdKey) {
   return (a, b) => {
@@ -112,10 +74,9 @@ function rankingSorter(firstKey, secondKey, thirdKey) {
   };
 }
 
-export const downloadMapByID: RequestHandler = (req, res) => {
-  const { id } = req.params;
-  Instance.find(
-    { map_id: id, empty: false },
+export const downloadMapByID = async ({ params }: Context) => {
+  const data = await Instance.find(
+    { map_id: params.id, empty: false },
     {
       map_id: 1,
       scen_id: 1,
@@ -124,49 +85,33 @@ export const downloadMapByID: RequestHandler = (req, res) => {
       lower_date: 1,
       solution_cost: 1,
       solution_date: 1,
-    }
-  )
-    .populate<{ scen_id: Infer<typeof Scenario> }>("scen_id", {
-      scen_type: 1,
-      type_id: 1,
-      _id: 0,
-    })
-    .then((data) => {
-      const transformedDataArray = data.map((row) => ({
-        scen_type: row.scen_id.scen_type,
-        type_id: row.scen_id.type_id,
-        agents: row.agents,
-        lower_cost: row.lower_cost,
-        lower_date: row.lower_date,
-        solution_cost: row.solution_cost,
-        solution_date: row.solution_date,
-      }));
-      transformedDataArray.sort(
-        rankingSorter("scen_type", "type_id", "agents")
-      );
-      res.send(transformedDataArray);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
-    });
+    },
+  ).populate<{ scen_id: Infer<typeof Scenario> }>("scen_id", {
+    scen_type: 1,
+    type_id: 1,
+    _id: 0,
+  });
+  const transformedDataArray = data.map((row) => ({
+    scen_type: row.scen_id.scen_type,
+    type_id: row.scen_id.type_id,
+    agents: row.agents,
+    lower_cost: row.lower_cost,
+    lower_date: row.lower_date,
+    solution_cost: row.solution_cost,
+    solution_date: row.solution_date,
+  }));
+  transformedDataArray.sort(rankingSorter("scen_type", "type_id", "agents"));
+  return transformedDataArray;
 };
 
-export const test: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
+export const test = async ({ params }: Context) =>
   Instance.aggregate([
     {
       $match: {
-        map_id: id,
+        map_id: new Types.ObjectId(params.id),
         $or: [
-          {
-            solution_algo_id: new Types.ObjectId("636cf9b1a1b36ac2118eb15f"),
-          },
-          {
-            lower_algo_id: new Types.ObjectId("636cf9b1a1b36ac2118eb15f"),
-          },
+          { solution_algo_id: new Types.ObjectId("636cf9b1a1b36ac2118eb15f") },
+          { lower_algo_id: new Types.ObjectId("636cf9b1a1b36ac2118eb15f") },
         ],
       },
     },
@@ -187,22 +132,11 @@ export const test: RequestHandler = (req, res) => {
         Submission_records: "$Submission_records",
       },
     },
-  ])
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
-    });
-};
+  ]);
 
-export const downloadNonEmptyByScenId: RequestHandler = (req, res) => {
-  const { id } = req.params;
+export const downloadNonEmptyByScenId = async ({ params }: Context) =>
   Instance.find(
-    { scen_id: id, empty: false },
+    { scen_id: params.id, empty: false },
     {
       agents: 1,
       lower_cost: 1,
@@ -210,26 +144,12 @@ export const downloadNonEmptyByScenId: RequestHandler = (req, res) => {
       solution_cost: 1,
       solution_date: 1,
       _id: 0,
-    }
-  )
-    .sort({ agents: 1 })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
-    });
-};
-
-export const downloadRowById: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
-  Instance.aggregate([
-    {
-      $match: { _id: id },
     },
+  ).sort({ agents: 1 });
+
+export const downloadRowById = async ({ params }: Context) =>
+  Instance.aggregate([
+    { $match: { _id: new Types.ObjectId(params.id) } },
     {
       $lookup: {
         from: "solution_paths",
@@ -256,96 +176,42 @@ export const downloadRowById: RequestHandler = (req, res) => {
         _id: 0,
       },
     },
-  ])
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving instances.",
-      });
-    });
-};
+  ]);
 
-export const get_map_level_summary: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
-  const query1 = Instance.aggregate([
-    { $match: { map_id: id } },
-    {
-      $group: {
-        _id: { agents: "$agents" },
-        count: { $count: {} },
-      },
-    },
-  ])
-    .sort({ "_id.agents": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
-
-  const query2 = Instance.aggregate([
-    { $match: { map_id: id, closed: true } },
-    {
-      $group: {
-        _id: { agents: "$agents" },
-        count: { $count: {} },
-      },
-    },
-  ]).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error occurred.",
+export const get_map_level_summary = async ({ params }: Context) => {
+  const id = new Types.ObjectId(params.id);
+  const [r0, r1, r2] = await Promise.all([
+    Instance.aggregate([
+      { $match: { map_id: id } },
+      { $group: { _id: { agents: "$agents" }, count: { $count: {} } } },
+    ]).sort({ "_id.agents": 1 }),
+    Instance.aggregate([
+      { $match: { map_id: id, closed: true } },
+      { $group: { _id: { agents: "$agents" }, count: { $count: {} } } },
+    ]),
+    Instance.aggregate([
+      { $match: { map_id: id, $expr: { $ne: ["$solution_cost", null] } } },
+      { $group: { _id: { agents: "$agents" }, count: { $count: {} } } },
+    ]),
+  ]);
+  const final_results = [];
+  r0.forEach((element) => {
+    final_results.push({
+      name: element._id.agents,
+      total: element.count,
+      Unknown: element.count,
+      Closed: 0,
+      Solved: 0,
     });
   });
-  const query3 = Instance.aggregate([
-    { $match: { map_id: id, $expr: { $ne: ["$solution_cost", null] } } },
-    {
-      $group: {
-        _id: { agents: "$agents" },
-        count: { $count: {} },
-      },
-    },
-  ]).catch((err) => {
-    res.status(500).send({
-      message: err.message || "Some error occurred.",
-    });
+  r1.forEach((element) => {
+    final_results[parseInt(element._id.agents) - 1]["Closed"] = element.count;
   });
-
-  Promise.all([query1, query2, query3])
-    .then((result) => {
-      const [r0, r1, r2] = result;
-      if (r0 && r1 && r2) {
-        const final_results = [];
-        r0.forEach((element) => {
-          const entry = {
-            name: element._id.agents,
-            total: element.count,
-            Unknown: element.count,
-            Closed: 0,
-            Solved: 0,
-          };
-          final_results.push(entry);
-        });
-        r1.forEach((element) => {
-          final_results[parseInt(element._id.agents) - 1]["Closed"] =
-            element.count;
-        });
-        r2.forEach((element) => {
-          final_results[parseInt(element._id.agents) - 1]["Solved"] =
-            element.count -
-            final_results[parseInt(element._id.agents) - 1]["Closed"];
-          final_results[parseInt(element._id.agents) - 1]["Unknown"] =
-            final_results[parseInt(element._id.agents) - 1]["total"] -
-            element.count;
-        });
-        res.send(final_results);
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+  r2.forEach((element) => {
+    final_results[parseInt(element._id.agents) - 1]["Solved"] =
+      element.count - final_results[parseInt(element._id.agents) - 1]["Closed"];
+    final_results[parseInt(element._id.agents) - 1]["Unknown"] =
+      final_results[parseInt(element._id.agents) - 1]["total"] - element.count;
+  });
+  return final_results;
 };

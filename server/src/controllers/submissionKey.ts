@@ -1,49 +1,20 @@
-import { RequestHandler } from "express";
+import type { Context } from "elysia";
+import { status } from "elysia";
 import { SubmissionKey } from "models";
 import { createSubmissionKey } from "./user";
-import { route } from "query";
-import { z } from "zod";
 
-export const findAll: RequestHandler = (req, res) => {
-  SubmissionKey.find({})
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving requesters.",
-      });
+export const findAll = async () => SubmissionKey.find({});
+
+export const findByApiKey = async ({ params }: Context) => {
+  const data = await SubmissionKey.findOne({ api_key: params.apiKey });
+  if (!data)
+    return status(404, {
+      message: `Not found SubmissionKey with apiKey ${params.apiKey}`,
     });
+  return data.toJSON();
 };
 
-export const findByApiKey: RequestHandler = (req, res) => {
-  const { apiKey } = req.params; // Assuming apiKey is passed in req.params
-  /**/ SubmissionKey.findOne({ api_key: apiKey })
-    .then((data) => {
-      if (!data)
-        res
-          .status(404)
-          .send({ message: `Not found SubmissionKey with apiKey ${apiKey}` });
-      else {
-        res.send(data);
-        /**/
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: `Error retrieving SubmissionKey with apiKey=${apiKey}`,
-      });
-    });
+export const create = async ({ params }: Context) => {
+  const key = await createSubmissionKey(params.request);
+  return { key };
 };
-
-export const create = route(
-  z.object({
-    request: z.string(),
-  }),
-  async ({ request }) => {
-    const key = await createSubmissionKey(request);
-    return { key };
-  },
-  { source: "params" }
-);

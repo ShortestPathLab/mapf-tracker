@@ -1,9 +1,9 @@
-import { RequestHandler } from "express";
+import type { Context } from "elysia";
 import { chunk, map, split } from "lodash";
 import { OngoingSubmissionSolution, SolutionPath } from "models";
 import { Types } from "mongoose";
 import { isDefined } from "utils/isDefined";
-import { encode } from "validator";
+import { encode } from "validator-wasm";
 import { z } from "zod";
 
 const flip = (path: string) =>
@@ -47,12 +47,12 @@ export async function getSolutionPathsRaw(ids: string[]) {
   return all;
 }
 
-export const findPath: RequestHandler = async (req, res) => {
+export const findPath = async ({ params }: Context) => {
   const { id, source } = z
     .object({
       id: z.string(),
       source: z.enum(["ongoing", "submitted"]).default("submitted"),
     })
-    .parse(req.params);
-  return res.send(await getSolutionPath(id, source));
+    .parse(params);
+  return getSolutionPath(id, source);
 };

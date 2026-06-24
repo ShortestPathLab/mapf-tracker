@@ -3,34 +3,24 @@
 import { Algorithm, Submission } from "models";
 import { Types } from "mongoose";
 
-export const findAll: RequestHandler = (req, res) => {
-  Algorithm.find({}, { _id: 1, algo_name: 1 })
+export const findAll = async (ctx: any) => {
+  return Algorithm.find({}, { _id: 1, algo_name: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAllDetails: RequestHandler = (req, res) => {
-  Algorithm.find({})
+export const findAllDetails = async (ctx: any) => {
+  return Algorithm.find({})
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findBestClosed: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findBestClosed = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { $expr: { $eq: ["$lower_cost", "$solution_cost"] } } },
     {
       $group: {
@@ -89,18 +79,13 @@ export const findBestClosed: RequestHandler = (req, res) => {
     },
   ])
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findBestSolution: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findBestSolution = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { best_solution: true } },
     {
       $group: {
@@ -159,17 +144,13 @@ export const findBestSolution: RequestHandler = (req, res) => {
     },
   ])
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestSolved: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findBestSolved = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { $expr: { $ne: ["$solution_cost", null] } } },
     {
       $group: {
@@ -228,17 +209,13 @@ export const findBestSolved: RequestHandler = (req, res) => {
     },
   ])
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestLower: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findBestLower = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { best_lower: true } },
     {
       $group: {
@@ -297,18 +274,13 @@ export const findBestLower: RequestHandler = (req, res) => {
     },
   ])
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findSolvedDomainQuery: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findSolvedDomainQuery = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { $expr: { $ne: ["$solution_cost", null] } } },
     {
       $group: {
@@ -387,17 +359,13 @@ export const findSolvedDomainQuery: RequestHandler = (req, res) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findClosedDomainQuery: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findClosedDomainQuery = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { $expr: { $eq: ["$lower_cost", "$solution_cost"] } } },
     {
       $group: {
@@ -476,17 +444,13 @@ export const findClosedDomainQuery: RequestHandler = (req, res) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestLowerDomainQuery: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findBestLowerDomainQuery = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { best_lower: true } },
     {
       $group: {
@@ -565,17 +529,13 @@ export const findBestLowerDomainQuery: RequestHandler = (req, res) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
-  Submission.aggregate([
+export const findBestSolutionDomainQuery = async (ctx: any) => {
+  return Submission.aggregate([
     { $match: { best_solution: true } },
     {
       $group: {
@@ -653,17 +613,13 @@ export const findBestSolutionDomainQuery: RequestHandler = (req, res) => {
           algo["count"] = algo["sum_value"] / total;
         });
       });
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestLowerGroup: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
+export const findBestLowerGroup = async (ctx: any) => {
+  const id = new Types.ObjectId(ctx.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { best_lower: true } },
@@ -705,11 +661,7 @@ export const findBestLowerGroup: RequestHandler = (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
   const query2 = Submission.aggregate([
     { $match: { best_lower: true, algo_id: id } },
     {
@@ -765,13 +717,9 @@ export const findBestLowerGroup: RequestHandler = (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 
-  Promise.all([query1, query2, query3])
+  return Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
       result[0] &&
@@ -788,17 +736,13 @@ export const findBestLowerGroup: RequestHandler = (req, res) => {
             });
           final_results.push(entry);
         });
-      res.send(final_results);
+      return final_results;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestSolutionGroup = async (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
+export const findBestSolutionGroup = async (ctx: any) => {
+  const id = new Types.ObjectId(ctx.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { best_solution: true } },
@@ -840,11 +784,7 @@ export const findBestSolutionGroup = async (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
   const query2 = Submission.aggregate([
     { $match: { best_solution: true, algo_id: id } },
     {
@@ -900,13 +840,9 @@ export const findBestSolutionGroup = async (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 
-  Promise.all([query1, query2, query3])
+  return Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
       result[0] &&
@@ -923,17 +859,13 @@ export const findBestSolutionGroup = async (req, res) => {
             });
           final_results.push(entry);
         });
-      res.send(final_results);
+      return final_results;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestClosedGroup: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
+export const findBestClosedGroup = async (ctx: any) => {
+  const id = new Types.ObjectId(ctx.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { $expr: { $eq: ["$lower_cost", "$solution_cost"] } } },
@@ -975,11 +907,7 @@ export const findBestClosedGroup: RequestHandler = (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
   const query2 = Submission.aggregate([
     {
       $match: {
@@ -1040,13 +968,9 @@ export const findBestClosedGroup: RequestHandler = (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 
-  Promise.all([query1, query2, query3])
+  return Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
       if (result[0])
@@ -1063,17 +987,13 @@ export const findBestClosedGroup: RequestHandler = (req, res) => {
             });
           final_results.push(entry);
         });
-      res.send(final_results);
+      return final_results;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const findBestSolvedGroup: RequestHandler = (req, res) => {
-  const id = new Types.ObjectId(req.params.id);
+export const findBestSolvedGroup = async (ctx: any) => {
+  const id = new Types.ObjectId(ctx.params.id);
   const query3 = Algorithm.find({ _id: id });
   const query1 = Submission.aggregate([
     { $match: { $expr: { $ne: ["$solution_cost", null] } } },
@@ -1115,11 +1035,7 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
   const query2 = Submission.aggregate([
     { $match: { $expr: { $ne: ["$solution_cost", null] }, algo_id: id } },
     {
@@ -1175,13 +1091,9 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
     },
   ])
     .sort({ "_id.map_type": 1 })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 
-  Promise.all([query1, query2, query3])
+  return Promise.all([query1, query2, query3])
     .then((result) => {
       const final_results = [];
       result[0] &&
@@ -1198,17 +1110,13 @@ export const findBestSolvedGroup: RequestHandler = (req, res) => {
             });
           final_results.push(entry);
         });
-      res.send(final_results);
+      return final_results;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred.",
-      });
-    });
+    ;
 };
 
-export const LeadingSolvedInfo: RequestHandler = (req, res) => {
-  Algorithm.aggregate([
+export const LeadingSolvedInfo = async (ctx: any) => {
+  return Algorithm.aggregate([
     {
       $lookup: {
         from: "submissions",
@@ -1239,18 +1147,13 @@ export const LeadingSolvedInfo: RequestHandler = (req, res) => {
   ])
     .sort({ name: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const LeadingLowerInfo: RequestHandler = (req, res) => {
-  Algorithm.aggregate([
+export const LeadingLowerInfo = async (ctx: any) => {
+  return Algorithm.aggregate([
     {
       $lookup: {
         from: "submissions",
@@ -1281,33 +1184,26 @@ export const LeadingLowerInfo: RequestHandler = (req, res) => {
   ])
     .sort({ name: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findOne: RequestHandler = (req, res) => {
-  const { id } = req.params;
+export const findOne = async (ctx: any) => {
+  const { id } = ctx.params;
 
-  Algorithm.findById(id)
+  return Algorithm.findById(id)
     .then((data) => {
       if (!data)
-        res.status(404).send({ message: `Not found Map with id ${id}` });
-      else res.send(data);
+        return ctx.status(404, { message: `Not found Map with id ${id}` });
+      else return data;
     })
-    .catch((err) => {
-      res.status(500).send({ message: `Error retrieving Map with id=${id}` });
-    });
+    ;
 };
 
-export const findScenBestClosed: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findScenBestClosed = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1375,19 +1271,14 @@ export const findScenBestClosed: RequestHandler = (req, res) => {
   ])
     .sort({ scen_type: 1, type_id: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findScenBestSolved: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findScenBestSolved = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1455,19 +1346,14 @@ export const findScenBestSolved: RequestHandler = (req, res) => {
   ])
     .sort({ scen_type: 1, type_id: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findScenBestLower: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findScenBestLower = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1535,19 +1421,14 @@ export const findScenBestLower: RequestHandler = (req, res) => {
   ])
     .sort({ scen_type: 1, type_id: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findScenBestSolution: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findScenBestSolution = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1615,19 +1496,14 @@ export const findScenBestSolution: RequestHandler = (req, res) => {
   ])
     .sort({ scen_type: 1, type_id: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAgentBestClosed: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findAgentBestClosed = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1673,19 +1549,14 @@ export const findAgentBestClosed: RequestHandler = (req, res) => {
   ])
     .sort({ agents: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAgentBestSolved: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findAgentBestSolved = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1731,19 +1602,14 @@ export const findAgentBestSolved: RequestHandler = (req, res) => {
   ])
     .sort({ agents: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAgentBestLower: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findAgentBestLower = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1789,19 +1655,14 @@ export const findAgentBestLower: RequestHandler = (req, res) => {
   ])
     .sort({ agents: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAgentBestSolution: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.id);
-  Submission.aggregate([
+export const findAgentBestSolution = async (ctx: any) => {
+  const map_id = new Types.ObjectId(ctx.params.id);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1847,20 +1708,16 @@ export const findAgentBestSolution: RequestHandler = (req, res) => {
   ])
     .sort({ agents: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAgentSolutionCost: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.mapId);
-  const scen_id = new Types.ObjectId(req.params.scenId);
-  Submission.aggregate([
+export const findAgentSolutionCost = async (ctx: any) => {
+  const [mapId, scenId] = (ctx.params.pair ?? "").split("&");
+  const map_id = new Types.ObjectId(mapId);
+  const scen_id = new Types.ObjectId(scenId);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1904,20 +1761,16 @@ export const findAgentSolutionCost: RequestHandler = (req, res) => {
   ])
     .sort({ agents: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };
 
-export const findAgentLower: RequestHandler = (req, res) => {
-  const map_id = new Types.ObjectId(req.params.mapId);
-  const scen_id = new Types.ObjectId(req.params.scenId);
-  Submission.aggregate([
+export const findAgentLower = async (ctx: any) => {
+  const [mapId, scenId] = (ctx.params.pair ?? "").split("&");
+  const map_id = new Types.ObjectId(mapId);
+  const scen_id = new Types.ObjectId(scenId);
+  return Submission.aggregate([
     {
       $match: {
         $and: [
@@ -1959,12 +1812,7 @@ export const findAgentLower: RequestHandler = (req, res) => {
   ])
     .sort({ agents: 1 })
     .then((data) => {
-      res.send(data);
+      return data;
     })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
+    ;
 };

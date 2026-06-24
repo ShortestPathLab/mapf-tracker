@@ -1,7 +1,7 @@
 import { run } from "aggregations";
 import { stage as updateSubmissionsWithOngoingSubmissions } from "aggregations/stages/updateSubmissionsWithOngoingSubmissions";
 import { randomUUIDv7 } from "bun";
-import { RequestHandler } from "express";
+import type { Context } from "elysia";
 import {
   chain as _,
   ceil,
@@ -18,7 +18,7 @@ import { Instance, instances, OngoingSubmission } from "models";
 import { set } from "models/PipelineStatus";
 import { AggregateBuilder, toString } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
-import { cached, createCache, queryClient, route } from "query";
+import { cached, queryClient } from "query";
 import { usingWorkerTaskReusable } from "queue/usingWorker";
 import { ResultTicketStatus, createPool } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
@@ -56,17 +56,17 @@ export const findAll = query();
 /**
  * Find a submission using id
  */
-export const findById = query(z.object({ id: z.string() }), ({ id }) => [
+export const findById = query(({ params }) => [
   {
-    _id: new Types.ObjectId(id),
+    _id: new Types.ObjectId(params.id),
   },
 ]);
 
 export const summaryPageCountByApiKeyGeneral = aggregate(
-  undefined,
-  z.object({ apiKey: z.string() }),
-  ({ apiKey }, p) => p.match({ apiKey }).count("count"),
-  async (p: [{ count: number }]) => ceil((p[0]?.count ?? 0) / CHUNK),
+  ({ params }, p) => p.match({ apiKey: params.apiKey }).count("count"),
+  {
+    handler: async (p: [{ count: number }]) => ceil((p[0]?.count ?? 0) / CHUNK),
+  },
 );
 
 const summaryByApiKeyWorker = usingWorkerTaskReusable<
@@ -74,33 +74,28 @@ const summaryByApiKeyWorker = usingWorkerTaskReusable<
   SummaryByApiKeyResult
 >(() => new Worker(summaryByApiKeyWorkerPath));
 
-
 export const summaryByApiKey = cached(
-  [],
-  z.unknown(),
-  (params) => summaryByApiKeyWorker(params),
-  "params",
-  { maxAge: 10 * 1000, maxSize: 1000 }
-)
+  ({ params }: Context) => summaryByApiKeyWorker(params),
+  { cacheKey: (ctx) => ctx.params, maxAge: 10 * 1000, maxSize: 1000 },
+);
 
 export const summaryByApiKeyGeneral = aggregate(
-  undefined,
-  z.object({ apiKey: z.string() }),
-  ({ apiKey }, p) =>
+  ({ params }, p) =>
     p
-      .match({ apiKey })
+      .match({ apiKey: params.apiKey })
       .project({
         "validation.outcome": { $ifNull: ["$validation.outcome", "running"] },
       })
       .group({ _id: "$validation.outcome", count: { $sum: 1 } }),
-  async (p: { _id: string; count: number }[]) =>
-    reduce(p, (prev, { _id, count }) => ({ ...prev, [_id]: count }), {}),
+  {
+    handler: async (p: { _id: string; count: number }[]) =>
+      reduce(p, (prev, { _id, count }) => ({ ...prev, [_id]: count }), {}),
+  },
 );
 
 export const findByScenario = cached(
-  [OngoingSubmission, Instance],
-  z.object({ apiKey: z.string(), scenario: z.string() }),
-  async ({ apiKey, scenario }) => {
+  async ({ params }: Context) => {
+    const { apiKey, scenario } = params as { apiKey: string; scenario: string };
     const indexes = await generateIndexes();
     const ids = await Instance.aggregate(
       new AggregateBuilder()
@@ -132,6 +127,7 @@ export const findByScenario = cached(
       instance: pick(indexes.instances[r.instance], ["_id", "solution_cost", "lower_cost"])
     }))
   },
+  { watch: [OngoingSubmission, Instance] },
 );
 
 export const instanceByApiKey = undefined;
@@ -140,50 +136,42 @@ export const instanceByApiKey = undefined;
  * Delete by id
  * TODO: FIX BEFORE LAUNCH Require auth or api key
  */
-export const deleteById = route(
-  z.object({
-    id: z
-      .string()
-      .or(z.string().array())
-      .transform((c) => (typeof c === "string" ? [c] : c)),
-  }),
-  async ({ id }) => {
-    const out = await OngoingSubmission.deleteMany({
-      _id: { $in: id },
-    });
-
-    return { count: out.deletedCount };
-  },
-);
+export const deleteById = async ({ body }: Context) => {
+  const { id } = z
+    .object({
+      id: z
+        .string()
+        .or(z.string().array())
+        .transform((c) => (typeof c === "string" ? [c] : c)),
+    })
+    .parse(body);
+  const out = await OngoingSubmission.deleteMany({
+    _id: { $in: id },
+  });
+  return { count: out.deletedCount };
+};
 
 /**
  * Delete by api key
  */
-export const deleteByApiKey = route(
-  z.object({ apiKey: z.string() }),
-  async ({ apiKey }) => {
-    const out = await OngoingSubmission.deleteMany({ apiKey });
-    return { count: out.deletedCount };
-  },
-  { source: "params" },
-);
+export const deleteByApiKey = async ({ params }: Context) => {
+  const out = await OngoingSubmission.deleteMany({ apiKey: params.apiKey });
+  return { count: out.deletedCount };
+};
 
 // ─── Submission Handlers ─────────────────────────────────────────────────────
 
-export const finalise = route(
-  z
-    .object({
-      key: apiKeySchema,
-    })
-    .transform(({ key }, ctx) => getKey(key, ctx)),
-  async (data) => {
-    await data.updateOne({ status: { type: "submitted" } });
-    run(updateSubmissionsWithOngoingSubmissions, undefined, {
-      onProgress: (args) => set(args.stage, args),
-    });
-  },
-  { source: "params" },
-);
+export const finalise = async ({ params }: Context) => {
+  const data = await z
+    .object({ key: apiKeySchema })
+    .transform(({ key }, ctx) => getKey(key, ctx))
+    .parseAsync(params);
+  await data.updateOne({ status: { type: "submitted" } });
+  run(updateSubmissionsWithOngoingSubmissions, undefined, {
+    onProgress: (args) => set(args.stage, args),
+  });
+  return { status: "submitted" };
+};
 
 const validateSubmissionRequestAsync = usingWorkerTaskReusable<
   unknown,
@@ -216,36 +204,33 @@ const submissionTickets = createPool<{
   size?: number;
 }>();
 
-export const status = route(
-  z.object({ ticket: z.string() }),
-  async ({ ticket }) =>
-    submissionTickets.pool.tickets[ticket] || { status: "unknown" },
-);
+export const status = async ({ body }: Context) => {
+  const { ticket } = z.object({ ticket: z.string() }).parse(body);
+  return submissionTickets.pool.tickets[ticket] || { status: "unknown" };
+};
 
-export const statusByApiKey = route(
-  z.object({ apiKey: z.string() }),
-  async ({ apiKey }) =>
-    filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === apiKey),
+export const statusByApiKey = async ({ params }: Context) =>
+  filter(
+    values(submissionTickets.pool.tickets),
+    (c) => c.apiKey === params.apiKey,
+  );
 
-  { source: "params" },
-);
-
-export const create = route(z.any(), async (d, req) => {
+export const create = async ({ body, params }: Context) => {
   const { apiKey, label } = await z
     .object({ apiKey: apiKeyValidationSchema, label: z.string().optional() })
-    .parseAsync(req.params);
+    .parseAsync(params);
   const key = randomUUIDv7();
   submissionTickets.withTicket(
     key,
-    () => processSubmission(d, apiKey.api_key!),
+    () => processSubmission(body, apiKey.api_key!),
     {
       apiKey: apiKey.api_key!,
-      size: await estimateSizeAsync(d),
+      size: await estimateSizeAsync(body),
       label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
     },
   );
   return { message: "submission received", ticket: key };
-});
+};
 
 export async function restore() {
   // Remove unfinished jobs

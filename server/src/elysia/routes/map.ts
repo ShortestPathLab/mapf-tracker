@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { Map } from "models";
+import { makespan, preview } from "../../controllers/map";
 
 /**
  * Wire shape for a map record as serialised to clients. Mirrors the client's
@@ -42,4 +43,6 @@ export const mapRoutes = new Elysia({ prefix: "/api/map" })
     // adds `id`). Elysia renders a bare Mongoose document as text/plain rather
     // than JSON, so the conversion is required for a single-document response.
     return data.toJSON() as MapRecord;
-  });
+  })
+  .post("/preview", preview)
+  .post("/makespan", makespan);

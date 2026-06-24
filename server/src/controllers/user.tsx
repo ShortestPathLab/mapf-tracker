@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import type { Context } from "elysia";
 import { mail } from "mail";
 import { Types } from "mongoose";
 import { render } from "@react-email/components";
@@ -57,12 +57,8 @@ async function queueMail({
   );
 }
 
-export const createKeyAndSendMail: RequestHandler<
-  unknown,
-  unknown,
-  { requestId: string }
-> = async (req, res) => {
-  const { requestId } = z.object({ requestId: z.string() }).parse(req.body);
+export const createKeyAndSendMail = async ({ body }: Context) => {
+  const { requestId } = z.object({ requestId: z.string() }).parse(body);
   const doc = await Request.findById(requestId);
   assert(doc, "Request must be defined");
   const {
@@ -81,22 +77,11 @@ export const createKeyAndSendMail: RequestHandler<
     comments,
     status,
   });
-  res.json({ success: true });
+  return { success: true };
 };
 
-export const findSubmittedAlgoByID: RequestHandler = (req, res) => {
-  const { id } = req.params;
-  Algorithm.find({ user_id: id }, {})
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
-      });
-    });
-};
+export const findSubmittedAlgoByID = async ({ params }: Context) =>
+  Algorithm.find({ user_id: params.id }, {});
 
 export async function createSubmissionKey(requestId: string) {
   log.info("Creating API key");

@@ -1,11 +1,9 @@
-import { Status, run, stages } from "aggregations";
-import { timeStamp } from "console";
-import { RequestHandler } from "express";
-import { chain, has, map } from "lodash";
-import { log } from "logging";
+import { run, stages } from "aggregations";
+import type { Context } from "elysia";
+import { status } from "elysia";
+import { chain, map } from "lodash";
 import { PipelineStatus } from "models";
 import { get, set } from "models/PipelineStatus";
-import { inferErrorMessage } from "utils/error";
 import z from "zod";
 
 export async function restore() {
@@ -17,21 +15,18 @@ export async function restore() {
   }
 }
 
-export const getStatus: RequestHandler = async (req, res) => {
-  return res.json(
-    await chain(stages)
-      .values()
-      .map(async ({ key, dependents, description, destructive }) => ({
-        key,
-        description: description?.(),
-        destructive,
-        dependents: map(dependents, "key"),
-        status: await get(key),
-      }))
-      .thru((c) => Promise.all(c))
-      .value()
-  );
-};
+export const getStatus = async () =>
+  chain(stages)
+    .values()
+    .map(async ({ key, dependents, description, destructive }) => ({
+      key,
+      description: description?.(),
+      destructive,
+      dependents: map(dependents, "key"),
+      status: await get(key),
+    }))
+    .thru((c) => Promise.all(c))
+    .value();
 
 const stageSchema = z
   .object({
@@ -44,29 +39,15 @@ const stageSchema = z
   });
 
 export const runStage =
-  (one?: boolean): RequestHandler =>
-  async (req, res) => {
-    const { data, success, error } = stageSchema.safeParse(req.params);
-    if (!success) {
-      res.status(400).json(error);
-      return;
-    }
-    try {
-      run<any>(
-        stages[data.stage as keyof typeof stages],
-        {},
-        {
-          one,
-          onProgress: async (args) => {
-            await set(args.stage, args);
-          },
-        }
-      );
-      res.status(200).send({});
-    } catch (err) {
-      const message = inferErrorMessage(err);
-      log.error("Pipeline error", { message });
-      console.error(err);
-      res.status(500).send({ error: message });
-    }
+  (one?: boolean) =>
+  async ({ params }: Context) => {
+    const { data, success, error: zErr } = stageSchema.safeParse(params);
+    if (!success) return status(400, zErr);
+    run<any>(stages[data.stage as keyof typeof stages], {}, {
+      one,
+      onProgress: async (args) => {
+        await set(args.stage, args);
+      },
+    });
+    return {};
   };

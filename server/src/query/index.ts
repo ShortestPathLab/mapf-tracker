@@ -1,15 +1,12 @@
-import { Request, RequestHandler, Router } from "express";
+import { Elysia, type Context } from "elysia";
 import { AggregateBuilder } from "mongodb-aggregate-builder";
 import { Document, FilterQuery, Model, ProjectionType, Types } from "mongoose";
-import z from "zod";
 import memo, { AnyAsyncFunction } from "p-memoize";
 import hash from "object-hash";
 import QuickLRU, { Options } from "quick-lru";
-import { log } from "logging";
-import { debounce, has } from "lodash";
+import { debounce } from "lodash";
 import { diskCached } from "./withDiskCache";
 import { get } from "models/Version";
-import { serializeError } from "serialize-error";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -33,164 +30,136 @@ export const createCache = <T extends AnyAsyncFunction>(
   return [g, cache] as const;
 };
 
-export function cached<V extends z.ZodType>(
-  watch: Model<any>[],
-  validate: V = z.any() as any,
-  handler: (req: z.infer<V>) => Promise<any>,
-  source: "body" | "params" = "params",
-  cacheOptions: Options<string, Awaited<ReturnType<typeof handler>>> = {
-    maxSize: 1000,
-  },
-) {
-  const [g, cache] = createCache(handler, cacheOptions);
+/** Derives the cache key (an object to be hashed) from the request context. */
+export type CacheKey = (ctx: Context) => unknown;
+
+export type CachedOptions = {
+  /** Collections whose changes clear this cache. */
+  watch?: Model<any>[];
+  /** Maps the context to the value hashed for the cache key (default: params). */
+  cacheKey?: CacheKey;
+} & Partial<Options<string, any>>;
+
+/**
+ * Wraps an Elysia handler with an in-memory LRU cache. The handler's return
+ * type is preserved so Eden still infers the response type end-to-end. The
+ * cache is keyed by `hash(cacheKey(ctx))` and cleared (debounced) whenever any
+ * watched collection changes.
+ */
+export function cached<Fn extends (ctx: any) => Promise<unknown>>(
+  handler: Fn,
+  {
+    watch = [],
+    cacheKey = (ctx) => (ctx as Context).params,
+    maxSize = 1000,
+    ...rest
+  }: CachedOptions = {},
+): Fn {
+  const cache = new QuickLRU<string, Awaited<ReturnType<Fn>>>({
+    maxSize,
+    ...rest,
+  });
   const clear = debounce(() => cache.clear(), 1000);
   for (const w of watch) {
     w.watch().on("change", clear);
   }
-  return (async (req, res) => {
-    try {
-      const request = await validate.parseAsync(req[source]);
-      const out = await g(request);
-      return res.json(out);
-    } catch (e) {
-      log.error(e, e)
-      res.status(500).json({
-        error: `Error occurred retrieving data.`,
-        details: serializeError(e)
-      });
-    }
-  }) as RequestHandler<unknown>;
+  return memo(handler as any, {
+    cache,
+    // Stringify first: the Elysia context's params/body are not always
+    // structurally hashable by object-hash directly.
+    cacheKey: ([ctx]: any[]) =>
+      hash(JSON.stringify(cacheKey(ctx as Context) ?? "")),
+  }) as unknown as Fn;
 }
 
-export const queryClient = <T>(model: Model<T>) => {
-  const createHandler = <V extends z.ZodType, U>(
-    validate: V = z.any() as any,
-    f: (data: z.infer<V>) => Promise<U>,
-  ): RequestHandler<z.infer<V>> => {
-    const [g, cache] = createCache(f);
-    const clear = debounce(() => cache.clear(), 1000);
-    model.watch().on("change", clear);
-    return async (req, res) => {
-      const { success, data, error } = await validate.safeParseAsync({
-        ...req.params,
-        ...req.query,
-      });
-      if (!success) return res.status(400).json(error.format());
-      try {
-        res.json(await g(data));
-      } catch (e) {
-        res.status(500).json({
-          error: `Error occurred processing query for ${model.modelName}.`,
-          details: serializeError(e),
-        });
-      }
-    };
-  };
+export type AggregateOptions<R> = {
+  /** Enables disk caching under this name. */
+  name?: string;
+  /** Transforms the raw aggregation result before returning. */
+  handler?: (docs: any, ctx: Context) => Promise<R>;
+} & CachedOptions;
 
+export const queryClient = <T>(model: Model<T>) => {
   return {
-    basic: (router = Router()) =>
-      router
-        .get(
-          "/",
-          createHandler(z.unknown(), async () => model.find()),
-        )
-        .get(
-          "/:id",
-          createHandler(
-            z.object({
-              id: z.string(),
-            }),
-            async ({ id }) => model.findById(id),
-          ),
-        )
-        .post(
-          "/write",
-          route(
-            z.object({
-              id: z.string().optional(),
-              data: z.any(),
-            }),
-            async ({ id, data }) => {
-              const result = await model.findOneAndUpdate(
-                { _id: id ?? new Types.ObjectId() },
-                { $set: data },
-                {
-                  upsert: true,
-                },
-              );
-              return { id: result?.id?.toString?.() };
-            },
-            { source: "body" },
-          ),
-        )
-        .post(
-          "/delete",
-          route(
-            z.object({ id: z.string().optional() }),
-            async ({ id }) => {
-              await model.findByIdAndDelete(id);
-              return { id };
-            },
-            { source: "body" },
-          ),
-        ),
-    query: <V extends z.ZodType>(
-      validate: V = z.any() as any,
-      query: (
-        b: z.infer<V>,
+    /** A `model.find`-backed, cached Elysia handler. */
+    query: <R = (Document<unknown, {}, T> & T)[]>(
+      buildQuery: (
+        ctx: Context,
       ) => [FilterQuery<T>] | [FilterQuery<T>, ProjectionType<T>] = () => [{}],
-      handler: (q: (Document<T> & T)[]) => Promise<any> = async (q) => q,
-    ): RequestHandler<z.infer<V>> =>
-      createHandler(validate, async (data) => {
-        const [q, p] = query(data);
-        const docs = await model.find(q, p);
-        return await handler(docs as any);
-      }),
-    aggregate: <V extends z.ZodType>(
-      name: string | undefined,
-      validate: V = z.any() as any,
-      agg: (b: z.infer<V>, pipeline: AggregateBuilder) => AggregateBuilder = (
+      handler: (
+        docs: (Document<unknown, {}, T> & T)[],
+        ctx: Context,
+      ) => Promise<R> = async (docs) => docs as unknown as R,
+      { watch = [model], ...rest }: CachedOptions = {},
+    ) =>
+      cached(
+        async (ctx: Context): Promise<R> => {
+          const [q, p] = buildQuery(ctx);
+          const docs = await model.find(q, p as any);
+          return handler(docs as any, ctx);
+        },
+        { watch, ...rest },
+      ),
+
+    /** A `model.aggregate`-backed, cached (optionally disk-cached) handler. */
+    aggregate: <R = any>(
+      agg: (ctx: Context, pipeline: AggregateBuilder) => AggregateBuilder = (
         _,
         p,
       ) => p,
-      handler: (q: any) => Promise<any> = async (q) => q,
-    ): RequestHandler<z.infer<V>> => {
-      const f = async (data: z.infer<V>) => {
-        const q = agg(data, new AggregateBuilder());
-        const docs = await model.aggregate(q.build());
-        return await handler(docs);
+      {
+        name,
+        handler = async (docs) => docs as R,
+        watch = [model],
+        cacheKey = (ctx) => ctx.params,
+        ...rest
+      }: AggregateOptions<R> = {},
+    ) => {
+      const run = async (ctx: Context): Promise<R> => {
+        const docs = await model.aggregate(
+          agg(ctx, new AggregateBuilder()).build(),
+        );
+        return handler(docs, ctx);
       };
-      return createHandler(
-        validate,
-        name
-          ? diskCached(`aggregate-${model.modelName}-${name}`, f, {
+      const f = name
+        ? (diskCached(`aggregate-${model.modelName}-${name}`, run, {
+            resolver: (ctx: Context) => JSON.stringify(cacheKey(ctx) ?? ""),
             invalidationKey: () => get("diskCache"),
-          })
-          : f,
-      );
+          }) as (ctx: Context) => Promise<R>)
+        : run;
+      return cached(f, { watch, cacheKey, ...rest });
     },
-  };
-};
 
-export const route = <T extends z.ZodType, R>(
-  validate: T = z.any() as any,
-  f: (data: z.infer<T>, req: Request) => Promise<R | undefined> = async () =>
-    undefined,
-  { source = "body" }: { source?: "body" | "params" } = {},
-): RequestHandler<z.infer<T>, {}, R> => {
-  return async (req, res) => {
-    const { success, data, error } = await validate.safeParseAsync(req[source]);
-    if (!success) return res.status(400).json(error.format());
-    try {
-      const out = await f(data, req);
-      res.json(out ?? undefined);
-    } catch (e) {
-      log.error("Query error", { message: has(e, "message") ? e.message : e });
-      console.error(e);
-      res.status(500).json({
-        error: `Error occurred processing this request.`,
-        details: serializeError(e),
-      });
-    }
+    /**
+     * An Elysia micro-app exposing the standard CRUD routes for this model.
+     * Mounted via `.use(model.basic(requireAuth))`, so its routes augment the
+     * app type for Eden inference. `beforeHandle` (e.g. `requireAuth`) is
+     * applied on this micro-app so it reliably guards every route here
+     * (including those added by `extend`) regardless of Elysia hook scoping.
+     */
+    basic: (
+      beforeHandle?: (ctx: Context) => unknown,
+      extend?: (app: any) => any,
+    ) => {
+      const base = new Elysia();
+      const app = (beforeHandle ? base.onBeforeHandle(beforeHandle as any) : base)
+        .get("/", () => model.find())
+        .get("/:id", ({ params }) => model.findById(params.id))
+        .post("/write", async ({ body }) => {
+          const { id, data } = body as { id?: string; data: unknown };
+          const result = await model.findOneAndUpdate(
+            { _id: id ?? new Types.ObjectId() } as FilterQuery<T>,
+            { $set: data } as any,
+            { upsert: true },
+          );
+          return { id: result?.id?.toString?.() };
+        })
+        .post("/delete", async ({ body }) => {
+          const { id } = body as { id?: string };
+          await model.findByIdAndDelete(id);
+          return { id };
+        });
+      return extend ? extend(app) : app;
+    },
   };
 };
