@@ -14,8 +14,6 @@ const findById = query(
   async (docs) => first(docs)?.toJSON(),
 );
 
-const findAll = async () => Instance.find({});
-
 const findNonEmptyByScenId = async ({ params }: Context) =>
   Instance.aggregate([
     {
@@ -151,7 +149,6 @@ const downloadRowById = async ({ params }: Context) =>
 
 // Static segments registered before the dynamic `/:id` so they aren't shadowed.
 export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
-  .get("/", findAll)
   .get("/id/:id", findById)
   .get("/getAlgo/:id", findAlgosRecord)
   .get("/DownloadRow/:id", downloadRowById)
