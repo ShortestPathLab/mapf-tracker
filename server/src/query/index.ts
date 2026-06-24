@@ -63,12 +63,22 @@ export function cached<Fn extends (ctx: any) => Promise<unknown>>(
   for (const w of watch) {
     w.watch().on("change", clear);
   }
-  return memo(handler as any, {
+  const g = memo(handler as any, {
     cache,
     // Stringify first: the Elysia context's params/body are not always
     // structurally hashable by object-hash directly.
     cacheKey: ([ctx]: any[]) =>
       hash(JSON.stringify(cacheKey(ctx as Context) ?? "")),
+  });
+  // Elysia statically analyses the handler source to decide which context
+  // fields to parse. The memoized fn hides that, so explicitly reference
+  // query/params/body/headers here to force Elysia to populate them.
+  return ((ctx: any) => {
+    void ctx.query;
+    void ctx.params;
+    void ctx.body;
+    void ctx.headers;
+    return g(ctx);
   }) as unknown as Fn;
 }
 
