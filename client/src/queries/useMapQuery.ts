@@ -64,11 +64,11 @@ export function mapsQuery() {
 export function scenariosQuery(id: string | number) {
   return {
     queryKey: ["instanceCollections", id],
-    queryFn: async () =>
-      map(
-        await json<Scenario[]>(`${APIConfig.apiUrl}/scenario/map/${id}`),
-        incorporateProportions
-      ),
+    queryFn: async () => {
+      const { data, error } = await api.api.scenario.map({ id: `${id}` }).get();
+      if (error) throw error;
+      return map(data ?? [], incorporateProportions);
+    },
     enabled: !!id,
   };
 }
@@ -76,7 +76,11 @@ export function scenariosQuery(id: string | number) {
 export function scenarioQuery(id: string | number) {
   return {
     queryKey: ["scenario", id],
-    queryFn: () => json<Scenario>(`${APIConfig.apiUrl}/scenario/id/${id}`),
+    queryFn: async () => {
+      const { data, error } = await api.api.scenario.id({ id: `${id}` }).get();
+      if (error) throw error;
+      return data ?? null;
+    },
     enabled: !!id,
   };
 }

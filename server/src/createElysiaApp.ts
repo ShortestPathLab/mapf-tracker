@@ -13,7 +13,6 @@ import * as map from "./controllers/map";
 import * as ongoingSubmission from "./controllers/ongoingSubmission";
 import * as pipeline from "./controllers/pipeline";
 import * as request from "./controllers/request";
-import * as scenario from "./controllers/scenario";
 import * as solutionPath from "./controllers/solutionPath";
 import * as submission from "./controllers/submission";
 import * as submissionKey from "./controllers/submissionKey";
@@ -22,6 +21,7 @@ import { Request, SubmissionKey, User } from "./models";
 import { use as useQueries } from "./query/queries";
 import { express, expandOptionalPath, toElysiaPath } from "./elysia/expressAdapter";
 import { mapRoutes } from "./elysia/routes/map";
+import { scenarioRoutes } from "./elysia/routes/scenario";
 
 const { hash } = password;
 
@@ -192,7 +192,8 @@ export const createElysiaApp = () => {
     // Native Elysia routes are chained into the app definition (not added via
     // `add`, whose return value is discarded) so their types flow into the
     // exported `App` type for end-to-end Eden inference.
-    .use(mapRoutes);
+    .use(mapRoutes)
+    .use(scenarioRoutes);
 
   add(app, "post", "/api/map", "/preview", map.preview);
   add(app, "post", "/api/map", "/makespan", map.makespan);
@@ -209,11 +210,6 @@ export const createElysiaApp = () => {
   add(app, "get", "/api/submission", "/summary/:algorithm", submission.summaryByAlgorithm);
   add(app, "get", "/api/submission", "/:algorithm/:scenario", submission.byScenario);
 
-  add(app, "get", "/api/scenario", "/", scenario.findAll);
-  add(app, "get", "/api/scenario", "/map/:id", scenario.findByMap_id);
-  add(app, "get", "/api/scenario", "/map/:id/:scen_type", scenario.findByMap_id_Map_type);
-  add(app, "get", "/api/scenario", "/:id", scenario.findById);
-  add(app, "get", "/api/scenario", "/id/:id", scenario.findById);
 
   add(app, "get", "/api/algorithm", "/", algorithm.findAll);
   add(app, "get", "/api/algorithm", "/all_detail", algorithm.findAllDetails);
