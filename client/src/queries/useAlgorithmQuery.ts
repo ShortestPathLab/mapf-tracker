@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
 import { Metric } from "core/metrics";
 import {
   Algorithm,
@@ -8,30 +7,42 @@ import {
   AlgorithmDetails,
   SummaryResult,
 } from "core/types";
-import { capitalize, find } from "lodash";
-import { json } from "./query";
+import { find } from "lodash";
+import api, { DataOf, untyped, unwrap } from "hooks/useQuery";
+
+// Metric-keyed path segments mapped to static treaty nodes (Eden can't type a
+// dynamically-built path). The aggregation handlers behind these are untyped
+// server-side, so the inferred data is `any` for now.
+// TODO(eden): type the /algorithm aggregation responses server-side.
+const mapInfoRoutes = {
+  solved: api.api.algorithm.getSolvedInfo,
+  solution: api.api.algorithm.getSolutionInfo,
+  closed: api.api.algorithm.getClosedInfo,
+  lower: api.api.algorithm.getLowerInfo,
+} as const;
+
+const domainInfoRoutes = {
+  solved: api.api.algorithm.getDomainSolvedInfo,
+  solution: api.api.algorithm.getDomainSolutionInfo,
+  closed: api.api.algorithm.getDomainClosedInfo,
+  lower: api.api.algorithm.getDomainLowerInfo,
+} as const;
 
 export function useAlgorithmSummaryQuery(algorithm?: string) {
   return useQuery(algorithmSummaryQuery(algorithm));
 }
 
-export type SubmissionInfo = {
-  _id: string;
-  agents: number;
-  date: string;
-  instance_id: string;
-  lower_cost: number;
-  solution_cost: number;
-  best_lower: boolean;
-  best_solution: boolean;
-};
+/** A submission row for an algorithm + scenario, inferred from the server. */
+export type SubmissionInfo = DataOf<
+  ReturnType<ReturnType<typeof api.api.submission>>["get"]
+>[number];
 
 export function algorithmSummaryQuery(algorithm?: string) {
   return {
     queryKey: ["algorithms", "summary", algorithm],
     queryFn: () =>
-      json<SummaryResult>(
-        `${APIConfig.apiUrl}/submission/summary/${algorithm}`
+      untyped<SummaryResult>(
+        api.api.submission.summary({ algorithm: `${algorithm}` }).get()
       ),
     enabled: !!algorithm,
   };
@@ -47,7 +58,7 @@ export function useAlgorithmScenarioQuery(
 export const useAlgorithmsData = () => {
   return useQuery({
     queryKey: ["algorithms"],
-    queryFn: () => json<Algorithm[]>(`${APIConfig.apiUrl}/algorithm/`),
+    queryFn: () => untyped<Algorithm[]>(api.api.algorithm.get()),
   });
 };
 
@@ -67,7 +78,7 @@ export const useAlgorithmForInstanceData = (id: string) => {
   return useQuery({
     queryKey: ["algorithmInstance", id],
     queryFn: () =>
-      json<
+      untyped<
         {
           id: string;
           lower_algos: (Algorithm & {
@@ -83,7 +94,7 @@ export const useAlgorithmForInstanceData = (id: string) => {
             date: string;
           })[];
         }[]
-      >(`${APIConfig.apiUrl}/instance/getAlgo/${id}`),
+      >(api.api.instance.getAlgo({ id }).get()),
     enabled: !!id,
   });
 };
@@ -92,12 +103,9 @@ export const useMapData = (query: Metric) =>
   useQuery({
     queryKey: ["mapData", query],
     queryFn: () =>
-      json<
-        {
-          map_name: string;
-          solved_instances: AlgorithmCollectionCount[];
-        }[]
-      >(`${APIConfig.apiUrl}/algorithm/get${capitalize(query)}Info`),
+      untyped<
+        { map_name: string; solved_instances: AlgorithmCollectionCount[] }[]
+      >(mapInfoRoutes[query].get()),
     enabled: !!query,
   });
 
@@ -105,35 +113,34 @@ export const useMapTypeData = (query: Metric) =>
   useQuery({
     queryKey: ["domainData", query],
     queryFn: () =>
-      json<
-        {
-          map_type: string;
-          results: AlgorithmCollectionAggregate[];
-        }[]
-      >(`${APIConfig.apiUrl}/algorithm/getDomain${capitalize(query)}Info`),
+      untyped<
+        { map_type: string; results: AlgorithmCollectionAggregate[] }[]
+      >(domainInfoRoutes[query].get()),
     enabled: !!query,
   });
 export const useScenarioSuccessRateByAgentCountData = (id: string) =>
   useQuery({
     queryKey: ["scenarioSuccessRateByAgentCount", id],
     queryFn: () =>
-      json<
+      untyped<
         {
           Closed: number;
           Solved: number;
           Unknown: number;
-          name: 1;
-          total: 50;
+          name: number;
+          total: number;
         }[]
-      >(`${APIConfig.apiUrl}/instance/test/${id}`),
+      >(api.api.instance.test({ id }).get()),
     enabled: !!id,
   });
 export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
   return {
     queryKey: ["algorithms", algorithm, scenario],
     queryFn: () =>
-      json<SubmissionInfo[]>(
-        `${APIConfig.apiUrl}/submission/${algorithm}/${scenario}`
+      unwrap(
+        api.api
+          .submission({ algorithm: `${algorithm}` })({ scenario: `${scenario}` })
+          .get()
       ),
     enabled: !!algorithm && !!scenario,
   };
@@ -142,7 +149,6 @@ export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
 export function algorithmDetailsQuery() {
   return {
     queryKey: ["algorithms-detailed"],
-    queryFn: () =>
-      json<AlgorithmDetails[]>(`${APIConfig.apiUrl}/algorithm/all_detail`),
+    queryFn: () => untyped<AlgorithmDetails[]>(api.api.algorithm.all_detail.get()),
   };
 }

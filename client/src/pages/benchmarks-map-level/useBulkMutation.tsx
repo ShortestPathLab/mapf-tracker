@@ -23,7 +23,6 @@ import {
 import { nanoid } from "nanoid";
 import prettyBytes from "pretty-bytes";
 import { parallel } from "promise-tools";
-import { text } from "queries/query";
 import {
   algorithmDetailsQuery,
   algorithmScenarioQuery,
@@ -243,7 +242,9 @@ export const bulkDownloadMaps = async (
       const fullName = `${name}.map`;
       const { set } = addJob({ label: fullName, status: "Downloading" });
       try {
-        const contents = await text<string>(`/assets/maps/${fullName}`);
+        const contents = await fetch(`/assets/maps/${fullName}`).then((r) =>
+          r.text()
+        );
         set({ progress: 0.75, status: "Compressing" });
         const meta = await writeOne(`maps/${fullName}`, contents);
         set({
@@ -271,7 +272,9 @@ export const bulkDownloadMaps = async (
         status: "Downloading",
       });
       try {
-        const contents = await text(`./assets/scens/${fullName}`);
+        const contents = await fetch(`./assets/scens/${fullName}`).then((r) =>
+          r.text()
+        );
         set({ progress: 0.75, status: "Compressing" });
         const meta = await writeOne(`scenarios/${fullName}`, contents);
         set({

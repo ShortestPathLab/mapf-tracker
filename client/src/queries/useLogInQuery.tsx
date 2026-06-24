@@ -1,6 +1,5 @@
-import { APIConfig } from "core/config";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { post } from "queries/mutation";
+import api from "hooks/useQuery";
 import { queryClient } from "App";
 import { LogInFormData } from "components/appbar/LogInDialog";
 
@@ -35,11 +34,12 @@ export function useLogInMutation() {
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["credentials"] }),
     mutationFn: async ({ username, password }: LogInFormData) => {
-      const result = await post(`${APIConfig.apiUrl}/auth/login`, {
+      const { data, error } = await api.api.auth.login.post({
         username,
         password,
       });
-      const { token } = (await result?.json?.()) ?? {};
+      if (error) throw error;
+      const { token } = data ?? {};
       if (token) {
         localStorage.setItem("user", JSON.stringify({ token, username }));
         return true;

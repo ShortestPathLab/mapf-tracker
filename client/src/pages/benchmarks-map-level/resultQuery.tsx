@@ -2,7 +2,7 @@ import { JSONParser } from "@streamparser/json";
 import { APIConfig } from "core/config";
 import { ceil, map, noop, range, throttle } from "lodash";
 import { parallel } from "promise-tools";
-import { post } from "queries/mutation";
+import { getAuth } from "queries/mutation";
 import type { Job } from "./useBulkMutation";
 
 export const CHUNK_LIMIT = 500;
@@ -46,11 +46,17 @@ export const resultQuery = async (
             res();
           };
           parser.onError = console.log;
-          post(`${APIConfig.apiUrl}/bulk/results`, {
-            scenario: id,
-            solutions,
-            limit: CHUNK_LIMIT,
-            skip: c * CHUNK_LIMIT,
+          // Raw fetch (not Eden): this endpoint streams its JSON body, which we
+          // consume incrementally below — Eden buffers/parses the whole body.
+          fetch(`${APIConfig.apiUrl}/bulk/results`, {
+            method: "post",
+            headers: { "Content-Type": "application/json", ...getAuth() },
+            body: JSON.stringify({
+              scenario: id,
+              solutions,
+              limit: CHUNK_LIMIT,
+              skip: c * CHUNK_LIMIT,
+            }),
           }).then(async (b) => {
             // The bulk results endpoint always responds with a streamed body
             const reader = b.body!.getReader();

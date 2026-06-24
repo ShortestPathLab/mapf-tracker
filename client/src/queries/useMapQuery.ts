@@ -1,14 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { find, map } from "lodash";
-import {
-  Map,
-  CollectionWithInstanceCount,
-  Instance as Instance,
-  Scenario,
-} from "core/types";
-import { APIConfig } from "core/config";
-import { json } from "./query";
-import api from "hooks/useQuery";
+import { CollectionWithInstanceCount, Instance } from "core/types";
+import api, { untyped } from "hooks/useQuery";
 
 const incorporateProportions = <T extends CollectionWithInstanceCount>(
   item: T
@@ -28,7 +21,7 @@ export const useScenario = (id: number | string) => useQuery(scenarioQuery(id));
 export const useInstancesByScenario = (id: number | string) =>
   useQuery({
     queryKey: ["instanceCollection", id],
-    queryFn: () => json<Instance[]>(`${APIConfig.apiUrl}/instance/${id}`),
+    queryFn: () => untyped<Instance[]>(api.api.instance({ id: `${id}` }).get()),
     enabled: !!id,
   });
 

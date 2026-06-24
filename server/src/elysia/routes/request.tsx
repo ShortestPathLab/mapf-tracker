@@ -6,22 +6,29 @@ import RequestConfirmation from "emails/RequestConfirmation";
 import { log } from "logging";
 import { mail } from "mail";
 import { Infer, Request, SubmissionKey, requests } from "models";
-import { queryClient } from "query";
 import React from "react";
 import { assert } from "utils/assert";
+import { allToJSON, toJSON } from "utils/toJSON";
 import { z } from "zod";
 
-const { query } = queryClient(Request);
-
-const findByEmail = query(({ params }) => [{ requesterEmail: params.email }]);
+const findByEmail = async ({ params }: Context) =>
+  Request.find({ requesterEmail: params.email }).then(allToJSON);
 
 const findAll = async () => Request.find({});
 
 const findByKey = async ({ params }: Context) => {
   const { request_id } =
     (await SubmissionKey.findOne({ api_key: params.key })) ?? {};
-  if (!request_id) return undefined;
-  return (await Request.findById(request_id))?.toJSON();
+  if (!request_id)
+    return status(404, {
+      message: `No request linked to key ${params.key}`,
+    });
+  const data = await Request.findById(request_id);
+  if (!data)
+    return status(404, {
+      message: `Not found request with id ${request_id}`,
+    });
+  return toJSON(data);
 };
 
 const findByInstance_id = async ({ params }: Context) => {

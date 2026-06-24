@@ -4,14 +4,13 @@ import { useMutation } from "@tanstack/react-query";
 import { Floating } from "components/Floating";
 import { useSnackbar } from "components/Snackbar";
 import { ConfirmDialog } from "components/dialog/Modal";
-import { APIConfig } from "core/config";
 import {
   SubmissionKeyRequestForm,
   SubmissionKeyRequestFormProps,
 } from "forms/SubmissionKeyRequestForm";
 import { useSurface } from "components/surface/useSurface";
 import { defer } from "lodash";
-import { post } from "queries/mutation";
+import api, { unwrap } from "hooks/useQuery";
 import { Request } from "queries/useRequestQuery";
 
 const hintText = (algorithm: string, email: string) =>
@@ -32,8 +31,8 @@ export function SubmitRequestForm({
   });
 
   const { mutateAsync: submit } = useMutation({
-    mutationFn: async (request: Request) =>
-      post<Request>(`${APIConfig.apiUrl}/request/create`, request),
+    mutationFn: (request: Request) =>
+      unwrap(api.api.request.create.post(request)),
     mutationKey: ["requestSubmissionKey"],
   });
 

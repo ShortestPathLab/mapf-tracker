@@ -7,6 +7,8 @@ import QuickLRU, { Options } from "quick-lru";
 import { debounce } from "lodash";
 import { diskCached } from "./withDiskCache";
 import { get } from "models/Version";
+import { InferRaw } from "models";
+import { allToJSON, toJSON } from "utils/toJSON";
 
 export const toJson = (r: Response) => r.json();
 export const toBlob = (r: Response) => r.blob();
@@ -92,18 +94,18 @@ export type AggregateOptions<R> = {
 export const queryClient = <T>(model: Model<T>) => {
   return {
     /** A `model.find`-backed, cached Elysia handler. */
-    query: <R = (Document<unknown, {}, T> & T)[]>(
+    query: (
       buildQuery: (
         ctx: Context,
       ) => [FilterQuery<T>] | [FilterQuery<T>, ProjectionType<T>] = () => [{}],
       handler: (
         docs: (Document<unknown, {}, T> & T)[],
         ctx: Context,
-      ) => Promise<R> = async (docs) => docs as unknown as R,
+      ) => Promise<T> = async (docs) => docs as unknown as T,
       { watch = [model], ...rest }: CachedOptions = {},
     ) =>
       cached(
-        async (ctx: Context): Promise<R> => {
+        async (ctx: Context): Promise<T> => {
           const [q, p] = buildQuery(ctx);
           const docs = await model.find(q, p as any);
           return handler(docs as any, ctx);
@@ -133,9 +135,9 @@ export const queryClient = <T>(model: Model<T>) => {
       };
       const f = name
         ? (diskCached(`aggregate-${model.modelName}-${name}`, run, {
-            resolver: (ctx: Context) => JSON.stringify(cacheKey(ctx) ?? ""),
-            invalidationKey: () => get("diskCache"),
-          }) as (ctx: Context) => Promise<R>)
+          resolver: (ctx: Context) => JSON.stringify(cacheKey(ctx) ?? ""),
+          invalidationKey: () => get("diskCache"),
+        }) as (ctx: Context) => Promise<R>)
         : run;
       return cached(f, { watch, cacheKey, ...rest });
     },
@@ -152,9 +154,9 @@ export const queryClient = <T>(model: Model<T>) => {
       extend?: (app: any) => any,
     ) => {
       const base = new Elysia();
-      const app = (beforeHandle ? base.onBeforeHandle(beforeHandle as any) : base)
-        .get("/", () => model.find())
-        .get("/:id", ({ params }) => model.findById(params.id))
+      const app = (beforeHandle ? base.onBeforeHandle(beforeHandle) : base)
+        .get("/", () => model.find().then(allToJSON))
+        .get("/:id", ({ params }) => model.findById(params.id).then(toJSON))
         .post("/write", async ({ body }) => {
           const { id, data } = body as { id?: string; data: unknown };
           const result = await model.findOneAndUpdate(
@@ -169,7 +171,7 @@ export const queryClient = <T>(model: Model<T>) => {
           await model.findByIdAndDelete(id);
           return { id };
         });
-      return extend ? extend(app) : app;
+      return (extend ? extend(app) : app) as typeof app;
     },
   };
 };

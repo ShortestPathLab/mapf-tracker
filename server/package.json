@@ -31,6 +31,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "apicache": "^1.6.3",
+    "bridge-mongo": "^1.0.27",
     "bullmq": "^5.12.1",
     "bun": "^1.1.21",
     "config": "workspace:*",

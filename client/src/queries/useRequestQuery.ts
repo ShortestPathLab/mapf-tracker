@@ -1,9 +1,7 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
 import { map } from "lodash";
 import { boolean, InferType, object, string } from "yup";
-import { json } from "./query";
-import { RequestWithReviewOutcome } from "./useRequestsQuery";
+import api, { unwrap } from "hooks/useQuery";
 
 export type Request = InferType<typeof requestSchema> & { id?: string };
 
@@ -27,7 +25,7 @@ export const requestSchema = object({
 const requestQuery = (key: string | number) => ({
   queryKey: ["submissionRequestDetails", key],
   queryFn: async () => ({
-    ...(await json<Request>(`${APIConfig.apiUrl}/request/key/${key}`)),
+    ...(await unwrap(api.api.request.key({ key: `${key}` }).get())),
     key,
   }),
   enabled: !!key,
@@ -39,10 +37,8 @@ export const useRequestData = (key: string | number) =>
 export const useRequestsData = (keys: string[]) =>
   useQueries({ queries: map(keys, requestQuery) });
 
-export const requestByEmailQueryFn = (email: string) => async () =>
-  await json<RequestWithReviewOutcome[]>(
-    `${APIConfig.apiUrl}/request/email/${email}`,
-  );
+export const requestByEmailQueryFn = (email: string) => () =>
+  unwrap(api.api.request.email({ email }).get());
 
 export const useRequestByEmailData = (email: string) =>
   useQuery({

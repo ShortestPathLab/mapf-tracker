@@ -2,7 +2,6 @@ import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 import { queryClient as client } from "App";
 import { Semaphore } from "async-mutex";
 import { useSnackbar } from "components/Snackbar";
-import { APIConfig } from "core/config";
 import { SummaryResult } from "core/types";
 import {
   cloneDeep,
@@ -15,8 +14,7 @@ import {
   some,
   values,
 } from "lodash";
-import { del, post } from "queries/mutation";
-import { json } from "queries/query";
+import api, { untyped, unwrap } from "hooks/useQuery";
 
 const REFETCH_MS = 2500;
 
@@ -73,7 +71,7 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
   return useMutation({
     mutationKey: ["finaliseOngoingSubmission"],
     mutationFn: () =>
-      json(`${APIConfig.apiUrl}/ongoing_submission/finalise/${key}`),
+      unwrap(api.api.ongoing_submission.finalise({ key: `${key}` }).get()),
     onMutate: () => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
     },
@@ -98,12 +96,7 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "general", key],
     queryFn: async () => ({
       ...defaults,
-      ...(await json<{
-        running: number;
-        valid: number;
-        invalid: number;
-        outdated: number;
-      }>(`${APIConfig.apiUrl}/ongoing_submission/${key}`)),
+      ...(await unwrap(api.api.ongoing_submission({ apiKey: `${key}` }).get())),
     }),
     enabled: !!key,
     refetchInterval: REFETCH_MS,
@@ -117,9 +110,9 @@ export function useOngoingSubmissionByIdQuery(id?: string | number) {
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "id", id],
     queryFn: async () =>
       head(
-        await json<OngoingSubmission[]>(
-          `${APIConfig.apiUrl}/ongoing_submission/id/${id}`,
-        ),
+        await untyped<OngoingSubmission[]>(
+          api.api.ongoing_submission.id({ id: `${id}` }).get()
+        )
       ),
     enabled: !!id,
   });
@@ -129,8 +122,10 @@ export const ongoingSubmissionScenarioQueryFn = (
   key?: string | number,
   scenario?: string | number,
 ) =>
-  json<OngoingSubmission[]>(
-    `${APIConfig.apiUrl}/ongoing_submission/scenario/${key}/${scenario}`,
+  untyped<OngoingSubmission[]>(
+    api.api.ongoing_submission
+      .scenario({ apiKey: `${key}` })({ scenario: `${scenario}` })
+      .get()
   );
 
 export function useOngoingSubmissionScenarioQuery(
@@ -148,8 +143,10 @@ export function useOngoingSubmissionScenarioQuery(
 const summaryPageCountQuery = (key?: string | number) => ({
   queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary-pagecount", key],
   queryFn: () =>
-    json<number>(
-      `${APIConfig.apiUrl}/ongoing_submission/summary-pagecount/${key}`,
+    unwrap(
+      api.api.ongoing_submission["summary-pagecount"]({
+        apiKey: `${key}`,
+      }).get()
     ),
   enabled: !!key,
   refetchInterval: REFETCH_MS,
@@ -168,9 +165,11 @@ const summaryQuery = (key?: string | number, i: number = 0) => ({
     // `key` is guaranteed present here since the query is only `enabled` when `key` is truthy
     mutexes(key!).runExclusive(
       async () =>
-        json<SummaryResult>(
-          `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`,
-        ) ?? null,
+        (await unwrap(
+          api.api.ongoing_submission
+            .summary({ apiKey: `${key}` })({ page: `${i}` })
+            .get()
+        )) ?? null,
       // Each task has a weight of 1
       1,
       // FIFO
@@ -224,8 +223,8 @@ export function useOngoingSubmissionTicketQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
     queryFn: async () => [
-      ...(await json<SubmissionTicket[]>(
-        `${APIConfig.apiUrl}/ongoing_submission/status/${key}`,
+      ...(await untyped<SubmissionTicket[]>(
+        api.api.ongoing_submission.status({ apiKey: `${key}` }).get()
       )),
       ...cloneDeep(Array.from(optimisticQueue)),
     ],
@@ -242,8 +241,8 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
     mutationKey: ["deleteOngoingSubmission"],
     mutationFn: (k: string | string[] | typeof deleteAll) =>
       k === deleteAll
-        ? del(`${APIConfig.apiUrl}/ongoing_submission/${key}`)
-        : post(`${APIConfig.apiUrl}/ongoing_submission/delete`, { id: k }),
+        ? unwrap(api.api.ongoing_submission({ apiKey: `${key}` }).delete())
+        : unwrap(api.api.ongoing_submission.delete.post({ id: k })),
     onMutate: (k) => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
       client.setQueryData<OngoingSubmission[]>(

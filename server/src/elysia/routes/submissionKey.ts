@@ -3,8 +3,9 @@ import type { Context } from "elysia";
 import { Elysia, status } from "elysia";
 import { SubmissionKey, submissionKeys } from "models";
 import { createSubmissionKey } from "utils/submissionKey";
+import { allToJSON, toJSON } from "utils/toJSON";
 
-const findAll = async () => SubmissionKey.find({});
+const findAll = async () => SubmissionKey.find({}).then(allToJSON);
 
 const findByApiKey = async ({ params }: Context) => {
   const data = await SubmissionKey.findOne({ api_key: params.apiKey });
@@ -12,7 +13,7 @@ const findByApiKey = async ({ params }: Context) => {
     return status(404, {
       message: `Not found SubmissionKey with apiKey ${params.apiKey}`,
     });
-  return data.toJSON();
+  return toJSON(data);
 };
 
 const create = async ({ params }: Context) => {

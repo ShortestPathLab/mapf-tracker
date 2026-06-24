@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
 import { Mutex } from "async-mutex";
 import { queryClient } from "App";
-import { post } from "./mutation";
+import api, { unwrap } from "hooks/useQuery";
 
 export type MakespanOptions = {
   instance?: string;
@@ -25,11 +24,9 @@ export const useMakespanData = ({
           await queryClient.cancelQueries({ queryKey: key });
           return null;
         }
-        const response = await post(`${APIConfig.apiUrl}/map/makespan`, {
-          instance,
-          solutionPath,
-        });
-        return JSON.parse(await response.text()) as number | null;
+        return await unwrap(
+          api.api.map.makespan.post({ instance, solutionPath })
+        );
       });
     },
     enabled: !!(instance || solutionPath),

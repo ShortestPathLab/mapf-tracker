@@ -23,7 +23,7 @@ import {
 } from "core/config";
 import { Layout } from "layout";
 import { capitalize, has, isObject, omit, startCase, toPairs } from "lodash";
-import { json } from "queries/query";
+import api, { unwrap } from "hooks/useQuery";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import { paper } from "theme";
 import { tryChain } from "utils/tryChain";
@@ -50,20 +50,14 @@ function useInfo() {
   return useQuery({
     queryKey: ["info/general"],
     refetchInterval: 1000,
-    queryFn: () =>
-      json<{
-        [K in string]: string | number;
-      }>(`${APIConfig.apiUrl}/info/general`),
+    queryFn: () => unwrap(api.api.info.general.get()),
   });
 }
 
 function useEnvironment() {
   return useQuery({
     queryKey: ["info/environment"],
-    queryFn: () =>
-      json<{
-        [K in string]: string | number;
-      }>(`${APIConfig.apiUrl}/info/environment`),
+    queryFn: () => unwrap(api.api.info.environment.get()),
   });
 }
 
@@ -71,7 +65,7 @@ function useInfoLogs() {
   return useQuery({
     queryKey: ["info/logs"],
     refetchInterval: 1000,
-    queryFn: () => json<string[]>(`${APIConfig.apiUrl}/info/logs`),
+    queryFn: () => unwrap(api.api.info.logs.get()),
   });
 }
 

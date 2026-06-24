@@ -1,6 +1,5 @@
 import { queryClient } from "App";
-import { APIConfig } from "core/config";
-import { request } from "queries/mutation";
+import api from "hooks/useQuery";
 import { Request } from "queries/useRequestQuery";
 
 export const handleRequestDetailUpdated = async ({
@@ -11,17 +10,14 @@ export const handleRequestDetailUpdated = async ({
   key?: string | number;
 }) => {
   try {
-    const response = await request(
-      `${APIConfig.apiUrl}/request/update/${values?.id}`,
-      values
-    );
-
-    const data = await response.json();
+    const { error } = await api.api.request
+      .update({ id: `${values?.id}` })
+      .post(values);
     queryClient.invalidateQueries({
       queryKey: ["submissionRequestDetails", key],
     });
-    if (!response.ok) {
-      console.error("Error updating request:", data);
+    if (error) {
+      console.error("Error updating request:", error);
     }
   } catch (error) {
     console.error("Error:", error);

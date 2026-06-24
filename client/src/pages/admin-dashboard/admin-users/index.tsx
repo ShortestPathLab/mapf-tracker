@@ -22,10 +22,10 @@ import { Form, Formik, FormikConfig, FormikProps } from "formik";
 import { Layout } from "layout";
 import { find, noop } from "lodash";
 import { bindTrigger } from "material-ui-popup-state";
-import { User, userBasic } from "queries/useSubmissionKeyQuery";
+import { userBasic } from "queries/useSubmissionKeyQuery";
 import { ReactNode } from "react";
 import { DATE_TIME_FORMAT, formatDate } from "utils/format";
-import { string, object } from "yup";
+import { object, string } from "yup";
 
 type UsernamePassword = {
   username: string;
@@ -88,6 +88,7 @@ function PasswordForm({
 
 export default function index() {
   const { data } = userBasic.useAll();
+  type User = NonNullable<typeof data>[number];
   const { mutateAsync: deleteOne } = userBasic.useDelete();
   const { mutateAsync: writeOne } = userBasic.useWrite();
   const changePassword = useSurface(PasswordForm, {
@@ -101,7 +102,7 @@ export default function index() {
         icon: <EditOutlined />,
         action: (row) =>
           changePassword.open({
-            initialValues: { username: row.username, password: "" },
+            initialValues: { username: row.username ?? "", password: "" },
             disabledValues: { username: true },
             onSubmit: async (values) => {
               await notifyAction(() => writeOne({ id: row.id, ...values }), {

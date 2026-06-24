@@ -17,14 +17,13 @@ import { IconCard } from "components/IconCard";
 import { Item } from "components/Item";
 import { useSnackbar } from "components/Snackbar";
 import { Tip } from "components/Tip";
-import { APIConfig } from "core/config";
 import { AddKeyForm, Key } from "forms/AddKeyForm";
 import { FormikHelpers } from "formik";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
 import { some, zipWith } from "lodash";
 import { Status } from "pages/submission-summary/Status";
-import { get } from "queries/mutation";
+import api from "hooks/useQuery";
 import { Request, useRequestsData } from "queries/useRequestQuery";
 import { object, string } from "yup";
 import { useLocalStorageList } from "../../hooks/useLocalStorageList";
@@ -34,7 +33,7 @@ export function AddKey() {
   const navigate = useNavigate();
   const { mutateAsync: checkKey, isPending: isChecking } = useMutation({
     mutationFn: (key: string) =>
-      get(`${APIConfig.apiUrl}/submission_key/${key}`),
+      api.api.submission_key({ apiKey: key }).get(),
     mutationKey: ["checkKey"],
   });
 
@@ -46,8 +45,8 @@ export function AddKey() {
     { key }: Key,
     { resetForm }: FormikHelpers<Key>,
   ) => {
-    const { ok } = await checkKey(key);
-    if (ok) {
+    const { error } = await checkKey(key);
+    if (!error) {
       resetForm();
       push(key);
       notify("Your submission key was added");
@@ -72,8 +71,8 @@ export function AddKey() {
           })
           .test({
             test: async (value) => {
-              const { ok } = await checkKey(value);
-              return ok;
+              const { error } = await checkKey(value);
+              return !error;
             },
             message: "Invalid key",
           }),

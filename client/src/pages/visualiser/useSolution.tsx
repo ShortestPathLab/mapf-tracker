@@ -30,7 +30,6 @@ import {
   sumPositions,
 } from "validator";
 import { optimiseGridMap } from "./optimiseGridMap";
-import { text } from "queries/query";
 
 function padArray<T>(arr: T[], size: number, value: T) {
   if (arr.length >= size) return arr;
@@ -177,9 +176,9 @@ export function useSolution({
     queryFn: async () => {
       const getMap = async () => {
         if (mapMetaData?.map_name) {
-          const mapData = await text(
+          const mapData = await fetch(
             `/assets/maps/${mapMetaData.map_name}.map`
-          );
+          ).then((r) => r.text());
           const parsedMap = parseMap(mapData);
           const size = {
             width: (head(parsedMap) ?? "").length,
@@ -194,9 +193,9 @@ export function useSolution({
       };
       const getScenario = async () => {
         if (mapMetaData?.map_name && scenario?.scen_type && scenario?.type_id) {
-          const scenarioData = await text(
+          const scenarioData = await fetch(
             `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
-          );
+          ).then((r) => r.text());
           const parsedScenario = parseScenario(
             scenarioData,
             instance?.agents,

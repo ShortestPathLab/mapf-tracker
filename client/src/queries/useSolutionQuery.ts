@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
-import { json } from "./query";
+import api, { untyped } from "hooks/useQuery";
 
 export const useSolutionData = (
   id?: number | string,
@@ -9,6 +8,8 @@ export const useSolutionData = (
   useQuery({
     queryKey: ["solutionPath", id],
     queryFn: () =>
-      json<string[]>(`${APIConfig.apiUrl}/solution_path/${source}/${id}`),
+      untyped<string[]>(
+        api.api.solution_path({ source })({ id: `${id}` }).get()
+      ),
     enabled: !!id,
   });

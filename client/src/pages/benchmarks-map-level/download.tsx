@@ -1,15 +1,14 @@
-import { APIConfig } from "core/config";
 import { Scenario } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
-import { json, text } from "queries/query";
+import api, { unwrap } from "hooks/useQuery";
 
 export const downloadScenario = (map: string) => async (item?: Scenario) => {
   if (item)
     return download(
-      await text(
+      await fetch(
         `./assets/scens/${map}-${item.scen_type}-${item.type_id}.scen`
-      ),
+      ).then((r) => r.text()),
       `${map}.scen`
     );
 };
@@ -18,7 +17,7 @@ export const downloadInstance = (map: string) => async (item?: Scenario) => {
   if (item) {
     return download(
       json2csv(
-        await json(`${APIConfig.apiUrl}/instance/DownloadInstance/${item.id}`)
+        await unwrap(api.api.instance.DownloadInstance({ id: item.id }).get())
       ),
       `${map}-${item.scen_type}-${item.type_id}.csv`
     );

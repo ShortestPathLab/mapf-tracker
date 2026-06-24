@@ -1,22 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
 import { format, sub } from "date-fns";
 import { find, now, range } from "lodash";
-import { json } from "./query";
+import api, { DataOf, unwrap } from "hooks/useQuery";
 
-export type Result = {
-  /**
-   * YYYY-MM
-   */
-  _id: string;
-  count: number;
-};
+/** A `{ _id: "YYYY-MM", count }` monthly bucket, inferred from the server. */
+export type Result = DataOf<
+  ReturnType<typeof api.api.queries.series.instances>["get"]
+>[number];
 
 export type Trend = "lower_algos" | "solution_algos";
 
 async function series(trend: Trend, months: number) {
-  const result = await json<Result[]>(
-    `${APIConfig.apiUrl}/queries/series/instances/${trend}`
+  const result = await unwrap(
+    api.api.queries.series.instances({ series: trend }).get()
   );
   return range(0, months)
     .map((i) => format(sub(now(), { months: i }), "yyyy-MM"))

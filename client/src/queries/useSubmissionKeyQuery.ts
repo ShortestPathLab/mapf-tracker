@@ -1,48 +1,47 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
-import { json, toJson, useBasic } from "./query";
-import { request } from "./mutation";
+import { queryClient } from "App";
+import api, { DataOf, useMutation, useQuery } from "hooks/useQuery";
 
-export type ApiKey = {
-  id: string;
-  request_id: string;
-  api_key: string;
-  status?: {
-    type?: "submitted" | "default";
-  };
-  creationDate: string;
-  expirationDate: string;
+export type ApiKey = DataOf<typeof api.api.submission_key.basic.get>[number];
+
+export const userBasic = {
+  useAll: () => useQuery(["user", "all"], api.api.user.basic.get),
+  useDelete: () =>
+    useMutation((id: string) => api.api.user.basic.delete.post({ id }), {
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user"] }),
+    }),
+  useWrite: () =>
+    useMutation(
+      (item: { username: string; password: string; id?: string }) =>
+        api.api.user.basic.write.post(item),
+      { onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user"] }) }
+    ),
 };
 
-export type User = {
-  id: string;
-  username: string;
-  hash?: string;
-  createdAt?: string;
-  updatedAt?: string;
+export const submissionKeyBasic = {
+  useAll: () =>
+    useQuery(["submission_key", "all"], api.api.submission_key.basic.get),
+  useDelete: () =>
+    useMutation(
+      (id: string) => api.api.submission_key.basic.delete.post({ id }),
+      {
+        onSuccess: () =>
+          queryClient.invalidateQueries({ queryKey: ["submission_key"] }),
+      }
+    ),
 };
-
-export const userBasic = useBasic<User>(`${APIConfig.apiUrl}/user/basic`);
-
-export const submissionKeyBasic = useBasic<ApiKey>(
-  `${APIConfig.apiUrl}/submission_key/basic`
-);
 
 export function useCreateSubmissionKey() {
-  return useMutation({
-    mutationKey: ["createSubmissionKey"],
-    mutationFn: (requestId: string) =>
-      request(`${APIConfig.apiUrl}/submission_key/create/${requestId}`).then(
-        toJson
-      ) as Promise<{ key: string }>,
-  });
+  return useMutation(
+    (requestId: string) =>
+      api.api.submission_key.create({ request: requestId }).post(),
+    { mutationKey: ["createSubmissionKey"] }
+  );
 }
 
 export function useSubmissionKeyQuery(key: string | number) {
-  return useQuery({
-    refetchInterval: 1000,
-    enabled: !!key,
-    queryKey: ["submissionKey", key],
-    queryFn: () => json<ApiKey>(`${APIConfig.apiUrl}/submission_key/${key}`),
-  });
+  return useQuery(
+    ["submissionKey", key],
+    () => api.api.submission_key({ apiKey: `${key}` }).get(),
+    { refetchInterval: 1000, enabled: !!key }
+  );
 }

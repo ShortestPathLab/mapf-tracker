@@ -6,8 +6,11 @@ import { getSolutionPath } from "utils/solutionPath";
 import { handler as createPreviewAsync } from "workers/createPreview.worker";
 import z from "zod";
 
-const preview = async ({ body }: Context) =>
-  createPreviewAsync!(
+// `createPreviewAsync` resolves a rendered SVG string, but the disk-cache
+// wrapper's multi-path return widens its type, so assert the wire shape here so
+// Eden infers `string` end-to-end.
+const preview = async ({ body }: Context): Promise<string> =>
+  (await createPreviewAsync!(
     z
       .object({
         map: z.string().optional(),
@@ -15,7 +18,7 @@ const preview = async ({ body }: Context) =>
         scenario: z.string().optional(),
       })
       .parse(body),
-  );
+  )) as string;
 
 const makespan = cached(
   async ({ body }: Context) => {

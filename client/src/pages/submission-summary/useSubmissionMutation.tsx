@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "App";
 import { APIConfig } from "core/config";
 import { now } from "lodash";
-import { request } from "queries/mutation";
+import { getAuth } from "queries/mutation";
 import {
   ONGOING_SUBMISSION_QUERY_KEY,
   SubmissionTicket,
@@ -15,7 +15,7 @@ export function useSubmissionMutation({
   apiKey?: string | number;
 }) {
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       content,
       type,
       label,
@@ -24,16 +24,24 @@ export function useSubmissionMutation({
       content: string;
       type?: string;
       size?: number;
-    }) =>
-      request(
+    }) => {
+      // Raw fetch (not Eden): the body is the raw submission text sent with a
+      // caller-provided content type, which the server parses by content type.
+      const res = await fetch(
         `${APIConfig.apiUrl}/ongoing_submission/create/${apiKey}${
           label ? `/${encodeURIComponent(label)}` : ""
         }`,
-        content,
-        "post",
-        type,
-        true,
-      ),
+        {
+          method: "post",
+          headers: { "Content-Type": type ?? "application/json", ...getAuth() },
+          body: `${content}`,
+        },
+      );
+      if (!res.ok) {
+        throw (await res.json().catch(() => null)) ?? new Error(res.statusText);
+      }
+      return res;
+    },
     onMutate: async ({ label, size = 0 }) => {
       const optimistic = {
         label,

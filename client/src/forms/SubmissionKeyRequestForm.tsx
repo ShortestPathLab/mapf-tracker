@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Autocomplete, Checkbox, Field } from "components/Field";
 import { Form, Formik, FormikConfig, FormikProps } from "formik";
 import { chain, noop, once } from "lodash";
-import { toJson } from "queries/query";
 import { Request, requestSchema } from "queries/useRequestQuery";
 import { ReactNode, useMemo } from "react";
 import { paper } from "theme";
@@ -40,7 +39,13 @@ const DISABLED_OPTION = "Keep typing to see suggestions";
 const WORLD_UNIVERSITIES_API =
   "https://cdn.jsdelivr.net/gh/Hipo/university-domains-list@master/world_universities_and_domains.json";
 
-export type SubmissionKeyRequestFormProps = Partial<FormikConfig<Request>> & {
+export type SubmissionKeyRequestFormProps = Omit<
+  Partial<FormikConfig<Request>>,
+  "initialValues"
+> & {
+  // Accepts a partial record (e.g. a server-inferred request) and merges it
+  // over the defaults, so read models can prefill the form.
+  initialValues?: Partial<Request>;
   disabled?: boolean;
   onTouched?: () => void;
   disabledValues?: { [K in keyof Request]?: boolean };
@@ -52,13 +57,14 @@ export function SubmissionKeyRequestForm({
   disabled,
   onTouched,
   disabledValues,
+  initialValues,
   ...props
 }: SubmissionKeyRequestFormProps) {
   const touch = useMemo(() => once(() => onTouched?.()), []);
   const { data: options = [] } = useQuery({
     queryKey: ["universities"],
     queryFn: async () =>
-      chain(await fetch(WORLD_UNIVERSITIES_API).then(toJson))
+      chain(await fetch(WORLD_UNIVERSITIES_API).then((r) => r.json()))
         .map("name")
         .uniq()
         .value(),
@@ -90,7 +96,7 @@ export function SubmissionKeyRequestForm({
     <Formik<Request>
       validationSchema={requestSchema}
       onSubmit={noop}
-      initialValues={defaultRequest}
+      initialValues={{ ...defaultRequest, ...initialValues }}
       {...props}
     >
       {(state) => (

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
-import { post } from "./mutation";
+import api, { unwrap } from "hooks/useQuery";
 import { Mutex } from "async-mutex";
 import { queryClient } from "App";
 
@@ -24,12 +23,9 @@ export const usePreviewData = ({
     queryFn: async ({ signal }) => {
       return await mutex.runExclusive(async () => {
         if (signal.aborted) return queryClient.cancelQueries({ queryKey: key });
-        const response = await post(`${APIConfig.apiUrl}/map/preview`, {
-          map,
-          instance,
-          scenario,
-        });
-        return await response.text();
+        return await unwrap(
+          api.api.map.preview.post({ map, instance, scenario })
+        );
       });
     },
     enabled: !(!map && !instance && !scenario),

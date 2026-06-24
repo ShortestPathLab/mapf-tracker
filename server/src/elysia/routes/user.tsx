@@ -11,6 +11,7 @@ import { Types } from "mongoose";
 import React from "react";
 import { assert } from "utils/assert";
 import { createSubmissionKey } from "utils/submissionKey";
+import { allToJSON, toJSON } from "utils/toJSON";
 import z from "zod";
 
 const { hash } = password;
@@ -82,8 +83,8 @@ export const userRoutes = new Elysia({ prefix: "/api/user" }).guard(
   (app) =>
     app.post("/notify", createKeyAndSendMail).group("/basic", (basic) =>
       basic
-        .get("/", () => User.find())
-        .get("/:id", ({ params }) => User.findById(params.id))
+        .get("/", () => User.find().then(allToJSON))
+        .get("/:id", ({ params }) => (User.findById(params.id).then(toJSON)))
         .post("/write", async ({ body }) => {
           const { username, password: pw, id } = body as {
             username: string;

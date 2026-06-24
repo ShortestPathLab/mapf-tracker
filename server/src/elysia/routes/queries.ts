@@ -14,6 +14,26 @@ const metrics = ["instances_closed", "instances_solved"] as const;
 
 const series = ["lower_algos", "solution_algos"] as const;
 
+/** Monthly bucket count for the `/series/instances/:series` trend. */
+type SeriesResult = { _id: string; count: number };
+
+/**
+ * A grouped aggregate row. `_id` is the group key — a serialised ObjectId or a
+ * type/agents value (or null for the ungrouped total). `all`/`result` are the
+ * aggregated metric over all rows and over the filtered subset respectively.
+ */
+type AggregateResult = {
+  _id: string | number | null;
+  all: number;
+  result: number;
+};
+
+/** A projected `{ algo_name, <metric> }` row for `/algorithms/:metric`. */
+type AlgorithmMetricResult = {
+  _id: string;
+  algo_name: string;
+} & Partial<Record<(typeof metrics)[number], number>>;
+
 const aggregateOptions = {
   value: z
     .enum(["solution_cost", "lower_cost", "suboptimality"])
@@ -23,7 +43,7 @@ const aggregateOptions = {
   scenario: z.string().optional(),
   scenarioType: z.string().optional(),
   agents: z.coerce.number().int().nonnegative().optional(),
-  filterBy: z.enum(["closed", "solved", "all"]).default("all"),
+  filterBy: z.enum(["closed", "solved", "has_lower", "all"]).default("all"),
   groupBy: z
     .enum(["scenario", "map", "agents", "scenarioType", "mapType", "all"])
     .default("all"),
@@ -91,6 +111,7 @@ const instanceAggregateBase = createAggregateBase(
   {
     solved: isSolvedCond,
     closed: isClosedCond,
+    has_lower: (_s, lower) => ({ $ne: [lower, null] }),
     all: () => undefined,
   },
   {
@@ -106,7 +127,7 @@ const instanceAggregateBase = createAggregateBase(
 export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
   .get(
     "/algorithms/:metric",
-    algorithms.aggregate(
+    algorithms.aggregate<AlgorithmMetricResult[]>(
       (ctx, p) => {
         const { metric } = z.object({ metric: z.enum(metrics) }).parse(ctx.params);
         return p.project({ algo_name: 1, [metric]: 1 });
@@ -116,7 +137,7 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
   )
   .get(
     "/series/instances/:series",
-    instances.aggregate(
+    instances.aggregate<SeriesResult[]>(
       (ctx, p) => {
         const { series: s } = z
           .object({ series: z.enum(series) })
@@ -140,7 +161,7 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
   )
   .get(
     "/aggregate",
-    instances.aggregate(
+    instances.aggregate<AggregateResult[]>(
       (ctx, p) => {
         const data = z.object(aggregateOptions).parse(withParamsAndQuery(ctx));
         return instanceAggregateBase(data, p);
@@ -150,14 +171,14 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
   )
   .get(
     "/aggregate/algorithm/:algorithm",
-    submissions.aggregate(submissionAggregate, {
+    submissions.aggregate<AggregateResult[]>(submissionAggregate, {
       name: "aggregate-algorithm-algorithm",
       cacheKey: withParamsAndQuery,
     }),
   )
   .get(
     "/aggregate/algorithm",
-    submissions.aggregate(submissionAggregate, {
+    submissions.aggregate<AggregateResult[]>(submissionAggregate, {
       name: "aggregate-algorithm-algorithm",
       cacheKey: withParamsAndQuery,
     }),
@@ -208,6 +229,7 @@ function submissionAggregate(ctx: Context, p: AggregateBuilder) {
         {
           solved: isSolvedCond,
           closed: isClosedCond,
+          has_lower: (_s, lower) => ({ $ne: [lower, null] }),
           best_lower: () => ({ $eq: ["$best_lower", true] }),
           best_solution: () => ({ $eq: ["$best_solution", true] }),
           all: () => undefined,
