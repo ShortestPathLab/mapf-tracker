@@ -18,12 +18,14 @@ log.info(
     : "Production mode"
 );
 
-log.info("Restoring");
+if (process.env.NODE_ENV !== 'development') {
+  log.info("Restoring");
 
-for (const f of [
-  restoreOngoingSubmission,
-  restorePipeline,
-  restorePrecompute,
-]) {
-  f();
+  for (const f of [
+    restoreOngoingSubmission,
+    restorePipeline,
+    restorePrecompute,
+  ]) {
+    f();
+  }
 }
