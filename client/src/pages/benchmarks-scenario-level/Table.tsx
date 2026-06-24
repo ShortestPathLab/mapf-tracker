@@ -12,13 +12,14 @@ import { useInstancesByScenario } from "queries/useMapQuery";
 import { useMakespanData } from "queries/useMakespanQuery";
 import { formatDate } from "utils/format";
 import { PreviewCard } from "../../components/PreviewCard";
+import { Typography } from "@mui/material";
 
 function MakespanCell({ row }: { row: Instance }) {
   const { data } = useMakespanData({
     instance: row.id,
     solutionPath: row.solution_path_id,
   });
-  return <>{data?.toLocaleString?.() ?? "--"}</>;
+  return <Typography>{data?.toLocaleString?.() ?? "--"}</Typography>;
 }
 
 export default function Table() {
