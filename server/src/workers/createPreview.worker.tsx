@@ -8,8 +8,8 @@ import { usingTaskMessageHandler } from "queue/usingWorker";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { getMap, getScenario } from "resources";
-import { findInstance, findMapMemo, findScenarioMemo } from "./findMemo";
-import { optimiseGridMap } from "./optimiseGridMap";
+import { findInstance, findMapMemo, findScenarioMemo } from "utils/findMemo";
+import { optimiseGridMap } from "utils/optimiseGridMap";
 import { required } from "utils/assert";
 
 export const { precompute, handler } = createPrecomputeHandler(

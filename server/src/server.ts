@@ -1,5 +1,5 @@
-import { restore as restoreOngoingSubmission } from "controllers/ongoingSubmission";
-import { restore as restorePipeline } from "controllers/pipeline";
+import { restore as restoreOngoingSubmission } from "elysia/routes/ongoingSubmission";
+import { restore as restorePipeline } from "elysia/routes/pipeline";
 import { restore as restorePrecompute } from "query/withDiskCache";
 import { connectToDatabase } from "./connection";
 import { app } from "./createElysiaApp";

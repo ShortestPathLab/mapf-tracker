@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { z } from "zod";
-import { handler as bulkAsync } from "../../controllers/bulk.worker";
+import { handler as bulkAsync } from "workers/bulk.worker";
 
 const schema = z.object({
   scenario: z.string(),

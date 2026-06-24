@@ -1,24 +1,19 @@
-import type { Context } from "elysia";
-import { mail } from "mail";
-import { Types } from "mongoose";
 import { render } from "@react-email/components";
-import { randomBytes } from "crypto";
-import { addMonths, format } from "date-fns";
+import { requireAuth } from "auth";
+import { password } from "bun";
+import type { Context } from "elysia";
+import { Elysia } from "elysia";
 import ReviewOutcome from "emails/ReviewOutcome";
 import { log } from "logging";
-import {
-  Algorithm,
-  Instance,
-  Map,
-  Request,
-  Scenario,
-  SolutionPath,
-  Submission,
-  SubmissionKey,
-} from "models";
+import { mail } from "mail";
+import { Request, User } from "models";
+import { Types } from "mongoose";
 import React from "react";
-import z from "zod";
 import { assert } from "utils/assert";
+import { createSubmissionKey } from "utils/submissionKey";
+import z from "zod";
+
+const { hash } = password;
 
 const titles = {
   approved: "Your submission (API) key for MAPF Tracker",
@@ -57,7 +52,7 @@ async function queueMail({
   );
 }
 
-export const createKeyAndSendMail = async ({ body }: Context) => {
+const createKeyAndSendMail = async ({ body }: Context) => {
   const { requestId } = z.object({ requestId: z.string() }).parse(body);
   const doc = await Request.findById(requestId);
   assert(doc, "Request must be defined");
@@ -80,19 +75,32 @@ export const createKeyAndSendMail = async ({ body }: Context) => {
   return { success: true };
 };
 
-export const findSubmittedAlgoByID = async ({ params }: Context) =>
-  Algorithm.find({ user_id: params.id }, {});
-
-export async function createSubmissionKey(requestId: string) {
-  log.info("Creating API key");
-  const apiKey = randomBytes(16).toString("hex");
-  const creationDate = new Date();
-  const expirationDate = addMonths(creationDate, 1);
-  await new SubmissionKey({
-    request_id: requestId,
-    creationDate,
-    expirationDate,
-    api_key: apiKey,
-  }).save();
-  return apiKey;
-}
+// The whole /api/user surface requires auth. The basic CRUD is inlined here
+// (rather than `users.basic()`) because its `/write` hashes the password.
+export const userRoutes = new Elysia({ prefix: "/api/user" }).guard(
+  { beforeHandle: requireAuth },
+  (app) =>
+    app.post("/notify", createKeyAndSendMail).group("/basic", (basic) =>
+      basic
+        .get("/", () => User.find())
+        .get("/:id", ({ params }) => User.findById(params.id))
+        .post("/write", async ({ body }) => {
+          const { username, password: pw, id } = body as {
+            username: string;
+            password: string;
+            id?: string;
+          };
+          const result = await User.findOneAndUpdate(
+            { _id: id ?? new Types.ObjectId() },
+            { $set: { username, hash: await hash(pw) } },
+            { upsert: true },
+          );
+          return { id: result?.id?.toString?.() };
+        })
+        .post("/delete", async ({ body }) => {
+          const { id } = body as { id?: string };
+          await User.findByIdAndDelete(id);
+          return { id };
+        }),
+    ),
+);

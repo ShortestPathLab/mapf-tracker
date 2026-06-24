@@ -11,7 +11,7 @@ import {
 import { Infer, OngoingSubmission } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { z } from "zod";
-import { generateIndexes } from "./generateIndexes";
+import { generateIndexes } from "utils/generateIndexes";
 
 export const path = import.meta.path;
 

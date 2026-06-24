@@ -28,7 +28,7 @@ import {
   findInstance,
   findMapMemo,
   findScenarioMemo,
-} from "controllers/findMemo";
+} from "utils/findMemo";
 import { required } from "utils/assert";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {

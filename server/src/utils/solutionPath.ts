@@ -1,10 +1,8 @@
-import type { Context } from "elysia";
 import { chunk, map, split } from "lodash";
 import { OngoingSubmissionSolution, SolutionPath } from "models";
 import { Types } from "mongoose";
 import { isDefined } from "utils/isDefined";
 import { encode } from "validator-wasm";
-import { z } from "zod";
 
 const flip = (path: string) =>
   path.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d");
@@ -46,13 +44,3 @@ export async function getSolutionPathsRaw(ids: string[]) {
   }
   return all;
 }
-
-export const findPath = async ({ params }: Context) => {
-  const { id, source } = z
-    .object({
-      id: z.string(),
-      source: z.enum(["ongoing", "submitted"]).default("submitted"),
-    })
-    .parse(params);
-  return getSolutionPath(id, source);
-};

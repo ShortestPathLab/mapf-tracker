@@ -1,10 +1,11 @@
 import { render } from "@react-email/components";
+import { requireAuth } from "auth";
 import type { Context } from "elysia";
-import { status } from "elysia";
+import { Elysia, status } from "elysia";
 import RequestConfirmation from "emails/RequestConfirmation";
 import { log } from "logging";
 import { mail } from "mail";
-import { Infer, Request, SubmissionKey } from "models";
+import { Infer, Request, SubmissionKey, requests } from "models";
 import { queryClient } from "query";
 import React from "react";
 import { assert } from "utils/assert";
@@ -12,20 +13,18 @@ import { z } from "zod";
 
 const { query } = queryClient(Request);
 
-export const findByEmail = query(({ params }) => [
-  { requesterEmail: params.email },
-]);
+const findByEmail = query(({ params }) => [{ requesterEmail: params.email }]);
 
-export const findAll = async () => Request.find({});
+const findAll = async () => Request.find({});
 
-export const findByKey = async ({ params }: Context) => {
+const findByKey = async ({ params }: Context) => {
   const { request_id } =
     (await SubmissionKey.findOne({ api_key: params.key })) ?? {};
   if (!request_id) return undefined;
   return (await Request.findById(request_id))?.toJSON();
 };
 
-export const findByInstance_id = async ({ params }: Context) => {
+const findByInstance_id = async ({ params }: Context) => {
   const data = await Request.findById(params.id);
   if (!data) return status(404, { message: `Not found request with id ${params.id}` });
   return data.toJSON();
@@ -43,7 +42,7 @@ async function queueMail(args: Infer<typeof Request>) {
   );
 }
 
-export const create = async ({ body }: Context) => {
+const create = async ({ body }: Context) => {
   const b = body as Record<string, unknown>;
   if (!b.requesterName) {
     return status(400, { message: "Requester name can not be empty!" });
@@ -96,8 +95,20 @@ const handleRequestUpdate = async ({
   return { id };
 };
 
-export const updateRequest = async ({ body }: Context) =>
+const updateRequest = async ({ body }: Context) =>
   handleRequestUpdate(z.object(requestSchema).parse(body));
 
-export const updateRequestElevated = async ({ body }: Context) =>
+const updateRequestElevated = async ({ body }: Context) =>
   handleRequestUpdate(body as z.infer<z.ZodObject<typeof requestSchema>>);
+
+export const requestRoutes = new Elysia({ prefix: "/api/request" })
+  .get("/", findAll, { beforeHandle: requireAuth })
+  .get("/key/:key", findByKey)
+  .get("/id/:id", findByInstance_id)
+  .get("/email/:email", findByEmail)
+  .post("/create", create)
+  .post("/update/:id", updateRequest)
+  .post("/updateElevated/:id", updateRequestElevated, {
+    beforeHandle: requireAuth,
+  })
+  .group("/basic", (app) => app.use(requests.basic(requireAuth)));

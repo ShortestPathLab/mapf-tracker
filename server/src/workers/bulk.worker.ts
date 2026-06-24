@@ -2,7 +2,7 @@ import { connectToDatabase } from "connection";
 import { flatMap, last, range, zip } from "lodash";
 import { Instance, Scenario } from "models";
 import { createPrecomputeHandler } from "query/withDiskCache";
-import { getSolutionPathsRaw } from "./solutionPath";
+import { getSolutionPathsRaw } from "utils/solutionPath";
 import { get } from "models/Version";
 
 export type BulkOptions = {

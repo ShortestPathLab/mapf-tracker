@@ -1,6 +1,36 @@
+import type { Context } from "elysia";
 import { Elysia } from "elysia";
-import { Map } from "models";
-import { makespan, preview } from "../../controllers/map";
+import { Instance, Map, SolutionPath } from "models";
+import { cached } from "query";
+import { getSolutionPath } from "utils/solutionPath";
+import { handler as createPreviewAsync } from "workers/createPreview.worker";
+import z from "zod";
+
+const preview = async ({ body }: Context) =>
+  createPreviewAsync!(
+    z
+      .object({
+        map: z.string().optional(),
+        instance: z.string().optional(),
+        scenario: z.string().optional(),
+      })
+      .parse(body),
+  );
+
+const makespan = cached(
+  async ({ body }: Context) => {
+    const { instance, solutionPath } = (body ?? {}) as {
+      instance?: string;
+      solutionPath?: string;
+    };
+    const id = solutionPath ?? instance;
+    if (!id) return null;
+    const paths = await getSolutionPath(id, "submitted");
+    if (!paths) return null;
+    return Math.max(0, ...paths.map((path) => path.replace(/\r$/, "").length));
+  },
+  { watch: [Instance, SolutionPath], cacheKey: (ctx) => ctx.body },
+);
 
 /**
  * Wire shape for a map record as serialised to clients. Mirrors the client's
