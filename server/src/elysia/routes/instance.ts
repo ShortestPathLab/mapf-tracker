@@ -149,44 +149,6 @@ const downloadRowById = async ({ params }: Context) =>
     },
   ]);
 
-const get_map_level_summary = async ({ params }: Context) => {
-  const id = new Types.ObjectId(params.id);
-  const [r0, r1, r2] = await Promise.all([
-    Instance.aggregate([
-      { $match: { map_id: id } },
-      { $group: { _id: { agents: "$agents" }, count: { $count: {} } } },
-    ]).sort({ "_id.agents": 1 }),
-    Instance.aggregate([
-      { $match: { map_id: id, closed: true } },
-      { $group: { _id: { agents: "$agents" }, count: { $count: {} } } },
-    ]),
-    Instance.aggregate([
-      { $match: { map_id: id, $expr: { $ne: ["$solution_cost", null] } } },
-      { $group: { _id: { agents: "$agents" }, count: { $count: {} } } },
-    ]),
-  ]);
-  const final_results = [];
-  r0.forEach((element) => {
-    final_results.push({
-      name: element._id.agents,
-      total: element.count,
-      Unknown: element.count,
-      Closed: 0,
-      Solved: 0,
-    });
-  });
-  r1.forEach((element) => {
-    final_results[parseInt(element._id.agents) - 1]["Closed"] = element.count;
-  });
-  r2.forEach((element) => {
-    final_results[parseInt(element._id.agents) - 1]["Solved"] =
-      element.count - final_results[parseInt(element._id.agents) - 1]["Closed"];
-    final_results[parseInt(element._id.agents) - 1]["Unknown"] =
-      final_results[parseInt(element._id.agents) - 1]["total"] - element.count;
-  });
-  return final_results;
-};
-
 // Static segments registered before the dynamic `/:id` so they aren't shadowed.
 export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
   .get("/", findAll)
@@ -195,5 +157,4 @@ export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
   .get("/DownloadRow/:id", downloadRowById)
   .get("/DownloadInstance/:id", downloadNonEmptyByScenId)
   .get("/DownloadMapByID/:id", downloadMapByID)
-  .get("/test/:id", get_map_level_summary)
   .get("/:id", findNonEmptyByScenId);

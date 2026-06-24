@@ -37,6 +37,7 @@ export function useAlgorithmChartData(
           best_solution: "solved" as const,
           closed: "closed" as const,
           solved: "solved" as const,
+          has_lower: "has_lower" as const,
           all: "all" as const,
         }[metric]
       : undefined,

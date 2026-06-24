@@ -20,7 +20,6 @@ import {
   uniq,
   zip,
 } from "lodash";
-import { useScenarioOnAgentData } from "queries/useScenarioQuery";
 import {
   AggregateAlgorithmQuery,
   AggregateQuery,

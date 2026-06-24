@@ -1,32 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Metric } from "core/metrics";
-import {
-  Algorithm,
-  AlgorithmCollectionAggregate,
-  AlgorithmCollectionCount,
-  AlgorithmDetails,
-  SummaryResult,
-} from "core/types";
+import { Algorithm, AlgorithmDetails, SummaryResult } from "core/types";
 import { find } from "lodash";
 import api, { DataOf, untyped, unwrap } from "hooks/useQuery";
-
-// Metric-keyed path segments mapped to static treaty nodes (Eden can't type a
-// dynamically-built path). The aggregation handlers behind these are untyped
-// server-side, so the inferred data is `any` for now.
-// TODO(eden): type the /algorithm aggregation responses server-side.
-const mapInfoRoutes = {
-  solved: api.api.algorithm.getSolvedInfo,
-  solution: api.api.algorithm.getSolutionInfo,
-  closed: api.api.algorithm.getClosedInfo,
-  lower: api.api.algorithm.getLowerInfo,
-} as const;
-
-const domainInfoRoutes = {
-  solved: api.api.algorithm.getDomainSolvedInfo,
-  solution: api.api.algorithm.getDomainSolutionInfo,
-  closed: api.api.algorithm.getDomainClosedInfo,
-  lower: api.api.algorithm.getDomainLowerInfo,
-} as const;
 
 export function useAlgorithmSummaryQuery(algorithm?: string) {
   return useQuery(algorithmSummaryQuery(algorithm));
@@ -99,40 +74,6 @@ export const useAlgorithmForInstanceData = (id: string) => {
   });
 };
 
-export const useMapData = (query: Metric) =>
-  useQuery({
-    queryKey: ["mapData", query],
-    queryFn: () =>
-      untyped<
-        { map_name: string; solved_instances: AlgorithmCollectionCount[] }[]
-      >(mapInfoRoutes[query].get()),
-    enabled: !!query,
-  });
-
-export const useMapTypeData = (query: Metric) =>
-  useQuery({
-    queryKey: ["domainData", query],
-    queryFn: () =>
-      untyped<
-        { map_type: string; results: AlgorithmCollectionAggregate[] }[]
-      >(domainInfoRoutes[query].get()),
-    enabled: !!query,
-  });
-export const useScenarioSuccessRateByAgentCountData = (id: string) =>
-  useQuery({
-    queryKey: ["scenarioSuccessRateByAgentCount", id],
-    queryFn: () =>
-      untyped<
-        {
-          Closed: number;
-          Solved: number;
-          Unknown: number;
-          name: number;
-          total: number;
-        }[]
-      >(api.api.instance.test({ id }).get()),
-    enabled: !!id,
-  });
 export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
   return {
     queryKey: ["algorithms", algorithm, scenario],

@@ -1,14 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { APIConfig } from "core/config";
 import hash from "object-hash";
-import { json } from "./query";
-import { head, mapValues, toString } from "lodash";
-
-type Result = {
-  _id: string | null;
-  all: number;
-  result: number;
-};
+import { head } from "lodash";
+import api, { unwrap } from "hooks/useQuery";
 
 export type AggregateQuery = {
   operation?: "count" | "sum" | "max" | "min" | "avg";
@@ -17,7 +10,7 @@ export type AggregateQuery = {
   scenario?: string;
   scenarioType?: string;
   agents?: number;
-  filterBy?: "closed" | "solved" | "all";
+  filterBy?: "closed" | "solved" | "has_lower" | "all";
   groupBy?: "scenario" | "map" | "agents" | "scenarioType" | "mapType";
 };
 
@@ -48,10 +41,7 @@ function aggregateQueryKey(params: AggregateQuery): string[] {
 }
 
 function aggregate(params: AggregateQuery) {
-  const search = new URLSearchParams(mapValues(params, toString));
-  return json<Result[]>(
-    `${APIConfig.apiUrl}/queries/aggregate?${search.toString()}`,
-  );
+  return unwrap(api.api.queries.aggregate.get({ query: params }));
 }
 
 export type AggregateAlgorithmQuery = Omit<
@@ -64,10 +54,7 @@ export type AggregateAlgorithmQuery = Omit<
 };
 
 function aggregateAlgorithm(params: AggregateAlgorithmQuery) {
-  const search = new URLSearchParams(mapValues(params, toString));
-  return json<Result[]>(
-    `${APIConfig.apiUrl}/queries/aggregate/algorithm?${search.toString()}`,
-  );
+  return unwrap(api.api.queries.aggregate.algorithm.get({ query: params }));
 }
 
 export const useAggregateAlgorithm = (params: AggregateAlgorithmQuery) => {
