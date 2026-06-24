@@ -83,7 +83,7 @@ export function useHistoryProvider<T extends object, U extends object>() {
     } else {
       const previousIndex = findIndex(list, { key: previous?.key });
       if (previous?.key !== location.key && previousIndex !== -1) {
-        filter((_, i) => i <= previousIndex);
+        filter((_, i) => (i ?? 0) <= previousIndex);
       }
       // Went to new page
       push(location);
@@ -175,17 +175,19 @@ export function useNavigate() {
 export function useLocationState<
   T extends object = object,
   U extends object = object,
->() {
+>(): T {
   const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
   const [params] = useSearchParams();
   return useMemo(() => {
+    // Merges URL search params, saved and session state; callers parameterise
+    // by the shape they expect, so the merged result is surfaced as T.
     return {
       ...mapValues(fromPairs(Array.from(params.entries())), (v) =>
         isNaN(+v) ? v : +v,
       ),
       ...location.state?.saved,
       ...location.state?.session,
-    };
+    } as T;
   }, [location, params]);
 }
 

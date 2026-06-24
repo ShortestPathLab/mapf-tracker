@@ -132,7 +132,7 @@ export function Visualisation({
 
   // ─────────────────────────────────────────────────────────────────────
   const { step, backwards, forwards, play, pause, paused, restart, seek } =
-    usePlayback(timespan);
+    usePlayback(timespan ?? 0);
 
   const time = useLerp(step);
 
@@ -151,25 +151,28 @@ export function Visualisation({
   }, [dark]);
 
   const drawGrid = useMemo(
-    () => $grid({ x: width, y: height }, dark ? WHITE : BLACK),
+    () => $grid({ x: width ?? 0, y: height ?? 0 }, dark ? WHITE : BLACK),
     [width, height, dark],
   );
 
   const drawBox = useMemo(
-    () => $box({ x: width, y: height }, dark ? WHITE : BLACK),
+    () => $box({ x: width ?? 0, y: height ?? 0 }, dark ? WHITE : BLACK),
     [width, height, dark],
   );
 
-  const drawAgent = useMemo(
-    () =>
-      !isUndefined(selection.agent) &&
+  const drawAgent = useMemo(() => {
+    const agent = selection.agent;
+    return (
+      !isUndefined(agent) &&
       $agentDiagnostics(
-        getAgentColor(selection.agent),
-        getAgentPath?.(selection.agent),
-        goals?.[selection.agent],
-        diagnostics?.filter?.((x) => x.agents.includes(selection.agent)),
+        getAgentColor(agent),
+        getAgentPath?.(agent),
+        goals?.[agent] ?? { x: 0, y: 0 },
+        diagnostics?.filter?.((x) => x.agents.includes(agent)),
         theme.palette.error.main,
-      ),
+      )
+    );
+  },
     [
       diagnostics,
       step,
@@ -183,7 +186,7 @@ export function Visualisation({
   );
 
   const drawMap = useMemo(
-    () => $map(optimisedMap, dark ? WHITE : BLACK),
+    () => $map(optimisedMap ?? [], dark ? WHITE : BLACK),
     [optimisedMap, dark],
   );
 
@@ -195,8 +198,8 @@ export function Visualisation({
     return $agents(
       positions
         .map(([a, b], i) => ({
-          x: lerp(a.x, b.x, dt),
-          y: lerp(a.y, b.y, dt),
+          x: lerp(a?.x ?? 0, b?.x ?? 0, dt),
+          y: lerp(a?.y ?? 0, b?.y ?? 0, dt),
           i,
           color: getAgentColor(i),
         }))
@@ -246,7 +249,9 @@ export function Visualisation({
           getAgentPositions(step),
           (a) => a.x === position.x && a.y === position.y,
         );
-        container.current.style.cursor = agent ? "pointer" : "default";
+        if (container.current) {
+          container.current.style.cursor = agent ? "pointer" : "default";
+        }
       };
       viewport.on("mousemove", f);
       return () => void viewport.off("mousemove", f);
@@ -350,17 +355,24 @@ export function Visualisation({
                               getAgentPositions(t1),
                               getAgentPositions(t2),
                             ).map(([p0, p1, p2], i) => {
+                              // getAgentPositions returns one entry per agent
+                              // for any timestep, so the zipped triples are
+                              // aligned; fall back to p0 if a later timestep
+                              // is out of range.
+                              const a0 = p0 ?? { x: 0, y: 0 };
+                              const a1 = p1 ?? a0;
+                              const a2 = p2 ?? a0;
                               const [nextDidMove, prevDidMove] = [
-                                p2.x !== p1.x || p2.y !== p1.y,
-                                p1.x !== p0.x || p1.y !== p0.y,
+                                a2.x !== a1.x || a2.y !== a1.y,
+                                a1.x !== a0.x || a1.y !== a0.y,
                               ];
                               const [nextAngle, prevAngle] = [
-                                getAngle(p1 ?? p0, p2 ?? p0),
-                                getAngle(p0, p1 ?? p0),
+                                getAngle(a1, a2),
+                                getAngle(a0, a1),
                               ];
                               const position = {
-                                x: lerp(p0.x, p1.x, dt),
-                                y: lerp(p0.y, p1.y, dt),
+                                x: lerp(a0.x, a1.x, dt),
+                                y: lerp(a0.y, a1.y, dt),
                               };
                               return (
                                 within(position, bounds) && (
@@ -385,7 +397,9 @@ export function Visualisation({
                                 )
                               );
                             })}
-                          {selection.show && <Graphics draw={drawAgent} />}
+                          {selection.show && (
+                            <Graphics draw={drawAgent || undefined} />
+                          )}
                           <Graphics draw={drawBox} alpha={0.1} />
                         </Container>
                       </Viewport>
@@ -427,12 +441,16 @@ export function Visualisation({
                                 <Divider orientation="vertical" flexItem />
                               </>
                             )}
-                            {filter([
-                              !sm && {
-                                name: "Step back",
-                                icon: <ChevronLeftRounded />,
-                                action: backwards,
-                              },
+                            {[
+                              ...(!sm
+                                ? [
+                                    {
+                                      name: "Step back",
+                                      icon: <ChevronLeftRounded />,
+                                      action: backwards,
+                                    },
+                                  ]
+                                : []),
                               {
                                 name: paused ? "Play" : "Pause",
                                 icon: paused ? (
@@ -446,18 +464,22 @@ export function Visualisation({
                                 ),
                                 action: paused ? play : pause,
                               },
-                              !sm && {
-                                name: "Step forward",
-                                icon: <ChevronRightRounded />,
-                                action: forwards,
-                              },
+                              ...(!sm
+                                ? [
+                                    {
+                                      name: "Step forward",
+                                      icon: <ChevronRightRounded />,
+                                      action: forwards,
+                                    },
+                                  ]
+                                : []),
                               {
                                 name: "Restart",
                                 icon: <ReplayRounded />,
                                 action: restart,
                                 disabled: step === 0,
                               },
-                            ]).map(({ name, icon, action, disabled }) => (
+                            ].map(({ name, icon, action, disabled }) => (
                               <Tooltip title={name} key={name} placement="top">
                                 <IconButton
                                   disabled={disabled}
@@ -486,7 +508,7 @@ export function Visualisation({
                                   backgroundImage: (t) => {
                                     const ts = map(diagnostics, "t")
                                       .filter((c) => !isUndefined(c))
-                                      .map((c) => c / timespan);
+                                      .map((c) => (c ?? 0) / (timespan ?? NaN));
                                     return `linear-gradient(to right, ${map(
                                       ts,
                                       (c) =>
@@ -542,18 +564,23 @@ export function Visualisation({
                                   >
                                     {[
                                       {
-                                        getScale: () => viewport.scale.x * 1.2,
+                                        getScale: () =>
+                                          (viewport?.scale.x ?? 0) * 1.2,
                                         label: "Zoom in",
                                         icon: <ZoomInRounded />,
                                       },
                                       {
-                                        getScale: () => viewport.scale.x * 0.8,
+                                        getScale: () =>
+                                          (viewport?.scale.x ?? 0) * 0.8,
                                         label: "Zoom out",
                                         icon: <ZoomOutRounded />,
                                       },
                                       {
                                         getScale: () =>
-                                          viewport.findFit(width, height) * 0.9,
+                                          (viewport?.findFit(
+                                            width ?? 0,
+                                            height ?? 0
+                                          ) ?? 0) * 0.9,
                                         label: "Fit to screen",
                                         icon: <FitScreenRounded />,
                                       },
@@ -596,7 +623,8 @@ export function Visualisation({
                     maxWidth: 260,
                   }}
                 >
-                  {!isUndefined(selection.agent) && (
+                  {!isUndefined(selection.agent) &&
+                    ((agent: number) => (
                     <>
                       <Stack
                         direction="row"
@@ -609,9 +637,9 @@ export function Visualisation({
                       >
                         <Typography sx={{ flex: 1 }}>
                           <Dot
-                            sx={{ bgcolor: getAgentColor(selection.agent) }}
+                            sx={{ bgcolor: getAgentColor(agent) }}
                           />
-                          Agent {selection.agent}
+                          Agent {agent}
                         </Typography>
                         <IconButton
                           edge="end"
@@ -623,13 +651,13 @@ export function Visualisation({
                       <Stack sx={{ p: 2, minWidth: 180 }}>
                         <Item
                           invert
-                          primary={getAgentPath(selection.agent).length - 1}
+                          primary={getAgentPath(agent).length - 1}
                           secondary="Cost"
                         />
                         <Item
                           invert
                           primary={thru(
-                            getAgentPositions(step)[selection.agent],
+                            getAgentPositions(step)[agent],
                             (p) => (p ? `(${p.x}, ${p.y})` : "--"),
                           )}
                           secondary="Position"
@@ -637,7 +665,7 @@ export function Visualisation({
                         <Item
                           invert
                           primary={thru(
-                            getAgentPath(selection.agent)[step],
+                            getAgentPath(agent)[step],
                             (p) =>
                               ({
                                 w: "Wait",
@@ -645,7 +673,7 @@ export function Visualisation({
                                 d: "Down",
                                 l: "Left",
                                 r: "Right",
-                              })[p?.action] ?? "--",
+                              })[p?.action ?? ""] ?? "--",
                           )}
                           secondary="Action"
                         />
@@ -653,14 +681,14 @@ export function Visualisation({
                           {
                             name: "Moving",
                             value: proportionOf(
-                              getAgentPath(selection.agent),
-                              (p) => ["u", "d", "l", "r"].includes(p.action),
+                              getAgentPath(agent),
+                              (p) => ["u", "d", "l", "r"].includes(p.action ?? ""),
                             ),
                           },
                           {
                             name: "Waiting",
                             value: proportionOf(
-                              getAgentPath(selection.agent),
+                              getAgentPath(agent),
                               (p) => p.action === "w",
                             ),
                           },
@@ -674,7 +702,7 @@ export function Visualisation({
                                   {
                                     label: name,
                                     value,
-                                    color: getAgentColor(selection.agent),
+                                    color: getAgentColor(agent),
                                   },
                                 ]}
                               />
@@ -684,7 +712,7 @@ export function Visualisation({
                         ))}
                         {(() => {
                           const errors = filter(diagnostics, ({ agents }) =>
-                            agents.includes(selection.agent),
+                            agents.includes(agent),
                           );
                           return (
                             !!errors?.length && (
@@ -704,7 +732,7 @@ export function Visualisation({
                         })()}
                       </Stack>
                     </>
-                  )}
+                    ))(selection.agent)}
                 </Stack>
               </Enter>
             </>
@@ -729,7 +757,7 @@ export function Visualisation({
         >
           {contents}
         </Box>,
-        root.current,
+        root.current ?? document.body,
       )
     : contents;
 }

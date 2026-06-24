@@ -125,7 +125,7 @@ export function CategoryChart({
               }
             }
           >
-            {data.map((entry, i) => (
+            {data?.map((entry, i) => (
               <Cell
                 key={`${entry?._id}-${i}`}
                 fill={toneBy(theme.palette.mode, i, 3, 8)}
@@ -168,7 +168,7 @@ function CompletionByAlgorithmChart() {
       .map(([c, s], i) => ({
         i,
         _id: c?._id,
-        label: find(algorithms, { _id: c?._id })?.algo_name,
+        label: find(algorithms, (a) => a._id === c?._id)?.algo_name,
         all: c?.all,
         solved: s?.result,
         closed: c?.result,

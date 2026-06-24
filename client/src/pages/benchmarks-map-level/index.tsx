@@ -32,7 +32,8 @@ import { Item } from "components/Item";
 import { ItemGrid } from "components/ItemGrid";
 
 export default function Page() {
-  const { mapId } = useStableLocationState<MapLevelLocationState>();
+  const { mapId } =
+    useStableLocationState<MapLevelLocationState>() as MapLevelLocationState;
   const { data: mapData } = useMapData(mapId);
   const { data: mapScenarios } = useScenariosByMap(mapId);
   const { open: openPreview, dialog: previewDialog } = useSurface(
@@ -88,35 +89,37 @@ export default function Page() {
         },
       ]}
       actions={
-        !!mapData && {
-          options: [
-            {
-              label: "Export scenario files (.zip)",
-              icon: <FolderZipRounded />,
-              primary: true,
-              action: notify(() => downloadBenchmarks(mapData), {
-                start: "Preparing...",
-                end: "Done",
-              }),
-            },
-            {
-              label: "Export map (.map)",
-              icon: <MapRounded />,
-              action: notify(() => downloadMap(mapData), {
-                start: "Preparing...",
-                end: "Done",
-              }),
-            },
-            {
-              label: "Export results (.csv)",
-              icon: <TableRounded />,
-              action: notify(() => downloadBenchmarksResultsCSV(mapData), {
-                start: "Preparing...",
-                end: "Done",
-              }),
-            },
-          ],
-        }
+        mapData
+          ? {
+              options: [
+                {
+                  label: "Export scenario files (.zip)",
+                  icon: <FolderZipRounded />,
+                  primary: true,
+                  action: notify(() => downloadBenchmarks(mapData), {
+                    start: "Preparing...",
+                    end: "Done",
+                  }),
+                },
+                {
+                  label: "Export map (.map)",
+                  icon: <MapRounded />,
+                  action: notify(() => downloadMap(mapData), {
+                    start: "Preparing...",
+                    end: "Done",
+                  }),
+                },
+                {
+                  label: "Export results (.csv)",
+                  icon: <TableRounded />,
+                  action: notify(() => downloadBenchmarksResultsCSV(mapData), {
+                    start: "Preparing...",
+                    end: "Done",
+                  }),
+                },
+              ],
+            }
+          : undefined
       }
     >
       <ItemGrid
@@ -142,8 +145,12 @@ export default function Page() {
           dataTabName="Browse scenarios"
           analysisTabName="Trends"
           data={<Table />}
-          analysis={<Analysis template={analysisTemplate(mapData)} />}
-          compare={<Analysis template={compareTemplate(mapData)} />}
+          analysis={
+            <Analysis template={analysisTemplate(mapData ?? undefined)} />
+          }
+          compare={
+            <Analysis template={compareTemplate(mapData ?? undefined)} />
+          }
         />
       </Stack>
       {previewDialog}

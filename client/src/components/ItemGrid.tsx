@@ -1,7 +1,7 @@
 import { paper } from "../theme";
 import { Grid } from "layout";
 import { Stack } from "@mui/material";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 export function ItemGrid({
   items,

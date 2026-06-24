@@ -29,14 +29,10 @@ self.onmessage = async ({
       });
       const encoder = new TextEncoder();
       const encoded = encoder.encode(`${csv}\n`);
-      self.postMessage(
-        {
-          type: "data",
-          payload: encoded,
-        },
-        null,
-        [encoded]
-      );
+      self.postMessage({
+        type: "data",
+        payload: encoded,
+      });
       count++;
     }
   );

@@ -5,6 +5,7 @@ import {
   Slice,
   useSliceSelector,
 } from "components/analysis/useAlgorithmSelector";
+import { Metric } from "core/metrics";
 import { chain, keyBy } from "lodash";
 import { useScenarioOnAgentData } from "queries/useScenarioQuery";
 
@@ -18,7 +19,7 @@ export const slices = [
 export function AlgorithmByAgentChart({ map }: { map: string }) {
   const algorithmSelectorState = useSliceSelector(slices);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data, isLoading } = useScenarioOnAgentData(metric, map);
+  const { data, isLoading } = useScenarioOnAgentData(metric as Metric, map);
   return (
     <>
       <ChartOptions {...algorithmSelectorState} slices={slices} />
@@ -32,7 +33,7 @@ export function AlgorithmByAgentChart({ map }: { map: string }) {
           }))
           .sortBy("name")
           .value()}
-        render={<SliceChart slice={slice} selected={selected} />}
+        render={<SliceChart slice={slice ?? slices[0]} selected={selected} />}
       />
     </>
   );

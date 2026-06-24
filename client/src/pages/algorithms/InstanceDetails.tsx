@@ -48,8 +48,8 @@ export function InstanceDetails({
                 Instance
               </Typography>
               <Stack>
-                <MapLabel mapId={instance?.map_id} />
-                <ScenarioLabel scenarioId={instance?.scen_id} />
+                <MapLabel mapId={instance?.map_id ?? ""} />
+                <ScenarioLabel scenarioId={instance?.scen_id ?? ""} />
                 <InstanceLabel id={instance?.id} />
               </Stack>
             </Stack>
@@ -63,7 +63,7 @@ export function InstanceDetails({
                 secondary={"Date submitted"}
               />
               <Grid width={120}>
-                {["solution_cost", "lower_cost"].map((cost) => (
+                {(["solution_cost", "lower_cost"] as const).map((cost) => (
                   <Item
                     invert
                     key={cost}
@@ -73,7 +73,7 @@ export function InstanceDetails({
                 ))}
               </Grid>
               <Grid width={120}>
-                {["best_solution", "best_lower"].map((cost) => (
+                {(["best_solution", "best_lower"] as const).map((cost) => (
                   <Item
                     invert
                     key={cost}
@@ -104,7 +104,7 @@ export function InstanceDetails({
                 Best for this instance
               </Typography>
               <Grid width={120}>
-                {["solution_cost", "lower_cost"].map((cost) => (
+                {(["solution_cost", "lower_cost"] as const).map((cost) => (
                   <Item
                     invert
                     key={cost}
@@ -118,9 +118,9 @@ export function InstanceDetails({
               variant="contained"
               onClick={() =>
                 navigate<VisualiserLocationState>("/visualization", {
-                  instanceId: instance?.id,
-                  scenId: instance?.scen_id,
-                  mapId: instance?.map_id,
+                  instanceId: instance?.id ?? "",
+                  scenId: instance?.scen_id ?? "",
+                  mapId: instance?.map_id ?? "",
                   solutionId: instance?.solution_path_id,
                   source: "submitted",
                 })

@@ -13,7 +13,7 @@ import SuccessRateDoc from "docs/charts/SuccessRate.md";
 import SuccessRateOnAgentsDoc from "docs/charts/SuccessRateOnAgents.md";
 import SuboptimalityByAgentCountDoc from "docs/charts/SuboptimalityByAgentCount.md";
 
-export function compareTemplate(mapData: Map) {
+export function compareTemplate(mapData?: Map) {
   return [
     {
       name: "",
@@ -21,19 +21,19 @@ export function compareTemplate(mapData: Map) {
       variants: [
         {
           name: "Completion per algorithm, by scenario type",
-          render: () => <AlgorithmByScenarioChart map={mapData?.id} />,
+          render: () => <AlgorithmByScenarioChart map={mapData?.id ?? ""} />,
           documentation: <AlgorithmByScenarioDoc />,
         },
         {
           name: "Completion per algorithm, by agent count per algorithm",
-          render: () => <AlgorithmByAgentChart map={mapData?.id} />,
+          render: () => <AlgorithmByAgentChart map={mapData?.id ?? ""} />,
           documentation: <AlgorithmByAgentDoc />,
         },
       ],
     },
   ];
 }
-export function analysisTemplate(mapData: Map) {
+export function analysisTemplate(mapData?: Map) {
   return [
     {
       name: "",
@@ -41,12 +41,12 @@ export function analysisTemplate(mapData: Map) {
       variants: [
         {
           name: "Completion by scenario type",
-          render: () => <SuccessRateChart map={mapData?.id} />,
+          render: () => <SuccessRateChart map={mapData?.id ?? ""} />,
           documentation: <SuccessRateDoc />,
         },
         {
           name: "Completion by agent count",
-          render: () => <SuccessRateOnAgentsChart map={mapData?.id} />,
+          render: () => <SuccessRateOnAgentsChart map={mapData?.id ?? ""} />,
           documentation: <SuccessRateOnAgentsDoc />,
         },
         {

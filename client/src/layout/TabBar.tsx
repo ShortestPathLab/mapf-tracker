@@ -1,11 +1,11 @@
 import { Box, BoxProps, Divider } from "@mui/material";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { round } from "lodash";
-import { MutableRefObject, useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { useRafLoop } from "react-use";
 import { navbarHeight } from "./navbarHeight";
 
-export function useTop(ref: MutableRefObject<HTMLElement>) {
+export function useTop(ref: RefObject<HTMLElement>) {
   const sm = useXs();
   const threshold = navbarHeight(sm);
   const [top, setTop] = useState(true);

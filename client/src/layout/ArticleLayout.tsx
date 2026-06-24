@@ -16,7 +16,7 @@ import {
 import { Item } from "components/Item";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
-import Layout, { LayoutProps } from "layout/Layout";
+import Layout, { LayoutProps, LayoutRenderProps } from "layout/Layout";
 import { last } from "lodash";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { appName } from "core/config";
@@ -66,7 +66,9 @@ function Hero({
   );
 }
 
-const RenderArticleLayout = ({ children }) => <>{children}</>;
+const RenderArticleLayout = ({ children }: LayoutRenderProps) => (
+  <>{children}</>
+);
 
 export function ArticleLayout({
   children,
@@ -102,8 +104,8 @@ export function ArticleLayout({
             sx={{ mt: 2, alignSelf: "flex-start" }}
             edge="start"
             onClick={() => {
-              const { state, url } = last(path);
-              navigate(url, state);
+              const target = last(path);
+              if (target) navigate(target.url, target.state);
             }}
           >
             <ArrowBackRounded />

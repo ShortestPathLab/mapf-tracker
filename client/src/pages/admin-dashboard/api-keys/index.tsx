@@ -27,7 +27,7 @@ import { ApiKey, submissionKeyBasic } from "queries/useSubmissionKeyQuery";
 import { DATE_TIME_FORMAT, formatDate } from "utils/format";
 
 function RequestInfo({ id }: { id?: string }) {
-  const { data } = requestBasic.useOne(id);
+  const { data } = requestBasic.useOne(id ?? "");
   return data ? `${data?.algorithmName}, ${data?.authorName}` : "--";
 }
 

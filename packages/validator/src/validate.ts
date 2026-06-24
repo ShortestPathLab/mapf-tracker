@@ -89,7 +89,7 @@ function sumPositionsImperative(
   out: Point[],
   time: number,
   actions: string[],
-  offsetMap = defaultOffsetMap
+  offsetMap: Dictionary<Point> = defaultOffsetMap
 ) {
   for (let i = 0; i < prev.length; i++) {
     const action = actions[i][time];

@@ -23,7 +23,7 @@ export const SuccessRateBarChart = ({
   proportionClosedKey = "proportionClosed",
   proportionSolvedKey = "proportionSolved",
   proportionUnknownKey = "proportionUnknown",
-  formatter = formatPercentage,
+  formatter = (c: string | number) => formatPercentage(Number(c)),
   type = "bar",
   yAxisDomain = [0, "auto"],
   stacked,

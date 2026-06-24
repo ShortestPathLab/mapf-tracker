@@ -18,7 +18,8 @@ import { Item } from "components/Item";
 import { useSnackbar } from "components/Snackbar";
 import { Tip } from "components/Tip";
 import { APIConfig } from "core/config";
-import { AddKeyForm } from "forms/AddKeyForm";
+import { AddKeyForm, Key } from "forms/AddKeyForm";
+import { FormikHelpers } from "formik";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
 import { some, zipWith } from "lodash";
@@ -41,7 +42,10 @@ export function AddKey() {
     navigate<SubmissionLocationState>("/upload", {
       apiKey: key,
     });
-  const handleApiFormSubmit = async ({ key }, { resetForm }) => {
+  const handleApiFormSubmit = async (
+    { key }: Key,
+    { resetForm }: FormikHelpers<Key>,
+  ) => {
     const { ok } = await checkKey(key);
     if (ok) {
       resetForm();
@@ -113,7 +117,9 @@ export default function TrackSubmission() {
   }
 
   // ─────────────────────────────────────────────────────────────────────
-  const actions = useDataGridActions<Request & { id: string; key: string }>({
+  const actions = useDataGridActions<
+    Partial<Request> & { id: string; key?: string | number }
+  >({
     items: [],
     menuItems: [
       {
@@ -127,7 +133,9 @@ export default function TrackSubmission() {
     ],
   });
 
-  const columns: GridColDef<Request & { id: string; key: string }>[] = [
+  const columns: GridColDef<
+    Partial<Request> & { id: string; key?: string | number }
+  >[] = [
     {
       field: "Icon",
       width: 48,
@@ -142,7 +150,12 @@ export default function TrackSubmission() {
       flex: 1,
       maxWidth: 260,
       renderCell: ({ row }) => (
-        <Item secondary={row.key?.slice?.(-8)} primary={row.algorithmName} />
+        <Item
+          secondary={
+            typeof row.key === "string" ? row.key.slice(-8) : undefined
+          }
+          primary={row.algorithmName}
+        />
       ),
     },
     {
@@ -230,7 +243,7 @@ export default function TrackSubmission() {
           clickable
           columns={columns}
           rows={rows}
-          onRowClick={({ row }) => navigateToDetails(row.key)}
+          onRowClick={({ row }) => navigateToDetails(row.key ?? "")}
         />
       </FlatCard>
     </Layout>

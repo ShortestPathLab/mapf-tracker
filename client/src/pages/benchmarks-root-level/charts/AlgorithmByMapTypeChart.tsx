@@ -28,21 +28,21 @@ export const slices = [
     key: "proportion-extents",
     dataKey: "proportion",
     name: "Proportion (extents)",
-    formatter: (v) => formatPercentage(+v, 0),
+    formatter: (v: string | number) => formatPercentage(+v, 0),
     domain: [0, "auto"],
   },
   {
     key: "proportion",
     dataKey: "proportion",
     name: "Proportion",
-    formatter: (v) => formatPercentage(+v, 0),
+    formatter: (v: string | number) => formatPercentage(+v, 0),
     domain: [0, 1],
   },
   {
     key: "count",
     dataKey: "result",
     name: "Count",
-    formatter: formatLargeNumber,
+    formatter: (v: string | number) => formatLargeNumber(+v),
     domain: [0, "auto"],
   },
 ] satisfies Slice[];
@@ -55,7 +55,9 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
     undefined,
     algorithm ? [algorithm] : []
   );
-  const { metric, slice, algorithms: selected } = algorithmSelectorState;
+  const { metric, slice: selectedSlice, algorithms: selected } =
+    algorithmSelectorState;
+  const slice = selectedSlice ?? slices[0];
   const { data, isLoading } = useAlgorithmChartData(
     "mapType",
     selected.length
@@ -91,7 +93,6 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
                 <Radar
                   isAnimationActive={false}
                   dataKey={`${algorithm._id}.${slice.dataKey ?? slice.key}`}
-                  opacity={0.5}
                   name={algorithm.algo_name}
                   {...(algorithm === stateOfTheArt
                     ? {
@@ -116,7 +117,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
             <PolarRadiusAxis
               domain={slice.domain as AxisDomain}
               stroke={palette.text.primary}
-              tickFormatter={(v) => slice.formatter(v)}
+              tickFormatter={(v) => slice.formatter?.(v) ?? String(v)}
             />
             <Tooltip
               cursor={{ fill: palette.action.disabledBackground }}

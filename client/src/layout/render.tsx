@@ -1,8 +1,9 @@
 import { Stack, Box } from "@mui/material";
+import { LayoutRenderProps } from "./Layout";
 
 export const makePreviewImagePageRenderFunction =
   (url: string) =>
-  ({ header, children }) =>
+  ({ header, children }: LayoutRenderProps) =>
     (
       <>
         <Stack direction="row" sx={{ justifyContent: "space-between", gap: 2 }}>

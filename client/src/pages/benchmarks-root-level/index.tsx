@@ -6,6 +6,7 @@ import { useSurface } from "components/surface";
 import { Prose } from "layout";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
+import { LayoutRenderProps } from "layout/Layout";
 import { map, memoize, sum } from "lodash";
 import { DownloadOptions } from "pages/benchmarks-map-level/DownloadOptions";
 import { useAggregateOne } from "queries/useAggregateQuery";
@@ -17,12 +18,15 @@ import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import Description from "./description.md";
 import References from "./references.md";
 
-const render = memoize((showHeader: boolean) => ({ header, children }) => (
-  <>
-    {showHeader ? <IndexHeader in={showHeader} /> : header}
-    {children}
-  </>
-));
+const render = memoize(
+  (showHeader: boolean) =>
+    ({ header, children }: LayoutRenderProps) => (
+      <>
+        {showHeader ? <IndexHeader in={showHeader} /> : header}
+        {children}
+      </>
+    )
+);
 
 export default function Page({ showHeader }: { showHeader?: boolean }) {
   const { open: openDialog, dialog } = useSurface(DownloadOptions, {
@@ -41,18 +45,22 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
       root
       title={showHeader ? "Home" : "Benchmarks"}
       path={showHeader ? [] : [{ name: "Home", url: "/" }]}
-      render={render(showHeader)}
+      render={render(!!showHeader)}
       items={[
         { label: "Map count", value: maps?.length?.toLocaleString?.() },
         { label: "Instance count", value: instanceCount.toLocaleString() },
         { label: "Scenario count", value: scenarioCount.toLocaleString() },
         {
           label: "Instances solved",
-          value: formatPercentage(solved?.result / solved?.all),
+          value: formatPercentage(
+            (solved?.result ?? NaN) / (solved?.all ?? NaN)
+          ),
         },
         {
           label: "Instances closed",
-          value: formatPercentage(closed?.result / solved?.all),
+          value: formatPercentage(
+            (closed?.result ?? NaN) / (solved?.all ?? NaN)
+          ),
         },
         {
           label: "References",

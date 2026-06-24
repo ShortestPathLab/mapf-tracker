@@ -191,7 +191,7 @@ export function ConfirmDialog({
   hintText?: ReactNode;
   closeLabel?: ReactNode;
   acceptLabel?: ReactNode;
-  acceptColor?: string;
+  acceptColor?: ButtonProps["color"];
   acceptProps?: ButtonProps;
 }) {
   return (

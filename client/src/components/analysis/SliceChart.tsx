@@ -96,7 +96,9 @@ export const SliceChart = ({
         angle={-45}
         textAnchor="end"
         height={
-          max(map(props.data, (d) => `${get(d, xAxisDataKey)}`.length)) * 4 + 90
+          (max(map(props.data, (d) => `${get(d, xAxisDataKey)}`.length)) ?? 0) *
+            4 +
+          90
         }
       />
       <CartesianGrid stroke={theme.palette.divider} />

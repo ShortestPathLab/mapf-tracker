@@ -96,9 +96,9 @@ export function Router({
     ? routes.find((r) => matchPath(r.path, previous))
     : undefined;
 
-  const directMatch = (a?: Route) => matchPath(a.path, pathname);
+  const directMatch = (a?: Route) => (a ? matchPath(a.path, pathname) : null);
 
-  const recursiveMatch = (a?: Route) => {
+  const recursiveMatch = (a?: Route): boolean => {
     if (!a) return false;
     if (directMatch(a)) return true;
     const b = filter(routes, (r) => r.parent === a.path);
@@ -106,7 +106,7 @@ export function Router({
     return false;
   };
 
-  const depth = (a?: Route) =>
+  const depth = (a?: Route): number =>
     a?.parent ? depth(find(routes, (x) => x.path === a.parent)) + 1 : 0;
 
   const isRoot = (a?: Route) => !a?.parent;
@@ -193,7 +193,7 @@ export function Router({
                 )}
               </Fragment>
             ))
-          : fallback.content
+          : fallback?.content
         : matches.length
         ? animationState.direction
           ? animationState.direction === "forwards"
@@ -228,8 +228,8 @@ export function Router({
               </Sheet>,
             ]
         : [
-            <Sheet direction="forwards" in disableAnimation key={fallback.path}>
-              {fallback.content}
+            <Sheet direction="forwards" in disableAnimation key={fallback?.path}>
+              {fallback?.content}
             </Sheet>,
           ]}
     </Stack>

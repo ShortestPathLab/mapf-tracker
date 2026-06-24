@@ -22,6 +22,7 @@ import { useMemo, useState } from "react";
 import {
   DownloadOptionsBase,
   disambiguate,
+  Model,
   renderPlaceholder,
 } from "./DownloadOptionsBase";
 import {
@@ -37,7 +38,7 @@ export function useBenchmarksAll() {
     queries: maps?.map?.((m) => scenariosQuery(m.id)) ?? [],
     combine: (result) => ({
       isLoading: some(result, "isLoading"),
-      data: zip(maps, map(result, "data"))?.map?.(([map, data]) => ({
+      data: zip(maps ?? [], map(result, "data"))?.map?.(([map, data]) => ({
         ...map,
         scenarios: data,
       })),
@@ -100,7 +101,7 @@ export function DownloadOptions() {
       headerAlign: "center" as const,
       field: name,
       headerName: name,
-      renderCell: ({ row }) =>
+      renderCell: ({ row }: { row: Model }) =>
         disambiguate(row, {
           all: (row) => (
             <Checkbox

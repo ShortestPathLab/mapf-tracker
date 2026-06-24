@@ -22,7 +22,7 @@ export function useSubmissionMutation({
     }: {
       label?: string;
       content: string;
-      type: string;
+      type?: string;
       size?: number;
     }) =>
       request(
@@ -47,12 +47,15 @@ export function useSubmissionMutation({
       });
       return { optimistic };
     },
-    onSettled: async (res, e, _2, { optimistic }) => {
-      if (res?.ok) {
-        optimisticQueue.delete(optimistic);
-      } else {
-        optimistic.status = "error";
-        optimistic.error = e ?? (await res?.json?.());
+    onSettled: async (res, e, _2, context) => {
+      const optimistic = context?.optimistic;
+      if (optimistic) {
+        if (res?.ok) {
+          optimisticQueue.delete(optimistic);
+        } else {
+          optimistic.status = "error";
+          optimistic.error = e ?? (await res?.json?.());
+        }
       }
       queryClient.invalidateQueries({
         queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", apiKey],

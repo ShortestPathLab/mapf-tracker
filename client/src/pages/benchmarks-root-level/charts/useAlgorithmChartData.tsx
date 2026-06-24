@@ -31,13 +31,15 @@ export function useAlgorithmChartData(
   });
   const { data: sota, isLoading: sotaLoading } = useAggregate({
     groupBy: type,
-    filterBy: {
-      best_lower: "closed" as const,
-      best_solution: "solved" as const,
-      closed: "closed" as const,
-      solved: "solved" as const,
-      all: "all" as const,
-    }[metric],
+    filterBy: metric
+      ? {
+          best_lower: "closed" as const,
+          best_solution: "solved" as const,
+          closed: "closed" as const,
+          solved: "solved" as const,
+          all: "all" as const,
+        }[metric]
+      : undefined,
   });
   const is = useMemo(() => keyBy(sota, "_id"), [sota]);
   const data = useMemo(

@@ -5,7 +5,8 @@ import App from "./App";
 import "katex/dist/katex.min.css";
 import "./index.css";
 
-const rootElement = document.getElementById("root");
+// The #root element is guaranteed to exist in index.html
+const rootElement = document.getElementById("root")!;
 const root = createRoot(rootElement);
 
 root.render(

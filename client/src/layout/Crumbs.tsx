@@ -58,7 +58,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
             separator={<ChevronRightRounded fontSize="small" />}
             sx={{ minWidth: "max-content", p: 3, pl: 0, py: 1.5, flex: 1 }}
           >
-            {path.map(({ name, url, state }) => (
+            {path?.map(({ name, url, state }) => (
               <Link
                 key={name}
                 sx={{ cursor: "pointer" }}
@@ -105,10 +105,10 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
             <ArrowForwardRounded fontSize="small" />
           </IconButton>
           <IconButton
-            disabled={!path.length}
+            disabled={!path?.length}
             onClick={() => {
-              const { url, state } = last(path);
-              navigate(url, state);
+              const target = last(path);
+              if (target) navigate(target.url, target.state);
             }}
           >
             <ArrowUpwardRounded fontSize="small" />

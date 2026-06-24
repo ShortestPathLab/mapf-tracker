@@ -6,9 +6,11 @@ export function renderSelectChip(
   f: (id: string) => ReactNode,
   max: number = 3
 ) {
-  return (selected?: string[]) => {
-    const firstFew = selected?.slice(0, max);
-    const restCount = selected?.length - firstFew.length;
+  return (value: unknown) => {
+    // MUI Select renderValue passes the selected value(s) as unknown; here it is the array of selected ids
+    const selected = value as string[] | undefined;
+    const firstFew = selected?.slice(0, max) ?? [];
+    const restCount = (selected?.length ?? 0) - firstFew.length;
     return (
       <Box sx={{ display: "flex", gap: 0.5 }}>
         {map(firstFew, (value) => (

@@ -37,6 +37,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
   const {
     data: maps = [
       {
+        id: undefined,
         map_name: "--",
         map_size: "--",
         proportion_instances_solved: 0,
@@ -47,6 +48,9 @@ export default function Hero({ children }: { children?: ReactNode }) {
   const {
     data: algorithms = [
       {
+        id: undefined,
+        _id: undefined,
+        instances: undefined,
         algo_name: "--",
         authors: "--",
       },
@@ -277,16 +281,18 @@ export default function Hero({ children }: { children?: ReactNode }) {
                     source: "submitted",
                   },
                   icon: undefined,
-                  content: undefined,
+                  content: <></>,
                   cover: "/assets/visualisation.png",
                 },
-                ...[find(pages(), { value: "system-demo" })].map((v) => ({
-                  ...v,
-                  value: `/docs/${v.value}`,
-                  search: {},
-                  icon: undefined,
-                  cover: "/assets/demo.png",
-                })),
+                ...[find(pages(), { value: "system-demo" })]
+                  .filter((v): v is NonNullable<typeof v> => v !== undefined)
+                  .map((v) => ({
+                    ...v,
+                    value: `/docs/${v.value}`,
+                    search: {},
+                    icon: undefined,
+                    cover: "/assets/demo.png",
+                  })),
               ],
               (page) => (
                 <ArticleCard

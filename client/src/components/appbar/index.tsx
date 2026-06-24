@@ -129,7 +129,7 @@ export default function index(props: AppBarProps) {
                                 {items.map(
                                   ({ icon, label, url, action, avatar }, i) => {
                                     const selected =
-                                      url && !!matchPath(`${url}/*`, pathname);
+                                      !!url && !!matchPath(`${url}/*`, pathname);
                                     return (
                                       <ListItemButton
                                         key={i}
@@ -137,7 +137,9 @@ export default function index(props: AppBarProps) {
                                         sx={{
                                           borderRadius: 1,
                                           mx: 1.5,
-                                          color: selected && "primary.main",
+                                          color: selected
+                                            ? "primary.main"
+                                            : undefined,
                                           px: 1,
                                           // Looks more comfortable when there's space on the right
                                           pr: 3,
@@ -159,7 +161,9 @@ export default function index(props: AppBarProps) {
                                       >
                                         <ListItemIcon
                                           sx={{
-                                            color: selected && "primary.main",
+                                            color: selected
+                                              ? "primary.main"
+                                              : undefined,
                                             minWidth: 48,
                                             mr: -1,
                                             transform: "scale(0.9)",

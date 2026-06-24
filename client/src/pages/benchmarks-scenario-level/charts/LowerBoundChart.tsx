@@ -8,7 +8,7 @@ import {
 } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { sample } from "components/charts/sample";
-import { metrics, scenarioMetrics } from "core/metrics";
+import { ScenarioMetric, scenarioMetrics } from "core/metrics";
 import { chain, keyBy, map } from "lodash";
 import { useInstancesByScenario } from "queries/useMapQuery";
 import { useScenarioOnAgentGapData } from "queries/useScenarioQuery";
@@ -62,7 +62,7 @@ export const slices = [
   {
     key: "cost",
     name: "Cost",
-    formatter: formatLargeNumber,
+    formatter: (n: string | number) => formatLargeNumber(+n),
   },
 ] satisfies Slice[];
 
@@ -73,12 +73,13 @@ export function LowerBoundComparisonChart({
   map: string;
   scenario: string | number;
 }) {
-  const algorithmSelectorState = useSliceSelector<
-    (typeof metrics)[number],
-    (typeof slices)[number]
-  >(slices, scenarioMetrics);
+  const algorithmSelectorState = useSliceSelector(slices, scenarioMetrics);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data, isLoading } = useScenarioOnAgentGapData(metric, map, scenario);
+  const { data, isLoading } = useScenarioOnAgentGapData(
+    metric as ScenarioMetric,
+    map,
+    scenario
+  );
   return (
     <>
       <ChartOptions
@@ -100,7 +101,7 @@ export function LowerBoundComparisonChart({
           <SliceChart
             type="area"
             xAxisDataKey="agents"
-            slice={slice}
+            slice={slice ?? slices[0]}
             selected={selected}
             keyType="name"
           />

@@ -10,7 +10,7 @@ export function useLerp(a: number, t: number = 0.1) {
   return current;
 }
 
-const signedMod = (a, n) => a - floor(a / n) * n;
+const signedMod = (a: number, n: number) => a - floor(a / n) * n;
 
 export const lerpCircle = (a: number, b: number, t: number) => {
   const diff = b - a;

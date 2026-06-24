@@ -12,7 +12,7 @@ import {
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { DetailsList } from "components/DetailsList";
 import { Scroll } from "components/dialog/Scrollbars";
-import { capitalize, chain, head, map, startCase } from "lodash";
+import { capitalize, chain, get, head, map, startCase } from "lodash";
 import { useMapsData } from "queries/useMapQuery";
 import { useMeasure } from "react-use";
 import {
@@ -33,7 +33,7 @@ export const slices = [
     keySolved: "proportionSolved",
     keyClosed: "proportionClosed",
     keyAll: "proportionAll",
-    formatter: (v: number) => formatPercentage(v, 0),
+    formatter: (v: string | number) => formatPercentage(+v, 0),
     domain: [0, 1],
     showAll: false,
   },
@@ -43,7 +43,7 @@ export const slices = [
     keySolved: "solved",
     keyClosed: "closed",
     keyAll: "instances",
-    formatter: formatLargeNumber,
+    formatter: (v: string | number) => formatLargeNumber(+v),
     domain: [0, "auto"],
     showAll: true,
   },
@@ -58,7 +58,8 @@ export function MapProportionChart() {
   const { palette } = useTheme();
   const { data, isLoading } = useMapsData();
   const selectorState = useSliceSelector(slices, undefined, []);
-  const { slice } = selectorState;
+  const slice = selectorState.slice ?? slices[0];
+  const format = slice.formatter ?? String;
   const aggregated = chain(data)
     .groupBy("map_type")
     .mapValues(aggregateInstances)
@@ -72,7 +73,7 @@ export function MapProportionChart() {
       ...v,
     }))
     .value();
-  const [ref, { width }] = useMeasure();
+  const [ref, { width }] = useMeasure<HTMLDivElement>();
   const showSummary = width > 430;
   return (
     <Stack sx={{ height: "100%", flex: 1 }} ref={ref}>
@@ -153,13 +154,13 @@ export function MapProportionChart() {
                 label: startCase(a.type),
                 value: (
                   <Typography variant="body2">
-                    {`${slice.formatter(
-                      a[slice.keySolved]
-                    )} solved and ${slice.formatter(
-                      a[slice.keyClosed]
+                    {`${format(
+                      get(a, slice.keySolved)
+                    )} solved and ${format(
+                      get(a, slice.keyClosed)
                     )} closed${
                       slice.showAll
-                        ? ` of ${slice.formatter(a[slice.keyAll])}`
+                        ? ` of ${format(get(a, slice.keyAll))}`
                         : ""
                     }`}
                   </Typography>

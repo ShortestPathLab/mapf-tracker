@@ -35,7 +35,7 @@ function RenderChart({
   data?: { all: number; closed: number; solved: number; _id: number }[];
 }) {
   const theme = useTheme();
-  const peak = max(map(data, (c) => c.all));
+  const peak = max(map(data, (c) => c.all)) ?? 0;
   const formatter = (n: number) => `${n} (${formatPercentage(n / peak)})`;
 
   return (

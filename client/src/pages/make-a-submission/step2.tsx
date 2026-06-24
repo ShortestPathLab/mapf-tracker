@@ -2,6 +2,7 @@ import { Typography } from "@mui/material";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
 import { SubmitRequestForm } from "pages/contribute/SubmitRequestForm";
+import { Request } from "queries/useRequestQuery";
 import { useEffect } from "react";
 import { Section } from "./Section";
 import { ContactEmailState } from "./step1";
@@ -9,7 +10,8 @@ import { defer } from "lodash";
 
 export default function index() {
   const navigate = useNavigate();
-  const { contactEmail } = useLocationState<ContactEmailState>();
+  const { contactEmail } =
+    useLocationState<ContactEmailState>() as ContactEmailState;
   useEffect(() => {
     if (!contactEmail) navigate("/submit/1");
   }, [contactEmail]);
@@ -28,9 +30,8 @@ export default function index() {
       >
         <Typography>Tell us about you and your algorithm.</Typography>
         <SubmitRequestForm
-          initialValues={{
-            requesterEmail: contactEmail,
-          }}
+          // The form fills the remaining fields from its default request.
+          initialValues={{ requesterEmail: contactEmail } as Request}
           onSubmit={async () =>
             defer(() => navigate("/submit/3", {}, { contactEmail }))
           }

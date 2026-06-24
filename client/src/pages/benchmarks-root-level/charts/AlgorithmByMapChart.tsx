@@ -19,12 +19,12 @@ export const slices = [
   {
     key: "result",
     name: "Count",
-    formatter: formatLargeNumber,
+    formatter: (v: string | number) => formatLargeNumber(+v),
   },
   {
     key: "proportion",
     name: "Proportion",
-    formatter: (v) => formatPercentage(+v, 0),
+    formatter: (v: string | number) => formatPercentage(+v, 0),
   },
 ] satisfies Slice[];
 
@@ -82,7 +82,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
           <SliceChart
             xAxisDataKey="map"
             stacked={false}
-            slice={slice}
+            slice={slice ?? slices[0]}
             selected={selected}
             keyType="id"
             stateOfTheArt

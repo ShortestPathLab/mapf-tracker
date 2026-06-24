@@ -6,7 +6,10 @@ import { Request } from "queries/useRequestQuery";
 export const handleRequestDetailUpdated = async ({
   key,
   ...values
-}: Request & { id: string | number; key: string | number }) => {
+}: Partial<Request> & {
+  id: string | number;
+  key?: string | number;
+}) => {
   try {
     const response = await request(
       `${APIConfig.apiUrl}/request/update/${values?.id}`,

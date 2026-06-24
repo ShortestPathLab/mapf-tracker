@@ -227,12 +227,14 @@ export function DownloadOptionsBase<
                   clickable
                   isLoading={isLoading}
                   columns={columns1}
-                  getChildren={(row) =>
-                    disambiguate(row, {
+                  getChildren={(row): T[] | undefined =>
+                    // The tree renders heterogeneous model rows (maps,
+                    // scenarios, placeholders) as children of the root row.
+                    disambiguate<Model[] | undefined>(row, {
                       all: (r) => arrayFallback(r.maps, placeholder(r.id)),
                       map: (r) => arrayFallback(r.scenarios, placeholder(r.id)),
                       scenario: () => undefined,
-                    })
+                    }) as T[] | undefined
                   }
                   expanded={expanded}
                   onExpandedChange={setExpanded}
@@ -352,7 +354,7 @@ export function DownloadOptionsBase<
                                         ? "indeterminate"
                                         : "determinate"
                                     }
-                                    value={progress * 100}
+                                    value={(progress ?? 0) * 100}
                                   />
                                 </Stack>
                               )}
@@ -386,14 +388,14 @@ export function DownloadOptionsBase<
                     variant="contained"
                     sx={{ width: "100%" }}
                     disabled={isRunning || disabled}
-                    onClick={notify(() => onSubmit?.(), {
+                    onClick={notify(() => onSubmit?.() ?? Promise.resolve(), {
                       start: "Exporting selection",
                       end: "Exported selection",
                     })}
                   >
                     {isRunning
-                      ? `Exporting ${floor(progress.current)} of ${
-                          progress.total
+                      ? `Exporting ${floor(progress?.current ?? 0)} of ${
+                          progress?.total ?? 0
                         }`
                       : "Export selection"}
                   </Button>

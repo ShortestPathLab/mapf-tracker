@@ -17,10 +17,10 @@ export function parseMapMeta(map: string): {
   type: string;
 } {
   const [type, height, width] = map.trim().split(/\r?\n/).slice(0, 4);
-  const v = (c: string) => last(c.split(" "));
+  const v = (c: string | undefined) => last((c ?? "").split(" "));
   return {
-    width: +v(width),
-    height: +v(height),
-    type: v(type),
+    width: +(v(width) ?? NaN),
+    height: +(v(height) ?? NaN),
+    type: v(type) ?? "",
   };
 }

@@ -16,7 +16,7 @@ import AlgorithmByAgentCountDoc from "docs/charts/AlgorithmByAgentCount.md";
 
 export const analysisTemplate = [
   {
-    name: undefined,
+    name: "",
     icon: <ShowChartRounded />,
     variants: [
       {
@@ -48,7 +48,7 @@ export const analysisTemplate = [
 ];
 export const compareTemplate = [
   {
-    name: undefined,
+    name: "",
     icon: <ShowChartRounded />,
     variants: [
       {

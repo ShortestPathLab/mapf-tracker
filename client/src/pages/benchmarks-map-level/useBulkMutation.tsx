@@ -174,7 +174,7 @@ export const bulkDownloadAlgorithms = async (
   const getAlgoName = (a: AlgorithmDetails) =>
     `${kebabCase(a.algo_name)}-${a.id}`;
 
-  const details = summaries.flatMap((id) => find(algorithmsDetails, { id }));
+  const details = summaries.flatMap((id) => find(algorithmsDetails, { id }) ?? []);
 
   const csv = json2csv(details, { emptyFieldValue: "" });
   const { set } = addJob({
@@ -392,7 +392,7 @@ function useBulkMutationProvider() {
 
 type R1 = ReturnType<typeof useBulkMutationProvider>;
 type R2 = R1["add"];
-export const BulkDownloadContext = createContext<R1>(null);
+export const BulkDownloadContext = createContext<R1 | null>(null);
 
 export const BulkDownloadProvider = ({ children }: PropsWithChildren) => {
   const value = useBulkMutationProvider();

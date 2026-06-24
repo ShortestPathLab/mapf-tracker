@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
+import { LayoutRenderProps } from "./Layout";
 
-export const RenderFixed = ({ header, children }) => {
+export const RenderFixed = ({ header, children }: LayoutRenderProps) => {
   const sm = useSm();
   return (
     <>

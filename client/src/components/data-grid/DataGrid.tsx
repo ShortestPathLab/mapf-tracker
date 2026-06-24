@@ -98,7 +98,7 @@ function ButtonRow(props: GridRowProps) {
     const controller = new AbortController();
     const listener = throttle(() => {
       const rootOffset = dataGrid.getBoundingClientRect().top;
-      const offset = props.offsetTop + rootOffset;
+      const offset = (props.offsetTop ?? 0) + rootOffset;
       setVisible(
         offset + props.dimensions.rowHeight + padding > 0 &&
           offset - padding < window.innerHeight,
@@ -168,7 +168,9 @@ export default function DataGrid<
   isLoading,
   ...rest
 }: DataGridProps<T>) {
-  const { q } = useLocationState<{ q?: string }>();
+  // useLocationState's inferred return type does not surface the generic
+  // saved-state shape, so re-assert the declared shape here.
+  const { q } = useLocationState<{ q?: string }>() as { q?: string };
   const scroll = useScroll();
   const { enabled: bottomBarEnabled } = useBottomBar();
   const ref = useRef<HTMLDivElement>(null);
@@ -197,7 +199,9 @@ export default function DataGrid<
           obj[actualPath] as unknown as never,
           obj,
           column,
-          null,
+          // No grid apiRef exists outside the grid lifecycle; these valueGetters
+          // don't access it during fuse indexing.
+          { current: null! },
         );
       return `${get(obj, actualPath)}`;
     },
@@ -207,7 +211,7 @@ export default function DataGrid<
     input
       ? fuse
           .search(input)
-          .filter((r) => r.score < 0.5)
+          .filter((r) => (r.score ?? 1) < 0.5)
           .map((r) => r.item)
       : rows,
     shouldIncludeItem,
@@ -271,7 +275,7 @@ export default function DataGrid<
               rowSelection={false}
               autoHeight
               rowHeight={88}
-              slots={clickable && { row: ButtonRow }}
+              slots={clickable ? { row: ButtonRow } : undefined}
               initialState={{
                 pagination: { paginationModel: { pageSize: PAGE_SIZE } },
               }}
@@ -318,7 +322,6 @@ export default function DataGrid<
                 sm ? filter(columns, (c) => !c.fold) : columns,
                 (c) => ({
                   type: "string",
-                  field: "",
                   headerName: "",
                   sortable: false,
                   align: "left",

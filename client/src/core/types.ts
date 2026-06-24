@@ -14,8 +14,10 @@ export type Map = {
   map_size: string;
   map_type: string;
   map_name: string;
-  scen_type: string;
-  type_id: number;
+  // scen_type/type_id are scenario fields; the /api/map endpoint does not
+  // return them, so they are optional on a map record.
+  scen_type?: string;
+  type_id?: number;
   scens: number;
   original_link?: string;
   papers?: string;

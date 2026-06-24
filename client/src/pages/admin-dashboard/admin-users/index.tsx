@@ -126,7 +126,7 @@ export default function index() {
       },
       {
         name: "Delete",
-        hidden: () => data?.length <= 1,
+        hidden: () => data !== undefined && data.length <= 1,
         render: (row, trigger) => (
           <Surface
             title="Delete user"

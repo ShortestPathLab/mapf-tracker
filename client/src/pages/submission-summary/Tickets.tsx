@@ -21,6 +21,7 @@ import { bindTrigger } from "material-ui-popup-state";
 import pluralize from "pluralize";
 import prettyBytes from "pretty-bytes";
 import { useOngoingSubmissionTicketQuery } from "queries/useOngoingSubmissionQuery";
+import { ReactNode } from "react";
 import { paper } from "theme";
 import GenericDetailsList from "./GenericDetailsList";
 
@@ -36,11 +37,13 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
             <Enter axis="x" key={dateReceived} in>
               <ListItem sx={{ gap: 2, ...paper(0) }}>
                 <ListItemIcon>
-                  {{
-                    done: <CheckCircleRounded color="success" />,
-                    error: <CancelRounded color="error" />,
-                    pending: <PendingRounded color="warning" />,
-                  }[status] ?? <CircularProgress size={24} />}
+                  {(
+                    {
+                      done: <CheckCircleRounded color="success" />,
+                      error: <CancelRounded color="error" />,
+                      pending: <PendingRounded color="warning" />,
+                    } as Record<string, ReactNode>
+                  )[status] ?? <CircularProgress size={24} />}
                 </ListItemIcon>
                 <ListItemText
                   sx={{ minWidth: "max-content", whiteSpace: "pre-line" }}
@@ -48,13 +51,14 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                   secondary={
                     <Stack>
                       {[
-                        `${prettyBytes(size)}, ${format(
+                        `${prettyBytes(size ?? 0)}, ${format(
                           dateReceived,
                           "MMM dd HH:mm aaa",
                         )}`,
-                        {
-                          done: pluralize("entry", result?.count, true),
-                          error: (
+                        (
+                          {
+                            done: pluralize("entry", result?.count, true),
+                            error: (
                             <Surface
                               title="Error details"
                               trigger={(state) => (
@@ -73,9 +77,10 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                               <GenericDetailsList data={{ error }} />
                             </Surface>
                           ),
-                          pending: "Processing",
-                          uploading: "Uploading",
-                        }[status] ?? "-",
+                            pending: "Processing",
+                            uploading: "Uploading",
+                          } as Record<string, ReactNode>
+                        )[status] ?? "-",
                       ]
                         .filter(identity)
                         .map((c, i) => (

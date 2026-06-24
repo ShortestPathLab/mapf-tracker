@@ -11,7 +11,7 @@ import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/Scen
 import { useScenariosByMap } from "queries/useMapQuery";
 
 export default function Table() {
-  const state = useStableLocationState<MapLevelLocationState>();
+  const state = useStableLocationState<MapLevelLocationState>() as MapLevelLocationState;
   const { mapId } = state;
   const { data, isLoading } = useScenariosByMap(mapId);
   const navigate = useNavigate();

@@ -77,10 +77,10 @@ export function AnalysisButton({
           height: "100dvh",
         },
       }}
-      appBar={{ children: <Title>{head(template).name}</Title> }}
+      appBar={{ children: <Title>{head(template)?.name}</Title> }}
       trigger={(onClick) => button(onClick)}
     >
-      <Chart data={head(template).variants} />
+      <Chart data={head(template)?.variants} />
     </Dialog>
   ) : (
     <PopupState variant="popover">
@@ -128,7 +128,7 @@ export function AnalysisButton({
   );
 }
 
-function Chart({ data }: { data: Variant[] }) {
+function Chart({ data }: { data?: Variant[] }) {
   const height = "70dvh";
   return (
     <FlatCard>

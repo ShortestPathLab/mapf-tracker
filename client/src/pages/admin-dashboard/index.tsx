@@ -15,7 +15,7 @@ export default function index() {
   const match = matchPath("/sudo/:section?/", pathname);
   const { section } = match?.params ?? {};
   return credentials ? (
-    <TabContext value={section ?? head(pages()).value}>
+    <TabContext value={section ?? head(pages())?.value ?? ""}>
       <Stack
         direction="row"
         sx={{

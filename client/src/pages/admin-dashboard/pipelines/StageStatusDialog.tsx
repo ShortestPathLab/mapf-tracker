@@ -21,9 +21,9 @@ export function StageStatusDialog({
   const { data } = usePipelineStatus();
   const { status, description, destructive, dependents } =
     find(data, { key: stage }) ?? {};
-  const { mutateAsync, isPending } = usePipelineRunMutation(stage);
+  const { mutateAsync, isPending } = usePipelineRunMutation(stage ?? "");
   const notify = useSnackbar();
-  const [ref, { width }] = useMeasure();
+  const [ref, { width }] = useMeasure<HTMLDivElement>();
   const sm = width < 960;
   return (
     <Stack sx={{ gap: 4 }} direction={sm ? "column" : "row"} ref={ref}>
@@ -38,7 +38,7 @@ export function StageStatusDialog({
           }),
         }}
       >
-        <StageStatus stage={stage} sx={{ ml: -2 }} />
+        <StageStatus stage={stage ?? ""} sx={{ ml: -2 }} />
         <Stack sx={{ gap: 2 }}>
           <Button
             color={destructive ? "error" : "secondary"}

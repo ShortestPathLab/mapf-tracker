@@ -46,10 +46,11 @@ export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
   });
   const isLoading = queries.some((q) => q.isLoading) || isAlgorithmsLoading;
   const data = zip(algorithms, queries)
+    // `queries` is derived from `algorithms`, so the zipped pairs are aligned
     .map(([a, q]) => ({
-      _id: a._id,
-      label: a.algo_name,
-      values: fromPairs(map(q.data, (v) => [v._id, v.result])),
+      _id: a!._id,
+      label: a!.algo_name,
+      values: fromPairs(map(q!.data, (v) => [v._id, v.result])),
     }))
     .filter(({ _id }) => (selected?.length ? selected.includes(_id) : true));
   const series = uniq(flatMap(data, (d) => keys(d.values))).map((id) => ({

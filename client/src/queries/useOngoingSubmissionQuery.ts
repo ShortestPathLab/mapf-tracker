@@ -29,9 +29,14 @@ function mergeArray<T>(
   return values(mergeWith(keyBy(xs, key), keyBy(ys, key), f));
 }
 
-function mergeValues(v1: unknown, v2: unknown) {
+function mergeValues(v1: unknown, v2: unknown): unknown {
   if (v1 instanceof Array && v2 instanceof Array) {
-    return mergeArray(v1, v2, (v) => v.id, mergeValues);
+    return mergeArray<unknown>(
+      v1,
+      v2,
+      (v) => (v as { id: string }).id,
+      mergeValues,
+    );
   }
   if (typeof v1 === "number" && typeof v2 === "number") {
     return v1 + v2;
@@ -121,8 +126,8 @@ export function useOngoingSubmissionByIdQuery(id?: string | number) {
 }
 
 export const ongoingSubmissionScenarioQueryFn = (
-  key: string | number,
-  scenario: string | number,
+  key?: string | number,
+  scenario?: string | number,
 ) =>
   json<OngoingSubmission[]>(
     `${APIConfig.apiUrl}/ongoing_submission/scenario/${key}/${scenario}`,
@@ -157,10 +162,11 @@ const summaryPageCountQuery = (key?: string | number) => ({
 const MAX_TASKS = 4;
 const mutexes = memoize((_: string | number) => new Semaphore(MAX_TASKS));
 
-const summaryQuery = (key: string | number, i: number = 0) => ({
+const summaryQuery = (key?: string | number, i: number = 0) => ({
   queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary", key, i],
   queryFn: () =>
-    mutexes(key).runExclusive(
+    // `key` is guaranteed present here since the query is only `enabled` when `key` is truthy
+    mutexes(key!).runExclusive(
       async () =>
         json<SummaryResult>(
           `${APIConfig.apiUrl}/ongoing_submission/summary/${key}/${i}`,

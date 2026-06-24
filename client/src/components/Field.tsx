@@ -50,11 +50,10 @@ export function Field<
         label="Unlabelled"
         fullWidth
         name={name}
-        color={errors[name] && touched[name] ? "error" : undefined}
+        color={name && errors[name] && touched[name] ? "error" : undefined}
         {...fieldProps}
       />
       <ErrorMessage
-        name={name}
         component={FormHelperText}
         {...slotProps.error}
         {...({
@@ -65,6 +64,7 @@ export function Field<
             ...slotProps.error?.sx,
           } as SxProps,
         } as unknown as ErrorMessageProps)}
+        name={name ? String(name) : ""}
       />
     </Box>
   );
@@ -98,7 +98,7 @@ export const Checkbox = forwardRef(
           <MuiCheckbox
             defaultChecked={!!props.value}
             onChange={(v) => {
-              form.setFieldValue(props.name, v.target.checked);
+              form.setFieldValue(props.name ?? "", v.target.checked);
             }}
           />
         }
@@ -136,10 +136,12 @@ export const Autocomplete = forwardRef(function <
   return (
     <MuiAutocomplete
       disabled={disabled}
+      options={[]}
       {...autoCompleteProps}
-      onBlur={(e) =>
-        form.setFieldValue(props.name, e.target["value" as string])
-      }
+      onBlur={(e) => {
+        // The blur event target within the autocomplete is the text input
+        form.setFieldValue(props.name ?? "", (e.target as HTMLInputElement).value);
+      }}
       renderInput={(props1) => <TextField ref={ref} {...props} {...props1} />}
     />
   );

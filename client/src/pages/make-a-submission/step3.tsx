@@ -3,10 +3,11 @@ import { Floating } from "components/Floating";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { useLocationState, useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
+import { LayoutRenderProps } from "layout/Layout";
 import { SectionContent } from "./Section";
 import { ContactEmailState } from "./step1";
 
-const Render = ({ children, header }) => (
+const Render = ({ children, header }: LayoutRenderProps) => (
   <SectionContent>
     <Stack sx={{ gap: 4 }}>
       {header}
@@ -18,7 +19,8 @@ const Render = ({ children, header }) => (
 export default function index() {
   const xs = useXs();
   const navigate = useNavigate();
-  const { contactEmail } = useLocationState<ContactEmailState>();
+  const { contactEmail } =
+    useLocationState<ContactEmailState>() as ContactEmailState;
   return (
     <Layout
       backBehaviour="back"

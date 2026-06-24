@@ -50,7 +50,7 @@ export function MapVisualisation({
       optimisedMap={optimisedMap}
       {...result}
       {...size}
-      getAgentPositions={() => result?.sources}
+      getAgentPositions={() => result?.sources ?? []}
       disablePlayback
     />
   );

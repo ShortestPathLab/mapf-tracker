@@ -18,7 +18,7 @@ import { SheetTitle } from "./SheetTitle";
 import { SlotProps } from "./SlotProps";
 
 export type SurfaceGeneralProps = {
-  variant?: "fullscreen" | "sheet" | "modal" | "popover" | "drawer";
+  variant?: "fullscreen" | "sheet" | "modal" | "popover";
   title?: ReactNode;
   children?: ((state: State) => ReactNode) | ReactNode;
   slotProps?: SlotProps;
@@ -34,7 +34,10 @@ export function useSurfaceHistory(state: PopupState) {
     () => `hidden-${nanoid()}`,
     `hidden-${nanoid()}`,
   );
-  const { params, saved, session } = useLocationStateSeparate();
+  const { params, saved, session: _session } = useLocationStateSeparate();
+  // Session is a record keyed by the generated surface id; the hook's default
+  // return type does not expose an index signature.
+  const session = _session as Record<string, number | undefined>;
   const previouslyOpen = usePrevious(state.isOpen);
   // Sync close state
   useEffect(() => {

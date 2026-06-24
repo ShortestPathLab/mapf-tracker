@@ -45,7 +45,7 @@ export function useBasic<T>(p: string) {
   function useWrite() {
     "use no memo";
     return useMutation({
-      mutationFn: (item: T & { id?: string }) => b.write(item),
+      mutationFn: (item: Omit<T, "id"> & { id?: string }) => b.write(item as T),
       onSuccess: (_, item) => invalidate(item.id),
     });
   }

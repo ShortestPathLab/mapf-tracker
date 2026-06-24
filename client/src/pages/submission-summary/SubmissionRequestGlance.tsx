@@ -23,8 +23,8 @@ export const SubmissionRequestGlance = ({
       title: "Edit request details",
     },
   );
-  const { data: request } = useRequestData(apiKey);
-  const { data: apiKeyData } = useSubmissionKeyQuery(apiKey);
+  const { data: request } = useRequestData(apiKey ?? "");
+  const { data: apiKeyData } = useSubmissionKeyQuery(apiKey ?? "");
 
   return (
     <>

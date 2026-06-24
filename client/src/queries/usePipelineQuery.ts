@@ -16,7 +16,10 @@ function layout<T extends Node>(nodes: Partial<T>[], edges: Edge[]) {
   graph.setDefaultEdgeLabel(() => ({}));
 
   graph.setGraph({ rankdir: "LR" });
-  nodes.forEach((node) => graph.setNode(node.id, { width: 500, height: 100 }));
+  // Callers always provide `id` (e.g. `{ id: p.key, ... }`)
+  nodes.forEach((node) =>
+    graph.setNode(node.id!, { width: 500, height: 100 })
+  );
   edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   dagre.layout(graph);
   return graph as dagre.graphlib.Graph<T>;

@@ -15,7 +15,8 @@ export function useCredentials() {
   return useQuery({
     queryKey: ["credentials"],
     queryFn: () => {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const stored = localStorage.getItem("user");
+      const user = stored ? JSON.parse(stored) : null;
       if (user) {
         const decodedJwt = parseJwt(user.token);
         if (decodedJwt.exp * 1000 < Date.now()) {

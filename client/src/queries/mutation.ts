@@ -14,7 +14,7 @@ export const getAuth = () => {
 
 export const request = async <T = null>(
   p: string,
-  body: T = undefined,
+  body?: T,
   method = "post",
   type = "application/json",
   raw = false,
@@ -37,6 +37,6 @@ export const request = async <T = null>(
   }
 };
 
-export const post = <T = null>(p: string, t = null) => request<T>(p, t);
+export const post = <T = null>(p: string, t?: T) => request<T>(p, t);
 export const get = <T = null>(p: string) => request<T>(p, undefined, "get");
 export const del = <T = null>(p: string) => request<T>(p, undefined, "delete");

@@ -28,6 +28,7 @@ import { CHUNK_SIZE_B } from "./DownloadOptions";
 import {
   DownloadOptionsBase,
   disambiguate,
+  Model,
   renderPlaceholder,
 } from "./DownloadOptionsBase";
 import {
@@ -67,9 +68,10 @@ export function AlgorithmDownloadOptions({
     queries: map(algorithms, (a) => algorithmSummaryQuery(a._id)),
     combine: (result) => ({
       isLoading: some(result, "isLoading"),
-      data: zip(algorithms, map(result, "data")).map(([a, d]) => ({
-        _id: a._id,
-        name: a.algo_name,
+      // `result` has one entry per algorithm, so the zipped pairs are aligned
+      data: zip(algorithms ?? [], map(result, "data")).map(([a, d]) => ({
+        _id: a!._id,
+        name: a!.algo_name,
         data: d,
       })),
     }),
@@ -113,7 +115,7 @@ export function AlgorithmDownloadOptions({
       headerAlign: "center" as const,
       field: "Summary",
       headerName: "Summary",
-      renderCell: ({ row }) =>
+      renderCell: ({ row }: { row: Model }) =>
         disambiguate(row, {
           all: (row) => <Checkbox {...summaries.bindToggle(row.id)} />,
         }),
@@ -128,7 +130,7 @@ export function AlgorithmDownloadOptions({
       headerAlign: "center" as const,
       field: "Submissions",
       headerName: "Submissions",
-      renderCell: ({ row }) =>
+      renderCell: ({ row }: { row: Model }) =>
         disambiguate(row, {
           all: (row) => (
             <Checkbox
@@ -260,8 +262,8 @@ export function AlgorithmDownloadOptions({
       isLoading={isLoading || isLoading2 || isLoading3}
       selectionMenuItems={selectionMenuItems}
       onSelectionMenuItemClick={(v, { algorithms: a, scens: s }) => {
-        submissions.toggle(v, ...s);
-        summaries.toggle(v, ...a);
+        submissions.toggle(v, ...(s ?? []));
+        summaries.toggle(v, ...(a ?? []));
       }}
       renderLabel={(row) =>
         disambiguate(row, {

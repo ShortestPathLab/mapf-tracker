@@ -69,7 +69,7 @@ export function ReviewRequestDialog({
           onSubmit={async (values) => {
             notify("Saving changes");
             await updateRequest({
-              id: data?.id,
+              id: data?.id ?? "",
               value: {
                 ...data,
                 reviewStatus: values,
@@ -113,7 +113,7 @@ export function ReviewRequestDialog({
                     onClick={async () => {
                       await submitForm();
                       showConfirmation({
-                        data: { ...data, reviewStatus: values },
+                        data: data ? { ...data, reviewStatus: values } : undefined,
                         onClose: () =>
                           delay(
                             () => onClose?.(),

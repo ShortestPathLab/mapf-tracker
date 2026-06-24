@@ -138,6 +138,7 @@ export function DonutChart({
   data?: {
     name?: string;
     color?: string;
+    [key: string]: string | number | undefined;
   }[];
 }) {
   const theme = useTheme();
@@ -180,14 +181,14 @@ export function DonutChart({
                     x={viewBox.cx}
                     y={(viewBox.cy || 0) - 8}
                   >
-                    {formatPercentage(data[0][valueKey], 0)}
+                    {formatPercentage(Number(data?.[0]?.[valueKey]), 0)}
                   </tspan>
                   <tspan
                     fill={theme.palette.text.secondary}
                     x={viewBox.cx}
                     y={(viewBox.cy || 0) + 16}
                   >
-                    {data[0].name}
+                    {data?.[0]?.name}
                   </tspan>
                 </text>
               );

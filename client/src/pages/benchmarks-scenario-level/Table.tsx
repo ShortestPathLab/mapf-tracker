@@ -22,7 +22,8 @@ function MakespanCell({ row }: { row: Instance }) {
 }
 
 export default function Table() {
-  const state = useStableLocationState<ScenarioLevelLocationState>();
+  const state =
+    useStableLocationState<ScenarioLevelLocationState>() as ScenarioLevelLocationState;
   const { scenId } = state;
   const { data, isLoading } = useInstancesByScenario(scenId);
   const navigate = useNavigate();

@@ -73,15 +73,24 @@ function Table() {
       renderCell: ({ formattedValue }) =>
         cellRendererChip({ formattedValue: startCase(formattedValue) }),
     },
-    ...[
-      {
-        color: theme.palette.success.main,
-        best: "instances_closed",
-        bestLabel: "closed",
-        total: "instances_solved",
-        totalLabel: "solved",
-      },
-    ].map(({ best: closed, total: solved, color, bestLabel, totalLabel }) => ({
+    ...(
+      [
+        {
+          color: theme.palette.success.main,
+          best: "instances_closed",
+          bestLabel: "closed",
+          total: "instances_solved",
+          totalLabel: "solved",
+        },
+      ] as const
+    ).map(
+      ({
+        best: closed,
+        total: solved,
+        color,
+        bestLabel,
+        totalLabel,
+      }): GridColDef<AlgorithmDetails> => ({
       field: solved,
       flex: 2,
       maxWidth: 480,
@@ -113,16 +122,18 @@ function Table() {
       ),
       fold: true,
     })),
-    ...[
-      {
-        key: "best_solution",
-        label: "best solution",
-      },
-      {
-        label: "best lower-bound",
-        key: "best_lower",
-      },
-    ].map(({ key, label }) => ({
+    ...(
+      [
+        {
+          key: "best_solution",
+          label: "best solution",
+        },
+        {
+          label: "best lower-bound",
+          key: "best_lower",
+        },
+      ] as const
+    ).map(({ key, label }): GridColDef<AlgorithmDetails> => ({
       field: key,
       flex: 2,
       maxWidth: 240,

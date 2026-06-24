@@ -10,7 +10,7 @@ export const useDeleteOngoingSubmissionByScenarioIndexMutation = (
   apiKey?: string | number
 ) => {
   const { mutateAsync: deleteEntry } =
-    useDeleteOngoingSubmissionMutation(apiKey);
+    useDeleteOngoingSubmissionMutation(apiKey ?? "");
   return useMutation({
     mutationKey: ["deleteOngoingSubmission1"],
     mutationFn: async ({

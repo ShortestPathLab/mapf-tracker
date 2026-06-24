@@ -27,7 +27,7 @@ export function SubmissionInstanceContext({
   const { data, isLoading } = useAlgorithmScenarioQuery(algorithm, scenario);
   const current = data?.[index];
   const { data: instance, isLoading: isInstanceLoading } = useInstance(
-    current?.instance_id
+    current?.instance_id ?? ""
   );
   return children({
     current,

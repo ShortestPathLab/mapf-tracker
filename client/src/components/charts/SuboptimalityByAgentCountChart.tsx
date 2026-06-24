@@ -59,7 +59,7 @@ export function SuboptimalityByAgentCountChart({
 
       return {
         isLoading: minQuery.isLoading || maxQuery.isLoading,
-        data: range(agents).flatMap((agent) => {
+        data: range(agents ?? 0).flatMap((agent) => {
           if (
             !isNil(minData[agent]?.result) &&
             !isNil(maxData[agent]?.result)

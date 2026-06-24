@@ -6,8 +6,8 @@ export function checkEdgeCollision(params: CheckParams): CheckResult {
   if (params.stage !== "pre") return {};
   const { grid, next, prev, timestep, paths } = params;
   const collision = next.findIndex((nextPosition, agent) => {
-    const target = grid[nextPosition.y]?.[nextPosition.x];
-    const action = paths[agent][timestep - 1];
+    const target = grid?.[nextPosition.y]?.[nextPosition.x];
+    const action = paths?.[agent]?.[timestep - 1];
     // Check if the tile was previously occupied
     if (
       // Tile moved
@@ -30,16 +30,16 @@ export function checkEdgeCollision(params: CheckParams): CheckResult {
     const conflict = {
       agentA: collision,
       point: next[collision],
-      agentB: grid[next[collision].y]?.[next[collision].x],
+      agentB: grid?.[next[collision].y]?.[next[collision].x],
     };
     return {
       errorTimesteps: [timestep],
-      errorAgents: [conflict.agentA, ...conflict.agentB],
+      errorAgents: [conflict.agentA, ...(conflict.agentB ?? [])],
       errors: [
         `agent-to-agent edge collision, agent ${
           conflict.agentA
         }, at timestep ${timestep}, at ${$(conflict.point)}, with agent ${[
-          ...conflict.agentB,
+          ...(conflict.agentB ?? []),
         ]}`,
       ],
     };

@@ -8,6 +8,7 @@ import { useSurface } from "components/surface";
 import { formatDuration } from "date-fns";
 import { DialogContentProps } from "hooks/useDialog";
 import { capitalize, isNumber, map } from "lodash";
+import { ReactNode } from "react";
 import { SolutionVisualisation } from "pages/visualiser/SolutionVisualisation";
 import pluralize from "pluralize";
 import { useScenario } from "queries/useMapQuery";
@@ -20,7 +21,7 @@ import {
 } from "./SubmissionInstanceContext";
 import { getOutcomeDisplay } from "./getOutcomeDisplay";
 
-export function FullsizeDialog({ children }: { children }) {
+export function FullsizeDialog({ children }: { children: ReactNode }) {
   return (
     <>
       <Box
@@ -92,7 +93,7 @@ export function DetailsDialog({
               }}
             >
               <Stack sx={{ gap: 2 }}>
-                <MapLabel mapId={scenario?.map_id} />
+                <MapLabel mapId={scenario?.map_id ?? ""} />
                 <ScenarioLabel scenarioId={scenarioId} />
                 <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
                   <Box sx={{ width: 48 }} />

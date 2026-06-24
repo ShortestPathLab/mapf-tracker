@@ -54,7 +54,7 @@ export type LayoutProps = {
   root?: boolean;
 };
 
-const DefaultLayout = ({ header, children }) => (
+const DefaultLayout = ({ header, children }: LayoutRenderProps) => (
   <>
     {header}
     {children}
@@ -86,7 +86,7 @@ export default function Layout({
   );
   useEffect(() => {
     if (
-      location.state?.session?.["hidden-reason"] === "top" &&
+      location?.state?.session?.["hidden-reason"] === "top" &&
       action === "forward"
     ) {
       panel?.scrollTo?.({ top: 0, behavior: "smooth" });
@@ -139,8 +139,8 @@ export default function Layout({
                 edge="start"
                 onClick={() => {
                   if (backBehaviour === "up") {
-                    const { state, url } = last(path);
-                    navigate(url, state);
+                    const target = last(path);
+                    if (target) navigate(target.url, target.state);
                   } else {
                     navigate(-1);
                   }

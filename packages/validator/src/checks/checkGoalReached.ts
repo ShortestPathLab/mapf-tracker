@@ -9,7 +9,8 @@ export function checkGoalReached(params: CheckParams): CheckResult {
 
   const fail = find(
     zip(current, goals).map(([p1, p2], i) => [p1, p2, i] as const),
-    ([p1, p2]) => $(p1) !== $(p2)
+    // A missing position/goal counts as not-reached; otherwise compare them.
+    ([p1, p2]) => !p1 || !p2 || $(p1) !== $(p2)
   );
   if (fail) {
     const [p1, p2, i] = fail;
@@ -17,7 +18,9 @@ export function checkGoalReached(params: CheckParams): CheckResult {
       errorTimesteps: [timestep],
       errorAgents: [i],
       errors: [
-        `agent ${i} did not reach goal. Expected ${$(p2)}, got ${$(p1)}`,
+        `agent ${i} did not reach goal. Expected ${
+          p2 ? $(p2) : "?"
+        }, got ${p1 ? $(p1) : "?"}`,
       ],
     };
   } else return {};

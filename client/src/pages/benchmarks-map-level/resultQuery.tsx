@@ -52,7 +52,8 @@ export const resultQuery = async (
             limit: CHUNK_LIMIT,
             skip: c * CHUNK_LIMIT,
           }).then(async (b) => {
-            const reader = b.body.getReader();
+            // The bulk results endpoint always responds with a streamed body
+            const reader = b.body!.getReader();
             while (true) {
               const { done, value } = await reader.read();
               if (done) {

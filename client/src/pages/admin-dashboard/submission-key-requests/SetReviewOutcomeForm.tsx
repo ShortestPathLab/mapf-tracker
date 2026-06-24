@@ -37,8 +37,8 @@ export function SetReviewOutcomeForm({
               label="Status"
               required
               SelectProps={{
-                renderValue: (v: ReviewOutcome["status"]) => (
-                  <StatusChip status={v} />
+                renderValue: (v: unknown) => (
+                  <StatusChip status={v as ReviewOutcome["status"]} />
                 ),
               }}
             >

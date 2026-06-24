@@ -50,7 +50,7 @@ export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
           <Tooltip title="Open this article in a new tab">
             <ArticleCard
               page={page}
-              onClick={() => open(`/docs/${page.value}`, "_blank")}
+              onClick={() => open(`/docs/${page?.value}`, "_blank")}
             />
           </Tooltip>
         </Grid>

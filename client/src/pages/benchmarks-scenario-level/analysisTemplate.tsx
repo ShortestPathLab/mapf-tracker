@@ -17,14 +17,14 @@ export function analysisTemplate(scenarioData?: Scenario) {
       variants: [
         {
           name: "Cost by agent count",
-          render: () => <CostChart scenario={scenarioData?.id} />,
+          render: () => <CostChart scenario={scenarioData?.id ?? ""} />,
           documentation: <CostDoc />,
         },
         {
           name: "Percent suboptimality",
           description:
             "Percent difference between best solution and lower-bound",
-          render: () => <LowerBoundChart scenario={scenarioData?.id} />,
+          render: () => <LowerBoundChart scenario={scenarioData?.id ?? ""} />,
           documentation: <LowerBoundDoc />,
         },
       ],
@@ -41,8 +41,8 @@ export function compareTemplate(scenarioData?: Scenario, mapData?: Map) {
           name: "Per-algorithm analysis",
           render: () => (
             <LowerBoundComparisonChart
-              map={mapData?.id}
-              scenario={scenarioData?.id}
+              map={mapData?.id ?? ""}
+              scenario={scenarioData?.id ?? ""}
             />
           ),
           documentation: <LowerBoundComparisonDoc />,

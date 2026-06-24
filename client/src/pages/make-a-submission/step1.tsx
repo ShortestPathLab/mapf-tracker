@@ -21,7 +21,8 @@ export type ContactEmailState = {
 
 export default function index() {
   const navigate = useNavigate();
-  const { contactEmail } = useStableLocationState<ContactEmailState>();
+  const { contactEmail } =
+    useStableLocationState<ContactEmailState>() as ContactEmailState;
   const xs = useXs();
   const { open, dialog, close } = useSurface(ConfirmDialog, {
     variant: "modal",

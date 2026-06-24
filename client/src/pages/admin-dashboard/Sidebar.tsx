@@ -25,7 +25,7 @@ export function Sidebar(props: StackProps) {
           <Typography variant="h6">Sudo</Typography>
         </Stack>
         <Tabs
-          value={section ?? head(pages()).value}
+          value={section ?? head(pages())?.value ?? ""}
           onChange={(_, v) => navigate(`/sudo/${v}`)}
           orientation="vertical"
         >

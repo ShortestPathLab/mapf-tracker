@@ -26,7 +26,7 @@ export default function Page({
   return (
     <Layout flat title={title} path={path} root {...props}>
       {groups
-        .filter(({ label }) => labels.includes(label))
+        .filter(({ label }) => label !== undefined && labels.includes(label))
         .map(({ label, items }, _, { length }) => (
           <Stack gap={2} key={label}>
             {length > 1 && (

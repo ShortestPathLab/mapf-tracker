@@ -110,8 +110,11 @@ function createAgentPositionGetter(
       const path: { x: number; y: number; action?: string }[] = [sources[n]];
       while (!bs[n].done(t)) {
         const [offset] = sumPositions(
-          [pick(last(path), "x", "y")],
-          createOffsetMap(createActionMap(t, [bs[n]]), defaultOffsetMap)
+          [pick(last(path) ?? { x: 0, y: 0 }, "x", "y")],
+          createOffsetMap(
+            createActionMap(t, [bs[n]]).map((a) => a ?? "w"),
+            defaultOffsetMap
+          )
         );
         if (offset.x || offset.y) {
           path.push({ ...offset, action: bs[n].seek(t) });
@@ -141,9 +144,9 @@ export function useSolution({
 }: SolutionParameters) {
   "use no memo";
   const { data: instance, isLoading: isInstanceLoading } =
-    useInstance(instanceId);
+    useInstance(instanceId ?? "");
   const { data: history, isLoading: isHistoryLoading } =
-    useAlgorithmForInstanceData(instanceId);
+    useAlgorithmForInstanceData(instanceId ?? "");
   const { data: solution, isLoading: isSolutionLoading } = useSolutionData(
     solutionId ?? last(head(history)?.solution_algos)?.submission_id,
     source
@@ -156,7 +159,7 @@ export function useSolution({
     );
 
   const { data: scenario, isLoading: isScenarioLoading } = useScenario(
-    instance?.scen_id ?? scenarioId
+    instance?.scen_id ?? scenarioId ?? ""
   );
   const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(
     instance?.map_id ?? mapId
@@ -179,7 +182,7 @@ export function useSolution({
           );
           const parsedMap = parseMap(mapData);
           const size = {
-            width: head(parsedMap).length,
+            width: (head(parsedMap) ?? "").length,
             height: parsedMap.length,
           };
           return {
@@ -217,7 +220,7 @@ export function useSolution({
       paths ?? [],
       instance?.agents ?? 0,
       ""
-    ), timespan),
+    ), timespan ?? 0),
     [sources, paths, timespan, instance?.agents]
   );
 

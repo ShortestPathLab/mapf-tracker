@@ -12,11 +12,13 @@ export const StatusChip = ({
       <Stack direction="row" sx={{ alignItems: "center" }}>
         <Dot
           sx={{
-            bgcolor: {
-              rejected: "error.main",
-              "not-reviewed": "warning.main",
-              approved: "success.main",
-            }[status] as "error" | "warning" | "success",
+            bgcolor: (status
+              ? {
+                  rejected: "error.main",
+                  "not-reviewed": "warning.main",
+                  approved: "success.main",
+                }[status]
+              : undefined) as "error" | "warning" | "success",
             mb: 0,
           }}
         />

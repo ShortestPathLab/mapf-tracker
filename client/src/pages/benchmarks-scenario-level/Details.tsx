@@ -36,9 +36,9 @@ import { downloadRow } from "./download";
 
 export default function Details({ id }: { id?: string }) {
   const notify = useSnackbarAction();
-  const { data: history } = useAlgorithmForInstanceData(id);
-  const { data: instance } = useInstance(id);
-  const { data: scenario } = useScenario(instance?.scen_id);
+  const { data: history } = useAlgorithmForInstanceData(id ?? "");
+  const { data: instance } = useInstance(id ?? "");
+  const { data: scenario } = useScenario(instance?.scen_id ?? "");
   const { data: map } = useMapData(instance?.map_id);
   const { data: makespan } = useMakespanData({
     instance: id,

@@ -22,6 +22,7 @@ import {
 } from "lodash";
 import { useScenarioOnAgentData } from "queries/useScenarioQuery";
 import {
+  AggregateAlgorithmQuery,
   AggregateQuery,
   algorithmQuery,
   useAggregate,
@@ -35,7 +36,7 @@ export const slices = [
     key: "count",
     name: "Instance count",
   },
-] as const satisfies Slice[];
+] satisfies Slice[];
 
 export const metrics = [
   { key: "solved", name: "Instances solved" },
@@ -45,10 +46,7 @@ export const metrics = [
 ] as const satisfies BaseMetric[];
 
 export function AlgorithmByAgentChart({ map: m }: { map: string }) {
-  const algorithmSelectorState = useSliceSelector<
-    (typeof metrics)[number],
-    (typeof slices)[number]
-  >(slices, metrics);
+  const algorithmSelectorState = useSliceSelector(slices, metrics);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
 
   const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
@@ -64,18 +62,18 @@ export function AlgorithmByAgentChart({ map: m }: { map: string }) {
         algorithm: a._id,
         map: m,
         groupBy: "agents",
-        filterBy: metric,
+        filterBy: metric as AggregateAlgorithmQuery["filterBy"],
       }),
     ),
     combine: (queries) => {
       const dictionaries = queries.map((q) => keyBy(q.data, "_id"));
-      const maxA = max(queries.flatMap((q) => q.data?.map?.((d) => +d._id)));
-      const data = range(1, maxA + 1).map((agentCount) => ({
+      const maxA = max(queries.flatMap((q) => q.data?.map?.((d) => +(d._id ?? 0))));
+      const data = range(1, (maxA ?? NaN) + 1).map((agentCount) => ({
         agentCount: agentCount,
         ...fromPairs(
           actualSelected.map((a, i) => [
             a._id,
-            { [slice.key]: dictionaries[i][agentCount]?.result },
+            { [(slice ?? slices[0]).key]: dictionaries[i][agentCount]?.result },
           ]),
         ),
       }));
@@ -89,8 +87,8 @@ export function AlgorithmByAgentChart({ map: m }: { map: string }) {
     <>
       <ChartOptions
         {...algorithmSelectorState}
-        slices={slices}
-        metrics={metrics}
+        slices={[...slices]}
+        metrics={[...metrics]}
       />
       <Chart
         isLoading={isLoading}
@@ -98,7 +96,7 @@ export function AlgorithmByAgentChart({ map: m }: { map: string }) {
         data={data}
         render={
           <SliceChart
-            slice={slice}
+            slice={slice ?? slices[0]}
             selected={selected}
             type="area"
             xAxisDataKey="agentCount"

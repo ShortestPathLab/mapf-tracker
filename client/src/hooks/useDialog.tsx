@@ -18,7 +18,7 @@ export function useDialog<T>(
     {}
   );
   const open = (s?: T & DialogContentProps) => {
-    setState(s ?? ({} as T));
+    setState(s ?? ({} as T & DialogContentProps));
     setOpen(true);
   };
   const close = () => {
@@ -45,18 +45,20 @@ export function useDialog<T>(
               },
             },
           },
-          props,
+          props ?? {},
           modalProps
         )}
       >
-        <C
-          {...state}
-          onClose={() => {
-            close?.();
-            state?.onClose?.();
-          }}
-          onProps={setModalProps}
-        />
+        {C && (
+          <C
+            {...(state ?? ({} as T & DialogContentProps))}
+            onClose={() => {
+              close?.();
+              state?.onClose?.();
+            }}
+            onProps={setModalProps}
+          />
+        )}
       </Dialog>
     ),
   };

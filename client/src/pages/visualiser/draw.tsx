@@ -1,5 +1,5 @@
 import { Graphics } from "@pixi/react";
-import { each, first, head, isNumber, isUndefined, range, trim } from "lodash";
+import { each, head, isNumber, isUndefined, range, trim } from "lodash";
 import memoizee from "memoizee";
 import { Graphics as PixiGraphics } from "pixi.js";
 import { LINE_WIDTH } from "./constants";
@@ -80,17 +80,18 @@ export const $agentDiagnostics = memoizee(
     (g: PixiGraphics) => {
       g.clear();
       g.lineStyle(LINE_WIDTH, hexToInt(color));
-      g.moveTo(head(path).x + 0.5, head(path).y + 0.5);
+      const start = head(path) ?? { x: 0, y: 0 };
+      g.moveTo(start.x + 0.5, start.y + 0.5);
       each(path, (point) => {
         g.lineTo(point.x + 0.5, point.y + 0.5);
       });
-      g.drawCircle(first(path).x + 0.5, first(path).y + 0.5, 0.5);
+      g.drawCircle(start.x + 0.5, start.y + 0.5, 0.5);
       g.drawCircle(goal.x + 0.5, goal.y + 0.5, 0.5);
       each(diagnostics, ({ t, ...rest }) => {
         const point = isUndefined(t) ? rest : path[t];
         if (point) {
           const { x, y } = point;
-          error(x, y, diagnosticColor)(g);
+          error(x ?? NaN, y ?? NaN, diagnosticColor)(g);
         }
       });
     },

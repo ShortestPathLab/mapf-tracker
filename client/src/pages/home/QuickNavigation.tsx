@@ -44,7 +44,9 @@ export function QuickNavigation() {
           navigate: () => navigate(`/submissions/${source._id}`),
         })),
         ...map(
-          flatMap(content.groups, (g) => g.items).filter((c) => c.url),
+          flatMap(content.groups, (g) => g.items).filter(
+            (c): c is typeof c & { url: string } => !!c.url,
+          ),
           (page) => ({
             type: "page",
             name: page.label,
@@ -68,10 +70,10 @@ export function QuickNavigation() {
         })),
       ]}
       autoHighlight
-      getOptionLabel={(d) => d.name}
+      getOptionLabel={(d) => d.name ?? ""}
       onChange={(e, v, reason) => {
         if (reason === "blur") return;
-        v.navigate();
+        v?.navigate();
       }}
       sx={{
         "& label": { fontSize: "0.9rem" },
@@ -102,8 +104,6 @@ export function QuickNavigation() {
         <TextField
           label={`Search...`}
           variant="outlined"
-          size="small"
-          fullWidth
           {...props}
         />
       )}

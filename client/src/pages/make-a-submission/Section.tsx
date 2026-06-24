@@ -4,9 +4,10 @@ import { appbarHeight } from "components/appbar";
 import { useMd, useSm, useXs } from "components/dialog/useSmallDisplay";
 import { useNavigate } from "hooks/useNavigation";
 import { bottomBarHeight } from "layout/navbarHeight";
+import { LayoutRenderProps } from "layout/Layout";
 import { ReactNode } from "react";
 
-export function Section({ children, header }) {
+export function Section({ children, header }: LayoutRenderProps) {
   const sm = useSm();
   const navigate = useNavigate();
   return (

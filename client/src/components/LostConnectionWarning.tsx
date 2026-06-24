@@ -27,12 +27,6 @@ export function LostConnectionWarning() {
               anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
               ContentProps={{
                 sx: {
-                  transition: (t) =>
-                    `${t.transitions.create([
-                      "translate",
-                      "opacity",
-                      "transform",
-                    ])} !important`,
                   translate: bottomBar ? "0 -80px" : "0",
                   color: "text.primary",
                   bgcolor: "background.paper",

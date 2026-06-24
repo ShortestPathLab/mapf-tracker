@@ -11,7 +11,7 @@ export const DetailsList = ({
 }: DetailsListProps & ListProps) => {
   return (
     <List {...rest}>
-      {items.map((item, index) => (
+      {items?.map((item, index) => (
         <ListItem key={index}>
           <ListItemText
             sx={{

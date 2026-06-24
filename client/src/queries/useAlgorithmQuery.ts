@@ -26,7 +26,7 @@ export type SubmissionInfo = {
   best_solution: boolean;
 };
 
-export function algorithmSummaryQuery(algorithm: string) {
+export function algorithmSummaryQuery(algorithm?: string) {
   return {
     queryKey: ["algorithms", "summary", algorithm],
     queryFn: () =>
@@ -128,7 +128,7 @@ export const useScenarioSuccessRateByAgentCountData = (id: string) =>
       >(`${APIConfig.apiUrl}/instance/test/${id}`),
     enabled: !!id,
   });
-export function algorithmScenarioQuery(algorithm: string, scenario: string) {
+export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
   return {
     queryKey: ["algorithms", algorithm, scenario],
     queryFn: () =>

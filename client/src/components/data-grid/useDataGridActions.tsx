@@ -10,7 +10,7 @@ import {
   Stack,
   Tooltip,
 } from "@mui/material";
-import { GridColDef } from "@mui/x-data-grid";
+import { GridColDef, GridValidRowModel } from "@mui/x-data-grid";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { filter, map } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
@@ -24,7 +24,7 @@ export type DataGridActionsItem<T> = {
   render?: (row: T, trigger: ReactElement) => ReactNode;
 };
 
-export function useDataGridActions<T>({
+export function useDataGridActions<T extends GridValidRowModel>({
   items = [],
   menuItems = [],
 }: {
@@ -56,7 +56,7 @@ export function useDataGridActions<T>({
         >
           {map(
             filteredShownItems,
-            ({ name, action, icon, render = (_, c) => c }) => (
+            ({ name, action, icon, render = (_: T, c: ReactElement) => c }) => (
               <Box
                 sx={{
                   "@media (pointer: fine)": {
@@ -68,7 +68,7 @@ export function useDataGridActions<T>({
                 {render(
                   row,
                   <IconButton onClick={() => action?.(row)}>
-                    <Tooltip title={name}>{icon}</Tooltip>
+                    <Tooltip title={name}>{icon ?? <></>}</Tooltip>
                   </IconButton>,
                 )}
               </Box>
@@ -96,7 +96,7 @@ export function useDataGridActions<T>({
                     <MenuList>
                       {map(
                         filteredStoredItems,
-                        ({ name, action, icon, render = (_, c) => c }) =>
+                        ({ name, action, icon, render = (_: T, c: ReactElement) => c }) =>
                           render(
                             row,
                             <MenuItem

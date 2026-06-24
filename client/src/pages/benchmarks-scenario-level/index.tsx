@@ -24,7 +24,8 @@ import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
 
 export default function Page() {
-  const state = useStableLocationState<ScenarioLevelLocationState>();
+  const state =
+    useStableLocationState<ScenarioLevelLocationState>() as ScenarioLevelLocationState;
   const { mapId, scenId } = state;
   const { data: mapData } = useMapData(mapId);
   const { data: scenarioData } = useScenario(scenId);
@@ -96,7 +97,7 @@ export default function Page() {
             label: "Export scenario file (.scen)",
             primary: true,
             action: notify(
-              () => downloadScenario(mapData?.map_name)(scenarioData),
+              () => downloadScenario(mapData?.map_name ?? "")(scenarioData),
               {
                 start: "Preparing...",
                 end: "Done",
@@ -107,7 +108,7 @@ export default function Page() {
           {
             label: "Export map (.map)",
             icon: <MapRounded />,
-            action: notify(() => downloadMap(mapData), {
+            action: notify(() => downloadMap(mapData ?? undefined), {
               start: "Preparing...",
               end: "Done",
             }),
@@ -115,7 +116,7 @@ export default function Page() {
           {
             label: "Results (.csv)",
             action: notify(
-              () => downloadInstance(mapData?.map_name)(scenarioData),
+              () => downloadInstance(mapData?.map_name ?? "")(scenarioData),
               {
                 start: "Preparing",
                 end: "Done",
@@ -133,7 +134,9 @@ export default function Page() {
           data={<Table />}
           analysis={<Analysis template={analysisTemplate(scenarioData)} />}
           compare={
-            <Analysis template={compareTemplate(scenarioData, mapData)} />
+            <Analysis
+              template={compareTemplate(scenarioData, mapData ?? undefined)}
+            />
           }
         />
       </Stack>

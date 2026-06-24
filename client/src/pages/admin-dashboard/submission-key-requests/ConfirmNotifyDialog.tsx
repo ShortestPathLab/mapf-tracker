@@ -36,7 +36,7 @@ export function ConfirmNotifyDialog({
       <SetReviewOutcomeForm
         onSubmit={(values) =>
           updateRequest({
-            id: data?.id,
+            id: data?.id ?? "",
             value: {
               ...data,
               reviewStatus: values,
@@ -56,7 +56,7 @@ export function ConfirmNotifyDialog({
                 notify("Saving outcome");
                 await submitForm();
                 notify("Queueing a response to be sent");
-                await sendOutcome(data?.id);
+                await sendOutcome(data?.id ?? "");
                 notify("Successfully queued a response to be sent");
                 onClose?.();
               }}

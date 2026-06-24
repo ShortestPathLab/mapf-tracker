@@ -99,7 +99,7 @@ export function Table({ algorithm }: { algorithm?: string }) {
         { cost: "solution_cost", best: "best_solution" },
         { cost: "lower_cost", best: "best_lower" },
       ] as const
-    ).map(({ cost, best }) => ({
+    ).map(({ cost, best }): GridColDef<Model> => ({
       fold: true,
       flex: 1,
       field: cost,

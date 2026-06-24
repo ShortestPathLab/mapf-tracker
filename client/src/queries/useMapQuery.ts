@@ -8,6 +8,7 @@ import {
 } from "core/types";
 import { APIConfig } from "core/config";
 import { json } from "./query";
+import api from "hooks/useQuery";
 
 const incorporateProportions = <T extends CollectionWithInstanceCount>(
   item: T
@@ -52,8 +53,11 @@ export const useMapData = (id: string = "") => {
 export function mapsQuery() {
   return {
     queryKey: ["benchmarks"],
-    queryFn: async () =>
-      map(await json<Map[]>(`${APIConfig.apiUrl}/map`), incorporateProportions),
+    queryFn: async () => {
+      const { data, error } = await api.api.map.get();
+      if (error) throw error;
+      return map(data ?? [], incorporateProportions);
+    },
   };
 }
 

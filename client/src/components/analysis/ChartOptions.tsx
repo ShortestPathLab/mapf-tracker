@@ -88,15 +88,15 @@ export default function ChartOptions({
             },
           }}
         >
-          {slices?.length > 1 && (
+          {(slices?.length ?? 0) > 1 && (
             <TextField
               select
               label="Display"
               variant="filled"
-              onChange={setFromEvent(setSlice)}
-              value={slice.key}
+              onChange={setSlice ? setFromEvent(setSlice) : undefined}
+              value={slice?.key}
             >
-              {slices.map(({ key, name }) => (
+              {slices?.map(({ key, name }) => (
                 <MenuItem key={key} value={key}>
                   {name}
                 </MenuItem>
@@ -108,7 +108,7 @@ export default function ChartOptions({
               select
               label="Metric"
               variant="filled"
-              onChange={setFromEvent(setMetric)}
+              onChange={setMetric ? setFromEvent(setMetric) : undefined}
               value={metric}
             >
               {metrics.map(({ key, name }) => (
@@ -132,9 +132,9 @@ export default function ChartOptions({
               variant="filled"
               value={selected}
               onChange={
-                setFromEvent(setSelected) as (e: {
-                  target: { value: unknown };
-                }) => void
+                setSelected
+                  ? (e) => setSelected(e.target.value as unknown as string[])
+                  : undefined
               }
             >
               {combinedAlgorithms.map((a) => (

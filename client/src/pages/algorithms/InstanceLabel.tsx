@@ -6,7 +6,7 @@ import pluralize from "pluralize";
 import { useInstance } from "queries/useInstanceQuery";
 
 export function InstanceLabel({ id }: { id?: string }) {
-  const { data: instance, isLoading } = useInstance(id);
+  const { data: instance, isLoading } = useInstance(id ?? "");
   return (
     <Enter axis="x" in={!isLoading}>
       <Stack

@@ -10,8 +10,9 @@ export type Options = {
   sidebarOpenMobile?: boolean;
 };
 
-export const storedOptionsValue = localStorage.getItem(key)
-  ? JSON.parse(localStorage.getItem(key))
+const storedOptionsString = localStorage.getItem(key);
+export const storedOptionsValue = storedOptionsString
+  ? JSON.parse(storedOptionsString)
   : { hideTips: false, hideSidebar: false, hideSidebarMobile: false };
 
 export const OptionsContext = createContext<[Options, (o: Options) => void]>([

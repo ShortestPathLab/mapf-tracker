@@ -55,7 +55,7 @@ export function PipelineStageNode({
         onClick={() => open({ stage })}
       >
         <Handle type="target" position={Position.Left} />
-        <StageStatus stage={stage} />
+        <StageStatus stage={stage ?? ""} />
         <Handle type="source" position={Position.Right} />
         {ripple}
       </Card>

@@ -22,7 +22,11 @@ export function DataInspectorLayout({
   analysis?: ReactNode;
   compare?: ReactNode;
 }) {
-  const { t } = useLocationState<{ t?: "data" | "analysis" | "compare" }>();
+  // useLocationState's inferred return type does not surface the generic
+  // saved-state shape, so re-assert the declared shape here.
+  const { t } = useLocationState<{
+    t?: "data" | "analysis" | "compare";
+  }>() as { t?: "data" | "analysis" | "compare" };
   const [tab, setTab] = useState<"data" | "analysis" | "compare">(t ?? "data");
   const sm = useXs();
   return (

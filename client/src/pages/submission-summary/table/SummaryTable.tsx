@@ -66,7 +66,7 @@ function getSubmissionInfoText(
 
     const improvement = (() => {
       if (isNumber(instance?.solution_cost)) {
-        const isImprovement = instance.solution_cost > cost;
+        const isImprovement = cost !== undefined && instance.solution_cost > cost;
         const isTie = instance.solution_cost === cost;
         return [
           isTie ? "Tie" : isImprovement ? "New record" : "Dominated",
@@ -132,7 +132,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   const { mutateAsync: deleteByScenarioIndex } =
     useDeleteOngoingSubmissionByScenarioIndexMutation(apiKey);
   const { mutate: deleteSubmissions } =
-    useDeleteOngoingSubmissionMutation(apiKey);
+    useDeleteOngoingSubmissionMutation(apiKey ?? "");
 
   const [expanded, setExpanded] = useBooleanMap();
   const [slice, setSlice] = useState<keyof SummarySlice>("total");
@@ -141,7 +141,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     menuItems: [
       {
         hidden: (row) =>
-          disambiguate(row, {
+          !!disambiguate(row, {
             map: () => true,
             scenario: () => false,
             instance: () => false,
