@@ -92,28 +92,4 @@ export async function unwrap<T extends Record<number, unknown>>(
   return data as Treaty.Data<Treaty.TreatyResponse<T>>;
 }
 
-/**
- * TODO(eden): interim bridge for server routes that are NOT yet typed — their
- * handlers return `any`/raw Mongoose documents, so Eden infers `unknown`/`{}`/
- * `Document<...>` instead of a clean wire shape. This unwraps the response and
- * asserts the expected client shape `T`.
- *
- * Each `untyped<T>(...)` call site marks a route to revisit: once the server
- * route returns a typed response (see `MapRecord` in `routes/map.ts` for the
- * pattern), replace `untyped<T>(...)` with `unwrap(...)` and delete the local
- * `T` so the type is inferred end-to-end. Grep `untyped<` for the remaining
- * routes that still need server-side typing.
- */
-export async function untyped<T>(
-  response:
-    | { data: unknown; error: unknown }
-    | Promise<{ data: unknown; error: unknown }>
-): Promise<T> {
-  const { data, error } = await response;
-  if (error) {
-    throw error;
-  }
-  return data as T;
-}
-
 export default api;

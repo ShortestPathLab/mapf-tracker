@@ -298,7 +298,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                             <CircularProgress size={24} />
                           </Stack>
                         ),
-                      }[submission?.validation?.outcome] ?? (
+                      }[submission?.validation?.outcome ?? ""] ?? (
                         <HourglassEmptyRounded
                           color="disabled"
                           fontSize="small"

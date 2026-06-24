@@ -12,6 +12,7 @@ import { Types } from "mongoose";
 import { cached, queryClient } from "query";
 import { usingWorkerTaskReusable } from "queue/usingWorker";
 import { generateIndexes } from "utils/generateIndexes";
+import { allToJSON } from "utils/toJSON";
 import { ResultTicketStatus, createPool } from "utils/ticket";
 import { createSubmissionValidator } from "validation/createSubmissionValidator";
 import {
@@ -38,6 +39,23 @@ const { add } = await createSubmissionValidator({
 // ─── Query Handlers ──────────────────────────────────────────────────────────
 
 const { query, aggregate } = queryClient(OngoingSubmission);
+
+/** A scenario submission row with its instance's best costs joined in. */
+type ScenarioSubmission = {
+  id: string;
+  createdAt?: string;
+  lowerBound?: number;
+  cost?: number;
+  apiKey?: string;
+  updatedAt?: string;
+  validation?: {
+    isValidationRun?: boolean;
+    outcome?: string;
+    timeTaken?: number;
+    errors?: { label?: string; agents?: number[]; timesteps?: number[] }[];
+  };
+  instance: { _id?: string; solution_cost?: number; lower_cost?: number };
+};
 
 
 
@@ -120,11 +138,11 @@ export const ongoingSubmissionRoutes = new Elysia({
   prefix: "/api/ongoing_submission",
 })
   .get("/", query())
-  .get("/id/:id", query(({ params }) => [
-    {
+  .get("/id/:id", ({ params }) =>
+    OngoingSubmission.find({
       _id: new Types.ObjectId(params.id),
-    },
-  ]))
+    }).then(allToJSON),
+  )
   .post("/delete", (async ({ body }: Context) => {
     const { id } = z
       .object({
@@ -179,7 +197,7 @@ export const ongoingSubmissionRoutes = new Elysia({
           })
           .addFields(toString("_id", "id"))
           .project({
-            createAt: 1,
+            createdAt: 1,
             lowerBound: 1,
             cost: 1,
             instance: 1,
@@ -193,7 +211,7 @@ export const ongoingSubmissionRoutes = new Elysia({
       return result.map((r) => ({
         ...r,
         instance: pick(indexes.instances[r.instance], ["_id", "solution_cost", "lower_cost"])
-      }));
+      })) as ScenarioSubmission[];
     },
     { watch: [OngoingSubmission, Instance] }
   ))

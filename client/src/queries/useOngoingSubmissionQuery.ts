@@ -14,7 +14,7 @@ import {
   some,
   values,
 } from "lodash";
-import api, { untyped, unwrap } from "hooks/useQuery";
+import api, { DataOf, unwrap } from "hooks/useQuery";
 
 const REFETCH_MS = 2500;
 
@@ -42,27 +42,11 @@ function mergeValues(v1: unknown, v2: unknown): unknown {
   return undefined;
 }
 
-export type ValidationOutcome = {
-  isValidationRun: boolean;
-  outcome: string;
-  errors: { label: string; agents: number[]; timesteps: number[] }[];
-  timeTaken?: number;
-};
-
-export type OngoingSubmission = {
-  id: string;
-  createdAt: string;
-  lowerBound: number;
-  cost?: number;
-  instance: {
-    _id: string,
-    solution_cost: number,
-    lower_cost: number
-  };
-  apiKey: string;
-  updatedAt: string;
-  validation: ValidationOutcome;
-};
+// A scenario submission row (with the instance's best costs joined in),
+// inferred from the `/ongoing_submission/scenario/:apiKey/:scenario` route.
+export type OngoingSubmission = DataOf<
+  ReturnType<ReturnType<typeof api.api.ongoing_submission.scenario>>["get"]
+>[number];
 
 export const ONGOING_SUBMISSION_QUERY_KEY = "ongoingSubmission";
 
@@ -109,11 +93,7 @@ export function useOngoingSubmissionByIdQuery(id?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "id", id],
     queryFn: async () =>
-      head(
-        await untyped<OngoingSubmission[]>(
-          api.api.ongoing_submission.id({ id: `${id}` }).get()
-        )
-      ),
+      head(await unwrap(api.api.ongoing_submission.id({ id: `${id}` }).get())),
     enabled: !!id,
   });
 }
@@ -122,7 +102,7 @@ export const ongoingSubmissionScenarioQueryFn = (
   key?: string | number,
   scenario?: string | number,
 ) =>
-  untyped<OngoingSubmission[]>(
+  unwrap(
     api.api.ongoing_submission
       .scenario({ apiKey: `${key}` })({ scenario: `${scenario}` })
       .get()
@@ -223,9 +203,7 @@ export function useOngoingSubmissionTicketQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
     queryFn: async () => [
-      ...(await untyped<SubmissionTicket[]>(
-        api.api.ongoing_submission.status({ apiKey: `${key}` }).get()
-      )),
+      ...await unwrap(api.api.ongoing_submission.status({ apiKey: `${key}` }).get()),
       ...cloneDeep(Array.from(optimisticQueue)),
     ],
     enabled: !!key,

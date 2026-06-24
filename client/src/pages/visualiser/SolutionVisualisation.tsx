@@ -20,8 +20,8 @@ export function SolutionVisualisation({
     <Visualisation
       diagnostics={map(diagnostics?.errors, ({ timesteps, agents, label }) => ({
         t: head(timesteps),
-        agents,
-        label,
+        agents: agents ?? [],
+        label: label ?? "",
       }))}
       goals={result?.goals}
       timespan={result?.timespan}

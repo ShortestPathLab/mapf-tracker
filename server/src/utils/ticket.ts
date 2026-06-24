@@ -1,15 +1,17 @@
 import { now, omitBy } from "lodash";
 
+// `result`/`error` are cross-filled as optional on each variant so consumers
+// can read them off any ticket without narrowing on `status` first.
 export type ResultTicketStatus = (
-  | { status: "error"; error: any }
-  | { status: "done"; result: any }
+  | { status: "error"; error: any; result?: undefined }
+  | { status: "done"; result: any; error?: undefined }
 ) & {
   message?: any;
 };
 
 export type TicketStatus<Meta> = (
   | ResultTicketStatus
-  | { status: "pending" }
+  | { status: "pending"; error?: undefined; result?: undefined; message?: undefined }
 ) & {
   dateReceived: number;
 } & Meta;
