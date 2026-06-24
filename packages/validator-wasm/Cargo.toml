@@ -1,0 +1,23 @@
+[package]
+name = "validator-wasm"
+version = "1.0.0"
+edition = "2021"
+description = "MAPF solution validator — a Rust/WebAssembly rewrite of the `validator` package."
+license = "ISC"
+repository = ""
+
+[lib]
+# `cdylib` is required for the wasm build; `rlib` lets us run native `cargo test`.
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+
+[dev-dependencies]
+serde_json = "1"
+
+[profile.release]
+# Validation is the hot path, so optimise for speed and strip dead code via LTO.
+lto = true
