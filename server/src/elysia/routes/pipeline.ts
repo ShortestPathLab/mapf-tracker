@@ -17,19 +17,6 @@ export async function restore() {
   }
 }
 
-const getStatus = async () =>
-  chain(stages)
-    .values()
-    .map(async ({ key, dependents, description, destructive }) => ({
-      key,
-      description: description?.(),
-      destructive,
-      dependents: map(dependents, "key"),
-      status: await get(key),
-    }))
-    .thru((c) => Promise.all(c))
-    .value();
-
 const stageSchema = z
   .object({
     stage: z.string().refine((stage) => stage in stages, {
@@ -57,7 +44,19 @@ const runStage =
 export const pipelineRoutes = new Elysia({ prefix: "/api/pipeline" })
   .guard({ beforeHandle: requireAuth }, (app) =>
     app
-      .get("/status", getStatus)
+      .get("/status", () =>
+        chain(stages)
+          .values()
+          .map(async ({ key, dependents, description, destructive }) => ({
+            key,
+            description: description?.(),
+            destructive,
+            dependents: map(dependents, "key"),
+            status: await get(key),
+          }))
+          .thru((c) => Promise.all(c))
+          .value(),
+      )
       .get("/run/:stage", runStage(false))
       .get("/runOne/:stage", runStage(true)),
   );

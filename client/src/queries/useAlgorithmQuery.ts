@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Algorithm, AlgorithmDetails, SummaryResult } from "core/types";
 import { find } from "lodash";
-import api, { DataOf, untyped, unwrap } from "hooks/useQuery";
+import api, { DataOf, unwrap } from "hooks/useQuery";
 
 export function useAlgorithmSummaryQuery(algorithm?: string) {
   return useQuery(algorithmSummaryQuery(algorithm));
@@ -16,9 +15,7 @@ export function algorithmSummaryQuery(algorithm?: string) {
   return {
     queryKey: ["algorithms", "summary", algorithm],
     queryFn: () =>
-      untyped<SummaryResult>(
-        api.api.submission.summary({ algorithm: `${algorithm}` }).get()
-      ),
+      unwrap(api.api.submission.summary({ algorithm: `${algorithm}` }).get()),
     enabled: !!algorithm,
   };
 }
@@ -33,7 +30,7 @@ export function useAlgorithmScenarioQuery(
 export const useAlgorithmsData = () => {
   return useQuery({
     queryKey: ["algorithms"],
-    queryFn: () => untyped<Algorithm[]>(api.api.algorithm.get()),
+    queryFn: () => unwrap(api.api.algorithm.get()),
   });
 };
 
@@ -52,24 +49,7 @@ export const useAlgorithmDetailData = (id?: string) => {
 export const useAlgorithmForInstanceData = (id: string) => {
   return useQuery({
     queryKey: ["algorithmInstance", id],
-    queryFn: () =>
-      untyped<
-        {
-          id: string;
-          lower_algos: (Algorithm & {
-            value: number;
-            algo_id: string;
-            submission_id: string;
-            date: string;
-          })[];
-          solution_algos: (Algorithm & {
-            value: number;
-            submission_id: string;
-            algo_id: string;
-            date: string;
-          })[];
-        }[]
-      >(api.api.instance.getAlgo({ id }).get()),
+    queryFn: () => unwrap(api.api.instance.getAlgo({ id }).get()),
     enabled: !!id,
   });
 };
@@ -90,6 +70,6 @@ export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
 export function algorithmDetailsQuery() {
   return {
     queryKey: ["algorithms-detailed"],
-    queryFn: () => untyped<AlgorithmDetails[]>(api.api.algorithm.all_detail.get()),
+    queryFn: () => unwrap(api.api.algorithm.all_detail.get()),
   };
 }

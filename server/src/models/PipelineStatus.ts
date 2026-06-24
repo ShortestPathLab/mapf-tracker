@@ -15,12 +15,12 @@ const schema = createSchema<Partial<Status>>({
 
 export const model = createModel("pipeline_status", schema);
 
-export const get = async (stage: string) =>
+export const get = async (stage: string): Promise<Partial<Status>> =>
   (await model.findOne({ stage }))?.toObject?.() ?? {
-    status: "invalidated",
+    type: "invalidated",
     stage,
     variables: {},
-    timeStamp: undefined,
+    timestamp: undefined,
   };
 
 export const set = async (stage: string, status: Partial<Status>) => {

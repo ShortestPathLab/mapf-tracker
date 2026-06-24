@@ -1,17 +1,17 @@
-import type { Context } from "elysia";
 import { Elysia } from "elysia";
 import { getSolutionPath } from "utils/solutionPath";
 import { z } from "zod";
 
-const findPath = async ({ params }: Context) => {
+export const solutionPathRoutes = new Elysia({
+  prefix: "/api/solution_path",
+}).get("/:source/:id", async ({ params }) => {
   const { id, source } = z
     .object({
       id: z.string(),
       source: z.enum(["ongoing", "submitted"]).default("submitted"),
     })
     .parse(params);
-  return getSolutionPath(id, source);
-};
-
-export const solutionPathRoutes = new Elysia({ prefix: "/api/solution_path" })
-  .get("/:source/:id", findPath);
+  // Default to an empty path list so the response type stays `string[]`
+  // (returning `undefined` collapses Eden's inference to `unknown`).
+  return (await getSolutionPath(id, source)) ?? [];
+});

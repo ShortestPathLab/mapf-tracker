@@ -1,3 +1,5 @@
+import api, { DataOf } from "hooks/useQuery";
+
 export type CollectionWithInstanceCount = {
   instances: number;
   instances_closed: number;
@@ -30,52 +32,21 @@ export type Scenario = {
   map_id: string;
 } & CollectionWithInstanceCount;
 
-export type Instance = {
-  agents: number;
-  id: string;
-  map_id: string;
-  scen_id: string;
-  lower_algos: number;
-  lower_cost: number;
-  lower_date: string;
-  solution_algos: number;
-  solution_cost: number;
-  solution_date: number;
-  solution_path_id: string;
-};
+// A single instance document (`/api/instance/id/:id`), inferred from the server.
+export type Instance = DataOf<
+  ReturnType<typeof api.api.instance.id>["get"]
+>;
 
-export type Algorithm = {
-  _id: string;
-  algo_name: string;
-};
+// A per-agent-count instance summary for a scenario (`/api/instance/:id`).
+export type InstanceSummary = DataOf<
+  ReturnType<typeof api.api.instance>["get"]
+>[number];
 
-export type AlgorithmDetails = Algorithm &
-  CollectionWithInstanceCount & {
-    comments: string;
-    authors: string;
-    best_lower: number;
-    best_solution: number;
-    github?: string;
-    dblp?: string;
-    google_scholar?: string;
-    instances_closed: number;
-    instances_solved: number;
-    papers?: string;
-    request_id: string;
-    submittedAt: string;
-    requesterName: string;
-  };
+export type Algorithm = DataOf<typeof api.api.algorithm.get>[number];
 
-export type AlgorithmCollectionCount = Algorithm & {
-  count: number;
-  total: number;
-};
-
-export type AlgorithmCollectionAggregate = Algorithm & {
-  count: number;
-  sum_value: number;
-  total_ins: number;
-};
+export type AlgorithmDetails = DataOf<
+  typeof api.api.algorithm.all_detail.get
+>[number];
 
 export type SummarySlice = {
   outdated: number;

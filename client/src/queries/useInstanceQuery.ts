@@ -1,11 +1,10 @@
-import api, { untyped } from "hooks/useQuery";
-import { Instance } from "core/types";
+import api, { unwrap } from "hooks/useQuery";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { map } from "lodash";
 
 const instanceQuery = (id: string | number) => ({
   queryKey: ["instance", id],
-  queryFn: () => untyped<Instance>(api.api.instance.id({ id: `${id}` }).get()),
+  queryFn: () => unwrap(api.api.instance.id({ id: `${id}` }).get()),
   enabled: !!id,
 });
 

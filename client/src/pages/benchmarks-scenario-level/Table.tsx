@@ -2,7 +2,7 @@ import { Dot } from "components/Dot";
 import { Item } from "components/Item";
 import { cellRendererText } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
-import { Instance } from "core/types";
+import { InstanceSummary } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { ScenarioLevelLocationState } from "pages/benchmarks-scenario-level/ScenarioLevelLocationState";
@@ -14,7 +14,7 @@ import { formatDate } from "utils/format";
 import { PreviewCard } from "../../components/PreviewCard";
 import { Typography } from "@mui/material";
 
-function MakespanCell({ row }: { row: Instance }) {
+function MakespanCell({ row }: { row: InstanceSummary }) {
   const { data } = useMakespanData({
     instance: row.id,
     solutionPath: row.solution_path_id,
@@ -29,7 +29,7 @@ export default function Table() {
   const { data, isLoading } = useInstancesByScenario(scenId);
   const navigate = useNavigate();
 
-  const openVisualisation = (row: Instance) =>
+  const openVisualisation = (row: InstanceSummary) =>
     navigate<VisualiserLocationState>("/visualization", {
       ...state,
       instanceId: row.id,
@@ -37,7 +37,7 @@ export default function Table() {
       source: "submitted",
     });
 
-  const columns: GridColDef<Instance>[] = [
+  const columns: GridColDef<InstanceSummary>[] = [
     {
       field: "agents",
       headerName: "Agent count",

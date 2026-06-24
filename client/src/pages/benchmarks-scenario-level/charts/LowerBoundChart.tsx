@@ -34,7 +34,9 @@ export function LowerBoundChart({ scenario }: { scenario: string | number }) {
       isLoading={isLoading}
       data={map(data, (c) => ({
         ...c,
-        gap: (c.solution_cost - c.lower_cost) / Math.max(c.lower_cost, 1)
+        gap:
+          ((c.solution_cost ?? 0) - (c.lower_cost ?? 0)) /
+          Math.max(c.lower_cost ?? 0, 1)
       }))}
       render={
         <AreaChart margin={{ bottom: 32, top: 32, left: 16, right: 16 }}>

@@ -101,18 +101,20 @@ function Table() {
         <Stack sx={{ gap: 1, width: "100%" }}>
           <Typography variant="body2" color="text.secondary">
             {`${formatLargeNumber(
-              row[closed],
-            )} ${bestLabel} / ${formatLargeNumber(row[solved])} ${totalLabel}`}
+              row[closed] ?? 0,
+            )} ${bestLabel} / ${formatLargeNumber(
+              row[solved] ?? 0,
+            )} ${totalLabel}`}
           </Typography>
           <Bar
             values={[
               {
-                value: row[closed] / total,
+                value: (row[closed] ?? 0) / total,
                 label: capitalize(bestLabel),
                 color: color,
               },
               {
-                value: (row[solved] - row[closed]) / total,
+                value: ((row[solved] ?? 0) - (row[closed] ?? 0)) / total,
                 label: capitalize(totalLabel),
                 color: alpha(color, 0.35),
               },
@@ -143,12 +145,12 @@ function Table() {
       renderCell: ({ row }) => (
         <Stack sx={{ gap: 1, width: "100%" }}>
           <Typography variant="body2" color="text.secondary">
-            {`${formatLargeNumber(row[key])} ${label}`}
+            {`${formatLargeNumber(row[key] ?? 0)} ${label}`}
           </Typography>
           <Bar
             values={[
               {
-                value: row[key] / total,
+                value: (row[key] ?? 0) / total,
                 label: capitalize(label),
                 color: "info.main",
               },

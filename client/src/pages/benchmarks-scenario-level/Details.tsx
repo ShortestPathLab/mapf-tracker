@@ -129,7 +129,11 @@ export default function Details({ id }: { id?: string }) {
               >
                 {collection
                   .filter(({ value }) => !!value)
-                  .map(({ algo_name, date, value }, i, xs) => {
+                  .map((claim, i, xs) => {
+                    const { date, value } = claim;
+                    // `algo_name` is only present on solution-record claims.
+                    const algo_name =
+                      "algo_name" in claim ? claim.algo_name : undefined;
                     const previous = i === 0 ? undefined : xs[i - 1]?.value;
                     return (
                       <TimelineItem color="text.secondary" key={i}>
@@ -150,7 +154,9 @@ export default function Details({ id }: { id?: string }) {
                               primary={
                                 <>
                                   {value?.toLocaleString?.() ?? "0"}
-                                  {isDefined(previous) && previous !== value ? (
+                                  {isDefined(previous) &&
+                                  isDefined(value) &&
+                                  previous !== value ? (
                                     previous < value ? (
                                       <Stat1Rounded
                                         sx={{
