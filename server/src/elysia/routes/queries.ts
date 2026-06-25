@@ -71,41 +71,85 @@ const createAggregateBase =
     filters: Record<U["filterBy"], (a: string, b: string) => any>,
     groupBySelectors: Record<U["groupBy"], string | null>,
   ) =>
-  (
-    { map, scenario, agents, groupBy, operation: o, value: v, filterBy: f }: U,
-    p: AggregateBuilder = new AggregateBuilder(),
-  ) =>
-    p
-      .match(
-        omitBy(
-          {
-            map_id: map ? new Types.ObjectId(map) : undefined,
-            scen_id: scenario ? new Types.ObjectId(scenario) : undefined,
-            agents,
-          },
-          isUndefined,
-        ),
-      )
-      .group({
-        _id: groupBySelectors[groupBy],
-        all: operations[o](undefined, v === "suboptimality" ? 1 : `$${v}`),
-        result: operations[o](
-          filters[f]("$solution_cost", "$lower_cost"),
-          v === "suboptimality"
-            ? {
+    (
+      { map, scenario, agents, groupBy, operation: o, value: v, filterBy: f }: U,
+      p: AggregateBuilder = new AggregateBuilder(),
+    ) =>
+      p
+        .match(
+          omitBy(
+            {
+              map_id: map ? new Types.ObjectId(map) : undefined,
+              scen_id: scenario ? new Types.ObjectId(scenario) : undefined,
+              agents,
+            },
+            isUndefined,
+          ),
+        )
+        .group({
+          _id: groupBySelectors[groupBy],
+          all: operations[o](undefined, v === "suboptimality" ? 1 : `$${v}`),
+          result: operations[o](
+            filters[f]("$solution_cost", "$lower_cost"),
+            v === "suboptimality"
+              ? {
                 $divide: [
                   { $subtract: ["$solution_cost", "$lower_cost"] },
                   { $max: ["$lower_cost", 1] },
                 ],
               }
-            : `$${v}`,
-        ),
-      });
+              : `$${v}`,
+          ),
+        });
 
 // Inputs that were validated by zod over {...params, ...query} now do the same
 // inside each handler so defaults/coercion are preserved. Cache keys include
 // the query string for the option-driven aggregates.
 const withParamsAndQuery = (ctx: Context) => ({ ...ctx.params, ...ctx.query });
+
+const submissionAggregateOptions = z.object({
+  ...aggregateOptions,
+  algorithm: z.string().optional(),
+  filterBy: aggregateOptions.filterBy.or(
+    z.enum(["best_lower", "best_solution"]),
+  ),
+  groupBy: aggregateOptions.groupBy.or(z.enum(["algorithm"])),
+});
+
+// Cache keys are derived from the *parsed* options rather than the raw query so
+// that requests differing only in omitted defaults or empty params (e.g.
+// `?operation=count` vs. the default, `?map=` vs. absent) collapse to a single
+// cache entry instead of fragmenting it.
+const aggregateCacheKey = (ctx: Context) =>
+  z.object(aggregateOptions).parse(withParamsAndQuery(ctx));
+
+const submissionAggregateCacheKey = (ctx: Context) =>
+  submissionAggregateOptions.parse(withParamsAndQuery(ctx));
+
+// The unfiltered (no map/scenario) instance aggregates are full-collection
+// scans — irreducible at query time. These are exactly the global combos the
+// dashboard issues (completion + state-of-the-art charts, all at default
+// operation=count / value=solution_cost). Warming them after each data version
+// bump means real requests always hit a disk-cache entry instead of paying the
+// scan. Filtered (map/scenario) combos are index-served and cheap, so they
+// stay lazy.
+const aggregatePrecompute = async (): Promise<Partial<Context>[]> => {
+  const groupBys = [
+    "all",
+    "agents",
+    "map",
+    "mapType",
+    "scenario",
+    "scenarioType",
+  ] as const;
+  const filterBys = ["all", "solved", "closed", "has_lower"] as const;
+  return groupBys.flatMap((groupBy) =>
+    filterBys.map((filterBy) => ({
+      params: {},
+      query: { groupBy, filterBy } as Record<string, string>,
+    })),
+  );
+};
 
 const instanceAggregateBase = createAggregateBase(
   {
@@ -166,35 +210,32 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
         const data = z.object(aggregateOptions).parse(withParamsAndQuery(ctx));
         return instanceAggregateBase(data, p);
       },
-      { name: "aggregate", cacheKey: withParamsAndQuery },
+      {
+        name: "aggregate",
+        cacheKey: aggregateCacheKey,
+        precompute: aggregatePrecompute,
+      },
     ),
   )
   .get(
     "/aggregate/algorithm/:algorithm",
     submissions.aggregate<AggregateResult[]>(submissionAggregate, {
       name: "aggregate-algorithm-algorithm",
-      cacheKey: withParamsAndQuery,
+      cacheKey: submissionAggregateCacheKey,
     }),
   )
   .get(
     "/aggregate/algorithm",
     submissions.aggregate<AggregateResult[]>(submissionAggregate, {
       name: "aggregate-algorithm-algorithm",
-      cacheKey: withParamsAndQuery,
+      cacheKey: submissionAggregateCacheKey,
     }),
   );
 
 function submissionAggregate(ctx: Context, p: AggregateBuilder) {
-  const { algorithm, ...rest } = z
-    .object({
-      ...aggregateOptions,
-      algorithm: z.string().optional(),
-      filterBy: aggregateOptions.filterBy.or(
-        z.enum(["best_lower", "best_solution"]),
-      ),
-      groupBy: aggregateOptions.groupBy.or(z.enum(["algorithm"])),
-    })
-    .parse(withParamsAndQuery(ctx));
+  const { algorithm, ...rest } = submissionAggregateOptions.parse(
+    withParamsAndQuery(ctx),
+  );
   return p
     .match(
       omitBy(
@@ -207,21 +248,21 @@ function submissionAggregate(ctx: Context, p: AggregateBuilder) {
     .mergeAggregationWithCurrent(
       rest.value === "suboptimality"
         ? [
-            new AggregateBuilder()
-              .lookup(
-                Instance.collection.collectionName,
-                "instance_id",
-                "_id",
-                "instance",
-              )
-              .addFields({
-                lower_cost: { $first: "$instance.lower_cost" },
-              })
-              .project({
-                instance: 0,
-              })
-              .build(),
-          ]
+          new AggregateBuilder()
+            .lookup(
+              Instance.collection.collectionName,
+              "instance_id",
+              "_id",
+              "instance",
+            )
+            .addFields({
+              lower_cost: { $first: "$instance.lower_cost" },
+            })
+            .project({
+              instance: 0,
+            })
+            .build(),
+        ]
         : [],
     )
     .mergeAggregationWithCurrent([

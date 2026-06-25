@@ -89,6 +89,14 @@ export type AggregateOptions<R> = {
   name?: string;
   /** Transforms the raw aggregation result before returning. */
   handler?: (docs: any, ctx: Context) => Promise<R>;
+  /**
+   * Cache-warming list. Returns the request contexts to precompute (and store
+   * to disk) whenever the data version changes — e.g. after the aggregation
+   * pipeline runs or on start with `PRECOMPUTE_ON_START=1`. Each context is run
+   * through the same `agg`/`cacheKey` path as a live request, so a warmed entry
+   * is hit verbatim by the matching request. Requires `name` (disk caching).
+   */
+  precompute?: () => Promise<Partial<Context>[]>;
 } & CachedOptions;
 
 export const queryClient = <T>(model: Model<T>) => {
@@ -124,6 +132,7 @@ export const queryClient = <T>(model: Model<T>) => {
         handler = async (docs) => docs as R,
         watch = [model],
         cacheKey = (ctx) => ctx.params,
+        precompute,
         ...rest
       }: AggregateOptions<R> = {},
     ) => {
@@ -137,6 +146,10 @@ export const queryClient = <T>(model: Model<T>) => {
         ? (diskCached(`aggregate-${model.modelName}-${name}`, run, {
           resolver: (ctx: Context) => JSON.stringify(cacheKey(ctx) ?? ""),
           invalidationKey: () => get("diskCache"),
+          precompute: precompute
+            ? async () =>
+              (await precompute()).map((ctx) => [ctx as Context])
+            : undefined,
         }) as (ctx: Context) => Promise<R>)
         : run;
       return cached(f, { watch, cacheKey, ...rest });

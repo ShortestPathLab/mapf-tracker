@@ -1,6 +1,6 @@
 import { file, gc, Glob, gunzipSync, gzipSync, isMainThread, write } from "bun";
 import { env } from "env";
-import { defer, entries, has, once } from "lodash";
+import { entries, has, once } from "lodash";
 import { log } from "logging";
 import hash from "object-hash";
 import { basename } from "path";
@@ -58,24 +58,35 @@ export function diskCached<T extends any[], U>(
           [...glob.scanSync({ absolute: true })].map((p) => basename(p))
         );
         if (files.has(filename)) {
-          if (precompute) return;
-          if (!files.has(`${filename}.version`)) {
-            // If the cache file exists but the version file does not,
-            // we assume the cache is fine and write the current version.
-            log.warn(`Cache file ${path} exists but version file does not.`);
-            await write(`${path}.version`, currentVersion, {
-              createPath: true,
-            });
-          }
-          const v = file(`${path}.version`);
-          const version = await v.text();
-          if (version === currentVersion) {
-            const cacheFile = file(path);
-            // This line can fail if the file doesn't exist
-            const buffer = cacheFile.arrayBuffer();
-            const decoder = new TextDecoder();
-            const text = decoder.decode(gunzipSync(await buffer));
-            return JSON.parse(text);
+          if (precompute) {
+            // Warm only what's missing or stale: skip when an entry already
+            // exists for the current data version, otherwise fall through and
+            // recompute so a version bump actually re-warms the entry. (A bare
+            // `return` here would leave stale entries un-refreshed, forcing the
+            // next real request to pay the full aggregation.)
+            if (files.has(`${filename}.version`)) {
+              const version = await file(`${path}.version`).text();
+              if (version === currentVersion) return;
+            }
+          } else {
+            if (!files.has(`${filename}.version`)) {
+              // If the cache file exists but the version file does not,
+              // we assume the cache is fine and write the current version.
+              log.warn(`Cache file ${path} exists but version file does not.`);
+              await write(`${path}.version`, currentVersion, {
+                createPath: true,
+              });
+            }
+            const v = file(`${path}.version`);
+            const version = await v.text();
+            if (version === currentVersion) {
+              const cacheFile = file(path);
+              // This line can fail if the file doesn't exist
+              const buffer = cacheFile.arrayBuffer();
+              const decoder = new TextDecoder();
+              const text = decoder.decode(gunzipSync(await buffer));
+              return JSON.parse(text);
+            }
           }
         }
       } catch {
@@ -119,8 +130,11 @@ export function diskCached<T extends any[], U>(
       log.info(`Precompute ${name} done`);
     }
   };
-  defer(p);
 
+  // Precompute is triggered explicitly via `diskCaches.precomputeAll()` —
+  // either on start when `PRECOMPUTE_ON_START=1` (see `restore`) or by the
+  // `precomputeQueries` pipeline stage after the data changes. (A previous
+  // `defer(p)` ran it unconditionally on module load, bypassing that flag.)
   if (isMainThread && precompute) {
     diskCaches.register(name, p);
   }
