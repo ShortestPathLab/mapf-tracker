@@ -1,14 +1,17 @@
 import { isBefore, parseISO } from "date-fns";
 import { now } from "lodash";
 import { ApiKey } from "queries/useSubmissionKeyQuery";
+import { tryChain } from "utils/tryChain";
 
 export function parseApiKeyStatus(apiKeyData?: ApiKey) {
   return apiKeyData
     ? apiKeyData?.status?.type === "submitted"
       ? "submitted"
-      : apiKeyData?.expirationDate &&
-        isBefore(now(), parseISO(apiKeyData.expirationDate))
-      ? "in-progress"
-      : "expired"
+      : tryChain(
+        () => apiKeyData.expirationDate && isBefore(now(), parseISO(apiKeyData.expirationDate)),
+        () => false
+      )
+        ? "in-progress"
+        : "expired"
     : "unknown";
 }

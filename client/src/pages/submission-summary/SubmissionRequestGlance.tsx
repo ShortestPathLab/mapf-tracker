@@ -2,14 +2,13 @@ import { EditRounded } from "@mui-symbols-material/w300";
 import { Button, Stack } from "@mui/material";
 import { DetailsList } from "components/DetailsList";
 import { useSnackbar } from "components/Snackbar";
-import { format, parseISO } from "date-fns";
 import { useSurface } from "components/surface/useSurface";
 import { SubmissionKeyRequestFormDialog } from "pages/submissions/SubmissionKeyRequestFormDialog";
 import { handleRequestDetailUpdated } from "pages/submissions/handleRequestDetailUpdated";
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
-import { DATE_FORMAT } from "utils/format";
 import { Status } from "./Status";
+import { formatDate } from 'utils/format';
 
 export const SubmissionRequestGlance = ({
   apiKey,
@@ -37,9 +36,7 @@ export const SubmissionRequestGlance = ({
             {
               label: "Expiry",
               value:
-                (apiKeyData?.expirationDate &&
-                  format(parseISO(apiKeyData?.expirationDate), DATE_FORMAT)) ??
-                "-",
+                formatDate(apiKeyData?.expirationDate)
             },
             {
               label: "Status",
