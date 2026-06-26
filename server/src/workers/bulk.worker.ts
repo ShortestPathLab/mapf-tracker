@@ -18,19 +18,19 @@ async function run({
   skip,
   limit,
 }: BulkOptions) {
-  await connectToDatabase(32);
+  await connectToDatabase(64);
   const instances = await Instance.find({ scen_id: id })
     .skip(skip)
     .limit(limit);
   const solutions = includeSolutions
     ? await getSolutionPathsRaw(
-        instances.map((i) => {
-          const id =
-            i?.solution_path_id?.toString?.() ??
-            last(i?.solution_algos)?.submission_id?.toString?.();
-          return id ?? "";
-        })
-      )
+      instances.map((i) => {
+        const id =
+          i?.solution_path_id?.toString?.() ??
+          last(i?.solution_algos)?.submission_id?.toString?.();
+        return id ?? "";
+      })
+    )
     : [];
   return await Promise.all(
     zip(instances, solutions).map(async ([instance, s1]) => {
@@ -56,9 +56,9 @@ async function run({
         solution_cost: solution_cost ?? null,
         ...(id &&
           includeSolutions && {
-            flip_up_down: true,
-            solution_plan: s1,
-          }),
+          flip_up_down: true,
+          solution_plan: s1,
+        }),
       };
     })
   );
@@ -71,7 +71,7 @@ export const { precompute, handler } = createPrecomputeHandler(
   {
     invalidationKey: () => get("diskCache"),
     precompute: async () => {
-      await connectToDatabase(32);
+      await connectToDatabase(64);
       const scenarios = await Scenario.find({}, { _id: 1, instances: 1 });
       const chunkSize = 500;
       return flatMap(scenarios, ({ _id, instances }) => {

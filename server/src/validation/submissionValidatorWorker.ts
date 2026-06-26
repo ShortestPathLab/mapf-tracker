@@ -57,6 +57,8 @@ type OngoingSubmissionDocument = Document<
 > &
   OngoingSubmission;
 
+type BulkOp = Parameters<typeof OngoingSubmission.bulkWrite>[0][number];
+
 async function getMeta(instanceId: Types.ObjectId) {
   const instance = required(await findInstance(instanceId));
   const map = required(await findMapMemo(instance.map_id));
@@ -66,33 +68,51 @@ async function getMeta(instanceId: Types.ObjectId) {
   return { map, scenario, mapContent, scenarioContent };
 }
 
-async function saveResults(
+async function buildResultWrites(
   submission: OngoingSubmissionDocument,
   errors: { label: string; timesteps?: number[]; agents?: number[] }[],
-  meta: { timeTaken: number }
-) {
-  log.info("Saving results");
+  meta: { timeTaken: number },
+  extra: { cost?: number; lowerBound?: number } = {}
+): Promise<BulkOp[]> {
+  log.info("Building result writes");
+  const ops: BulkOp[] = [];
   for (const outdated of await OngoingSubmission.find({
     apiKey: submission.apiKey,
     instance: submission.instance,
     updatedAt: { $lt: submission.updatedAt },
-  })) {
-    await outdated
-      .set(validationResultsKey, {
-        errors: [],
-        isValidationRun: true,
-        outcome: "outdated" satisfies Outcome,
-      } satisfies OngoingSubmission[typeof validationResultsKey])
-      .save();
+  }).select("_id")) {
+    ops.push({
+      updateOne: {
+        filter: { _id: outdated._id },
+        update: {
+          $set: {
+            [validationResultsKey]: {
+              errors: [],
+              isValidationRun: true,
+              outcome: "outdated" satisfies Outcome,
+            } satisfies OngoingSubmission[typeof validationResultsKey],
+          },
+        },
+      },
+    });
   }
-  await submission
-    .set(validationResultsKey, {
-      errors,
-      isValidationRun: true,
-      outcome: (errors.length ? "invalid" : "valid") satisfies Outcome,
-      ...meta,
-    } satisfies OngoingSubmission[typeof validationResultsKey])
-    .save();
+  ops.push({
+    updateOne: {
+      filter: { _id: submission._id },
+      update: {
+        $set: {
+          ...extra,
+          [validationResultsKey]: {
+            errors,
+            isValidationRun: true,
+            outcome: (errors.length ? "invalid" : "valid") satisfies Outcome,
+            ...meta,
+          } satisfies OngoingSubmission[typeof validationResultsKey],
+        },
+      },
+    },
+  });
+  return ops;
 }
 
 async function validateGroup({
@@ -113,15 +133,7 @@ async function validateGroup({
   submission: OngoingSubmissionDocument;
   solutions?: string[];
   mode?: SubmissionValidatorData[number]["mode"];
-}) {
-  await submission
-    .set(validationResultsKey, {
-      isValidationRun: false,
-      errors: [],
-      outcome: "queued" satisfies Outcome,
-    } satisfies OngoingSubmission[typeof validationResultsKey])
-    .save();
-
+}): Promise<{ errors: { label: string }[]; writes: BulkOp[] }> {
   const count = solutions.length;
 
   const errors: { label: string; timesteps?: number[]; agents?: number[] }[] =
@@ -154,23 +166,27 @@ async function validateGroup({
   const timeTaken = now() - timeStart;
 
   // Update solution cost based on validation results
-  // TODO: Refactor for immutability
-  await setSolutionCost(submission, realCost, errors);
+  const costUpdate = computeSolutionCost(submission, realCost, errors);
 
   logOutcome(errors, errorAgents, mode);
 
-  // Don't have to wait to save results
-  saveResults(submission, errors, { timeTaken });
-  return { errors };
+  const writes = await buildResultWrites(
+    submission,
+    errors,
+    { timeTaken },
+    costUpdate
+  );
+  return { errors, writes };
 }
 
-async function setSolutionCost(
+function computeSolutionCost(
   submission: OngoingSubmissionDocument,
   realCost: number,
   errors: { label: string }[]
-) {
+): { cost?: number; lowerBound?: number } {
+  const update: { cost?: number; lowerBound?: number } = {};
   // There's already an error, don't bother checking solution cost
-  if (errors.length) return;
+  if (errors.length) return update;
   if (isNumber(submission.cost)) {
     // Check if cost is correct
     if (submission.cost !== realCost) {
@@ -178,11 +194,11 @@ async function setSolutionCost(
         label: `Cost mismatch, expected ${realCost}, but submission listed its cost as ${submission.cost}`,
       });
       // Don't bother fixing lower bound cost
-      return;
+      return update;
     }
   } else {
     // No cost specified, use real cost
-    await submission.set("cost", realCost).save();
+    update.cost = realCost;
   }
   // At this point the submission's cost is correct
   const lowerBound = isNumber(submission.lowerBound)
@@ -191,8 +207,9 @@ async function setSolutionCost(
   // Check if lower bound is correct
   // If incorrect, correct it with real cost
   if (lowerBound !== submission.lowerBound) {
-    await submission.set("lowerBound", lowerBound).save();
+    update.lowerBound = lowerBound;
   }
+  return update;
 }
 
 function logOutcome(
@@ -221,20 +238,32 @@ const connect = once(() => connectToDatabase());
 const parseMapMemo = memoize(parseMap);
 const parseScenarioMemo = memoize(parseScenarioMeta);
 
-export async function skip(submission: OngoingSubmissionDocument) {
+export function skip(submission: OngoingSubmissionDocument) {
   const errors = [
     { label: "Skipped validation because skip_validation is set" },
   ];
-  await submission
-    .set(validationResultsKey, {
-      isValidationRun: true,
-      errors,
-      // Set document to valid
-      outcome: "valid" satisfies Outcome,
-    } satisfies OngoingSubmission[typeof validationResultsKey])
-    .save();
+  const writes: BulkOp[] = [
+    {
+      updateOne: {
+        filter: { _id: submission._id },
+        update: {
+          $set: {
+            [validationResultsKey]: {
+              isValidationRun: true,
+              errors,
+              // Set document to valid
+              outcome: "valid" satisfies Outcome,
+            } satisfies OngoingSubmission[typeof validationResultsKey],
+          },
+        },
+      },
+    },
+  ];
   // Set output to skipped
-  return { result: { outcome: "skipped" as const satisfies Outcome, errors } };
+  return {
+    result: { outcome: "skipped" as const satisfies Outcome, errors },
+    writes,
+  };
 }
 
 export async function run(data: SubmissionValidatorData[number]): Promise<{
@@ -242,6 +271,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     errors?: { label: string }[];
     outcome: Outcome;
   };
+  writes: BulkOp[];
 }> {
   log.info("Received job");
   try {
@@ -255,7 +285,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
 
     if (!submission) throw new Error("Error: submission not found");
 
-    if (submission.options?.skipValidation) return await skip(submission);
+    if (submission.options?.skipValidation) return skip(submission);
 
     const {
       mapContent: map,
@@ -275,7 +305,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
       }, agent count ${solutions?.length ?? 0}.`
     );
 
-    const { errors } = await validateGroup({
+    const { errors, writes } = await validateGroup({
       sources,
       goals,
       solutions: split(solutions, "\n"),
@@ -288,11 +318,13 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
 
     return {
       result: { outcome: errors?.length ? "invalid" : "valid", errors },
+      writes,
     };
   } catch (e) {
     log.error("General error", { message: has(e, "message") ? e.message : e });
     return {
       result: { outcome: "error", errors: [{ label: "General error" }] },
+      writes: [],
     };
   }
 }
@@ -300,7 +332,15 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
 export const path = import.meta.path;
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>((d) =>
-    asyncMap(d, run)
+  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>(
+    async (d) => {
+      const outcomes = await asyncMap(d, run);
+      const writes = outcomes.flatMap((o) => o.writes);
+      if (writes.length) {
+        log.info(`Executing ${writes.length} write(s) via bulkWrite`);
+        await OngoingSubmission.bulkWrite(writes);
+      }
+      return outcomes.map((o) => o.result);
+    }
   );
 }

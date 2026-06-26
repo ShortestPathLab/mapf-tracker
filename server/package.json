@@ -52,6 +52,7 @@
     "neat-csv": "^7.0.0",
     "object-hash": "^3.0.0",
     "object-sizeof": "^2.6.5",
+    "p-debounce": "^5.1.0",
     "p-memoize": "^7.1.1",
     "parser": "workspace:*",
     "passport": "^0.7.0",

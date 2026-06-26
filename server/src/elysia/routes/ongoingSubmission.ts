@@ -168,16 +168,16 @@ export const ongoingSubmissionRoutes = new Elysia({
   .get("/summary-pagecount/:apiKey", aggregate(
     ({ params }, p) => p.match({ apiKey: params.apiKey }).count("count"),
     {
-      handler: async (p: [{ count: number; }]) => ceil((p[0]?.count ?? 0) / CHUNK),
+      handler: async (p: [{ count: number; }]) => ceil((p[0]?.count ?? 0) / CHUNK), maxAge: 300,
     }
   ))
   .get("/summary/:apiKey", cached(
     ({ params }: Context) => summaryByApiKeyWorker(params),
-    { cacheKey: (ctx) => ctx.params, maxAge: 10 * 1000, maxSize: 1000 }
+    { cacheKey: (ctx) => ctx.params, maxAge: 2 * 1000, maxSize: 1000 }
   ))
   .get("/summary/:apiKey/:page", cached(
     ({ params }: Context) => summaryByApiKeyWorker(params),
-    { cacheKey: (ctx) => ctx.params, maxAge: 10 * 1000, maxSize: 1000 }
+    { cacheKey: (ctx) => ctx.params, maxAge: 2 * 1000, maxSize: 1000 }
   ))
   .get("/scenario/:apiKey/:scenario", cached(
     async ({ params }: Context) => {
