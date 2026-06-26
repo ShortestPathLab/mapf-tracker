@@ -12,6 +12,16 @@ export function decode(input: string): string;
 export function encode(input: string): string;
 
 /**
+ * Length of a (potentially run-length encoded) action string once decoded.
+ */
+export function length(solution_path: string): number;
+
+/**
+ * Makespan of a solution: the longest decoded path length across all agents.
+ */
+export function makespan(solution: string[]): number;
+
+/**
  * Validate a group of agent solutions. See the module docs for the input shape.
  */
 export function validate(input: any): any;

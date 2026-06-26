@@ -55,3 +55,15 @@ pub fn encode(input: &str) -> String {
 pub fn decode(input: &str) -> String {
     rle::decode(input)
 }
+
+/// Length of a (potentially run-length encoded) action string once decoded.
+#[wasm_bindgen]
+pub fn length(solution_path: &str) -> usize {
+    rle::length(solution_path)
+}
+
+/// Makespan of a solution: the longest decoded path length across all agents.
+#[wasm_bindgen]
+pub fn makespan(solution: Vec<String>) -> usize {
+    rle::makespan(&solution)
+}

@@ -5,6 +5,8 @@ import {
   validate as wasmValidate,
   encode as wasmEncode,
   decode as wasmDecode,
+  length as wasmLength,
+  makespan as wasmMakespan,
 } from "./pkg/validator_wasm.js";
 
 export type Point = { x: number; y: number };
@@ -61,4 +63,26 @@ export function encode(input: string): string {
 /** Run-length decode an action string (`d3l` -> `dlll`). */
 export function decode(input: string): string {
   return wasmDecode(input);
+}
+
+/**
+ * Length of a (potentially run-length encoded) action string once decoded,
+ * computed without allocating the decoded form.
+ *
+ * Mirrors {@link decode}'s semantics: digits accumulate a run count that applies
+ * to the following symbol (`d3l` -> 4), an absent or zero count means a single
+ * repetition (`rd` -> 2, `0d` -> 1), and trailing digits with no symbol are
+ * dropped. Carriage returns and newlines are ignored so a `\r`-terminated line
+ * (as stored per path) doesn't inflate the count.
+ */
+export function length(solutionPath: string): number {
+  return wasmLength(solutionPath);
+}
+
+/**
+ * Makespan of a solution: the longest decoded path length across all agents.
+ * Each entry may be run-length encoded. Returns 0 for an empty solution.
+ */
+export function makespan(solution: string[]): number {
+  return wasmMakespan(solution);
 }

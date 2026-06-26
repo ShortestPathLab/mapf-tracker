@@ -1,11 +1,12 @@
 import type { Context } from "elysia";
 import { Elysia } from "elysia";
 import { Instance, Map, SolutionPath } from "models";
-import { get } from "models/Version";
 import { cached } from "query";
-import { diskCached } from "query/withDiskCache";
-import { getSolutionPath } from "utils/solutionPath";
 import { handler as createPreviewAsync } from "workers/createPreview.worker";
+import {
+  handler as makespanAsync,
+  type MakespanData,
+} from "workers/computeMakespan.worker";
 import z from "zod";
 
 // `createPreviewAsync` resolves a rendered SVG string, but the disk-cache
@@ -22,45 +23,26 @@ const preview = async ({ body }: Context): Promise<string> =>
       .parse(body),
   )) as string;
 
-// The makespan is a pure function of the solution path it resolves to, so both
-// cache layers key on the single resolved id (`solutionPath ?? instance`)
-// rather than the raw body. This keeps the key canonical regardless of body
-// shape/ordering, so a precomputed entry is hit verbatim by the live request.
+// The makespan is a pure function of the solution path it resolves to, so the
+// in-memory cache keys on the single resolved id (`solutionPath ?? instance`)
+// rather than the raw body, matching the disk cache's resolver in the worker.
+// This keeps the key canonical regardless of body shape/ordering.
+const makespanBody = (ctx: Context): MakespanData => {
+  const { instance, solutionPath } = (ctx.body ?? {}) as MakespanData;
+  return { instance, solutionPath };
+};
+
 const makespanKey = (ctx: Context) => {
-  const { instance, solutionPath } = (ctx.body ?? {}) as {
-    instance?: string;
-    solutionPath?: string;
-  };
+  const { instance, solutionPath } = makespanBody(ctx);
   return solutionPath ?? instance ?? "";
 };
 
-const computeMakespan = async (ctx: Context): Promise<number | null> => {
-  const id = makespanKey(ctx);
-  if (!id) return null;
-  const paths = await getSolutionPath(id, "submitted");
-  if (!paths) return null;
-  return Math.max(0, ...paths.map((path) => path.replace(/\r$/, "").length));
-};
-
+// The heavy compute (disk-cache miss and precompute warming) runs in
+// `computeMakespan.worker`, mirroring the preview worker; this in-memory layer
+// just shields the warm disk cache from repeat live hits.
 const makespan = cached(
-  diskCached("map-makespan", computeMakespan, {
-    resolver: makespanKey,
-    invalidationKey: () => get("diskCache"),
-    // Warm one entry per instance, matching the `{ instance, solutionPath }`
-    // body the client sends (see `useMakespanData`). Both fields are included
-    // so the warmed key matches whether or not the instance has a solution.
-    precompute: async () => {
-      const instances = await Instance.find({}, { _id: 1, solution_path_id: 1 });
-      return instances.map((i) => [
-        {
-          body: {
-            instance: i._id.toString(),
-            solutionPath: i.solution_path_id?.toString(),
-          },
-        } as Context,
-      ]);
-    },
-  }) as (ctx: Context) => Promise<number | null>,
+  async (ctx: Context): Promise<number | null> =>
+    (await makespanAsync!(makespanBody(ctx))) as number | null,
   { watch: [Instance, SolutionPath], cacheKey: makespanKey },
 );
 

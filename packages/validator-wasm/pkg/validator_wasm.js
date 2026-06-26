@@ -43,6 +43,32 @@ function encode(input) {
 exports.encode = encode;
 
 /**
+ * Length of a (potentially run-length encoded) action string once decoded.
+ * @param {string} solution_path
+ * @returns {number}
+ */
+function length(solution_path) {
+    const ptr0 = passStringToWasm0(solution_path, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.length(ptr0, len0);
+    return ret >>> 0;
+}
+exports.length = length;
+
+/**
+ * Makespan of a solution: the longest decoded path length across all agents.
+ * @param {string[]} solution
+ * @returns {number}
+ */
+function makespan(solution) {
+    const ptr0 = passArrayJsValueToWasm0(solution, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.makespan(ptr0, len0);
+    return ret >>> 0;
+}
+exports.makespan = makespan;
+
+/**
  * Validate a group of agent solutions. See the module docs for the input shape.
  * @param {any} input
  * @returns {any}
@@ -354,6 +380,16 @@ function handleError(f, args) {
 
 function isLikeNone(x) {
     return x === undefined || x === null;
+}
+
+function passArrayJsValueToWasm0(array, malloc) {
+    const ptr = malloc(array.length * 4, 4) >>> 0;
+    for (let i = 0; i < array.length; i++) {
+        const add = addToExternrefTable0(array[i]);
+        getDataViewMemory0().setUint32(ptr + 4 * i, add, true);
+    }
+    WASM_VECTOR_LEN = array.length;
+    return ptr;
 }
 
 function passStringToWasm0(arg, malloc, realloc) {

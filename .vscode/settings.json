@@ -2,5 +2,8 @@
   "vitest.disableWorkspaceWarning": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "remote.autoForwardPorts": false,
-  "js/ts.tsdk.path": "node_modules/typescript/lib"
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "rust-analyzer.linkedProjects": [
+    "packages/validator-wasm/Cargo.toml"
+  ]
 }

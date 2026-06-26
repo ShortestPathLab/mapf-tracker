@@ -3,6 +3,8 @@
 export const memory: WebAssembly.Memory;
 export const decode: (a: number, b: number) => [number, number];
 export const encode: (a: number, b: number) => [number, number];
+export const length: (a: number, b: number) => number;
+export const makespan: (a: number, b: number) => number;
 export const validate: (a: any) => [number, number, number];
 export const __wbindgen_malloc: (a: number, b: number) => number;
 export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
