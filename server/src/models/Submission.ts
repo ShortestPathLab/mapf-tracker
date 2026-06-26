@@ -40,6 +40,10 @@ schema.index(
   { unique: true }
 );
 schema.index(
+  { scen_id: 1, agents: 1 },
+  { unique: true }
+);
+schema.index(
   { map_id: 1, scen_id: 1, agents: 1, solution_cost: 1 },
   { unique: false }
 );
