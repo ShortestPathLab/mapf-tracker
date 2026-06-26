@@ -28,7 +28,7 @@ const jsonHeaders = {
 };
 
 export const createElysiaApp = () => {
-  const app = new Elysia()
+  const app = new Elysia({ serve: { idleTimeout: 60 * 10 } })
     .headers(jsonHeaders)
     .options("*", ({ set }) => {
       set.status = 204;
