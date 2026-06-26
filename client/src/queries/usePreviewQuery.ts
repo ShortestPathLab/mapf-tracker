@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import api, { unwrap } from "hooks/useQuery";
 import { Mutex } from "async-mutex";
-import { queryClient } from "App";
+import api, { unwrap } from "hooks/useQuery";
 
 export type PreviewOptions = {
   map?: string;
@@ -20,14 +19,9 @@ export const usePreviewData = ({
   return useQuery({
     queryKey: key,
     staleTime: Infinity,
-    queryFn: async ({ signal }) => {
-      return await mutex.runExclusive(async () => {
-        if (signal.aborted) return queryClient.cancelQueries({ queryKey: key });
-        return await unwrap(
-          api.api.map.preview.post({ map, instance, scenario })
-        );
-      });
-    },
+    queryFn: ({ signal }) => mutex.runExclusive(() => unwrap(
+      api.api.map.preview.post({ map, instance, scenario, $fetch: { signal } })
+    )),
     enabled: !(!map && !instance && !scenario),
   });
 };
