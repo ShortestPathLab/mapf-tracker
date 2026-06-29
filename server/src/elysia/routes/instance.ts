@@ -43,11 +43,11 @@ type DownloadMapRow = {
 // Static segments registered before the dynamic `/:id` so they aren't shadowed.
 export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
   .get("/id/:id", ({ params }) => Instance.findById(params.id).then(toJSON))
-  .get("/getAlgo/:id", ({ params }) =>
+  .get("/algorithms/:id", ({ params }) =>
     Instance.find({ _id: params.id }, { lower_algos: 1, solution_algos: 1 }).then(allToJSON),
   )
   .get(
-    "/DownloadRow/:id",
+    "/download/row/:id",
     ({ params }) =>
       Instance.aggregate([
         { $match: { _id: new Types.ObjectId(params.id) } },
@@ -79,7 +79,7 @@ export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
         },
       ]) as Promise<DownloadRow[]>,
   )
-  .get("/DownloadInstance/:id", ({ params }) =>
+  .get("/download/scenario/:id", ({ params }) =>
     Instance.find(
       { scen_id: params.id, empty: false },
       {
@@ -94,7 +94,7 @@ export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
       .sort({ agents: 1 })
       .then(allToJSON),
   )
-  .get("/DownloadMapByID/:id", async ({ params }) => {
+  .get("/download/map/:id", async ({ params }) => {
     const data = await Instance.find(
       { map_id: params.id, empty: false },
       {

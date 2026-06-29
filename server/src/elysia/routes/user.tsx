@@ -6,12 +6,10 @@ import { Elysia } from "elysia";
 import ReviewOutcome from "emails/ReviewOutcome";
 import { log } from "logging";
 import { mail } from "mail";
-import { Request, User } from "models";
-import { Types } from "mongoose";
+import { Request, users } from "models";
 import React from "react";
 import { assert } from "utils/assert";
 import { createSubmissionKey } from "utils/submissionKey";
-import { allToJSON, toJSON } from "utils/toJSON";
 import z from "zod";
 
 const { hash } = password;
@@ -71,36 +69,18 @@ const createKeyAndSendMail = async ({ body }: Context) => {
   return { success: true };
 };
 
-// The whole /api/user surface requires auth. The basic CRUD is inlined here
-// (rather than `users.basic()`) because its `/write` hashes the password.
-export const userRoutes = new Elysia({ prefix: "/api/user" }).guard(
-  { beforeHandle: requireAuth },
-  (app) =>
-    app.post("/notify", createKeyAndSendMail).group("/basic", (basic) =>
-      basic
-        .get("/", () => User.find().then(allToJSON))
-        .get("/:id", ({ params }) => User.findById(params.id).then(toJSON))
-        .post("/write", async ({ body }) => {
-          const {
-            username,
-            password: pw,
-            id,
-          } = body as {
-            username: string;
-            password: string;
-            id?: string;
-          };
-          const result = await User.findOneAndUpdate(
-            { _id: id ?? new Types.ObjectId() },
-            { $set: { username, hash: await hash(pw) } },
-            { upsert: true },
-          );
-          return { id: result?.id?.toString?.() };
-        })
-        .post("/delete", async ({ body }) => {
-          const { id } = body as { id?: string };
-          await User.findByIdAndDelete(id);
-          return { id };
-        }),
-    ),
-);
+// The whole /api/user surface requires auth. The basic CRUD uses the shared
+// `users.basic()` generator with a `transformWrite` that hashes the password
+// into `hash` before it is stored.
+const transformWrite = async (body: unknown) => {
+  const {
+    username,
+    password: pw,
+    id,
+  } = body as { username: string; password: string; id?: string };
+  return { id, data: { username, hash: await hash(pw) } };
+};
+
+export const userRoutes = new Elysia({ prefix: "/api/user" })
+  .post("/notify", createKeyAndSendMail, { beforeHandle: requireAuth })
+  .group("/basic", (app) => app.use(users.basic(requireAuth, { transformWrite })));

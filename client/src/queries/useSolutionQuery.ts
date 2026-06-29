@@ -8,7 +8,7 @@ export const useSolutionData = (
     ["solutionPath", id],
     () =>
       api.api
-        .solution_path({ source })({ id: `${id}` })
+        .solutionPath({ source })({ id: `${id}` })
         .get(),
     { enabled: !!id },
   );

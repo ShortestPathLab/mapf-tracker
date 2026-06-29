@@ -40,7 +40,7 @@ export type InstanceSummary = DataOf<ReturnType<typeof api.api.instance>["get"]>
 
 export type Algorithm = DataOf<typeof api.api.algorithm.get>[number];
 
-export type AlgorithmDetails = DataOf<typeof api.api.algorithm.all_detail.get>[number];
+export type AlgorithmDetails = DataOf<typeof api.api.algorithm.allDetail.get>[number];
 
 export type SummarySlice = {
   outdated: number;

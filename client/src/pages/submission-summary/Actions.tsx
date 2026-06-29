@@ -38,7 +38,7 @@ export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
         <Prose>
           <SubmitWithApiContent />
         </Prose>
-        <CodeBlock language="plaintext">{`${url}/ongoing_submission/create/${apiKey}`}</CodeBlock>
+        <CodeBlock language="plaintext">{`${url}/ongoingSubmission/${apiKey}`}</CodeBlock>
       </Stack>
       <Stack sx={{ gap: 2 }}>
         <Typography variant="overline" color="text.secondary">

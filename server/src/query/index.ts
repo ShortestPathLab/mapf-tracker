@@ -31,6 +31,9 @@ export const createCache = <T extends AnyAsyncFunction>(
   return [g, cache] as const;
 };
 
+/** The payload upserted by the generated `basic` write (`PUT /`) route. */
+export type WriteData = { id?: string; data: Record<string, unknown> };
+
 /** Derives the cache key (an object to be hashed) from the request context. */
 export type CacheKey = (ctx: Context) => unknown;
 
@@ -153,13 +156,28 @@ export const queryClient = <T>(model: Model<T>) => {
      * applied on this micro-app so it reliably guards every route here
      * (including those added by `extend`) regardless of Elysia hook scoping.
      */
-    basic: (beforeHandle?: (ctx: Context) => unknown, extend?: (app: any) => any) => {
+    basic: (
+      beforeHandle?: (ctx: Context) => unknown,
+      {
+        extend,
+        transformWrite,
+      }: {
+        /** Adds extra routes to the generated CRUD app. */
+        extend?: (app: any) => any;
+        /**
+         * Maps the raw write (`PUT /`) body to the `{ id?, data }` upserted into
+         * the collection — e.g. to hash a password field before it is stored.
+         * Defaults to treating the body as `{ id?, data }` verbatim.
+         */
+        transformWrite?: (body: unknown) => WriteData | Promise<WriteData>;
+      } = {},
+    ) => {
       const base = new Elysia();
       const app = (beforeHandle ? base.onBeforeHandle(beforeHandle) : base)
         .get("/", () => model.find().then(allToJSON))
         .get("/:id", ({ params }) => model.findById(params.id).then(toJSON))
-        .post("/write", async ({ body }) => {
-          const { id, data } = body as { id?: string; data: unknown };
+        .put("/", async ({ body }) => {
+          const { id, data } = transformWrite ? await transformWrite(body) : (body as WriteData);
           const result = await model.findOneAndUpdate(
             { _id: id ?? new Types.ObjectId() } as FilterQuery<T>,
             { $set: data } as any,
@@ -167,8 +185,8 @@ export const queryClient = <T>(model: Model<T>) => {
           );
           return { id: result?.id?.toString?.() };
         })
-        .post("/delete", async ({ body }) => {
-          const { id } = body as { id?: string };
+        .delete("/:id", async ({ params }) => {
+          const { id } = params as { id?: string };
           await model.findByIdAndDelete(id);
           return { id };
         });

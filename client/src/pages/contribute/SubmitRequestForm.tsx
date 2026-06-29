@@ -31,7 +31,7 @@ export function SubmitRequestForm({
   });
 
   const { mutateAsync: submit } = useMutation({
-    mutationFn: (request: Request) => unwrap(api.api.request.create.post(request)),
+    mutationFn: (request: Request) => unwrap(api.api.request.post(request)),
     mutationKey: ["requestSubmissionKey"],
   });
 

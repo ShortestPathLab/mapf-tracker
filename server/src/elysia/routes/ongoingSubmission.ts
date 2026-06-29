@@ -119,7 +119,7 @@ export async function restore() {
 // Static-prefixed routes registered before the dynamic `/:apiKey` (GET/DELETE)
 // so they aren't shadowed. Optional `:page?`/`:label?` are two routes each.
 export const ongoingSubmissionRoutes = new Elysia({
-  prefix: "/api/ongoing_submission",
+  prefix: "/api/ongoingSubmission",
 })
   .get("/", query())
   .get("/id/:id", ({ params }) =>
@@ -127,7 +127,7 @@ export const ongoingSubmissionRoutes = new Elysia({
       _id: new Types.ObjectId(params.id),
     }).then(allToJSON),
   )
-  .post("/delete", async ({ body }: Context) => {
+  .delete("/", async ({ body }: Context) => {
     const { id } = z
       .object({
         id: z
@@ -144,12 +144,12 @@ export const ongoingSubmissionRoutes = new Elysia({
   .get("/status/:apiKey", async ({ params }: Context) =>
     filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === params.apiKey),
   )
-  .post("/status", async ({ body }: Context) => {
-    const { ticket } = z.object({ ticket: z.string() }).parse(body);
+  .get("/ticket/:ticket", async ({ params }: Context) => {
+    const { ticket } = z.object({ ticket: z.string() }).parse(params);
     return submissionTickets.pool.tickets[ticket] || { status: "unknown" };
   })
   .get(
-    "/summary-pagecount/:apiKey",
+    "/summaryPageCount/:apiKey",
     aggregate(({ params }, p) => p.match({ apiKey: params.apiKey }).count("count"), {
       handler: async (p: [{ count: number }]) => ceil((p[0]?.count ?? 0) / CHUNK),
       maxAge: 300,
@@ -210,7 +210,7 @@ export const ongoingSubmissionRoutes = new Elysia({
       { watch: [OngoingSubmission, Instance] },
     ),
   )
-  .get("/finalise/:key", async ({ params }: Context) => {
+  .post("/finalise/:key", async ({ params }: Context) => {
     const data = await z
       .object({ key: apiKeySchema })
       .transform(({ key }, ctx) => getKey(key, ctx))
@@ -221,7 +221,7 @@ export const ongoingSubmissionRoutes = new Elysia({
     });
     return { status: "submitted" };
   })
-  .post("/create/:apiKey", async ({ body, params }: Context) => {
+  .post("/:apiKey", async ({ body, params }: Context) => {
     const { apiKey, label } = await z
       .object({ apiKey: apiKeyValidationSchema, label: z.string().optional() })
       .parseAsync(params);
@@ -233,7 +233,7 @@ export const ongoingSubmissionRoutes = new Elysia({
     });
     return { message: "submission received", ticket: key };
   })
-  .post("/create/:apiKey/:label", async ({ body, params }: Context) => {
+  .post("/:apiKey/:label", async ({ body, params }: Context) => {
     const { apiKey, label } = await z
       .object({ apiKey: apiKeyValidationSchema, label: z.string().optional() })
       .parseAsync(params);

@@ -30,7 +30,7 @@ export const usePipelineStatus = () =>
   });
 
 export const usePipelineRunMutation = (stage: string) =>
-  useMutation((action: "run" | "runOne" = "run") => runRoutes[action]({ stage }).get(), {
+  useMutation((action: "run" | "runOne" = "run") => runRoutes[action]({ stage }).post(), {
     mutationKey: ["pipelineRun"],
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["pipeline"] }),
   });

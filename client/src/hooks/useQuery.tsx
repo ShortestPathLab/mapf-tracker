@@ -36,7 +36,7 @@ export function useQuery<T extends Record<number, unknown> = Record<number, unkn
 
 /**
  * Eden-oriented `useMutation`, the mutation counterpart to `useQuery` above.
- * Pass a treaty call (e.g. `(id) => api.api.request.basic.delete.post({ id })`);
+ * Pass a treaty call (e.g. `(id) => api.api.request.basic({ id }).delete()`);
  * the response is unwrapped (throwing on error) so `data`/`onSuccess` receive
  * the typed value inferred end-to-end from the server route.
  */

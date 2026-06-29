@@ -23,7 +23,7 @@ export const requestBasic = {
       enabled: !!id,
     }),
   useDelete: () =>
-    useMutation((id: string) => api.api.request.basic.delete.post({ id }), {
+    useMutation((id: string) => api.api.request.basic({ id }).delete(), {
       onSuccess: () => queryClient.invalidateQueries({ queryKey: ["request"] }),
     }),
 };
@@ -31,7 +31,7 @@ export const requestBasic = {
 export function useRequestsUpdateMutation() {
   return useMutation(
     ({ id: key, value: values }: { id: string; value: Partial<RequestWithReviewOutcome> }) =>
-      api.api.request.update({ id: key }).post(values),
+      api.api.request({ id: key }).put(values),
     {
       mutationKey: ["requestsUpdate"],
       onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
@@ -41,7 +41,7 @@ export function useRequestsUpdateMutation() {
 export function useRequestsUpdateElevatedMutation() {
   return useMutation(
     ({ id: key, value: values }: { id: string; value: Partial<RequestWithReviewOutcome> }) =>
-      api.api.request.updateElevated({ id: key }).post(values),
+      api.api.request({ id: key }).elevated.put(values),
     {
       mutationKey: ["requestsUpdateElevated"],
       onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),

@@ -21,9 +21,9 @@ const create = async ({ params }: Context) => {
   return { key };
 };
 
-// Static `/create` and `/basic` registered before the dynamic `/:apiKey`.
-export const submissionKeyRoutes = new Elysia({ prefix: "/api/submission_key" })
+// Static `/request` and `/basic` registered before the dynamic `/:apiKey`.
+export const submissionKeyRoutes = new Elysia({ prefix: "/api/submissionKey" })
   .get("/", findAll)
-  .post("/create/:request", create, { beforeHandle: requireAuth })
+  .post("/request/:request", create, { beforeHandle: requireAuth })
   .group("/basic", (app) => app.use(submissionKeys.basic(requireAuth)))
   .get("/:apiKey", findByApiKey);

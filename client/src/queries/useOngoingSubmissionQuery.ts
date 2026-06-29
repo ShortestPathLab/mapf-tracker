@@ -23,9 +23,9 @@ function mergeValues(v1: unknown, v2: unknown): unknown {
 }
 
 // A scenario submission row (with the instance's best costs joined in),
-// inferred from the `/ongoing_submission/scenario/:apiKey/:scenario` route.
+// inferred from the `/ongoingSubmission/scenario/:apiKey/:scenario` route.
 export type OngoingSubmission = DataOf<
-  ReturnType<ReturnType<typeof api.api.ongoing_submission.scenario>>["get"]
+  ReturnType<ReturnType<typeof api.api.ongoingSubmission.scenario>>["get"]
 >[number];
 
 export const ONGOING_SUBMISSION_QUERY_KEY = "ongoingSubmission";
@@ -34,7 +34,7 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
   const notify = useSnackbar();
   return useMutation({
     mutationKey: ["finaliseOngoingSubmission"],
-    mutationFn: () => unwrap(api.api.ongoing_submission.finalise({ key: `${key}` }).get()),
+    mutationFn: () => unwrap(api.api.ongoingSubmission.finalise({ key: `${key}` }).post()),
     onMutate: () => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
     },
@@ -59,7 +59,7 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "general", key],
     queryFn: async () => ({
       ...defaults,
-      ...(await unwrap(api.api.ongoing_submission({ apiKey: `${key}` }).get())),
+      ...(await unwrap(api.api.ongoingSubmission({ apiKey: `${key}` }).get())),
     }),
     enabled: !!key,
     refetchInterval: REFETCH_MS,
@@ -71,7 +71,7 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
 export function useOngoingSubmissionByIdQuery(id?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "id", id],
-    queryFn: async () => head(await unwrap(api.api.ongoing_submission.id({ id: `${id}` }).get())),
+    queryFn: async () => head(await unwrap(api.api.ongoingSubmission.id({ id: `${id}` }).get())),
     enabled: !!id,
   });
 }
@@ -81,7 +81,7 @@ export const ongoingSubmissionScenarioQueryFn = (
   scenario?: string | number,
 ) =>
   unwrap(
-    api.api.ongoing_submission
+    api.api.ongoingSubmission
       .scenario({ apiKey: `${key}` })({ scenario: `${scenario}` })
       .get(),
   );
@@ -99,12 +99,14 @@ export function useOngoingSubmissionScenarioQuery(
 }
 
 const summaryPageCountQuery = (key?: string | number) => ({
-  queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summary-pagecount", key],
+  queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "summaryPageCount", key],
   queryFn: () =>
     unwrap(
-      api.api.ongoing_submission["summary-pagecount"]({
-        apiKey: `${key}`,
-      }).get(),
+      api.api.ongoingSubmission
+        .summaryPageCount({
+          apiKey: `${key}`,
+        })
+        .get(),
     ),
   enabled: !!key,
   refetchInterval: REFETCH_MS,
@@ -124,7 +126,7 @@ const summaryQuery = (key?: string | number, i: number = 0) => ({
     mutexes(key!).runExclusive(
       async () =>
         (await unwrap(
-          api.api.ongoing_submission
+          api.api.ongoingSubmission
             .summary({ apiKey: `${key}` })({ page: `${i}` })
             .get(),
         )) ?? null,
@@ -177,7 +179,7 @@ export function useOngoingSubmissionTicketQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
     queryFn: async () => [
-      ...(await unwrap(api.api.ongoing_submission.status({ apiKey: `${key}` }).get())),
+      ...(await unwrap(api.api.ongoingSubmission.status({ apiKey: `${key}` }).get())),
       ...cloneDeep(Array.from(optimisticQueue)),
     ],
     enabled: !!key,
@@ -193,8 +195,8 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
     mutationKey: ["deleteOngoingSubmission"],
     mutationFn: (k: string | string[] | typeof deleteAll) =>
       k === deleteAll
-        ? unwrap(api.api.ongoing_submission({ apiKey: `${key}` }).delete())
-        : unwrap(api.api.ongoing_submission.delete.post({ id: k })),
+        ? unwrap(api.api.ongoingSubmission({ apiKey: `${key}` }).delete())
+        : unwrap(api.api.ongoingSubmission.delete({ id: k })),
     onMutate: (k) => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
       client.setQueryData<OngoingSubmission[]>([ONGOING_SUBMISSION_QUERY_KEY, key], (old) =>

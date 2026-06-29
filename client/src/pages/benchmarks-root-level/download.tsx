@@ -21,7 +21,7 @@ export async function downloadMap(item?: Map) {
 export async function downloadBenchmarksResultsCSV(item?: Map) {
   if (item) {
     return download(
-      json2csv(await unwrap(api.api.instance.DownloadMapByID({ id: item.id }).get())),
+      json2csv(await unwrap(api.api.instance.download.map({ id: item.id }).get())),
       `${item.map_name}.csv`,
     );
   }

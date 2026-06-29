@@ -3,7 +3,7 @@ import { getSolutionPath } from "utils/solutionPath";
 import { z } from "zod";
 
 export const solutionPathRoutes = new Elysia({
-  prefix: "/api/solution_path",
+  prefix: "/api/solutionPath",
 }).get("/:source/:id", async ({ params }) => {
   const { id, source } = z
     .object({

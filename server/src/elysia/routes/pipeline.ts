@@ -62,6 +62,6 @@ export const pipelineRoutes = new Elysia({ prefix: "/api/pipeline" }).guard(
           .thru((c) => Promise.all(c))
           .value(),
       )
-      .get("/run/:stage", runStage(false))
-      .get("/runOne/:stage", runStage(true)),
+      .post("/run/:stage", runStage(false))
+      .post("/runOne/:stage", runStage(true)),
 );

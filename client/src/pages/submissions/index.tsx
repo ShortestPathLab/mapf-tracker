@@ -25,7 +25,7 @@ import { SubmissionLocationState } from "./SubmissionLocationState";
 export function AddKey() {
   const navigate = useNavigate();
   const { mutateAsync: checkKey, isPending: isChecking } = useMutation({
-    mutationFn: (key: string) => api.api.submission_key({ apiKey: key }).get(),
+    mutationFn: (key: string) => api.api.submissionKey({ apiKey: key }).get(),
     mutationKey: ["checkKey"],
   });
 
@@ -93,8 +93,6 @@ export default function TrackSubmission() {
     ...data,
     id: key,
   })).filter((c) => c.key);
-
-  
 
   const notify = useSnackbar();
 

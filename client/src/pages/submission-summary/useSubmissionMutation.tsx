@@ -24,7 +24,7 @@ export function useSubmissionMutation({ apiKey }: { apiKey?: string | number }) 
       // Raw fetch (not Eden): the body is the raw submission text sent with a
       // caller-provided content type, which the server parses by content type.
       const res = await fetch(
-        `${APIConfig.apiUrl}/ongoing_submission/create/${apiKey}${
+        `${APIConfig.apiUrl}/ongoingSubmission/${apiKey}${
           label ? `/${encodeURIComponent(label)}` : ""
         }`,
         {

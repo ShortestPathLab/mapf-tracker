@@ -104,9 +104,9 @@ export const requestRoutes = new Elysia({ prefix: "/api/request" })
   .get("/key/:key", findByKey)
   .get("/id/:id", findByInstance_id)
   .get("/email/:email", findByEmail)
-  .post("/create", create)
-  .post("/update/:id", updateRequest)
-  .post("/updateElevated/:id", updateRequestElevated, {
+  .post("/", create)
+  .put("/:id", updateRequest)
+  .put("/:id/elevated", updateRequestElevated, {
     beforeHandle: requireAuth,
   })
   .group("/basic", (app) => app.use(requests.basic(requireAuth)));

@@ -16,7 +16,7 @@ export const downloadScenario = (map: string) => async (item?: Scenario) => {
 export const downloadInstance = (map: string) => async (item?: Scenario) => {
   if (item) {
     return download(
-      json2csv(await unwrap(api.api.instance.DownloadInstance({ id: item.id }).get())),
+      json2csv(await unwrap(api.api.instance.download.scenario({ id: item.id }).get())),
       `${map}-${item.scen_type}-${item.type_id}.csv`,
     );
   }

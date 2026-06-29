@@ -8,4 +8,4 @@ import { allToJSON } from "utils/toJSON";
 // algorithm and combines client-side. See queries.ts.
 export const algorithmRoutes = new Elysia({ prefix: "/api/algorithm" })
   .get("/", () => Algorithm.find({}, { _id: 1, algo_name: 1 }).then(allToJSON))
-  .get("/all_detail", () => Algorithm.find().then(allToJSON));
+  .get("/allDetail", () => Algorithm.find().then(allToJSON));

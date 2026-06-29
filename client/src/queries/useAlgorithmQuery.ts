@@ -45,7 +45,7 @@ export const useAlgorithmDetailData = (id?: string) => {
 export const useAlgorithmForInstanceData = (id: string) => {
   return useQuery({
     queryKey: ["algorithmInstance", id],
-    queryFn: () => unwrap(api.api.instance.getAlgo({ id }).get()),
+    queryFn: () => unwrap(api.api.instance.algorithms({ id }).get()),
     enabled: !!id,
   });
 };
@@ -66,6 +66,6 @@ export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
 export function algorithmDetailsQuery() {
   return {
     queryKey: ["algorithms-detailed"],
-    queryFn: () => unwrap(api.api.algorithm.all_detail.get()),
+    queryFn: () => unwrap(api.api.algorithm.allDetail.get()),
   };
 }
