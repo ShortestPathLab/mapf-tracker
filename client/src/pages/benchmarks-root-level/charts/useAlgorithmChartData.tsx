@@ -1,11 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { stateOfTheArt } from "components/analysis/ChartOptions";
 import { chain, keyBy, map, some, zip } from "lodash";
-import {
-  AggregateAlgorithmQuery,
-  algorithmQuery,
-  useAggregate,
-} from "queries/useAggregateQuery";
+import { AggregateAlgorithmQuery, algorithmQuery, useAggregate } from "queries/useAggregateQuery";
 import { useMemo } from "react";
 
 export function useAlgorithmChartData(

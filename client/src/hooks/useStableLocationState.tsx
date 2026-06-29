@@ -1,7 +1,4 @@
-import {
-  useLocationState,
-  useLocationStateSeparate,
-} from "hooks/useNavigation";
+import { useLocationState, useLocationStateSeparate } from "hooks/useNavigation";
 import { useMemo, useState } from "react";
 import { usePreviousDistinct } from "react-use";
 import { isEqual } from "lodash";

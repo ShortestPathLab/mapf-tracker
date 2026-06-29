@@ -8,9 +8,9 @@ export function parseApiKeyStatus(apiKeyData?: ApiKey) {
     ? apiKeyData?.status?.type === "submitted"
       ? "submitted"
       : tryChain(
-        () => apiKeyData.expirationDate && isBefore(now(), apiKeyData.expirationDate),
-        () => false
-      )
+            () => apiKeyData.expirationDate && isBefore(now(), apiKeyData.expirationDate),
+            () => false,
+          )
         ? "in-progress"
         : "expired"
     : "unknown";

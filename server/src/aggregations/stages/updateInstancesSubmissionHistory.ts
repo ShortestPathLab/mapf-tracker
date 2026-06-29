@@ -13,7 +13,7 @@ const variants = {
 
 const reduceHistory = (
   field: string,
-  variant: (typeof variants)[keyof typeof variants]
+  variant: (typeof variants)[keyof typeof variants],
 ): Expression.Reduce => ({
   $reduce: {
     input: `$${SUBMISSIONS}`,
@@ -131,7 +131,7 @@ export const updateInstancesSubmissionHistory = () =>
         },
       },
     ],
-    { allowDiskUse: true }
+    { allowDiskUse: true },
   );
 
 export const stage: PipelineStage = {

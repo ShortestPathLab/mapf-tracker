@@ -1,9 +1,6 @@
 import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
-import {
-  aggregateInstances,
-  getInstanceAggregateProportions,
-} from "components/analysis/reducers";
+import { aggregateInstances, getInstanceAggregateProportions } from "components/analysis/reducers";
 import { SuccessRateBarChart } from "components/analysis/successRateBarChartRenderer";
 import { capitalize, chain, head } from "lodash";
 import { useMapsData } from "queries/useMapQuery";

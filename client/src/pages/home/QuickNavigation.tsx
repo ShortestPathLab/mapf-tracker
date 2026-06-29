@@ -51,11 +51,7 @@ export function QuickNavigation() {
             type: "page",
             name: page.label,
             render: () => (
-              <Item
-                primary={page.label}
-                secondary={page.description}
-                icon={page.icon}
-              />
+              <Item primary={page.label} secondary={page.description} icon={page.icon} />
             ),
             navigate: () => navigate(page.url),
           }),
@@ -63,9 +59,7 @@ export function QuickNavigation() {
         ...map(pages(), (page) => ({
           type: "docs",
           name: page.label,
-          render: () => (
-            <Item primary={page.label} secondary="Docs" icon={page.icon} />
-          ),
+          render: () => <Item primary={page.label} secondary="Docs" icon={page.icon} />,
           navigate: () => navigate(`/docs/${page.value}`),
         })),
       ]}
@@ -80,11 +74,7 @@ export function QuickNavigation() {
         "& .MuiOutlinedInput-root": {
           fontSize: "0.9rem",
           "& fieldset": { borderColor: (t) => t.palette.divider },
-          bgcolor: (t) =>
-            alpha(
-              t.palette.background.default,
-              t.palette.mode === "dark" ? 0.5 : 1,
-            ),
+          bgcolor: (t) => alpha(t.palette.background.default, t.palette.mode === "dark" ? 0.5 : 1),
         },
       }}
       slotProps={{
@@ -100,13 +90,7 @@ export function QuickNavigation() {
           {d.render()}
         </Box>
       )}
-      renderInput={(props) => (
-        <TextField
-          label={`Search...`}
-          variant="outlined"
-          {...props}
-        />
-      )}
+      renderInput={(props) => <TextField label={`Search...`} variant="outlined" {...props} />}
     />
   );
 }

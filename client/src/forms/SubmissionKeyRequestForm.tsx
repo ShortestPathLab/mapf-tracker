@@ -1,9 +1,4 @@
-import {
-  createFilterOptions,
-  FilterOptionsState,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { createFilterOptions, FilterOptionsState, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Autocomplete, Checkbox, Field } from "components/Field";
 import { Form, Formik, FormikConfig, FormikProps } from "formik";
@@ -80,9 +75,7 @@ export function SubmissionKeyRequestForm({
       >
         {label}
       </Typography>
-      {secondary && (
-        <Typography sx={{ color: "text.secondary" }}>{secondary}</Typography>
-      )}
+      {secondary && <Typography sx={{ color: "text.secondary" }}>{secondary}</Typography>}
     </Stack>
   );
 
@@ -129,21 +122,14 @@ export function SubmissionKeyRequestForm({
                   freeSolo: true,
                   options,
                   getOptionDisabled: (o) => o === DISABLED_OPTION,
-                  filterOptions: (
-                    o: unknown[],
-                    s: FilterOptionsState<unknown>,
-                  ) =>
-                    s.inputValue.length > 2
-                      ? filterOptions(o, s)
-                      : [DISABLED_OPTION],
+                  filterOptions: (o: unknown[], s: FilterOptionsState<unknown>) =>
+                    s.inputValue.length > 2 ? filterOptions(o, s) : [DISABLED_OPTION],
                   ListboxProps: { sx: paper(2) },
                 }}
                 name="requesterAffiliation"
                 getOptionDisabled={(o: unknown) => o === DISABLED_OPTION}
                 filterOptions={(o: unknown[], s: FilterOptionsState<unknown>) =>
-                  s.inputValue.length > 2
-                    ? filterOptions(o, s)
-                    : [DISABLED_OPTION]
+                  s.inputValue.length > 2 ? filterOptions(o, s) : [DISABLED_OPTION]
                 }
                 label="Affiliation"
                 placeholder="Monash University"

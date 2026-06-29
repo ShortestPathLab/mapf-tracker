@@ -1,16 +1,7 @@
-import {
-  AddRounded,
-  DeleteRounded,
-  EditOutlined,
-  PersonRounded,
-} from "@mui-symbols-material/w300";
+import { AddRounded, DeleteRounded, EditOutlined, PersonRounded } from "@mui-symbols-material/w300";
 import { Box, Button, CircularProgress, Stack } from "@mui/material";
 import { ActionBar } from "components/ActionBar";
-import {
-  cellRendererText,
-  DataGrid,
-  useDataGridActions,
-} from "components/data-grid";
+import { cellRendererText, DataGrid, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { Field } from "components/Field";
@@ -52,8 +43,7 @@ function PasswordForm({
           .required("Username is required")
           .test({
             message: "Username already exists",
-            test: (username) =>
-              disabledValues?.username || !find(users, { username }),
+            test: (username) => disabledValues?.username || !find(users, { username }),
           }),
         password: string().required("Password is required"),
       })}

@@ -1,11 +1,5 @@
 import { RouteRounded } from "@mui-symbols-material/w300";
-import {
-  ButtonBase,
-  Collapse,
-  CollapseProps,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { ButtonBase, Collapse, CollapseProps, Stack, Typography } from "@mui/material";
 import { useSm } from "components/dialog/useSmallDisplay";
 
 export function IndexHeader(props: CollapseProps) {
@@ -38,9 +32,7 @@ export function IndexHeader(props: CollapseProps) {
             <Typography sx={{ fontWeight: 500 }}>MAPF Tracker</Typography>
           </Stack>
         </Stack>
-        <Typography variant="h1">
-          Tracking Progress in Multi-Agent Pathfinding
-        </Typography>
+        <Typography variant="h1">Tracking Progress in Multi-Agent Pathfinding</Typography>
         <Typography variant="subtitle1" color="text.secondary">
           A database for benchmark results in Multi-Agent Pathfinding (MAPF)
         </Typography>

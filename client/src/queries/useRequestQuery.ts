@@ -31,11 +31,9 @@ const requestQuery = (key: string | number) => ({
   enabled: !!key,
 });
 
-export const useRequestData = (key: string | number) =>
-  useQuery(requestQuery(key));
+export const useRequestData = (key: string | number) => useQuery(requestQuery(key));
 
-export const useRequestsData = (keys: string[]) =>
-  useQueries({ queries: map(keys, requestQuery) });
+export const useRequestsData = (keys: string[]) => useQueries({ queries: map(keys, requestQuery) });
 
 export const requestByEmailQueryFn = (email: string) => () =>
   unwrap(api.api.request.email({ email }).get());

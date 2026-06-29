@@ -6,11 +6,8 @@ import {
   useDeleteOngoingSubmissionMutation,
 } from "queries/useOngoingSubmissionQuery";
 
-export const useDeleteOngoingSubmissionByScenarioIndexMutation = (
-  apiKey?: string | number
-) => {
-  const { mutateAsync: deleteEntry } =
-    useDeleteOngoingSubmissionMutation(apiKey ?? "");
+export const useDeleteOngoingSubmissionByScenarioIndexMutation = (apiKey?: string | number) => {
+  const { mutateAsync: deleteEntry } = useDeleteOngoingSubmissionMutation(apiKey ?? "");
   return useMutation({
     mutationKey: ["deleteOngoingSubmission1"],
     mutationFn: async ({

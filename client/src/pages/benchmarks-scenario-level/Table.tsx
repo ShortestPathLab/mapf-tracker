@@ -23,8 +23,7 @@ function MakespanCell({ row }: { row: InstanceSummary }) {
 }
 
 export default function Table() {
-  const state =
-    useStableLocationState<ScenarioLevelLocationState>() as ScenarioLevelLocationState;
+  const state = useStableLocationState<ScenarioLevelLocationState>() as ScenarioLevelLocationState;
   const { scenId } = state;
   const { data, isLoading } = useInstancesByScenario(scenId);
   const navigate = useNavigate();
@@ -161,11 +160,7 @@ export default function Table() {
       columnGroupingModel={[
         {
           groupId: "Lower bound record",
-          children: [
-            { field: "lower_date" },
-            { field: "lower_cost" },
-            { field: "lower_algos" },
-          ],
+          children: [{ field: "lower_date" }, { field: "lower_cost" }, { field: "lower_algos" }],
         },
         {
           groupId: "Solution record",

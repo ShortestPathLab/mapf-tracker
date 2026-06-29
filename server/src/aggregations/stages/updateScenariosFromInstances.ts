@@ -12,11 +12,7 @@ export const isClosedCond = (solution: string, lower: string) => ({
 });
 
 export const isSolvedCond = (solution: string) => ({
-  $and: [
-    { $ne: [solution, null] },
-    { $ne: [solution, Infinity] },
-    { $ne: [solution, 0] },
-  ],
+  $and: [{ $ne: [solution, null] }, { $ne: [solution, Infinity] }, { $ne: [solution, 0] }],
 });
 
 /**
@@ -42,10 +38,7 @@ export const updateScenariosFromInstances = () =>
             $filter: {
               input: "$instances",
               as: "instance",
-              cond: isClosedCond(
-                "$$instance.solution_cost",
-                "$$instance.lower_cost",
-              ),
+              cond: isClosedCond("$$instance.solution_cost", "$$instance.lower_cost"),
             },
           },
         },

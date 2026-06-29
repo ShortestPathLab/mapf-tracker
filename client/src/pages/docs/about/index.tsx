@@ -29,16 +29,14 @@ export function About() {
               {group}
             </Typography>
             <List>
-              {filter(people, { group }).map(
-                ({ name, avatar, affiliation }) => (
-                  <ListItem key={name}>
-                    <ListItemAvatar>
-                      <Avatar alt={name} src={avatar} />
-                    </ListItemAvatar>
-                    <ListItemText primary={`${name}`} secondary={affiliation} />
-                  </ListItem>
-                ),
-              )}
+              {filter(people, { group }).map(({ name, avatar, affiliation }) => (
+                <ListItem key={name}>
+                  <ListItemAvatar>
+                    <Avatar alt={name} src={avatar} />
+                  </ListItemAvatar>
+                  <ListItemText primary={`${name}`} secondary={affiliation} />
+                </ListItem>
+              ))}
             </List>
           </Card>
         ))}

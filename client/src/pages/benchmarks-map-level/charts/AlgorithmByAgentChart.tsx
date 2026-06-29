@@ -1,10 +1,7 @@
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { sample } from "components/charts/sample";
 import { BaseMetric } from "core/metrics";
 import {
@@ -48,8 +45,7 @@ export function AlgorithmByAgentChart({ map: m }: { map: string }) {
   const algorithmSelectorState = useSliceSelector(slices, metrics);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
 
-  const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
-    useAlgorithmsData();
+  const { data: algorithms = [], isLoading: isAlgorithmsLoading } = useAlgorithmsData();
 
   const actualSelected = algorithms.filter(({ _id }) =>
     selected?.length ? selected.includes(_id) : true,
@@ -84,11 +80,7 @@ export function AlgorithmByAgentChart({ map: m }: { map: string }) {
   });
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        slices={[...slices]}
-        metrics={[...metrics]}
-      />
+      <ChartOptions {...algorithmSelectorState} slices={[...slices]} metrics={[...metrics]} />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}

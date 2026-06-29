@@ -14,13 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DetailsList } from "components/DetailsList";
 import { Scroll } from "components/dialog/Scrollbars";
 import { Title } from "components/StickyTitle";
-import {
-  APIConfig,
-  appName,
-  identifier,
-  publisher,
-  version,
-} from "core/config";
+import { APIConfig, appName, identifier, publisher, version } from "core/config";
 import { Layout } from "layout";
 import { capitalize, has, isObject, omit, startCase, toPairs } from "lodash";
 import api, { unwrap } from "hooks/useQuery";
@@ -28,20 +22,14 @@ import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import { paper } from "theme";
 import { tryChain } from "utils/tryChain";
 
-import {
-  ChevronRightRounded,
-  DescriptionRounded,
-} from "@mui-symbols-material/w300";
+import { ChevronRightRounded, DescriptionRounded } from "@mui-symbols-material/w300";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { Dot } from "components/Dot";
 import { useSurface } from "components/surface";
 import { useConnectivity } from "hooks/useConnectivity";
 import { ReactNode } from "react";
 import jsonLang from "react-syntax-highlighter/dist/esm/languages/prism/json";
-import {
-  oneDark,
-  oneLight,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useStickToBottom } from "use-stick-to-bottom";
 
 SyntaxHighlighter.registerLanguage("json", jsonLang);
@@ -122,9 +110,7 @@ function Logs() {
                     <Box
                       component="code"
                       sx={{
-                        color: l.includes("ERROR:")
-                          ? "error.main"
-                          : "text.primary",
+                        color: l.includes("ERROR:") ? "error.main" : "text.primary",
                       }}
                       key={i}
                     >

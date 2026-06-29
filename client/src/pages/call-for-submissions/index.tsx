@@ -46,16 +46,10 @@ export default function Page() {
             </Typography>
             <Grid width={280} gap={2}>
               {filter(pages(), (p) =>
-                ["problem-definition", "how-to-submit"].includes(p.value)
+                ["problem-definition", "how-to-submit"].includes(p.value),
               ).map((page) => (
-                <Tooltip
-                  key={page?.value}
-                  title="Open this article in a new tab"
-                >
-                  <ArticleCard
-                    page={page}
-                    onClick={() => open(`/docs/${page.value}`, "_blank")}
-                  />
+                <Tooltip key={page?.value} title="Open this article in a new tab">
+                  <ArticleCard page={page} onClick={() => open(`/docs/${page.value}`, "_blank")} />
                 </Tooltip>
               ))}
             </Grid>

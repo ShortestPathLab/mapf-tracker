@@ -21,14 +21,11 @@ export type ContactEmailState = {
 
 export default function index() {
   const navigate = useNavigate();
-  const { contactEmail } =
-    useStableLocationState<ContactEmailState>() as ContactEmailState;
+  const { contactEmail } = useStableLocationState<ContactEmailState>() as ContactEmailState;
   const xs = useXs();
   const { open, dialog, close } = useSurface(ConfirmDialog, {
     variant: "modal",
-    title: xs
-      ? "Submission in review"
-      : "You already have submissions in review",
+    title: xs ? "Submission in review" : "You already have submissions in review",
   });
   const [checking, setChecking] = useState(false);
   return (
@@ -56,11 +53,11 @@ export default function index() {
               {},
               {
                 contactEmail: values.email,
-              }
+              },
             );
           const pendingRequests = filter(
             requests,
-            (c) => c.reviewStatus?.status === "not-reviewed"
+            (c) => c.reviewStatus?.status === "not-reviewed",
           );
           if (pendingRequests.length) {
             open({
@@ -70,27 +67,20 @@ export default function index() {
                   {pluralize("request", pendingRequests.length)} from you.
                   {map(
                     pendingRequests,
-                    ({
-                      algorithmName,
-                      requesterName,
-                      requesterAffiliation = "personal",
-                    }) => (
+                    ({ algorithmName, requesterName, requesterAffiliation = "personal" }) => (
                       <Card sx={{ ...paper(0), p: 2 }}>
                         <Item
                           primary={algorithmName}
                           secondary={`${requesterName}, ${requesterAffiliation}`}
                         />
                       </Card>
-                    )
+                    ),
                   )}
-                  You&apos;ll receive an API key once they&apos;re approved.
-                  This usually takes 2-3 days. Do you want to continue to making
-                  a new request?
+                  You&apos;ll receive an API key once they&apos;re approved. This usually takes 2-3
+                  days. Do you want to continue to making a new request?
                 </Stack>
               ),
-              acceptLabel: xs
-                ? "Continue"
-                : "Continue making a new submission request",
+              acceptLabel: xs ? "Continue" : "Continue making a new submission request",
               closeLabel: "Cancel",
               acceptColor: "primary",
               onAccept: () => {

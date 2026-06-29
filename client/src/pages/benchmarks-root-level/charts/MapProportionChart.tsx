@@ -1,14 +1,8 @@
 import { Stack, Typography, useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import {
-  aggregateInstances,
-  getInstanceAggregateProportions,
-} from "components/analysis/reducers";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { aggregateInstances, getInstanceAggregateProportions } from "components/analysis/reducers";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { DetailsList } from "components/DetailsList";
 import { Scroll } from "components/dialog/Scrollbars";
@@ -77,12 +71,7 @@ export function MapProportionChart() {
   const showSummary = width > 430;
   return (
     <Stack sx={{ height: "100%", flex: 1 }} ref={ref}>
-      <ChartOptions
-        {...selectorState}
-        slices={slices}
-        disableAlgorithms
-        disableMetrics
-      />
+      <ChartOptions {...selectorState} slices={slices} disableAlgorithms disableMetrics />
       <Stack direction="row" sx={{ flex: 1, overflow: "hidden" }}>
         <Chart
           isLoading={isLoading}
@@ -125,7 +114,7 @@ export function MapProportionChart() {
                     strokeWidth={stroke ? 2 : 0}
                     strokeOpacity={stroke ? 1 : undefined}
                   />
-                )
+                ),
               )}
               <PolarRadiusAxis
                 stroke={palette.text.primary}
@@ -154,15 +143,9 @@ export function MapProportionChart() {
                 label: startCase(a.type),
                 value: (
                   <Typography variant="body2">
-                    {`${format(
-                      get(a, slice.keySolved)
-                    )} solved and ${format(
-                      get(a, slice.keyClosed)
-                    )} closed${
-                      slice.showAll
-                        ? ` of ${format(get(a, slice.keyAll))}`
-                        : ""
-                    }`}
+                    {`${format(get(a, slice.keySolved))} solved and ${format(
+                      get(a, slice.keyClosed),
+                    )} closed${slice.showAll ? ` of ${format(get(a, slice.keyAll))}` : ""}`}
                   </Typography>
                 ),
               }))}

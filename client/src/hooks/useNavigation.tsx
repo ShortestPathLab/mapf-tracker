@@ -68,8 +68,7 @@ export function useHistoryProvider<T extends object, U extends object>() {
 
   // Has side effects
   useEffect(() => {
-    const currentIndex =
-      location.key && list.length ? findIndex(list, { key: location.key }) : -1;
+    const currentIndex = location.key && list.length ? findIndex(list, { key: location.key }) : -1;
     if (currentIndex !== -1) {
       // Went back
       setOut({
@@ -118,11 +117,7 @@ export const HistoryContext = createContext<{
 
 export function HistoryProvider({ children }: { children: ReactNode }) {
   const history = useHistoryProvider();
-  return (
-    <HistoryContext.Provider value={history}>
-      {children}
-    </HistoryContext.Provider>
-  );
+  return <HistoryContext.Provider value={history}>{children}</HistoryContext.Provider>;
 }
 
 export function useHistory() {
@@ -152,11 +147,7 @@ export function useNavigate() {
           pathname: url,
           search: createSearchParams(
             fromPairs(
-              filter(
-                items,
-                ([k, v]) =>
-                  !startsWith(k, "hidden-") && !isUndefined(v) && !isNull(v),
-              ),
+              filter(items, ([k, v]) => !startsWith(k, "hidden-") && !isUndefined(v) && !isNull(v)),
             ),
           ).toString(),
         },
@@ -172,38 +163,27 @@ export function useNavigate() {
   );
 }
 
-export function useLocationState<
-  T extends object = object,
-  U extends object = object,
->(): T {
+export function useLocationState<T extends object = object, U extends object = object>(): T {
   const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
   const [params] = useSearchParams();
   return useMemo(() => {
     // Merges URL search params, saved and session state; callers parameterise
     // by the shape they expect, so the merged result is surfaced as T.
     return {
-      ...mapValues(fromPairs(Array.from(params.entries())), (v) =>
-        isNaN(+v) ? v : +v,
-      ),
+      ...mapValues(fromPairs(Array.from(params.entries())), (v) => (isNaN(+v) ? v : +v)),
       ...location.state?.saved,
       ...location.state?.session,
     } as T;
   }, [location, params]);
 }
 
-export function useLocationStateSeparate<
-  T extends object = object,
-  U extends object = object,
->() {
+export function useLocationStateSeparate<T extends object = object, U extends object = object>() {
   const location: Location<{ saved?: T; session?: U }> = useRouterLocation();
   const [params] = useSearchParams();
   return useMemo(() => {
     return {
       saved: location.state?.saved ?? {},
-      params:
-        mapValues(fromPairs(Array.from(params.entries())), (v) =>
-          isNaN(+v) ? v : +v,
-        ) ?? {},
+      params: mapValues(fromPairs(Array.from(params.entries())), (v) => (isNaN(+v) ? v : +v)) ?? {},
       session: location.state?.session ?? {},
     };
   }, [location, params]);

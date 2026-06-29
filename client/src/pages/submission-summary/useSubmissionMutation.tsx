@@ -9,11 +9,7 @@ import {
   optimisticQueue,
 } from "queries/useOngoingSubmissionQuery";
 
-export function useSubmissionMutation({
-  apiKey,
-}: {
-  apiKey?: string | number;
-}) {
+export function useSubmissionMutation({ apiKey }: { apiKey?: string | number }) {
   return useMutation({
     mutationFn: async ({
       content,

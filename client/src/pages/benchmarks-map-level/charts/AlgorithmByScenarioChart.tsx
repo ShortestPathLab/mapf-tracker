@@ -1,17 +1,11 @@
 import { useQueries } from "@tanstack/react-query";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { BaseMetric } from "core/metrics";
 import { flatMap, fromPairs, keys, map, startCase, uniq, zip } from "lodash";
 import { CategoryChart } from "components/charts/CompletionByAlgorithmChart";
-import {
-  AggregateAlgorithmQuery,
-  algorithmQuery,
-} from "queries/useAggregateQuery";
+import { AggregateAlgorithmQuery, algorithmQuery } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 
 export const slices = [
@@ -31,8 +25,7 @@ export const metrics = [
 export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
   const algorithmSelectorState = useSliceSelector(slices);
   const { metric, algorithms: selected } = algorithmSelectorState;
-  const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
-    useAlgorithmsData();
+  const { data: algorithms = [], isLoading: isAlgorithmsLoading } = useAlgorithmsData();
 
   const queries = useQueries({
     queries: algorithms.map(({ _id }) =>
@@ -41,7 +34,7 @@ export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
         map: mapId,
         groupBy: "scenarioType",
         filterBy: metric as AggregateAlgorithmQuery["filterBy"],
-      })
+      }),
     ),
   });
   const isLoading = queries.some((q) => q.isLoading) || isAlgorithmsLoading;
@@ -60,11 +53,7 @@ export function AlgorithmByScenarioChart({ map: mapId }: { map: string }) {
   }));
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        metrics={metrics}
-        slices={slices}
-      />
+      <ChartOptions {...algorithmSelectorState} metrics={metrics} slices={slices} />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}

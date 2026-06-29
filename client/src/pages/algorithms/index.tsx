@@ -4,28 +4,14 @@ import { Item } from "components/Item";
 import { Tip } from "components/Tip";
 import { Analysis } from "components/analysis/Analysis";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
-import {
-  Bar,
-  DataGrid,
-  cellRendererChip,
-  cellRendererText,
-} from "components/data-grid";
+import { Bar, DataGrid, cellRendererChip, cellRendererText } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { useSurface } from "components/surface";
 import { AlgorithmDetails } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
 import { DataInspectorLayout, Prose } from "layout";
 import { GalleryLayout } from "layout/GalleryLayout";
-import {
-  capitalize,
-  flatMap,
-  isUndefined,
-  map,
-  max,
-  maxBy,
-  startCase,
-  sum,
-} from "lodash";
+import { capitalize, flatMap, isUndefined, map, max, maxBy, startCase, sum } from "lodash";
 import { AlgorithmDownloadOptions } from "pages/benchmarks-map-level/AlgorithmDownloadOptions";
 import { compareTemplate } from "pages/benchmarks-root-level/analysisTemplate";
 import { useAlgorithmDetailsData } from "queries/useAlgorithmQuery";
@@ -34,12 +20,7 @@ import Description from "./description.md";
 import { inferOptimality } from "./inferOptimality";
 import { formatDate } from "utils/format";
 
-const g = [
-  "instances_solved",
-  "instances_closed",
-  "best_lower",
-  "best_solution",
-];
+const g = ["instances_solved", "instances_closed", "best_lower", "best_solution"];
 
 function Table() {
   const { data: algorithms } = useAlgorithmDetailsData();
@@ -54,11 +35,7 @@ function Table() {
       maxWidth: 360,
       flex: 2,
       renderCell: ({ value, row }) => (
-        <Item
-          icon={<AlgorithmPreview id={row.id} />}
-          primary={value}
-          secondary={row.authors}
-        />
+        <Item icon={<AlgorithmPreview id={row.id} />} primary={value} secondary={row.authors} />
       ),
     },
     {
@@ -68,8 +45,7 @@ function Table() {
       maxWidth: 120,
       flex: 1,
       fold: true,
-      valueGetter: (_, row) =>
-        inferOptimality(row) ? "optimal" : "suboptimal",
+      valueGetter: (_, row) => (inferOptimality(row) ? "optimal" : "suboptimal"),
       renderCell: ({ formattedValue }) =>
         cellRendererChip({ formattedValue: startCase(formattedValue) }),
     },
@@ -91,39 +67,38 @@ function Table() {
         bestLabel,
         totalLabel,
       }): GridColDef<AlgorithmDetails> => ({
-      field: solved,
-      flex: 2,
-      maxWidth: 480,
-      headerName: `Instances ${bestLabel}/${totalLabel}`,
-      sortable: true,
-      type: "number" as const,
-      renderCell: ({ row }) => (
-        <Stack sx={{ gap: 1, width: "100%" }}>
-          <Typography variant="body2" color="text.secondary">
-            {`${formatLargeNumber(
-              row[closed] ?? 0,
-            )} ${bestLabel} / ${formatLargeNumber(
-              row[solved] ?? 0,
-            )} ${totalLabel}`}
-          </Typography>
-          <Bar
-            values={[
-              {
-                value: (row[closed] ?? 0) / total,
-                label: capitalize(bestLabel),
-                color: color,
-              },
-              {
-                value: ((row[solved] ?? 0) - (row[closed] ?? 0)) / total,
-                label: capitalize(totalLabel),
-                color: alpha(color, 0.35),
-              },
-            ]}
-          />
-        </Stack>
-      ),
-      fold: true,
-    })),
+        field: solved,
+        flex: 2,
+        maxWidth: 480,
+        headerName: `Instances ${bestLabel}/${totalLabel}`,
+        sortable: true,
+        type: "number" as const,
+        renderCell: ({ row }) => (
+          <Stack sx={{ gap: 1, width: "100%" }}>
+            <Typography variant="body2" color="text.secondary">
+              {`${formatLargeNumber(row[closed] ?? 0)} ${bestLabel} / ${formatLargeNumber(
+                row[solved] ?? 0,
+              )} ${totalLabel}`}
+            </Typography>
+            <Bar
+              values={[
+                {
+                  value: (row[closed] ?? 0) / total,
+                  label: capitalize(bestLabel),
+                  color: color,
+                },
+                {
+                  value: ((row[solved] ?? 0) - (row[closed] ?? 0)) / total,
+                  label: capitalize(totalLabel),
+                  color: alpha(color, 0.35),
+                },
+              ]}
+            />
+          </Stack>
+        ),
+        fold: true,
+      }),
+    ),
     ...(
       [
         {
@@ -135,31 +110,33 @@ function Table() {
           key: "best_lower",
         },
       ] as const
-    ).map(({ key, label }): GridColDef<AlgorithmDetails> => ({
-      field: key,
-      flex: 2,
-      maxWidth: 240,
-      headerName: `Instances ${label}`,
-      sortable: true,
-      type: "number" as const,
-      renderCell: ({ row }) => (
-        <Stack sx={{ gap: 1, width: "100%" }}>
-          <Typography variant="body2" color="text.secondary">
-            {`${formatLargeNumber(row[key] ?? 0)} ${label}`}
-          </Typography>
-          <Bar
-            values={[
-              {
-                value: (row[key] ?? 0) / total,
-                label: capitalize(label),
-                color: "info.main",
-              },
-            ]}
-          />
-        </Stack>
-      ),
-      fold: true,
-    })),
+    ).map(
+      ({ key, label }): GridColDef<AlgorithmDetails> => ({
+        field: key,
+        flex: 2,
+        maxWidth: 240,
+        headerName: `Instances ${label}`,
+        sortable: true,
+        type: "number" as const,
+        renderCell: ({ row }) => (
+          <Stack sx={{ gap: 1, width: "100%" }}>
+            <Typography variant="body2" color="text.secondary">
+              {`${formatLargeNumber(row[key] ?? 0)} ${label}`}
+            </Typography>
+            <Bar
+              values={[
+                {
+                  value: (row[key] ?? 0) / total,
+                  label: capitalize(label),
+                  color: "info.main",
+                },
+              ]}
+            />
+          </Stack>
+        ),
+        fold: true,
+      }),
+    ),
     {
       flex: 2,
       field: "submittedAt",
@@ -196,21 +173,15 @@ export default function AlgorithmsPage() {
         { value: algorithms?.length, label: "Submission count" },
         {
           label: "Total instances submitted",
-          value: algorithms
-            ? sum(map(algorithms, "instances_solved"))
-            : undefined,
+          value: algorithms ? sum(map(algorithms, "instances_solved")) : undefined,
         },
         {
           label: "Most instances solved",
-          value: algorithms
-            ? maxBy(algorithms, "instances_solved")?.algo_name
-            : undefined,
+          value: algorithms ? maxBy(algorithms, "instances_solved")?.algo_name : undefined,
         },
         {
           label: "Most instances closed",
-          value: algorithms
-            ? maxBy(algorithms, "instances_closed")?.algo_name
-            : undefined,
+          value: algorithms ? maxBy(algorithms, "instances_closed")?.algo_name : undefined,
         },
       ]}
       path={[{ name: "Home", url: "/" }]}
@@ -234,12 +205,8 @@ export default function AlgorithmsPage() {
         }
         actions={
           <>
-            <Button onClick={() => open("/docs/about", "_blank")}>
-              See the docs
-            </Button>
-            <Button onClick={() => open("/docs/about", "_blank")}>
-              Make a submission instead
-            </Button>
+            <Button onClick={() => open("/docs/about", "_blank")}>See the docs</Button>
+            <Button onClick={() => open("/docs/about", "_blank")}>Make a submission instead</Button>
           </>
         }
       />

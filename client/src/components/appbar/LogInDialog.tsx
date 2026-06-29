@@ -25,12 +25,7 @@ function LogInForm({
         <Form>
           <Stack sx={{ gap: 2 }}>
             <Field name="username" label="Username" variant="filled" required />
-            <Field
-              name="password"
-              label="Password"
-              type="password"
-              variant="filled"
-            />
+            <Field name="password" label="Password" type="password" variant="filled" />
             {submit(s)}
           </Stack>
         </Form>

@@ -21,10 +21,8 @@ export default function Table() {
       field: "type_id",
       headerName: "Scenario",
       sortComparator: (a, b, paramA, paramB) => {
-        return paramA.api.getRow(paramA.id).scen_type ===
-          paramB.api.getRow(paramB.id).scen_type
-          ? +paramA.api.getRow(paramA.id).type_id -
-              +paramB.api.getRow(paramB.id).type_id
+        return paramA.api.getRow(paramA.id).scen_type === paramB.api.getRow(paramB.id).scen_type
+          ? +paramA.api.getRow(paramA.id).type_id - +paramB.api.getRow(paramB.id).type_id
           : a.localeCompare(b);
       },
       sortable: true,

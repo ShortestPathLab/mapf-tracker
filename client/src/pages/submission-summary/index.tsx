@@ -1,12 +1,5 @@
 import { CheckRounded, WarningRounded } from "@mui-symbols-material/w300";
-import {
-  alpha,
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { alpha, Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { useSnackbar } from "components/Snackbar";
 import { Title } from "components/StickyTitle";
 import { ConfirmDialog } from "components/dialog/Modal";
@@ -39,14 +32,16 @@ const hintText =
 
 export default function SubmissionSummaryPage() {
   const { apiKey } = useStableLocationState<SubmissionLocationState>();
-  const { data, isLoading: summaryIncomplete, isEmpty: summaryEmpty } =
-    useOngoingSubmissionSummaryQuery(apiKey);
+  const {
+    data,
+    isLoading: summaryIncomplete,
+    isEmpty: summaryEmpty,
+  } = useOngoingSubmissionSummaryQuery(apiKey);
   const { data: apiKeyData, isLoading, error } = useSubmissionKeyQuery(apiKey);
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
-  const someIsPending = !!filter(isPending, (p) => p.status === "pending")
-    .length;
+  const someIsPending = !!filter(isPending, (p) => p.status === "pending").length;
   const { open, close, dialog } = useSurface(ConfirmDialog, {
     title: "Finish submission",
     variant: "modal",
@@ -129,15 +124,17 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Received",
-              count: sumBy(data?.processed?.maps, 'count.total'),
+              count: sumBy(data?.processed?.maps, "count.total"),
             },
             {
               name: "Queued",
-              count: sumBy(data?.processed?.maps, 'count.queued'),
+              count: sumBy(data?.processed?.maps, "count.queued"),
             },
             {
               name: "Run",
-              count: sumBy(data?.processed?.maps, 'count.total') - sumBy(data?.processed?.maps, 'count.queued'),
+              count:
+                sumBy(data?.processed?.maps, "count.total") -
+                sumBy(data?.processed?.maps, "count.queued"),
             },
           ],
         },
@@ -146,15 +143,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Valid",
-              count: sumBy(data?.processed?.maps, 'count.valid'),
+              count: sumBy(data?.processed?.maps, "count.valid"),
             },
             {
               name: "Invalid",
-              count: sumBy(data?.processed?.maps, 'count.invalid'),
+              count: sumBy(data?.processed?.maps, "count.invalid"),
             },
             {
               name: "Duplicate",
-              count: sumBy(data?.processed?.maps, 'count.outdated'),
+              count: sumBy(data?.processed?.maps, "count.outdated"),
             },
           ],
         },

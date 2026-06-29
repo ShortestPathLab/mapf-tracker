@@ -43,10 +43,7 @@ export function BentoLayout({
               ))}
             </TabList>
           </TabBar>
-          <TabPanel
-            value="left"
-            sx={{ display: "flex", gap: 4, flexDirection: "column", p: 0 }}
-          >
+          <TabPanel value="left" sx={{ display: "flex", gap: 4, flexDirection: "column", p: 0 }}>
             {contentLeft}
           </TabPanel>
           <TabPanel

@@ -1,16 +1,8 @@
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { ReactNode } from "react";
 import { SurfaceContentProps } from "./surface";
 
-export function ActionSheet({
-  options,
-  onClose,
-}: ActionSheetProps & SurfaceContentProps) {
+export function ActionSheet({ options, onClose }: ActionSheetProps & SurfaceContentProps) {
   return (
     <List disablePadding sx={{ mt: -2 }}>
       {options?.map?.(({ label, icon, action }, i) => (

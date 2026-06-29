@@ -72,9 +72,7 @@ export function DataInspectorLayout({
               value: "analysis",
               content: (
                 <Box sx={{ px: sm ? 2 : 0, py: 3 }}>
-                  {analysisContent ?? (
-                    <Typography color="text.secondary">No data</Typography>
-                  )}
+                  {analysisContent ?? <Typography color="text.secondary">No data</Typography>}
                 </Box>
               ),
             },
@@ -82,9 +80,7 @@ export function DataInspectorLayout({
               value: "compare",
               content: (
                 <Box sx={{ px: sm ? 2 : 0, py: 3 }}>
-                  {compareContent ?? (
-                    <Typography color="text.secondary"> No data</Typography>
-                  )}
+                  {compareContent ?? <Typography color="text.secondary"> No data</Typography>}
                 </Box>
               ),
             },

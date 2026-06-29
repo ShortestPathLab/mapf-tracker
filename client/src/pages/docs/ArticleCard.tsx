@@ -1,12 +1,4 @@
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardProps,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardActionArea, CardMedia, CardProps, Stack, Typography } from "@mui/material";
 import { paper } from "theme";
 import { Page } from "./pages";
 import BoringAvatar from "boring-avatars";

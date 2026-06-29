@@ -44,10 +44,7 @@ type DownloadMapRow = {
 export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
   .get("/id/:id", ({ params }) => Instance.findById(params.id).then(toJSON))
   .get("/getAlgo/:id", ({ params }) =>
-    Instance.find(
-      { _id: params.id },
-      { lower_algos: 1, solution_algos: 1 },
-    ).then(allToJSON),
+    Instance.find({ _id: params.id }, { lower_algos: 1, solution_algos: 1 }).then(allToJSON),
   )
   .get(
     "/DownloadRow/:id",
@@ -147,10 +144,7 @@ export const instanceRoutes = new Elysia({ prefix: "/api/instance" })
         {
           $addFields: {
             closed: {
-              $and: [
-                { $ne: ["$lower_cost", null] },
-                { $eq: ["$lower_cost", "$solution_cost"] },
-              ],
+              $and: [{ $ne: ["$lower_cost", null] }, { $eq: ["$lower_cost", "$solution_cost"] }],
             },
             empty: { $eq: ["$solution_algos", 0] },
           },

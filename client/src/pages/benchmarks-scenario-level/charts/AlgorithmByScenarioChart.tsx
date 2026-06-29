@@ -2,16 +2,10 @@ import { useQueries } from "@tanstack/react-query";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { Metric } from "core/metrics";
 import { capitalize, fromPairs, keyBy, some, sortBy } from "lodash";
-import {
-  AggregateAlgorithmQuery,
-  algorithmQuery,
-} from "queries/useAggregateQuery";
+import { AggregateAlgorithmQuery, algorithmQuery } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { useScenariosByMap } from "queries/useMapQuery";
 
@@ -37,10 +31,8 @@ const metricToFilterBy: Record<Metric, AggregateAlgorithmQuery["filterBy"]> = {
 export function AlgorithmByScenarioChart({ map }: { map: string }) {
   const algorithmSelectorState = useSliceSelector(slices);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
-    useAlgorithmsData();
-  const { data: scenarios = [], isLoading: isScenariosLoading } =
-    useScenariosByMap(map);
+  const { data: algorithms = [], isLoading: isAlgorithmsLoading } = useAlgorithmsData();
+  const { data: scenarios = [], isLoading: isScenariosLoading } = useScenariosByMap(map);
   const key = (slice ?? slices[0]).key;
   const { data, isLoading } = useQueries({
     queries: (map ? algorithms : []).map((a) =>
@@ -49,30 +41,20 @@ export function AlgorithmByScenarioChart({ map }: { map: string }) {
         map,
         groupBy: "scenario",
         filterBy: metricToFilterBy[metric as Metric],
-      })
+      }),
     ),
     combine: (results) => {
       const dictionaries = results.map((q) => keyBy(q.data, "_id"));
-      const data = (
-        scenarios as { id: string; scen_type: string; type_id: number }[]
-      )
-        .filter((s) =>
-          some(algorithms, (_, i) => (dictionaries[i]?.[s.id]?.result ?? 0) > 0)
-        )
+      const data = (scenarios as { id: string; scen_type: string; type_id: number }[])
+        .filter((s) => some(algorithms, (_, i) => (dictionaries[i]?.[s.id]?.result ?? 0) > 0))
         .map((s) => ({
           name: capitalize(`${s.scen_type}-${s.type_id}`),
           ...fromPairs(
-            algorithms.map((a, i) => [
-              a._id,
-              { [key]: dictionaries[i]?.[s.id]?.result ?? 0 },
-            ])
+            algorithms.map((a, i) => [a._id, { [key]: dictionaries[i]?.[s.id]?.result ?? 0 }]),
           ),
         }));
       return {
-        isLoading:
-          isAlgorithmsLoading ||
-          isScenariosLoading ||
-          some(results, "isLoading"),
+        isLoading: isAlgorithmsLoading || isScenariosLoading || some(results, "isLoading"),
         data: sortBy(data, "name"),
       };
     },

@@ -1,7 +1,4 @@
-import {
-  isClosedCond,
-  isSolvedCond,
-} from "aggregations/stages/updateScenariosFromInstances";
+import { isClosedCond, isSolvedCond } from "aggregations/stages/updateScenariosFromInstances";
 import { Elysia, type Context } from "elysia";
 import { isUndefined, omitBy } from "lodash";
 import { Instance, algorithms, instances, submissions } from "models";
@@ -35,26 +32,22 @@ type AlgorithmMetricResult = {
 } & Partial<Record<(typeof metrics)[number], number>>;
 
 const aggregateOptions = {
-  value: z
-    .enum(["solution_cost", "lower_cost", "suboptimality"])
-    .default("solution_cost"),
+  value: z.enum(["solution_cost", "lower_cost", "suboptimality"]).default("solution_cost"),
   operation: z.enum(["count", "sum", "max", "min", "avg"]).default("count"),
   map: z.string().optional(),
   scenario: z.string().optional(),
   scenarioType: z.string().optional(),
   agents: z.coerce.number().int().nonnegative().optional(),
   filterBy: z.enum(["closed", "solved", "has_lower", "all"]).default("all"),
-  groupBy: z
-    .enum(["scenario", "map", "agents", "scenarioType", "mapType", "all"])
-    .default("all"),
+  groupBy: z.enum(["scenario", "map", "agents", "scenarioType", "mapType", "all"]).default("all"),
 };
 
 type BaseAggregateOptions = z.infer<z.ZodObject<typeof aggregateOptions>>;
 
-type AggregateOptions<
-  Filters extends string = never,
-  Groups extends string = never,
-> = Omit<BaseAggregateOptions, "filterBy" | "groupBy"> & {
+type AggregateOptions<Filters extends string = never, Groups extends string = never> = Omit<
+  BaseAggregateOptions,
+  "filterBy" | "groupBy"
+> & {
   filterBy: BaseAggregateOptions["filterBy"] | Filters;
   groupBy: BaseAggregateOptions["groupBy"] | Groups;
 };
@@ -63,44 +56,41 @@ const createAggregateBase =
   <
     Filters extends string = never,
     Groups extends string = never,
-    U extends AggregateOptions<Filters, Groups> = AggregateOptions<
-      Filters,
-      Groups
-    >,
+    U extends AggregateOptions<Filters, Groups> = AggregateOptions<Filters, Groups>,
   >(
     filters: Record<U["filterBy"], (a: string, b: string) => any>,
     groupBySelectors: Record<U["groupBy"], string | null>,
   ) =>
-    (
-      { map, scenario, agents, groupBy, operation: o, value: v, filterBy: f }: U,
-      p: AggregateBuilder = new AggregateBuilder(),
-    ) =>
-      p
-        .match(
-          omitBy(
-            {
-              map_id: map ? new Types.ObjectId(map) : undefined,
-              scen_id: scenario ? new Types.ObjectId(scenario) : undefined,
-              agents,
-            },
-            isUndefined,
-          ),
-        )
-        .group({
-          _id: groupBySelectors[groupBy],
-          all: operations[o](undefined, v === "suboptimality" ? 1 : `$${v}`),
-          result: operations[o](
-            filters[f]("$solution_cost", "$lower_cost"),
-            v === "suboptimality"
-              ? {
+  (
+    { map, scenario, agents, groupBy, operation: o, value: v, filterBy: f }: U,
+    p: AggregateBuilder = new AggregateBuilder(),
+  ) =>
+    p
+      .match(
+        omitBy(
+          {
+            map_id: map ? new Types.ObjectId(map) : undefined,
+            scen_id: scenario ? new Types.ObjectId(scenario) : undefined,
+            agents,
+          },
+          isUndefined,
+        ),
+      )
+      .group({
+        _id: groupBySelectors[groupBy],
+        all: operations[o](undefined, v === "suboptimality" ? 1 : `$${v}`),
+        result: operations[o](
+          filters[f]("$solution_cost", "$lower_cost"),
+          v === "suboptimality"
+            ? {
                 $divide: [
                   { $subtract: ["$solution_cost", "$lower_cost"] },
                   { $max: ["$lower_cost", 1] },
                 ],
               }
-              : `$${v}`,
-          ),
-        });
+            : `$${v}`,
+        ),
+      });
 
 // Inputs that were validated by zod over {...params, ...query} now do the same
 // inside each handler so defaults/coercion are preserved. Cache keys include
@@ -110,9 +100,7 @@ const withParamsAndQuery = (ctx: Context) => ({ ...ctx.params, ...ctx.query });
 const submissionAggregateOptions = z.object({
   ...aggregateOptions,
   algorithm: z.string().optional(),
-  filterBy: aggregateOptions.filterBy.or(
-    z.enum(["best_lower", "best_solution"]),
-  ),
+  filterBy: aggregateOptions.filterBy.or(z.enum(["best_lower", "best_solution"])),
   groupBy: aggregateOptions.groupBy.or(z.enum(["algorithm"])),
 });
 
@@ -134,14 +122,7 @@ const submissionAggregateCacheKey = (ctx: Context) =>
 // scan. Filtered (map/scenario) combos are index-served and cheap, so they
 // stay lazy.
 const aggregatePrecompute = async (): Promise<Partial<Context>[]> => {
-  const groupBys = [
-    "all",
-    "agents",
-    "map",
-    "mapType",
-    "scenario",
-    "scenarioType",
-  ] as const;
+  const groupBys = ["all", "agents", "map", "mapType", "scenario", "scenarioType"] as const;
   const filterBys = ["all", "solved", "closed", "has_lower"] as const;
   return groupBys.flatMap((groupBy) =>
     filterBys.map((filterBy) => ({
@@ -183,9 +164,7 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
     "/series/instances/:series",
     instances.aggregate<SeriesResult[]>(
       (ctx, p) => {
-        const { series: s } = z
-          .object({ series: z.enum(series) })
-          .parse(ctx.params);
+        const { series: s } = z.object({ series: z.enum(series) }).parse(ctx.params);
         return p
           .match({ solution_date: { $ne: null } })
           .group({
@@ -233,9 +212,7 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
   );
 
 function submissionAggregate(ctx: Context, p: AggregateBuilder) {
-  const { algorithm, ...rest } = submissionAggregateOptions.parse(
-    withParamsAndQuery(ctx),
-  );
+  const { algorithm, ...rest } = submissionAggregateOptions.parse(withParamsAndQuery(ctx));
   return p
     .match(
       omitBy(
@@ -248,21 +225,16 @@ function submissionAggregate(ctx: Context, p: AggregateBuilder) {
     .mergeAggregationWithCurrent(
       rest.value === "suboptimality"
         ? [
-          new AggregateBuilder()
-            .lookup(
-              Instance.collection.collectionName,
-              "instance_id",
-              "_id",
-              "instance",
-            )
-            .addFields({
-              lower_cost: { $first: "$instance.lower_cost" },
-            })
-            .project({
-              instance: 0,
-            })
-            .build(),
-        ]
+            new AggregateBuilder()
+              .lookup(Instance.collection.collectionName, "instance_id", "_id", "instance")
+              .addFields({
+                lower_cost: { $first: "$instance.lower_cost" },
+              })
+              .project({
+                instance: 0,
+              })
+              .build(),
+          ]
         : [],
     )
     .mergeAggregationWithCurrent([

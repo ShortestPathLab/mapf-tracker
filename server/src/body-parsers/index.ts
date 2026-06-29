@@ -6,7 +6,7 @@ const createParser = <T extends (input: string) => Promise<unknown>>(
   name: string,
   predicate: (req: Request) => boolean,
   callback: T,
-  encoding: BufferEncoding = "utf8"
+  encoding: BufferEncoding = "utf8",
 ): ((req: Request, res: Response, next: NextFunction) => void) => {
   return (req, res, next) => {
     if (predicate(req)) {
@@ -32,11 +32,7 @@ const createParser = <T extends (input: string) => Promise<unknown>>(
 export const yamlParser = createParser(
   "yaml",
   (req) => !!(req.is("application/yaml") || req.is("application/json")),
-  parseYamlAsync
+  parseYamlAsync,
 );
 
-export const csvParser = createParser(
-  "csv",
-  (req) => !!req.is("text/csv"),
-  parseCsvAsync
-);
+export const csvParser = createParser("csv", (req) => !!req.is("text/csv"), parseCsvAsync);

@@ -34,11 +34,7 @@ export default function index() {
                   <ArticleCard
                     key={page?.label}
                     page={page}
-                    onClick={
-                      page?.value
-                        ? () => navigate(`/docs/${page?.value}`)
-                        : undefined
-                    }
+                    onClick={page?.value ? () => navigate(`/docs/${page?.value}`) : undefined}
                   />
                 ))}
               </Grid>

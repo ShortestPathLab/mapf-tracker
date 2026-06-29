@@ -18,10 +18,7 @@ import { useSurface } from "components/surface/useSurface";
 import { useNavigate } from "hooks/useNavigation";
 import { Layout } from "layout";
 import { bindTrigger } from "material-ui-popup-state";
-import {
-  requestBasic,
-  RequestWithReviewOutcome,
-} from "queries/useRequestsQuery";
+import { requestBasic, RequestWithReviewOutcome } from "queries/useRequestsQuery";
 import { useCreateSubmissionKey } from "queries/useSubmissionKeyQuery";
 import { ConfirmNotifyDialog } from "./ConfirmNotifyDialog";
 import { ReviewRequestDialog } from "./ReviewRequestDialog";
@@ -33,19 +30,13 @@ export default function index() {
   const { data: requests, isLoading } = requestBasic.useAll();
   const { mutateAsync: deleteOne } = requestBasic.useDelete();
   const { mutateAsync: createKey } = useCreateSubmissionKey();
-  const { open: showDetails, dialog: detailsDialog } = useSurface(
-    ReviewRequestDialog,
-    {
-      title: "Review submission key request",
-      slotProps: { paper: { sx: { maxWidth: "min(max(70vw, 640px), 100%)" } } },
-    },
-  );
-  const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
-    ConfirmNotifyDialog,
-    {
-      title: "Respond to request",
-    },
-  );
+  const { open: showDetails, dialog: detailsDialog } = useSurface(ReviewRequestDialog, {
+    title: "Review submission key request",
+    slotProps: { paper: { sx: { maxWidth: "min(max(70vw, 640px), 100%)" } } },
+  });
+  const { open: showConfirmation, dialog: confirmationDialog } = useSurface(ConfirmNotifyDialog, {
+    title: "Respond to request",
+  });
 
   const actions = useDataGridActions<RequestWithReviewOutcome>({
     menuItems: [
@@ -133,9 +124,7 @@ export default function index() {
       headerName: "Algorithm",
       sortable: false,
       width: 220,
-      renderCell: ({ row }) => (
-        <Item secondary={row.id?.slice?.(-8)} primary={row.algorithmName} />
-      ),
+      renderCell: ({ row }) => <Item secondary={row.id?.slice?.(-8)} primary={row.algorithmName} />,
     },
     {
       fold: true,

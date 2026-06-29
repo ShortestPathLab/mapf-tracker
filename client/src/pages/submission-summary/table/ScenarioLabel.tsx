@@ -6,13 +6,7 @@ import { PreviewCollection } from "components/PreviewCollection";
 import pluralize from "pluralize";
 import { useScenario } from "queries/useMapQuery";
 
-export function ScenarioLabel({
-  scenarioId,
-  count,
-}: {
-  scenarioId: string;
-  count?: number;
-}) {
+export function ScenarioLabel({ scenarioId, count }: { scenarioId: string; count?: number }) {
   const { data } = useScenario(scenarioId);
   return (
     <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
@@ -21,9 +15,7 @@ export function ScenarioLabel({
       </Stack>
       <Item
         primary={`${startCase(data?.scen_type ?? "-")}-${data?.type_id ?? "-"}`}
-        secondary={
-          isUndefined(count) ? undefined : pluralize("item", count, true)
-        }
+        secondary={isUndefined(count) ? undefined : pluralize("item", count, true)}
       />
     </Stack>
   );

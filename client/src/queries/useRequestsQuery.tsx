@@ -30,40 +30,27 @@ export const requestBasic = {
 
 export function useRequestsUpdateMutation() {
   return useMutation(
-    ({
-      id: key,
-      value: values,
-    }: {
-      id: string;
-      value: Partial<RequestWithReviewOutcome>;
-    }) => api.api.request.update({ id: key }).post(values),
+    ({ id: key, value: values }: { id: string; value: Partial<RequestWithReviewOutcome> }) =>
+      api.api.request.update({ id: key }).post(values),
     {
       mutationKey: ["requestsUpdate"],
       onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
-    }
+    },
   );
 }
 export function useRequestsUpdateElevatedMutation() {
   return useMutation(
-    ({
-      id: key,
-      value: values,
-    }: {
-      id: string;
-      value: Partial<RequestWithReviewOutcome>;
-    }) => api.api.request.updateElevated({ id: key }).post(values),
+    ({ id: key, value: values }: { id: string; value: Partial<RequestWithReviewOutcome> }) =>
+      api.api.request.updateElevated({ id: key }).post(values),
     {
       mutationKey: ["requestsUpdateElevated"],
       onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
-    }
+    },
   );
 }
 export function useSendOutcomeMutation() {
-  return useMutation(
-    (id: string) => api.api.user.notify.post({ requestId: id }),
-    {
-      mutationKey: ["requestsSendOutcome"],
-      onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
-    }
-  );
+  return useMutation((id: string) => api.api.user.notify.post({ requestId: id }), {
+    mutationKey: ["requestsSendOutcome"],
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
+  });
 }

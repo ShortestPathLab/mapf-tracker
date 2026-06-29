@@ -10,15 +10,11 @@ import { stage as updateInstances } from "../updateInstancesFromSubmissions";
 
 const getSelfIdentifiedCollection = (name: string) => {
   const [a1] = name.split("-");
-  return ["empty", "maze", "random", "room", "warehouse"].includes(toLower(a1))
-    ? a1
-    : undefined;
+  return ["empty", "maze", "random", "room", "warehouse"].includes(toLower(a1)) ? a1 : undefined;
 };
 
 const getCityCollection = (name: string) =>
-  some(map(["berlin", "boston", "paris"], (s) => name.startsWith(s)))
-    ? "city"
-    : undefined;
+  some(map(["berlin", "boston", "paris"], (s) => name.startsWith(s))) ? "city" : undefined;
 
 function getScenMeta(file: string) {
   // Example: [1, 'even', 'maze-32-32-2']
@@ -81,9 +77,9 @@ async function reset() {
             map_id: mapId,
             scen_id: scenId,
             agents: i + 1,
-          }).save()
+          }).save(),
         );
-      }
+      },
     );
   }
 }

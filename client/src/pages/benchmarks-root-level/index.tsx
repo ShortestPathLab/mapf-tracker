@@ -18,15 +18,12 @@ import { analysisTemplate, compareTemplate } from "./analysisTemplate";
 import Description from "./description.md";
 import References from "./references.md";
 
-const render = memoize(
-  (showHeader: boolean) =>
-    ({ header, children }: LayoutRenderProps) => (
-      <>
-        {showHeader ? <IndexHeader in={showHeader} /> : header}
-        {children}
-      </>
-    )
-);
+const render = memoize((showHeader: boolean) => ({ header, children }: LayoutRenderProps) => (
+  <>
+    {showHeader ? <IndexHeader in={showHeader} /> : header}
+    {children}
+  </>
+));
 
 export default function Page({ showHeader }: { showHeader?: boolean }) {
   const { open: openDialog, dialog } = useSurface(DownloadOptions, {
@@ -52,15 +49,11 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
         { label: "Scenario count", value: scenarioCount.toLocaleString() },
         {
           label: "Instances solved",
-          value: formatPercentage(
-            (solved?.result ?? NaN) / (solved?.all ?? NaN)
-          ),
+          value: formatPercentage((solved?.result ?? NaN) / (solved?.all ?? NaN)),
         },
         {
           label: "Instances closed",
-          value: formatPercentage(
-            (closed?.result ?? NaN) / (solved?.all ?? NaN)
-          ),
+          value: formatPercentage((closed?.result ?? NaN) / (solved?.all ?? NaN)),
         },
         {
           label: "References",
@@ -86,18 +79,12 @@ export default function Page({ showHeader }: { showHeader?: boolean }) {
         title={<>Browse MAPF benchmarks</>}
         description={
           <>
-            <Prose
-              sx={{ fontSize: (t) => t.typography.body2.fontSize, my: -2 }}
-            >
+            <Prose sx={{ fontSize: (t) => t.typography.body2.fontSize, my: -2 }}>
               <Description />
             </Prose>
           </>
         }
-        actions={
-          <Button onClick={() => open("/docs/about", "_blank")}>
-            See the docs
-          </Button>
-        }
+        actions={<Button onClick={() => open("/docs/about", "_blank")}>See the docs</Button>}
       />
       <Stack sx={{ gap: 4 }}>
         <DataInspectorLayout

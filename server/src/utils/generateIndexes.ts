@@ -9,28 +9,25 @@ import { QueryOptions } from "mongoose";
 
 const opts: QueryOptions = {
   batchSize: Number.MAX_SAFE_INTEGER,
-  lean: true
-}
+  lean: true,
+};
 
 export const g = async () => {
   log.info("Generating indexes for the first time");
   await connectToDatabase();
-  const maps = await Map.find({}, { _id: 1, map_name: 1 }, opts)
-  const scenarios = await Scenario.find(
-    {},
-    { _id: 1, map_id: 1, type_id: 1, scen_type: 1 }, opts
-  )
+  const maps = await Map.find({}, { _id: 1, map_name: 1 }, opts);
+  const scenarios = await Scenario.find({}, { _id: 1, map_id: 1, type_id: 1, scen_type: 1 }, opts);
   const instances = await Instance.find(
     {},
-    { _id: 1, scen_id: 1, solution_cost: 1, lower_cost: 1 }, opts
-  )
+    { _id: 1, scen_id: 1, solution_cost: 1, lower_cost: 1 },
+    opts,
+  );
   log.info("Indexes generated");
   return {
     maps: keyBy(maps, "_id"),
     scenarios: keyBy(scenarios, "_id"),
     instances: keyBy(instances, "_id"),
   };
-
 };
 
 export const [generateIndexes, generateIndexesCache] = createCache(g);

@@ -13,7 +13,7 @@ export const model = createModel("version", schema);
 
 export const get = memoize(
   async (key: string) => (await model.findOne({ _id: key }))?.version ?? 0,
-  { cache: new ExpiryMap(1000 * 60) }
+  { cache: new ExpiryMap(1000 * 60) },
 );
 
 export const set = async (key: string, version: number) => {

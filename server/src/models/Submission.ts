@@ -32,21 +32,12 @@ const schema = createSchema(
     scenario_type: { type: String },
     scenario_type_id: { type: Number },
   },
-  { versionKey: false }
+  { versionKey: false },
 );
 
-schema.index(
-  { algo_id: 1, map_id: 1, scen_id: 1, agents: 1 },
-  { unique: true }
-);
-schema.index(
-  { scen_id: 1, agents: 1 },
-  { unique: true }
-);
-schema.index(
-  { map_id: 1, scen_id: 1, agents: 1, solution_cost: 1 },
-  { unique: false }
-);
+schema.index({ algo_id: 1, map_id: 1, scen_id: 1, agents: 1 }, { unique: true });
+schema.index({ scen_id: 1, agents: 1 }, { unique: true });
+schema.index({ map_id: 1, scen_id: 1, agents: 1, solution_cost: 1 }, { unique: false });
 
 schema.index({ instance_id: 1, solution_cost: 1 }, { unique: false });
 

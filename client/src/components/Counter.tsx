@@ -7,7 +7,6 @@ export function Counter({ start }: { start: number }) {
   const [time, tick] = useReducer(() => now(), now());
   useHarmonicIntervalFn(tick, 1000);
   return (
-    formatDuration(intervalToDuration({ start, end: max([start, time]) ?? start })) ||
-    "0 seconds"
+    formatDuration(intervalToDuration({ start, end: max([start, time]) ?? start })) || "0 seconds"
   );
 }

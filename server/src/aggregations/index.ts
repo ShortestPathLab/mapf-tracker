@@ -11,11 +11,7 @@ import { stage as updateSubmissionBestFlags } from "./stages/updateSubmissionBes
 import { stage as precomputeQueries } from "./stages/precomputeQueries";
 import { stage as generateIndexableFields } from "./stages/generateIndexableFields";
 import { stage as invalidateQueryCache } from "./stages/invalidateQueryCache";
-import {
-  mockStageA,
-  mockStageB,
-  mockStageCExpectError,
-} from "./stages/mockStages";
+import { mockStageA, mockStageB, mockStageCExpectError } from "./stages/mockStages";
 
 export const stages = {
   reset,

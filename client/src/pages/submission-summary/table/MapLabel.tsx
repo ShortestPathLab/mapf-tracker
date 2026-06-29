@@ -13,12 +13,7 @@ export function MapLabel({ mapId, count }: { mapId: string; count?: number }) {
     <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
       <Stack sx={{ width: 48, pt: 1 }}>
         <PreviewCollection
-          preview={
-            <PreviewCard
-              map={mapId}
-              palette={{ obstacle: theme.palette.text.primary }}
-            />
-          }
+          preview={<PreviewCard map={mapId} palette={{ obstacle: theme.palette.text.primary }} />}
         />
       </Stack>
       <Item

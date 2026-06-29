@@ -68,8 +68,7 @@ export function cached<Fn extends (ctx: any) => Promise<unknown>>(
     cache,
     // Stringify first: the Elysia context's params/body are not always
     // structurally hashable by object-hash directly.
-    cacheKey: ([ctx]: any[]) =>
-      hash(JSON.stringify(cacheKey(ctx as Context) ?? "")),
+    cacheKey: ([ctx]: any[]) => hash(JSON.stringify(cacheKey(ctx as Context) ?? "")),
   });
   // Elysia statically analyses the handler source to decide which context
   // fields to parse. The memoized fn hides that, so explicitly reference
@@ -102,13 +101,12 @@ export const queryClient = <T>(model: Model<T>) => {
   return {
     /** A `model.find`-backed, cached Elysia handler. */
     query: (
-      buildQuery: (
-        ctx: Context,
-      ) => [FilterQuery<T>] | [FilterQuery<T>, ProjectionType<T>] = () => [{}],
-      handler: (
-        docs: (Document<unknown, {}, T> & T)[],
-        ctx: Context,
-      ) => Promise<T> = async (docs) => docs as unknown as T,
+      buildQuery: (ctx: Context) => [FilterQuery<T>] | [FilterQuery<T>, ProjectionType<T>] = () => [
+        {},
+      ],
+      handler: (docs: (Document<unknown, {}, T> & T)[], ctx: Context) => Promise<T> = async (
+        docs,
+      ) => docs as unknown as T,
       { watch = [model], ...rest }: CachedOptions = {},
     ) =>
       cached(
@@ -122,10 +120,7 @@ export const queryClient = <T>(model: Model<T>) => {
 
     /** A `model.aggregate`-backed, cached (optionally disk-cached) handler. */
     aggregate: <R = any>(
-      agg: (ctx: Context, pipeline: AggregateBuilder) => AggregateBuilder = (
-        _,
-        p,
-      ) => p,
+      agg: (ctx: Context, pipeline: AggregateBuilder) => AggregateBuilder = (_, p) => p,
       {
         name,
         handler = async (docs) => docs as R,
@@ -136,20 +131,17 @@ export const queryClient = <T>(model: Model<T>) => {
       }: AggregateOptions<R> = {},
     ) => {
       const run = async (ctx: Context): Promise<R> => {
-        const docs = await model.aggregate(
-          agg(ctx, new AggregateBuilder()).build(),
-        );
+        const docs = await model.aggregate(agg(ctx, new AggregateBuilder()).build());
         return handler(docs, ctx);
       };
       const f = name
         ? (diskCached(`aggregate-${model.modelName}-${name}`, run, {
-          resolver: (ctx: Context) => JSON.stringify(cacheKey(ctx) ?? ""),
-          invalidationKey: () => get("diskCache"),
-          precompute: precompute
-            ? async () =>
-              (await precompute()).map((ctx) => [ctx as Context])
-            : undefined,
-        }) as (ctx: Context) => Promise<R>)
+            resolver: (ctx: Context) => JSON.stringify(cacheKey(ctx) ?? ""),
+            invalidationKey: () => get("diskCache"),
+            precompute: precompute
+              ? async () => (await precompute()).map((ctx) => [ctx as Context])
+              : undefined,
+          }) as (ctx: Context) => Promise<R>)
         : run;
       return cached(f, { watch, cacheKey, ...rest });
     },
@@ -161,10 +153,7 @@ export const queryClient = <T>(model: Model<T>) => {
      * applied on this micro-app so it reliably guards every route here
      * (including those added by `extend`) regardless of Elysia hook scoping.
      */
-    basic: (
-      beforeHandle?: (ctx: Context) => unknown,
-      extend?: (app: any) => any,
-    ) => {
+    basic: (beforeHandle?: (ctx: Context) => unknown, extend?: (app: any) => any) => {
       const base = new Elysia();
       const app = (beforeHandle ? base.onBeforeHandle(beforeHandle) : base)
         .get("/", () => model.find().then(allToJSON))

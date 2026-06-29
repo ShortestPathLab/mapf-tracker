@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Button,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Stack,
-} from "@mui/material";
+import { Avatar, Button, ListItem, ListItemAvatar, ListItemText, Stack } from "@mui/material";
 import { DialogContentProps } from "hooks/useDialog";
 import { useSnackbar } from "../Snackbar";
 import { paper } from "theme";

@@ -39,12 +39,7 @@ const RenderSm = ({
   );
 };
 
-function Sidebar({
-  cover,
-  header,
-  items,
-  sidebarWidth,
-}: GalleryLayoutProps & LayoutRenderProps) {
+function Sidebar({ cover, header, items, sidebarWidth }: GalleryLayoutProps & LayoutRenderProps) {
   return (
     <Stack
       sx={{
@@ -77,11 +72,7 @@ function Sidebar({
             invert
             key={i}
             primary={
-              !isUndefined(value)
-                ? isNumber(value)
-                  ? value.toLocaleString()
-                  : value
-                : "--"
+              !isUndefined(value) ? (isNumber(value) ? value.toLocaleString() : value) : "--"
             }
             secondary={label}
           />
@@ -100,12 +91,7 @@ const RenderLg = ({
   actions,
 }: LayoutRenderProps & GalleryLayoutProps) => (
   <Stack direction="row" sx={{ gap: 4 }}>
-    <Sidebar
-      cover={cover}
-      header={header}
-      items={items}
-      sidebarWidth={sidebarWidth}
-    />
+    <Sidebar cover={cover} header={header} items={items} sidebarWidth={sidebarWidth} />
     <Stack sx={{ gap: 4, flex: 1, minWidth: 0 }}>
       {!!actions?.options?.length && <ActionBar {...actions} />}
       {children}

@@ -50,10 +50,7 @@ export function BottomBar() {
   const { setEnabled } = useBottomBar();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const selected = find(
-    bottomBarPaths,
-    (c) => !!matchPath(`${c?.url}/*`, pathname)
-  )?.url;
+  const selected = find(bottomBarPaths, (c) => !!matchPath(`${c?.url}/*`, pathname))?.url;
   useEffect(() => {
     setEnabled?.(!!selected);
   }, [setEnabled, selected]);

@@ -32,13 +32,7 @@ export function SolutionVisualisation({
   );
 }
 
-export function MapVisualisation({
-  mapId,
-  scenarioId,
-}: {
-  mapId?: string;
-  scenarioId?: string;
-}) {
+export function MapVisualisation({ mapId, scenarioId }: { mapId?: string; scenarioId?: string }) {
   const { result, optimisedMap, size, isLoading } = useSolution({
     mapId,
     scenarioId,

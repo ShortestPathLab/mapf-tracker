@@ -35,11 +35,7 @@ export function Analysis({ template }: { template: Template[] }) {
       {map(template, ({ variants, name }) => (
         <Stack direction="column">
           {name && (
-            <Typography
-              sx={{ p: 2, py: 1 }}
-              variant="overline"
-              color="text.secondary"
-            >
+            <Typography sx={{ p: 2, py: 1 }} variant="overline" color="text.secondary">
               {name}
             </Typography>
           )}

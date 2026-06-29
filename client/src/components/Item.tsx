@@ -37,19 +37,13 @@ export function Item({
         primary={
           primary && (
             <Typography variant="body1">
-              {isNull(primary) || isUndefined(primary) || isNaN(primary)
-                ? "-"
-                : primary}
+              {isNull(primary) || isUndefined(primary) || isNaN(primary) ? "-" : primary}
             </Typography>
           )
         }
         secondary={
           secondary && (
-            <Typography
-              variant={sm ? "body1" : "body2"}
-              fontSize="0.875rem"
-              color="text.secondary"
-            >
+            <Typography variant={sm ? "body1" : "body2"} fontSize="0.875rem" color="text.secondary">
               {secondary}
             </Typography>
           )

@@ -27,10 +27,7 @@ export const updateSubmissionBestFlags = async () =>
               $and: [
                 { $ne: ["$solution_cost", null] },
                 {
-                  $eq: [
-                    "$solution_cost",
-                    { $first: "$instance.solution_cost" },
-                  ],
+                  $eq: ["$solution_cost", { $first: "$instance.solution_cost" }],
                 },
               ],
             }),
@@ -50,8 +47,8 @@ export const updateSubmissionBestFlags = async () =>
             into: Submission.collection.collectionName,
           },
         },
-      ])
-    )
+      ]),
+    ),
   );
 
 export const stage: PipelineStage = {

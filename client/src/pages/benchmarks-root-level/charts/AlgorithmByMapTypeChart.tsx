@@ -1,10 +1,7 @@
 import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions, { stateOfTheArt } from "components/analysis/ChartOptions";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { metrics } from "core/metrics";
 import { capitalize, chain, filter, find, keyBy, map } from "lodash";
@@ -50,20 +47,15 @@ export const slices = [
 export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
   const { palette } = useTheme();
   const { data: algorithms = [] } = useAlgorithmsData();
-  const algorithmSelectorState = useSliceSelector(
-    slices,
-    undefined,
-    algorithm ? [algorithm] : []
-  );
-  const { metric, slice: selectedSlice, algorithms: selected } =
-    algorithmSelectorState;
+  const algorithmSelectorState = useSliceSelector(slices, undefined, algorithm ? [algorithm] : []);
+  const { metric, slice: selectedSlice, algorithms: selected } = algorithmSelectorState;
   const slice = selectedSlice ?? slices[0];
   const { data, isLoading } = useAlgorithmChartData(
     "mapType",
     selected.length
       ? selected.filter((a) => a !== stateOfTheArt._id)
       : algorithms.map((c) => c._id),
-    find(metrics, (m) => m.key === metric)?.keyAlt
+    find(metrics, (m) => m.key === metric)?.keyAlt,
   );
 
   return (
@@ -87,7 +79,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
             {map(
               filter(
                 [...algorithms, stateOfTheArt],
-                (a) => !selected.length || selected.includes(a._id)
+                (a) => !selected.length || selected.includes(a._id),
               ),
               (algorithm, i) => (
                 <Radar
@@ -112,7 +104,7 @@ export function AlgorithmByMapTypeChart({ algorithm }: { algorithm?: string }) {
                         stroke: toneBy(palette.mode, i),
                       })}
                 />
-              )
+              ),
             )}
             <PolarRadiusAxis
               domain={slice.domain as AxisDomain}

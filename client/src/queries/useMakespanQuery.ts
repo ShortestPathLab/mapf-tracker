@@ -6,18 +6,13 @@ export type MakespanOptions = {
   solutionPath?: string;
 };
 
-export const useMakespanData = ({
-  instance,
-  solutionPath,
-}: MakespanOptions = {}) => {
+export const useMakespanData = ({ instance, solutionPath }: MakespanOptions = {}) => {
   const key = ["instance-makespan", instance, solutionPath];
   return useQuery({
     queryKey: key,
     staleTime: Infinity,
     queryFn: ({ signal }) =>
-      unwrap(
-        api.api.map.makespan.post({ instance, solutionPath, $fetch: { signal } })
-      ),
+      unwrap(api.api.map.makespan.post({ instance, solutionPath, $fetch: { signal } })),
     enabled: !!(instance || solutionPath),
   });
 };

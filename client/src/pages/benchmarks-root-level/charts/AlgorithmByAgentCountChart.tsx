@@ -1,10 +1,7 @@
 import { Chart } from "components/analysis/Chart";
 import ChartOptions, { stateOfTheArt } from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { metrics } from "core/metrics";
 import { capitalize, chain, find, includes, keyBy } from "lodash";
@@ -29,18 +26,10 @@ export const slices = [
   },
 ] satisfies Slice[];
 
-export function AlgorithmByAgentCountChart({
-  algorithm,
-}: {
-  algorithm?: string;
-}) {
+export function AlgorithmByAgentCountChart({ algorithm }: { algorithm?: string }) {
   const { data: algorithms = [] } = useAlgorithmsData();
 
-  const algorithmSelectorState = useSliceSelector(
-    slices,
-    undefined,
-    algorithm ? [algorithm] : [],
-  );
+  const algorithmSelectorState = useSliceSelector(slices, undefined, algorithm ? [algorithm] : []);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useAlgorithmChartData(
     "agents",
@@ -51,12 +40,7 @@ export function AlgorithmByAgentCountChart({
   );
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        stateOfTheArt
-        slices={slices}
-        slice={slice}
-      />
+      <ChartOptions {...algorithmSelectorState} stateOfTheArt slices={slices} slice={slice} />
       <Chart
         isLoading={isLoading}
         style={{ flex: 1 }}

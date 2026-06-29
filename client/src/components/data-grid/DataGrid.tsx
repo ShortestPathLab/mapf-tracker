@@ -1,12 +1,5 @@
 import { SearchRounded } from "@mui-symbols-material/w300";
-import {
-  Box,
-  ButtonBase,
-  CircularProgress,
-  InputAdornment,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Box, ButtonBase, CircularProgress, InputAdornment, Stack, TextField } from "@mui/material";
 import {
   GridRow,
   GridRowProps,
@@ -20,14 +13,7 @@ import { useXs } from "components/dialog/useSmallDisplay";
 import Fuse from "fuse.js";
 import { useTop } from "layout/TabBar";
 import { debounce, filter, find, get, join, map, throttle } from "lodash";
-import {
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ReactNode, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useCss } from "react-use";
 import { setFromEvent } from "utils/set";
 
@@ -36,11 +22,7 @@ import { createContext } from "react";
 import { useLocationState } from "hooks/useNavigation";
 import { paper } from "theme";
 
-function smoothScrollTo(
-  element: HTMLElement,
-  yPosition: number,
-  duration: number,
-): void {
+function smoothScrollTo(element: HTMLElement, yPosition: number, duration: number): void {
   const startY = element.scrollTop;
   const difference = yPosition - startY;
   let startTime: number | null = null;
@@ -100,8 +82,7 @@ function ButtonRow(props: GridRowProps) {
       const rootOffset = dataGrid.getBoundingClientRect().top;
       const offset = (props.offsetTop ?? 0) + rootOffset;
       setVisible(
-        offset + props.dimensions.rowHeight + padding > 0 &&
-          offset - padding < window.innerHeight,
+        offset + props.dimensions.rowHeight + padding > 0 && offset - padding < window.innerHeight,
       );
     }, 150);
     addEventListener("resize", listener, {
@@ -156,9 +137,7 @@ function useDebouncedInput(defaultValue: string = "") {
 
 const PAGE_SIZE = 100;
 
-export default function DataGrid<
-  T extends GridValidRowModel = { [K: string | symbol]: unknown },
->({
+export default function DataGrid<T extends GridValidRowModel = { [K: string | symbol]: unknown }>({
   clickable,
   columns,
   rows,
@@ -318,18 +297,15 @@ export default function DataGrid<
                 },
                 ...rest.sx,
               }}
-              columns={map(
-                sm ? filter(columns, (c) => !c.fold) : columns,
-                (c) => ({
-                  type: "string",
-                  headerName: "",
-                  sortable: false,
-                  align: "left",
-                  headerAlign: "left",
-                  cellClassName: center,
-                  ...c,
-                }),
-              )}
+              columns={map(sm ? filter(columns, (c) => !c.fold) : columns, (c) => ({
+                type: "string",
+                headerName: "",
+                sortable: false,
+                align: "left",
+                headerAlign: "left",
+                cellClassName: center,
+                ...c,
+              }))}
               rows={allRows}
             />
           </DataGridContext.Provider>

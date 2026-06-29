@@ -1,11 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Divider,
-  Link,
-  Stack,
-  Tooltip,
-} from "@mui/material";
+import { Box, CircularProgress, Divider, Link, Stack, Tooltip } from "@mui/material";
 import { GridChartCard } from "components/charts/GridChartCard";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { GalleryLayout } from "layout/GalleryLayout";
@@ -33,8 +26,7 @@ import SuboptimalityByAgentCountDoc from "docs/charts/SuboptimalityByAgentCount.
 
 export function AlgorithmPage() {
   const sm = useSm();
-  const { params } =
-    matchPath("/submissions/:id", window.location.pathname) ?? {};
+  const { params } = matchPath("/submissions/:id", window.location.pathname) ?? {};
 
   const { data } = useAlgorithmDetailData(params?.id);
   const { data: general } = useAggregateOne({});
@@ -64,11 +56,7 @@ export function AlgorithmPage() {
         )
           .filter(({ key }) => !!data?.[key])
           .map(({ key, label }) => ({
-            value: (
-              <Link href={data?.[key]}>
-                {data?.[key]?.replace("https://", "")}
-              </Link>
-            ),
+            value: <Link href={data?.[key]}>{data?.[key]?.replace("https://", "")}</Link>,
             label,
           })),
         { value: data?.papers, label: "Papers" },
@@ -102,22 +90,13 @@ export function AlgorithmPage() {
           { value: data?.best_solution, label: "Best solution" },
           { value: data?.best_lower, label: "Best lower-bound" },
         ].map(({ value, label }) => {
-          const displayValue = isUndefined(value)
-            ? "--"
-            : value.toLocaleString();
+          const displayValue = isUndefined(value) ? "--" : value.toLocaleString();
           const percentage = (value ?? 0) / (general?.all ?? 1);
           const color = percentage < 1 ? "info.main" : "success.main";
           return (
             <>
-              <Item
-                key={label}
-                primary={displayValue}
-                secondary={label}
-                invert
-              ></Item>
-              <Tooltip
-                title={`${label}: ${displayValue} (${formatPercentage(percentage)})`}
-              >
+              <Item key={label} primary={displayValue} secondary={label} invert></Item>
+              <Tooltip title={`${label}: ${displayValue} (${formatPercentage(percentage)})`}>
                 <Box
                   sx={{
                     display: "grid",
@@ -153,9 +132,7 @@ export function AlgorithmPage() {
           secondaryLabel="Instances closed and solved across domains"
           height={560}
           documentation={<AlgorithmByMapTypeDoc />}
-          content={
-            !!data?.id && <AlgorithmByMapTypeChart algorithm={data?.id} />
-          }
+          content={!!data?.id && <AlgorithmByMapTypeChart algorithm={data?.id} />}
         />
         <GridChartCard
           primaryLabel="Completion by map"
@@ -169,11 +146,7 @@ export function AlgorithmPage() {
           secondaryLabel="Suboptimality range across agent counts"
           height={560}
           documentation={<SuboptimalityByAgentCountDoc />}
-          content={
-            !!data?.id && (
-              <SuboptimalityByAgentCountChart algorithm={data?.id} />
-            )
-          }
+          content={!!data?.id && <SuboptimalityByAgentCountChart algorithm={data?.id} />}
         />
       </Stack>
       <Title sticky>Submitted instances</Title>

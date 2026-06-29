@@ -1,22 +1,17 @@
 import { Card, Box } from "@mui/material";
 import { CodeBlock } from "components/CodeBlock";
 
-
 ##### Solution string format
 
 For each agent, we use a motion string to represent the path, where the symbol `u`, `d`, `l` and `r` represents moving up, down, left and right respectively, and `w` represents waiting at its current location.
 
 For example, the path:
 
-<CodeBlock>
-{`(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)`}
-</CodeBlock>
+<CodeBlock>{`(0,0) -> (0,1) -> (1,1) -> (2,1) -> (2,0) -> (2,0) -> (1,0)`}</CodeBlock>
 
 is converted to a motion string:
 
-<CodeBlock>
-{`drruwl`}
-</CodeBlock>
+<CodeBlock>{`drruwl`}</CodeBlock>
 
 We use `\n` to separate the paths between different agents. Or, in supported formats, you can represent them as a list of strings.
 

@@ -10,9 +10,7 @@ export const handleRequestDetailUpdated = async ({
   key?: string | number;
 }) => {
   try {
-    const { error } = await api.api.request
-      .update({ id: `${values?.id}` })
-      .post(values);
+    const { error } = await api.api.request.update({ id: `${values?.id}` }).post(values);
     queryClient.invalidateQueries({
       queryKey: ["submissionRequestDetails", key],
     });

@@ -30,7 +30,7 @@ const schema = createSchema(
       outcome: { type: String, index: true },
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
 schema.index({ apiKey: 1, instance: 1, createdAt: 1 });

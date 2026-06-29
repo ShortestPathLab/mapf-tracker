@@ -19,9 +19,7 @@ export function SubmitContactEmailForm({
   return (
     <Formik<Email>
       validationSchema={object({
-        email: string()
-          .email("Must be an email.")
-          .required("Email is required."),
+        email: string().email("Must be an email.").required("Email is required."),
       })}
       initialValues={{ email: "" }}
       onSubmit={noop}
@@ -29,13 +27,7 @@ export function SubmitContactEmailForm({
     >
       {(state) => (
         <Form>
-          <Field
-            fullWidth
-            name="email"
-            label="Your contact email"
-            variant="filled"
-            required
-          />
+          <Field fullWidth name="email" label="Your contact email" variant="filled" required />
           {submit(state)}
         </Form>
       )}

@@ -1,20 +1,13 @@
 import { Box, Fade, LinearProgress, Stack } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useIsMutating,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useIsMutating } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BottomBar } from "BottomBar";
 import { LostConnectionWarning } from "components/LostConnectionWarning";
 import { Router } from "components/Router";
 import AppBar from "components/appbar/index";
 import { useXs } from "components/dialog/useSmallDisplay";
-import {
-  ModalContext,
-  useModalProviderValue,
-} from "hooks/useModalProviderValue";
+import { ModalContext, useModalProviderValue } from "hooks/useModalProviderValue";
 import { HistoryProvider } from "hooks/useNavigation";
 import { ConfirmProvider } from "material-ui-confirm";
 import { NotFoundPage } from "pages/NotFound";
@@ -45,15 +38,8 @@ export const BottomBarProvider = ({ children }: { children: ReactNode }) => {
   const [enabled, setEnabled] = useState(false);
   const xs = useXs();
   const enabled1 = xs && enabled;
-  const value = useMemo(
-    () => ({ enabled: enabled1, setEnabled }),
-    [enabled1, setEnabled]
-  );
-  return (
-    <BottomBarContext.Provider value={value}>
-      {children}
-    </BottomBarContext.Provider>
-  );
+  const value = useMemo(() => ({ enabled: enabled1, setEnabled }), [enabled1, setEnabled]);
+  return <BottomBarContext.Provider value={value}>{children}</BottomBarContext.Provider>;
 };
 
 export default function App() {
@@ -109,7 +95,7 @@ export function MutatingBar() {
         variant="indeterminate"
       />
     </Fade>,
-    document.body
+    document.body,
   );
 }
 

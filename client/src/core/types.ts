@@ -33,20 +33,14 @@ export type Scenario = {
 } & CollectionWithInstanceCount;
 
 // A single instance document (`/api/instance/id/:id`), inferred from the server.
-export type Instance = DataOf<
-  ReturnType<typeof api.api.instance.id>["get"]
->;
+export type Instance = DataOf<ReturnType<typeof api.api.instance.id>["get"]>;
 
 // A per-agent-count instance summary for a scenario (`/api/instance/:id`).
-export type InstanceSummary = DataOf<
-  ReturnType<typeof api.api.instance>["get"]
->[number];
+export type InstanceSummary = DataOf<ReturnType<typeof api.api.instance>["get"]>[number];
 
 export type Algorithm = DataOf<typeof api.api.algorithm.get>[number];
 
-export type AlgorithmDetails = DataOf<
-  typeof api.api.algorithm.all_detail.get
->[number];
+export type AlgorithmDetails = DataOf<typeof api.api.algorithm.all_detail.get>[number];
 
 export type SummarySlice = {
   outdated: number;

@@ -34,7 +34,7 @@ self.onmessage = async ({
         payload: encoded,
       });
       count++;
-    }
+    },
   );
   self.postMessage({ type: "done" });
 };

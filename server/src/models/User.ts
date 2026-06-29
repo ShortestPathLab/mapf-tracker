@@ -8,7 +8,7 @@ const schema = createSchema(
     password: String,
     hash: String,
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
 export const model = createModel("User", schema);

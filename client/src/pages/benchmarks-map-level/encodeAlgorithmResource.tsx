@@ -3,9 +3,6 @@ export const decodeAlgorithmResource = (s: string) => {
   return { algorithm, resource };
 };
 
-export const encodeAlgorithmResource = (
-  algorithm: string,
-  resource: string
-) => {
+export const encodeAlgorithmResource = (algorithm: string, resource: string) => {
   return `${algorithm}:${resource}`;
 };

@@ -25,17 +25,10 @@ export const $box =
   (g: PixiGraphics) => {
     g.clear();
     g.lineStyle(LINE_WIDTH, hexToInt(color));
-    g.moveTo(0, 0)
-      .lineTo(0, height)
-      .lineTo(width, height)
-      .lineTo(width, 0)
-      .lineTo(0, 0);
+    g.moveTo(0, 0).lineTo(0, height).lineTo(width, height).lineTo(width, 0).lineTo(0, 0);
   };
 export const $agents =
-  (
-    agents: { color: string; x: number; y: number; i: number }[],
-    selection?: number
-  ) =>
+  (agents: { color: string; x: number; y: number; i: number }[], selection?: number) =>
   (g: PixiGraphics) => {
     g.clear();
     for (const { x, y, color, i } of agents) {
@@ -45,15 +38,10 @@ export const $agents =
     }
   };
 export const $map =
-  (
-    map: { width: number; height: number; x: number; y: number }[],
-    color: string
-  ) =>
+  (map: { width: number; height: number; x: number; y: number }[], color: string) =>
   (g: PixiGraphics) => {
     each(map, ({ x, y, width, height }) => {
-      g.beginFill(hexToInt(color), 0.85)
-        .drawRect(x, y, width, height)
-        .endFill();
+      g.beginFill(hexToInt(color), 0.85).drawRect(x, y, width, height).endFill();
     });
   };
 
@@ -71,12 +59,12 @@ export function error(x: number, y: number, color = "#ff0000") {
 
 export const $agentDiagnostics = memoizee(
   (
-      color: string,
-      path: { x: number; y: number }[],
-      goal: { x: number; y: number },
-      diagnostics?: Diagnostic[],
-      diagnosticColor?: string
-    ) =>
+    color: string,
+    path: { x: number; y: number }[],
+    goal: { x: number; y: number },
+    diagnostics?: Diagnostic[],
+    diagnosticColor?: string,
+  ) =>
     (g: PixiGraphics) => {
       g.clear();
       g.lineStyle(LINE_WIDTH, hexToInt(color));
@@ -95,18 +83,15 @@ export const $agentDiagnostics = memoizee(
         }
       });
     },
-  { normalizer: JSON.stringify }
+  { normalizer: JSON.stringify },
 );
 export const $bg = memoizee(
   (color, width, height): ((graphics: PixiGraphics) => void) =>
     (g) =>
-      g.beginFill(hexToInt(color)).drawRect(0, 0, width, height).endFill()
+      g.beginFill(hexToInt(color)).drawRect(0, 0, width, height).endFill(),
 );
 const $pointer = memoizee((color: string) => (g: PixiGraphics) => {
-  return g
-    .beginFill(hexToInt(color))
-    .drawPolygon(-0.12, -0.7, 0.12, -0.7, 0, -0.8)
-    .endFill();
+  return g.beginFill(hexToInt(color)).drawPolygon(-0.12, -0.7, 0.12, -0.7, 0, -0.8).endFill();
 });
 
 export function Arrow({
@@ -130,7 +115,5 @@ export function Arrow({
     />
   );
 }
-export const getAngle = (
-  a: { x: number; y: number },
-  b: { x: number; y: number }
-) => Math.atan2(b.y - a.y, b.x - a.x);
+export const getAngle = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+  Math.atan2(b.y - a.y, b.x - a.x);

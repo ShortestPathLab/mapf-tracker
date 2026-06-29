@@ -31,9 +31,7 @@ export const requireAuth = async ({ headers }: Context) => {
   if (!token) return status(401, "Unauthorized");
   try {
     const payload = verifyJwt(token, env.JWT_SECRET) as { sub?: string };
-    const user = payload.sub
-      ? await User.findOne({ username: payload.sub })
-      : null;
+    const user = payload.sub ? await User.findOne({ username: payload.sub }) : null;
     if (!user) return status(401, "Unauthorized");
   } catch {
     return status(401, "Unauthorized");
@@ -52,8 +50,7 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
   })
   .post("/register", async ({ body }) => {
     const { username, password } = credentials.parse(body);
-    if (!registrationEnabled)
-      return status(403, "Registration is not enabled");
+    if (!registrationEnabled) return status(403, "Registration is not enabled");
     await new User({ username, hash: await hash(password) }).save();
     return signUser(username);
   });

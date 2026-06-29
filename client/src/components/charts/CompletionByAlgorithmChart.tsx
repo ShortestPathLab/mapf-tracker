@@ -9,21 +9,11 @@ import { useAggregateAlgorithm } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { ComponentProps, useMemo } from "react";
 import { useSize } from "react-use";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Label,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Label, Tooltip, XAxis, YAxis } from "recharts";
 import { paper } from "theme";
 import { toneBy } from "utils/colors";
 import { GridChartCard } from "./GridChartCard";
 import Documentation from "docs/charts/CompletionByAlgorithm.md";
-
 
 export const slices = [
   {
@@ -66,13 +56,7 @@ export function CategoryChart({
 
   return (
     <>
-      <BarChart
-        data={data}
-        margin={{ bottom: 20 }}
-        layout="vertical"
-        barGap={4}
-        {...props}
-      >
+      <BarChart data={data} margin={{ bottom: 20 }} layout="vertical" barGap={4} {...props}>
         <Tooltip
           formatter={(v, _, item) => (
             <Box
@@ -141,9 +125,7 @@ export function CategoryChart({
 }
 
 export function formatScientific(n: number) {
-  return n > 9
-    ? n.toLocaleString("fullwide", { notation: "scientific" })
-    : `${n}`;
+  return n > 9 ? n.toLocaleString("fullwide", { notation: "scientific" }) : `${n}`;
 }
 
 export function formatLargeNumber(n: number) {
@@ -160,8 +142,7 @@ function CompletionByAlgorithmChart() {
     groupBy: "algorithm",
     filterBy: "closed",
   });
-  const { data: algorithms, isLoading: isAlgorithmsLoading } =
-    useAlgorithmsData();
+  const { data: algorithms, isLoading: isAlgorithmsLoading } = useAlgorithmsData();
 
   const { data } = useMemo(() => {
     const data = _(zip(sortBy(closed, "_id"), sortBy(solved, "_id")))
@@ -210,9 +191,7 @@ function CompletionByAlgorithmChart() {
   );
 }
 
-export function CompletionByAlgorithmChartCard(
-  props: ComponentProps<typeof GridChartCard>
-) {
+export function CompletionByAlgorithmChartCard(props: ComponentProps<typeof GridChartCard>) {
   return (
     <GridChartCard
       {...props}

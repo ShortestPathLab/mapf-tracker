@@ -8,13 +8,9 @@ import { handleRequestDetailUpdated } from "pages/submissions/handleRequestDetai
 import { useRequestData } from "queries/useRequestQuery";
 import { useSubmissionKeyQuery } from "queries/useSubmissionKeyQuery";
 import { Status } from "./Status";
-import { formatDate } from 'utils/format';
+import { formatDate } from "utils/format";
 
-export const SubmissionRequestGlance = ({
-  apiKey,
-}: {
-  apiKey?: string | number;
-}) => {
+export const SubmissionRequestGlance = ({ apiKey }: { apiKey?: string | number }) => {
   const notify = useSnackbar();
   const { open: showRequestDetails, dialog: requestDetails } = useSurface(
     SubmissionKeyRequestFormDialog,
@@ -35,8 +31,7 @@ export const SubmissionRequestGlance = ({
             { label: "API key", value: `${apiKey ?? "-"}` },
             {
               label: "Expiry",
-              value:
-                formatDate(apiKeyData?.expirationDate)
+              value: formatDate(apiKeyData?.expirationDate),
             },
             {
               label: "Status",

@@ -60,8 +60,8 @@ export default function index() {
         <Stack sx={{ gap: 4 }}>
           <Typography variant="h2">Make a new submission request</Typography>
           <Typography>
-            If you have data to submit to the tracker, you&apos;ve come to the
-            right place. Here&apos;s a rundown of the process.
+            If you have data to submit to the tracker, you&apos;ve come to the right place.
+            Here&apos;s a rundown of the process.
           </Typography>
           <Stepper activeStep={5} orientation="vertical">
             {[

@@ -20,10 +20,7 @@ interface TransitionProps {
   delay: string | undefined;
 }
 
-export function getTransitionProps(
-  props: ComponentProps,
-  options: Options
-): TransitionProps {
+export function getTransitionProps(props: ComponentProps, options: Options): TransitionProps {
   const { timeout, easing, style = {} } = props;
 
   return {
@@ -92,47 +89,41 @@ const Show = React.forwardRef<any, any>((props, ref) => {
   const nodeRef = React.useRef(null);
   const handleRef = useForkRef(nodeRef, children.ref, ref);
 
-  const normalizedTransitionCallback =
-    (callback: any) => (maybeIsAppearing: any) => {
-      if (callback) {
-        const node = nodeRef.current;
+  const normalizedTransitionCallback = (callback: any) => (maybeIsAppearing: any) => {
+    if (callback) {
+      const node = nodeRef.current;
 
-        // onEnterXxx and onExitXxx callbacks have a different arguments.length value.
-        if (maybeIsAppearing === undefined) {
-          callback(node);
-        } else {
-          callback(node, maybeIsAppearing);
-        }
+      // onEnterXxx and onExitXxx callbacks have a different arguments.length value.
+      if (maybeIsAppearing === undefined) {
+        callback(node);
+      } else {
+        callback(node, maybeIsAppearing);
       }
-    };
+    }
+  };
 
   const handleEntering = normalizedTransitionCallback(onEntering);
 
-  const handleEnter = normalizedTransitionCallback(
-    (node: any, isAppearing: any) => {
-      reflow(node); // So the animation always start from the start.
+  const handleEnter = normalizedTransitionCallback((node: any, isAppearing: any) => {
+    reflow(node); // So the animation always start from the start.
 
-      const transitionProps = getTransitionProps(
-        { style, timeout, easing },
-        {
-          mode: "enter",
-        }
-      );
+    const transitionProps = getTransitionProps(
+      { style, timeout, easing },
+      {
+        mode: "enter",
+      },
+    );
 
-      node.style.webkitTransition = theme.transitions.create(
-        ["opacity", "transform"],
-        transitionProps
-      );
-      node.style.transition = theme.transitions.create(
-        ["opacity", "transform"],
-        transitionProps
-      );
+    node.style.webkitTransition = theme.transitions.create(
+      ["opacity", "transform"],
+      transitionProps,
+    );
+    node.style.transition = theme.transitions.create(["opacity", "transform"], transitionProps);
 
-      if (onEnter) {
-        onEnter(node, isAppearing);
-      }
+    if (onEnter) {
+      onEnter(node, isAppearing);
     }
-  );
+  });
 
   const handleEntered = normalizedTransitionCallback(onEntered);
 
@@ -143,17 +134,14 @@ const Show = React.forwardRef<any, any>((props, ref) => {
       { style, timeout, easing },
       {
         mode: "exit",
-      }
+      },
     );
 
     node.style.webkitTransition = theme.transitions.create(
       ["opacity", "transform"],
-      transitionProps
+      transitionProps,
     );
-    node.style.transition = theme.transitions.create(
-      ["opacity", "transform"],
-      transitionProps
-    );
+    node.style.transition = theme.transitions.create(["opacity", "transform"], transitionProps);
 
     if (onExit) {
       onExit(node);

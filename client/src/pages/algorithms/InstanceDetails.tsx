@@ -25,11 +25,7 @@ export function InstanceDetails({
   const { data: algorithmInfo } = useAlgorithmDetailData(algorithm);
   const navigate = useNavigate();
   return (
-    <SubmissionInstanceContext
-      algorithm={algorithm}
-      scenario={scenario}
-      index={index}
-    >
+    <SubmissionInstanceContext algorithm={algorithm} scenario={scenario} index={index}>
       {({ current, instance }) => {
         return (
           <Stack sx={{ gap: 4, width: 720, maxWidth: "100%" }}>
@@ -57,11 +53,7 @@ export function InstanceDetails({
               <Typography variant="subtitle2" color="text.secondary">
                 Results
               </Typography>
-              <Item
-                invert
-                primary={formatDate(current?.date)}
-                secondary={"Date submitted"}
-              />
+              <Item invert primary={formatDate(current?.date)} secondary={"Date submitted"} />
               <Grid width={120}>
                 {(["solution_cost", "lower_cost"] as const).map((cost) => (
                   <Item

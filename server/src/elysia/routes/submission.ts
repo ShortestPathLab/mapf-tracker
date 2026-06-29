@@ -9,15 +9,13 @@ import {
   path as summaryByAlgorithmWorkerPath,
 } from "workers/summaryByAlgorithm.worker";
 
-const summaryByAlgorithmWorker = usingWorkerTaskReusable<
-  unknown,
-  SummaryByAlgorithmResult
->(() => new Worker(summaryByAlgorithmWorkerPath));
-
-const summaryByAlgorithm = cached(
-  async ({ params }) => summaryByAlgorithmWorker(params),
-  { watch: [Submission] },
+const summaryByAlgorithmWorker = usingWorkerTaskReusable<unknown, SummaryByAlgorithmResult>(
+  () => new Worker(summaryByAlgorithmWorkerPath),
 );
+
+const summaryByAlgorithm = cached(async ({ params }) => summaryByAlgorithmWorker(params), {
+  watch: [Submission],
+});
 
 const byScenario = async ({ params }: Context) =>
   Submission.find(

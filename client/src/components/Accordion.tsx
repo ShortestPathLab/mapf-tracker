@@ -31,12 +31,7 @@ export default function Accordion({
           slotProps?.summary,
         )}
       >
-        <Typography
-          {...merge(
-            { variant: sm ? "body1" : "h6", sx: { mr: 2 } },
-            slotProps?.label,
-          )}
-        >
+        <Typography {...merge({ variant: sm ? "body1" : "h6", sx: { mr: 2 } }, slotProps?.label)}>
           {label}
         </Typography>
       </AccordionSummary>

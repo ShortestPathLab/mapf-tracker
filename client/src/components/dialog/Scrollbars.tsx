@@ -43,7 +43,7 @@ export const Scroll = forwardRef(
       py = 0,
       ...rest
     }: ScrollProps & OverlayScrollbarsComponentProps,
-    ref: ForwardedRef<HTMLDivElement>
+    ref: ForwardedRef<HTMLDivElement>,
   ) => {
     const [panel, setPanel] = useState<HTMLDivElement | null>(null);
     const { palette, spacing } = useTheme();
@@ -84,7 +84,7 @@ export const Scroll = forwardRef(
           }
         }
       },
-      [ref, setPanel]
+      [ref, setPanel],
     );
     useEffect(() => {
       if (panel && fadeX) {
@@ -92,19 +92,16 @@ export const Scroll = forwardRef(
         const f = () => {
           const gradient = (direction: string) =>
             `linear-gradient(to ${direction}, transparent, black 8px)`;
-          const hasRight =
-            Math.abs(
-              panel.scrollWidth - panel.scrollLeft - panel.clientWidth
-            ) >= 1;
+          const hasRight = Math.abs(panel.scrollWidth - panel.scrollLeft - panel.clientWidth) >= 1;
           const hasLeft = !!panel.scrollLeft;
           panel.style.maskImage =
             hasLeft && hasRight
               ? "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent 100%)"
               : hasRight
-              ? gradient("left")
-              : hasLeft
-              ? gradient("right")
-              : "";
+                ? gradient("left")
+                : hasLeft
+                  ? gradient("right")
+                  : "";
           if (!controller.signal.aborted) {
             requestAnimationFrame(f);
           }
@@ -125,8 +122,7 @@ export const Scroll = forwardRef(
             },
             scrollbars: {
               autoHide: "leave",
-              theme:
-                palette.mode === "dark" ? "os-theme-light" : "os-theme-dark",
+              theme: palette.mode === "dark" ? "os-theme-light" : "os-theme-dark",
             },
           }}
           {...rest}
@@ -142,5 +138,5 @@ export const Scroll = forwardRef(
         </OverlayScrollbarsComponent>
       </ScrollContext.Provider>
     );
-  }
+  },
 );

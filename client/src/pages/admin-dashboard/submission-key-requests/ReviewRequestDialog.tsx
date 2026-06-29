@@ -1,7 +1,4 @@
-import {
-  KeyboardArrowDownRounded,
-  SendRounded,
-} from "@mui-symbols-material/w300";
+import { KeyboardArrowDownRounded, SendRounded } from "@mui-symbols-material/w300";
 import {
   Button,
   ButtonGroup,
@@ -37,18 +34,12 @@ export function ReviewRequestDialog({
   const { transitions } = useTheme();
   const sm = useSm();
   const notify = useSnackbar();
-  const { open: showConfirmation, dialog: confirmationDialog } = useSurface(
-    ConfirmNotifyDialog,
-    {
-      title: "Respond to request",
-    },
-  );
+  const { open: showConfirmation, dialog: confirmationDialog } = useSurface(ConfirmNotifyDialog, {
+    title: "Respond to request",
+  });
   const { mutateAsync: updateRequest } = useRequestsUpdateElevatedMutation();
   return (
-    <Stack
-      direction={sm ? "column" : "row"}
-      sx={{ gap: sm ? 4 : 3, "> *": { flex: 1 } }}
-    >
+    <Stack direction={sm ? "column" : "row"} sx={{ gap: sm ? 4 : 3, "> *": { flex: 1 } }}>
       <Stack>
         <Accordion
           sx={{ p: sm ? 2 : 3, ...paper(0) }}
@@ -114,20 +105,14 @@ export function ReviewRequestDialog({
                       await submitForm();
                       showConfirmation({
                         data: data ? { ...data, reviewStatus: values } : undefined,
-                        onClose: () =>
-                          delay(
-                            () => onClose?.(),
-                            transitions.duration.shortest,
-                          ),
+                        onClose: () => delay(() => onClose?.(), transitions.duration.shortest),
                       });
                     }}
                   >
                     <ListItemIcon sx={{ color: "primary.main" }}>
                       <SendRounded />
                     </ListItemIcon>
-                    <ListItemText
-                      primary={`Save and send a response to ${data?.requesterEmail}`}
-                    />
+                    <ListItemText primary={`Save and send a response to ${data?.requesterEmail}`} />
                   </ListItemButton>
                 </List>
               </Surface>

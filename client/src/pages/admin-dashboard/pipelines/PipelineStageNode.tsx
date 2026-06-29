@@ -1,7 +1,5 @@
 import { Card } from "@mui/material";
-import TouchRipple, {
-  TouchRippleActions,
-} from "@mui/material/ButtonBase/TouchRipple";
+import TouchRipple, { TouchRippleActions } from "@mui/material/ButtonBase/TouchRipple";
 import { Handle, Position } from "@xyflow/react";
 import { useSm } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface/useSurface";
@@ -11,8 +9,7 @@ import { StageStatusDialog } from "./StageStatusDialog";
 
 export const useRipple = () => {
   const rippleRef = useRef<TouchRippleActions | null>(null);
-  const start = (e: SyntheticEvent) =>
-    rippleRef?.current?.start(e, { center: false });
+  const start = (e: SyntheticEvent) => rippleRef?.current?.start(e, { center: false });
 
   const stop = () => rippleRef.current?.stop();
   return {
@@ -31,11 +28,7 @@ export const useRipple = () => {
   };
 };
 
-export function PipelineStageNode({
-  data: { stage } = {},
-}: {
-  data?: { stage?: string };
-}) {
+export function PipelineStageNode({ data: { stage } = {} }: { data?: { stage?: string } }) {
   const sm = useSm();
   const { dialog, open } = useSurface(StageStatusDialog, {
     title: "Stage details",

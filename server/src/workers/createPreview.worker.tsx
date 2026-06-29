@@ -26,7 +26,7 @@ export const { precompute, handler } = createPrecomputeHandler(
         ...maps.map(({ _id }) => [{ map: _id.toString() }]),
       ] as [{ scenario?: string; map?: string }][];
     },
-  }
+  },
 );
 
 const connect = once(connectToDatabase);
@@ -37,14 +37,14 @@ const processMap = memoize(
     const mapMeta = parseMapMeta(map);
     return { meta: mapMeta, bounds: optimiseGridMap(mapContent, mapMeta) };
   },
-  { cacheKey: JSON.stringify }
+  { cacheKey: JSON.stringify },
 );
 
 const processScenario = memoize(
   async (scenario: string, agents?: number) => {
     return parseScenarioMeta(scenario, agents);
   },
-  { cacheKey: JSON.stringify }
+  { cacheKey: JSON.stringify },
 );
 
 async function getSources({ map, instance, scenario }: CreatePreviewData) {
@@ -76,31 +76,13 @@ const run = async (params: CreatePreviewData) => {
   if (!map) return renderToString(<svg />);
   const { meta, bounds } = await processMap(await getMap({ map }));
   const { sources } = scenario
-    ? await processScenario(
-        await getScenario({ map, scenario }),
-        instance?.agents
-      )
+    ? await processScenario(await getScenario({ map, scenario }), instance?.agents)
     : { sources: [] };
   const preview = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={meta.width}
-      height={meta.height}
-    >
-      <rect
-        x="0"
-        y="0"
-        width={meta.width}
-        height={meta.height}
-        fill="var(--background)"
-      />
+    <svg xmlns="http://www.w3.org/2000/svg" width={meta.width} height={meta.height}>
+      <rect x="0" y="0" width={meta.width} height={meta.height} fill="var(--background)" />
       {bounds.map((bounds, i) => (
-        <rect
-          key={i}
-          {...bounds}
-          fill="var(--obstacle)"
-          shapeRendering="optimizeSpeed"
-        />
+        <rect key={i} {...bounds} fill="var(--obstacle)" shapeRendering="optimizeSpeed" />
       ))}
       {sources.map((source, i) => (
         <rect
@@ -124,10 +106,8 @@ type CreatePreviewData = {
 };
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingTaskMessageHandler<CreatePreviewData, any>(
-    async (d) => {
-      await connect();
-      return await run(d);
-    }
-  );
+  self.onmessage = usingTaskMessageHandler<CreatePreviewData, any>(async (d) => {
+    await connect();
+    return await run(d);
+  });
 }

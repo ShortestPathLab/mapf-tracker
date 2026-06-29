@@ -5,9 +5,8 @@ import { resourcesDevPath } from "./dev";
 import { resourcesProductionPath } from "./production";
 
 export const resourcesPath =
-  false && process.env.NODE_ENV === "development"
-    ? resourcesDevPath
-    : resourcesProductionPath;
+  // eslint-disable-next-line no-constant-condition, no-constant-binary-expression -- intentional toggle to force production resource paths
+  false && process.env.NODE_ENV === "development" ? resourcesDevPath : resourcesProductionPath;
 
 const contentCacheKey = ([{ map, scenario }]: [Data]) =>
   `${map?.map_name}-${scenario?.scen_type}-${scenario?.type_id}`;
@@ -22,20 +21,17 @@ export const getScenario = memoize(
     await Bun.file(
       join(
         resourcesPath,
-        `./scens/${map.map_name}-${scenario!.scen_type}-${
-          scenario!.type_id
-        }.scen`
-      )
+        `./scens/${map.map_name}-${scenario!.scen_type}-${scenario!.type_id}.scen`,
+      ),
     ).text(),
   {
     cacheKey: contentCacheKey,
-  }
+  },
 );
 
 export const getMap = memoize(
-  async ({ map }: Data) =>
-    await Bun.file(join(resourcesPath, `./maps/${map.map_name}.map`)).text(),
+  async ({ map }: Data) => await Bun.file(join(resourcesPath, `./maps/${map.map_name}.map`)).text(),
   {
     cacheKey: contentCacheKey,
-  }
+  },
 );

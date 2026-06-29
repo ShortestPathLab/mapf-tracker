@@ -1,13 +1,5 @@
 import { connectToDatabase } from "connection";
-import {
-  chain,
-  countBy,
-  groupBy,
-  head,
-  isUndefined,
-  mapValues,
-  once
-} from "lodash";
+import { chain, countBy, groupBy, head, isUndefined, mapValues, once } from "lodash";
 import { Infer, OngoingSubmission } from "models";
 import { usingTaskMessageHandler } from "queue/usingWorker";
 import { z } from "zod";
@@ -24,11 +16,7 @@ const run = async (params: unknown) => {
   const data = z
     .object({
       apiKey: z.string(),
-      page: z
-        .number()
-        .nonnegative()
-        .or(z.string().transform(Number))
-        .default(0),
+      page: z.number().nonnegative().or(z.string().transform(Number)).default(0),
     })
     .parse(params);
   const docs: Pick<
@@ -48,7 +36,7 @@ const run = async (params: unknown) => {
         },
       },
     ],
-    { allowDiskUse: true, batchSize: Number.MAX_SAFE_INTEGER, },
+    { allowDiskUse: true, batchSize: Number.MAX_SAFE_INTEGER },
   );
   const submissions = docs.map((d) => {
     const instance = indexes.instances[d.instance!.toString()];
@@ -59,17 +47,13 @@ const run = async (params: unknown) => {
     return { submission: d, scenario, map, instance };
   });
   const novelty = (c: typeof submissions) => {
-    const validSubmissions = c.filter(
-      (d) => d.submission.validation?.outcome === "valid",
-    );
+    const validSubmissions = c.filter((d) => d.submission.validation?.outcome === "valid");
     const solutionNovelty = groupBy(validSubmissions, (d) =>
       isUndefined(d.submission.cost)
         ? "unknown"
-        : d.submission.cost <
-          (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+        : d.submission.cost < (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
           ? "best"
-          : d.submission.cost ===
-            (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
+          : d.submission.cost === (d.instance.solution_cost ?? Number.MAX_SAFE_INTEGER)
             ? "tie"
             : "dominated",
     );
@@ -97,7 +81,7 @@ const run = async (params: unknown) => {
     lb_tie: 0,
     lb_dominated: 0,
     running: 0,
-    ...countBy(c, (d) => d.submission.validation?.outcome ?? 'queued'),
+    ...countBy(c, (d) => d.submission.validation?.outcome ?? "queued"),
     ...novelty(c),
     total: c.length,
   });

@@ -17,8 +17,7 @@ export function MapPickerLegacy({ ...props }: TextFieldProps) {
         ...props.SelectProps,
         multiple: true,
         MenuProps: { slotProps: { paper: { sx: { maxHeight: 480 } } } },
-        renderValue: (value: unknown) =>
-          renderSelectChip(startCase)(value as string[]),
+        renderValue: (value: unknown) => renderSelectChip(startCase)(value as string[]),
       }}
       {...props}
       select
@@ -49,10 +48,7 @@ export function MapPicker({ ...props }: TextFieldProps) {
         MenuProps: { slotProps: { paper: { sx: { maxHeight: 480 } } } },
         renderValue: (value: unknown) =>
           renderSelectChip(startCase)(
-            map(
-              value as string[],
-              (id) => find(data, { id })?.map_name ?? ""
-            )
+            map(value as string[], (id) => find(data, { id })?.map_name ?? ""),
           ),
       }}
       {...props}

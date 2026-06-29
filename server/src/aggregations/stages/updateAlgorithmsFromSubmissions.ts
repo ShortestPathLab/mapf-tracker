@@ -33,10 +33,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
                     $and: [
                       { $ne: ["$lower_cost", null] },
                       {
-                        $eq: [
-                          "$lower_cost",
-                          { $first: "$instance.lower_cost" },
-                        ],
+                        $eq: ["$lower_cost", { $first: "$instance.lower_cost" }],
                       },
                     ],
                   },
@@ -48,10 +45,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
               {
                 $match: {
                   $expr: {
-                    $eq: [
-                      "$solution_cost",
-                      { $first: "$instance.solution_cost" },
-                    ],
+                    $eq: ["$solution_cost", { $first: "$instance.solution_cost" }],
                   },
                 },
               },
@@ -70,10 +64,7 @@ export const updateAlgorithmsFromSubmissions = async () =>
                     $and: [
                       { $eq: ["$lower_cost", "$solution_cost"] },
                       {
-                        $eq: [
-                          "$lower_cost",
-                          { $first: "$instance.solution_cost" },
-                        ],
+                        $eq: ["$lower_cost", { $first: "$instance.solution_cost" }],
                       },
                     ],
                   },

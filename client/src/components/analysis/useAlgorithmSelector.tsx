@@ -15,11 +15,9 @@ export type Slice = {
 export function useSliceSelector<T extends BaseMetric, U extends Slice>(
   slices: U[],
   m: readonly BaseMetric[] = metrics,
-  initialAlgorithms: string[] = []
+  initialAlgorithms: string[] = [],
 ) {
-  const [metric, setMetric] = useState<T["key"] | undefined>(
-    head(m)?.key as T["key"] | undefined
-  );
+  const [metric, setMetric] = useState<T["key"] | undefined>(head(m)?.key as T["key"] | undefined);
   const [algorithms, modifySelected] = useList<string>(initialAlgorithms);
   const [slice, setSlice] = useState<U["key"] | undefined>(head(slices)?.key);
 

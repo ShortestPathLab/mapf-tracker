@@ -15,8 +15,7 @@ import SolutionFormatPage from "./docs-solution-format.mdx";
 
 export type Page = ReturnType<typeof pages>[number];
 
-export const submissionInstructions = () =>
-  find(pages(), { value: "how-to-submit" });
+export const submissionInstructions = () => find(pages(), { value: "how-to-submit" });
 
 export const pages = () => [
   createArticlePage({
@@ -31,8 +30,7 @@ export const pages = () => [
     title: "Submitting data to MAPF Tracker",
     icon: <UploadFileRounded />,
     content: <SubmissionInstructionsPage />,
-    description:
-      "Quick-start guide on how to submit your results to the platform",
+    description: "Quick-start guide on how to submit your results to the platform",
   }),
   createArticlePage({
     key: "problem-definition",
@@ -53,7 +51,6 @@ export const pages = () => [
     title: "Read and cite the paper",
     icon: <ArticleRounded />,
     content: <CitePage />,
-    description:
-      "This technical paper describes the goals and design of the MAPF Tracker",
+    description: "This technical paper describes the goals and design of the MAPF Tracker",
   }),
 ];

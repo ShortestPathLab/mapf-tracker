@@ -81,14 +81,9 @@ export default function Layout({
   const xs = useXs();
   const { location, action } = useHistory();
   const stableLocation = useStableLocationStateSeparate();
-  const [, isTop, isAbsoluteTop, panel, setPanel] = useScrollState(
-    appbarHeight(lg),
-  );
+  const [, isTop, isAbsoluteTop, panel, setPanel] = useScrollState(appbarHeight(lg));
   useEffect(() => {
-    if (
-      location?.state?.session?.["hidden-reason"] === "top" &&
-      action === "forward"
-    ) {
+    if (location?.state?.session?.["hidden-reason"] === "top" && action === "forward") {
       panel?.scrollTo?.({ top: 0, behavior: "smooth" });
     }
   }, [location, action]);
@@ -130,9 +125,7 @@ export default function Layout({
           >
             <Toolbar
               sx={{
-                bgcolor: isAbsoluteTop
-                  ? "background.paper"
-                  : "background.default",
+                bgcolor: isAbsoluteTop ? "background.paper" : "background.default",
               }}
             >
               <IconButton
@@ -158,9 +151,7 @@ export default function Layout({
         ) : (
           <Appbar
             sx={{
-              bgcolor: isAbsoluteTop
-                ? "background.paper"
-                : "background.default",
+              bgcolor: isAbsoluteTop ? "background.paper" : "background.default",
             }}
           />
         ))}

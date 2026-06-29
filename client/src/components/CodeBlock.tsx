@@ -1,16 +1,10 @@
 import { Box, Button, useTheme } from "@mui/material";
 import { debounce } from "lodash";
 import { useMemo, useState } from "react";
-import {
-  PrismLight as SyntaxHighlighter,
-  SyntaxHighlighterProps,
-} from "react-syntax-highlighter";
+import { PrismLight as SyntaxHighlighter, SyntaxHighlighterProps } from "react-syntax-highlighter";
 import json from "react-syntax-highlighter/dist/esm/languages/prism/json";
 import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml";
-import {
-  oneDark,
-  oneLight,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import csvWithHeading from "./csvWithHeading";
 import { Scroll } from "./dialog/Scrollbars";
 
@@ -33,7 +27,7 @@ export const CodeBlock = ({
   const [isCopied, setIsCopied] = useState(false);
   const fn = useMemo(
     () => debounce(() => setIsCopied(false), 2000, { trailing: true }),
-    [setIsCopied]
+    [setIsCopied],
   );
   return (
     <Box

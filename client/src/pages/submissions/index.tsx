@@ -1,15 +1,8 @@
-import {
-  ArrowUploadProgressRounded,
-  DeleteRounded,
-} from "@mui-symbols-material/w300";
+import { ArrowUploadProgressRounded, DeleteRounded } from "@mui-symbols-material/w300";
 import { Stack, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useMutation } from "@tanstack/react-query";
-import {
-  DataGrid,
-  cellRendererText,
-  useDataGridActions,
-} from "components/data-grid";
+import { DataGrid, cellRendererText, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { FlatCard } from "components/FlatCard";
@@ -32,8 +25,7 @@ import { SubmissionLocationState } from "./SubmissionLocationState";
 export function AddKey() {
   const navigate = useNavigate();
   const { mutateAsync: checkKey, isPending: isChecking } = useMutation({
-    mutationFn: (key: string) =>
-      api.api.submission_key({ apiKey: key }).get(),
+    mutationFn: (key: string) => api.api.submission_key({ apiKey: key }).get(),
     mutationKey: ["checkKey"],
   });
 
@@ -41,10 +33,7 @@ export function AddKey() {
     navigate<SubmissionLocationState>("/upload", {
       apiKey: key,
     });
-  const handleApiFormSubmit = async (
-    { key }: Key,
-    { resetForm }: FormikHelpers<Key>,
-  ) => {
+  const handleApiFormSubmit = async ({ key }: Key, { resetForm }: FormikHelpers<Key>) => {
     const { error } = await checkKey(key);
     if (!error) {
       resetForm();
@@ -116,9 +105,7 @@ export default function TrackSubmission() {
   }
 
   // ─────────────────────────────────────────────────────────────────────
-  const actions = useDataGridActions<
-    Partial<Request> & { id: string; key?: string | number }
-  >({
+  const actions = useDataGridActions<Partial<Request> & { id: string; key?: string | number }>({
     items: [],
     menuItems: [
       {
@@ -132,9 +119,7 @@ export default function TrackSubmission() {
     ],
   });
 
-  const columns: GridColDef<
-    Partial<Request> & { id: string; key?: string | number }
-  >[] = [
+  const columns: GridColDef<Partial<Request> & { id: string; key?: string | number }>[] = [
     {
       field: "Icon",
       width: 48,
@@ -150,9 +135,7 @@ export default function TrackSubmission() {
       maxWidth: 260,
       renderCell: ({ row }) => (
         <Item
-          secondary={
-            typeof row.key === "string" ? row.key.slice(-8) : undefined
-          }
+          secondary={typeof row.key === "string" ? row.key.slice(-8) : undefined}
           primary={row.algorithmName}
         />
       ),
@@ -162,8 +145,7 @@ export default function TrackSubmission() {
       headerName: "Status",
       flex: 1,
       maxWidth: 220,
-      renderCell: ({ row }) =>
-        cellRendererText({ formattedValue: <Status apiKey={row.key} /> }),
+      renderCell: ({ row }) => cellRendererText({ formattedValue: <Status apiKey={row.key} /> }),
     },
     {
       field: "requesterName",
@@ -196,8 +178,7 @@ export default function TrackSubmission() {
       Add a key
     </Typography>,
     <Typography key="header1" color="text.secondary">
-      Received your submission key? Enter it here to start submitting for your
-      algorithm.
+      Received your submission key? Enter it here to start submitting for your algorithm.
     </Typography>,
     <AddKey key="add-key" />,
     <Tip
@@ -205,19 +186,14 @@ export default function TrackSubmission() {
       title="API key"
       actions={
         <>
-          <Button onClick={() => navigate("/submit")}>
-            New submission request
-          </Button>
-          <Button onClick={() => navigate("/docs/how-to-submit")}>
-            Read the docs
-          </Button>
+          <Button onClick={() => navigate("/submit")}>New submission request</Button>
+          <Button onClick={() => navigate("/docs/how-to-submit")}>Read the docs</Button>
         </>
       }
       description={
         <>
-          An API key is a 32-character string of numbers 0-9 and lowercase
-          letters a-f, used to submit data for your algorithm. You can obtain
-          one by making a submission request.
+          An API key is a 32-character string of numbers 0-9 and lowercase letters a-f, used to
+          submit data for your algorithm. You can obtain one by making a submission request.
         </>
       }
     />,
@@ -229,9 +205,9 @@ export default function TrackSubmission() {
       path={
         xs
           ? [
-            { name: "Home", url: "/" },
-            { name: "More", url: "/more" },
-          ]
+              { name: "Home", url: "/" },
+              { name: "More", url: "/more" },
+            ]
           : [{ name: "Home", url: "/" }]
       }
     >

@@ -12,25 +12,18 @@ export type BulkOptions = {
   limit: number;
 };
 
-async function run({
-  scenario: id,
-  solutions: includeSolutions,
-  skip,
-  limit,
-}: BulkOptions) {
+async function run({ scenario: id, solutions: includeSolutions, skip, limit }: BulkOptions) {
   await connectToDatabase();
-  const instances = await Instance.find({ scen_id: id })
-    .skip(skip)
-    .limit(limit);
+  const instances = await Instance.find({ scen_id: id }).skip(skip).limit(limit);
   const solutions = includeSolutions
     ? await getSolutionPathsRaw(
-      instances.map((i) => {
-        const id =
-          i?.solution_path_id?.toString?.() ??
-          last(i?.solution_algos)?.submission_id?.toString?.();
-        return id ?? "";
-      })
-    )
+        instances.map((i) => {
+          const id =
+            i?.solution_path_id?.toString?.() ??
+            last(i?.solution_algos)?.submission_id?.toString?.();
+          return id ?? "";
+        }),
+      )
     : [];
   return await Promise.all(
     zip(instances, solutions).map(async ([instance, s1]) => {
@@ -44,9 +37,7 @@ async function run({
         scenario_type,
         scenario_type_id,
       } = instance!;
-      const id =
-        solution_path_id?.toString() ??
-        last(solution_algos)?.submission_id?.toString();
+      const id = solution_path_id?.toString() ?? last(solution_algos)?.submission_id?.toString();
       return {
         map_name,
         scen_type: scenario_type,
@@ -56,11 +47,11 @@ async function run({
         solution_cost: solution_cost ?? null,
         ...(id &&
           includeSolutions && {
-          flip_up_down: true,
-          solution_plan: s1,
-        }),
+            flip_up_down: true,
+            solution_plan: s1,
+          }),
       };
-    })
+    }),
   );
 }
 
@@ -84,9 +75,9 @@ export const { precompute, handler } = createPrecomputeHandler(
                 skip: start,
                 limit: chunkSize,
               },
-            ] as [any]
+            ] as [any],
         );
       });
     },
-  }
+  },
 );

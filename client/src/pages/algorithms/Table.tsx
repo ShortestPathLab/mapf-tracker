@@ -4,10 +4,7 @@ import { GridColDef } from "components/data-grid/DataGrid";
 import { Dot } from "components/Dot";
 import { Item } from "components/Item";
 import Enter from "components/transitions/Enter";
-import {
-  TreeDataGrid,
-  useBooleanMap,
-} from "components/tree-data-grid/TreeDataGrid";
+import { TreeDataGrid, useBooleanMap } from "components/tree-data-grid/TreeDataGrid";
 import { useSurface } from "components/surface/useSurface";
 import { capitalize, startCase, times } from "lodash";
 import { Arrow } from "pages/submission-summary/table/Arrow";
@@ -71,24 +68,15 @@ export function Table({ algorithm }: { algorithm?: string }) {
       flex: 1,
       renderCell: ({ row }) =>
         disambiguate(row, {
-          map: (row) => (
-            <MapLabel mapId={row.id} count={row.count[slice] ?? 0} />
-          ),
+          map: (row) => <MapLabel mapId={row.id} count={row.count[slice] ?? 0} />,
           scenario: (row) => (
             <Stack sx={{ pl: 2 }}>
-              <ScenarioLabel
-                scenarioId={row.id}
-                count={row.count[slice] ?? 0}
-              />
+              <ScenarioLabel scenarioId={row.id} count={row.count[slice] ?? 0} />
             </Stack>
           ),
           instance: ({ scenario, index }) => (
             <Stack sx={{ pl: 4 }}>
-              <SubmissionInstanceLabel
-                index={index}
-                scenario={scenario}
-                algorithm={algorithm}
-              />
+              <SubmissionInstanceLabel index={index} scenario={scenario} algorithm={algorithm} />
             </Stack>
           ),
           fallback: renderPlaceholder,
@@ -99,58 +87,50 @@ export function Table({ algorithm }: { algorithm?: string }) {
         { cost: "solution_cost", best: "best_solution" },
         { cost: "lower_cost", best: "best_lower" },
       ] as const
-    ).map(({ cost, best }): GridColDef<Model> => ({
-      fold: true,
-      flex: 1,
-      field: cost,
-      headerName: capitalize(startCase(cost)),
-      minWidth: 90,
-      renderCell: ({ row }) =>
-        disambiguate(row, {
-          instance: ({ scenario, index }) => {
-            return (
-              <SubmissionInstanceContext
-                algorithm={algorithm}
-                scenario={scenario}
-                index={index}
-              >
-                {({ current, instance, isLoading }) =>
-                  cellRendererText({
-                    formattedValue: isLoading ? (
-                      <Skeleton variant="text" width={100} />
-                    ) : (
-                      <>
-                        {current?.[cost]?.toLocaleString?.() ?? "N/A"}
-                        {current?.[best] ? (
-                          <>
-                            <Dot sx={{ bgcolor: "success.main", ml: 2 }} />
-                            <Box
-                              component="span"
-                              sx={{ color: "text.secondary" }}
-                            >
-                              {capitalize(startCase(best))}
-                            </Box>
-                          </>
-                        ) : (
-                          <>
-                            <Dot sx={{ bgcolor: "warning.main", ml: 2 }} />
-                            <Box
-                              component="span"
-                              sx={{ color: "text.secondary" }}
-                            >
-                              Best is {instance?.[cost]}
-                            </Box>
-                          </>
-                        )}
-                      </>
-                    ),
-                  })
-                }
-              </SubmissionInstanceContext>
-            );
-          },
-        }),
-    })),
+    ).map(
+      ({ cost, best }): GridColDef<Model> => ({
+        fold: true,
+        flex: 1,
+        field: cost,
+        headerName: capitalize(startCase(cost)),
+        minWidth: 90,
+        renderCell: ({ row }) =>
+          disambiguate(row, {
+            instance: ({ scenario, index }) => {
+              return (
+                <SubmissionInstanceContext algorithm={algorithm} scenario={scenario} index={index}>
+                  {({ current, instance, isLoading }) =>
+                    cellRendererText({
+                      formattedValue: isLoading ? (
+                        <Skeleton variant="text" width={100} />
+                      ) : (
+                        <>
+                          {current?.[cost]?.toLocaleString?.() ?? "N/A"}
+                          {current?.[best] ? (
+                            <>
+                              <Dot sx={{ bgcolor: "success.main", ml: 2 }} />
+                              <Box component="span" sx={{ color: "text.secondary" }}>
+                                {capitalize(startCase(best))}
+                              </Box>
+                            </>
+                          ) : (
+                            <>
+                              <Dot sx={{ bgcolor: "warning.main", ml: 2 }} />
+                              <Box component="span" sx={{ color: "text.secondary" }}>
+                                Best is {instance?.[cost]}
+                              </Box>
+                            </>
+                          )}
+                        </>
+                      ),
+                    })
+                  }
+                </SubmissionInstanceContext>
+              );
+            },
+          }),
+      }),
+    ),
   ];
   return (
     <>
@@ -160,8 +140,7 @@ export function Table({ algorithm }: { algorithm?: string }) {
         expanded={expanded}
         onRowClick={({ row }) =>
           disambiguate(row, {
-            instance: ({ scenario, index }) =>
-              open({ scenario, index, algorithm }),
+            instance: ({ scenario, index }) => open({ scenario, index, algorithm }),
           })
         }
         onExpandedChange={setExpanded}
@@ -177,7 +156,7 @@ export function Table({ algorithm }: { algorithm?: string }) {
                   scenario: row.id,
                   index: i,
                 })),
-                placeholder(row.id)
+                placeholder(row.id),
               ),
             instance: () => undefined,
           })

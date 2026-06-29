@@ -17,8 +17,7 @@ const findByEmail = async ({ params }: Context) =>
 const findAll = async () => Request.find({});
 
 const findByKey = async ({ params }: Context) => {
-  const { request_id } =
-    (await SubmissionKey.findOne({ api_key: params.key })) ?? {};
+  const { request_id } = (await SubmissionKey.findOne({ api_key: params.key })) ?? {};
   if (!request_id)
     return status(404, {
       message: `No request linked to key ${params.key}`,
@@ -41,12 +40,7 @@ async function queueMail(args: Infer<typeof Request>) {
   log.info("Preparing mail", args);
   assert(args.requesterEmail, "Requester email must be defined");
   const a = await render(<RequestConfirmation {...args} />, { pretty: true });
-  mail(
-    "noreply@pathfinding.ai",
-    args.requesterEmail,
-    "We have received your request",
-    a,
-  );
+  mail("noreply@pathfinding.ai", args.requesterEmail, "We have received your request", a);
 }
 
 const create = async ({ body }: Context) => {
@@ -92,10 +86,7 @@ const requestSchema = {
   comments: z.string().optional(),
 };
 
-const handleRequestUpdate = async ({
-  id,
-  ...data
-}: z.infer<z.ZodObject<typeof requestSchema>>) => {
+const handleRequestUpdate = async ({ id, ...data }: z.infer<z.ZodObject<typeof requestSchema>>) => {
   const request = Request.findById(id);
   if (!request) throw new Error("Request not found");
   await request.updateOne(data);

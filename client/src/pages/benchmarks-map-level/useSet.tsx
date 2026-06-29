@@ -12,8 +12,7 @@ export function useSet<T>(initial?: T[]) {
     has: (t: T) => index.has(t),
     add: (...xs: T[]) => xs.forEach((x) => set.upsert(isEqual, x)),
     remove: (...xs: T[]) => set.filter((x) => !xs.includes(x)),
-    toggle: (v: boolean, ...xs: T[]) =>
-      v ? ops.add(...xs) : ops.remove(...xs),
+    toggle: (v: boolean, ...xs: T[]) => (v ? ops.add(...xs) : ops.remove(...xs)),
     bindToggle: (...xs: T[]) => {
       const checked = {
         every: every(xs, (x) => ops.has(x)),

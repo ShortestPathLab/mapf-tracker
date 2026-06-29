@@ -14,16 +14,12 @@ export type SubmissionInfo = DataOf<
 export function algorithmSummaryQuery(algorithm?: string) {
   return {
     queryKey: ["algorithms", "summary", algorithm],
-    queryFn: () =>
-      unwrap(api.api.submission.summary({ algorithm: `${algorithm}` }).get()),
+    queryFn: () => unwrap(api.api.submission.summary({ algorithm: `${algorithm}` }).get()),
     enabled: !!algorithm,
   };
 }
 
-export function useAlgorithmScenarioQuery(
-  algorithm?: string,
-  scenario?: string
-) {
+export function useAlgorithmScenarioQuery(algorithm?: string, scenario?: string) {
   return useQuery(algorithmScenarioQuery(algorithm, scenario));
 }
 
@@ -61,7 +57,7 @@ export function algorithmScenarioQuery(algorithm?: string, scenario?: string) {
       unwrap(
         api.api
           .submission({ algorithm: `${algorithm}` })({ scenario: `${scenario}` })
-          .get()
+          .get(),
       ),
     enabled: !!algorithm && !!scenario,
   };

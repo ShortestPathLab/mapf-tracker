@@ -8,11 +8,9 @@ export type Params = unknown;
 export type Result = number;
 
 export const estimateSizeAsync = usingWorkerTask<Params, Result>(
-  () => new Worker(import.meta.path)
+  () => new Worker(import.meta.path),
 );
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingTaskMessageHandler<Params, Result>(async (d) =>
-    sizeof(d)
-  );
+  self.onmessage = usingTaskMessageHandler<Params, Result>(async (d) => sizeof(d));
 }

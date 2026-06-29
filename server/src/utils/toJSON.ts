@@ -1,8 +1,10 @@
 import { Document, Types } from "mongoose";
 
-export type Identity<T> = T extends object ? {} & {
-  [P in keyof T]: T[P]
-} : T;
+export type Identity<T> = T extends object
+  ? {} & {
+      [P in keyof T]: T[P];
+    }
+  : T;
 /**
  * Maps a raw Mongoose document type to its JSON wire shape: `ObjectId` and
  * `Date` fields (which Elysia serialises to strings on the wire) become
@@ -13,12 +15,12 @@ export type Identity<T> = T extends object ? {} & {
 export type Serialized<T> = T extends Types.ObjectId
   ? string
   : T extends Date
-  ? string
-  : T extends (infer U)[]
-  ? Serialized<U>[]
-  : T extends object
-  ? { [K in keyof T]: Serialized<T[K]> }
-  : T;
+    ? string
+    : T extends (infer U)[]
+      ? Serialized<U>[]
+      : T extends object
+        ? { [K in keyof T]: Serialized<T[K]> }
+        : T;
 
 type Hydrated<D> = Document<unknown, {}, D> & D;
 

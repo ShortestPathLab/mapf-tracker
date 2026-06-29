@@ -4,13 +4,9 @@ import { Types } from "mongoose";
 import { isDefined } from "utils/isDefined";
 import { encode } from "validator-wasm";
 
-const flip = (path: string) =>
-  path.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d");
+const flip = (path: string) => path.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d");
 
-export const getSolutionPath = async (
-  id: string,
-  source: "ongoing" | "submitted"
-) => {
+export const getSolutionPath = async (id: string, source: "ongoing" | "submitted") => {
   if (source === "ongoing") {
     const data = await OngoingSubmissionSolution.findOne({ _id: id });
     if (isDefined(data?.solutions)) {
@@ -38,8 +34,8 @@ export async function getSolutionPathsRaw(ids: string[]) {
     };
     all.push(
       ...(await SolutionPath.find(q, { solution_path: 1 })).map((b) =>
-        encode(b?.solution_path ?? "")
-      )
+        encode(b?.solution_path ?? ""),
+      ),
     );
   }
   return all;

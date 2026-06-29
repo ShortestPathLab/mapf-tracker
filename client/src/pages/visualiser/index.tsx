@@ -17,17 +17,14 @@ export { default as Visualiser } from "./Visualiser";
 
 export default function index() {
   const md = useMd();
-  const state =
-    useStableLocationState<VisualiserLocationState>() as VisualiserLocationState;
+  const state = useStableLocationState<VisualiserLocationState>() as VisualiserLocationState;
   const { data: instanceData } = useInstance(state.instanceId);
   const { data: scenarioData } = useScenario(instanceData?.scen_id ?? "");
   const { data: mapData } = useMapData(instanceData?.map_id);
   const scenarioString = scenarioData
     ? startCase(`${scenarioData?.scen_type}-${scenarioData?.type_id}`)
     : "--";
-  const title = instanceData
-    ? pluralize("agent", instanceData?.agents ?? 0, true)
-    : "--";
+  const title = instanceData ? pluralize("agent", instanceData?.agents ?? 0, true) : "--";
   return (
     <BentoLayout
       title={title}

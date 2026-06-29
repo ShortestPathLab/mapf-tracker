@@ -19,7 +19,7 @@ const schema = createSchema(
   },
   {
     versionKey: false,
-  }
+  },
 );
 
 export const model = createModel("submission_key", schema);

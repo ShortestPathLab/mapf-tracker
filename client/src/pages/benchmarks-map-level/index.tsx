@@ -1,15 +1,5 @@
-import {
-  FolderZipRounded,
-  MapRounded,
-  TableRounded,
-} from "@mui-symbols-material/w300";
-import {
-  CardActionArea,
-  Divider,
-  Stack,
-  Tooltip,
-  useTheme,
-} from "@mui/material";
+import { FolderZipRounded, MapRounded, TableRounded } from "@mui-symbols-material/w300";
+import { CardActionArea, Divider, Stack, Tooltip, useTheme } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { Analysis } from "components/analysis/Analysis";
@@ -32,25 +22,21 @@ import { Item } from "components/Item";
 import { ItemGrid } from "components/ItemGrid";
 
 export default function Page() {
-  const { mapId } =
-    useStableLocationState<MapLevelLocationState>() as MapLevelLocationState;
+  const { mapId } = useStableLocationState<MapLevelLocationState>() as MapLevelLocationState;
   const { data: mapData } = useMapData(mapId);
   const { data: mapScenarios } = useScenariosByMap(mapId);
-  const { open: openPreview, dialog: previewDialog } = useSurface(
-    MapVisualisationDialog,
-    {
-      variant: "fullscreen",
-      title: mapData ? startCase(mapData.map_name) : "--",
-      slotProps: {
-        appBar: {
-          sx: {
-            background: "transparent",
-            width: "fit-content",
-          },
+  const { open: openPreview, dialog: previewDialog } = useSurface(MapVisualisationDialog, {
+    variant: "fullscreen",
+    title: mapData ? startCase(mapData.map_name) : "--",
+    slotProps: {
+      appBar: {
+        sx: {
+          background: "transparent",
+          width: "fit-content",
         },
       },
     },
-  );
+  });
   const theme = useTheme();
   const notify = useSnackbarAction();
   return (
@@ -62,10 +48,7 @@ export default function Page() {
       ]}
       cover={
         <Tooltip title="Enlarge">
-          <CardActionArea
-            sx={{ borderRadius: 1 }}
-            onClick={() => openPreview({ mapId })}
-          >
+          <CardActionArea sx={{ borderRadius: 1 }} onClick={() => openPreview({ mapId })}>
             <PreviewCard
               palette={{ obstacle: theme.palette.text.primary }}
               map={mapId}
@@ -132,12 +115,7 @@ export default function Page() {
             label: "Maximum agents",
           },
         ].map(({ value, label }) => (
-          <Item
-            key={label}
-            primary={value?.toLocaleString?.() ?? "--"}
-            secondary={label}
-            invert
-          />
+          <Item key={label} primary={value?.toLocaleString?.() ?? "--"} secondary={label} invert />
         ))}
       />
       <Stack sx={{ gap: 4 }}>
@@ -145,12 +123,8 @@ export default function Page() {
           dataTabName="Browse scenarios"
           analysisTabName="Trends"
           data={<Table />}
-          analysis={
-            <Analysis template={analysisTemplate(mapData ?? undefined)} />
-          }
-          compare={
-            <Analysis template={compareTemplate(mapData ?? undefined)} />
-          }
+          analysis={<Analysis template={analysisTemplate(mapData ?? undefined)} />}
+          compare={<Analysis template={compareTemplate(mapData ?? undefined)} />}
         />
       </Stack>
       {previewDialog}

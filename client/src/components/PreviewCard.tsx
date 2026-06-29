@@ -1,12 +1,4 @@
-import {
-  Box,
-  Fade,
-  Skeleton,
-  SkeletonProps,
-  Stack,
-  StackProps,
-  useTheme,
-} from "@mui/material";
+import { Box, Fade, Skeleton, SkeletonProps, Stack, StackProps, useTheme } from "@mui/material";
 import { PreviewOptions, usePreviewData } from "queries/usePreviewQuery";
 import { useMemo } from "react";
 import { colors } from "utils/colors";
@@ -22,9 +14,7 @@ export function PreviewCard({
   map,
   instance,
   ...props
-}: { palette?: { [K in string]: string } } & PreviewOptions &
-  StackProps &
-  SkeletonProps) {
+}: { palette?: { [K in string]: string } } & PreviewOptions & StackProps & SkeletonProps) {
   const { data, isLoading } = usePreviewData({ scenario, map, instance });
   const theme = useTheme();
   const dark = theme.palette.mode === "dark";
@@ -39,7 +29,7 @@ export function PreviewCard({
       data
         .replace(/var\(--background\)/g, p.background)
         .replace(/var\(--obstacle\)/g, p.obstacle)
-        .replace(/var\(--agent\)/g, () => getColor()[dark ? "300" : "A400"])
+        .replace(/var\(--agent\)/g, () => getColor()[dark ? "300" : "A400"]),
     );
   }, [data, theme, dark, p.background, p.obstacle]);
   return (

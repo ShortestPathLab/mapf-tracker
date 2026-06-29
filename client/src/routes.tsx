@@ -24,12 +24,7 @@ function MorePage() {
   const navigate = useNavigate();
   if (!md) defer(() => navigate("/"));
   return (
-    md && (
-      <DirectoryPage
-        labels={["Make a submission", "Docs", "Settings", "More"]}
-        title="More"
-      />
-    )
+    md && <DirectoryPage labels={["Make a submission", "Docs", "Settings", "More"]} title="More" />
   );
 }
 type NestedRoute = Omit<Route, "parent"> & {
@@ -39,10 +34,7 @@ type NestedRoute = Omit<Route, "parent"> & {
 const flattenRoutes = (routes: NestedRoute[], parent?: string): Route[] => {
   return routes.flatMap(({ children, ...route }) => {
     const flatRoute: Route = parent ? { ...route, parent } : route;
-    return [
-      flatRoute,
-      ...(children ? flattenRoutes(children, route.path) : []),
-    ];
+    return [flatRoute, ...(children ? flattenRoutes(children, route.path) : [])];
   });
 };
 

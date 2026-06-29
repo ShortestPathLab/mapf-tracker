@@ -1,8 +1,4 @@
-import {
-  ConversionPathRounded,
-  Stat1Rounded,
-  StatMinus1Rounded,
-} from "@mui-symbols-material/w300";
+import { ConversionPathRounded, Stat1Rounded, StatMinus1Rounded } from "@mui-symbols-material/w300";
 import {
   Timeline,
   TimelineConnector,
@@ -12,13 +8,7 @@ import {
   TimelineSeparator,
   timelineItemClasses,
 } from "@mui/lab";
-import {
-  Divider,
-  ListItem,
-  ListItemText,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Divider, ListItem, ListItemText, Stack, Typography } from "@mui/material";
 import { isDefined } from "@mui/x-charts/internals";
 import { ActionBar } from "components/ActionBar";
 import { DetailsList } from "components/DetailsList";
@@ -44,8 +34,7 @@ export default function Details({ id }: { id?: string }) {
     instance: id,
     solutionPath: instance?.solution_path_id,
   });
-  const isClosed =
-    instance?.solution_cost && instance.solution_cost === instance.lower_cost;
+  const isClosed = instance?.solution_cost && instance.solution_cost === instance.lower_cost;
   return (
     <Stack sx={{ gap: 4 }}>
       <DetailsList
@@ -132,8 +121,7 @@ export default function Details({ id }: { id?: string }) {
                   .map((claim, i, xs) => {
                     const { date, value } = claim;
                     // `algo_name` is only present on solution-record claims.
-                    const algo_name =
-                      "algo_name" in claim ? claim.algo_name : undefined;
+                    const algo_name = "algo_name" in claim ? claim.algo_name : undefined;
                     const previous = i === 0 ? undefined : xs[i - 1]?.value;
                     return (
                       <TimelineItem color="text.secondary" key={i}>
@@ -154,9 +142,7 @@ export default function Details({ id }: { id?: string }) {
                               primary={
                                 <>
                                   {value?.toLocaleString?.() ?? "0"}
-                                  {isDefined(previous) &&
-                                  isDefined(value) &&
-                                  previous !== value ? (
+                                  {isDefined(previous) && isDefined(value) && previous !== value ? (
                                     previous < value ? (
                                       <Stat1Rounded
                                         sx={{
@@ -164,9 +150,7 @@ export default function Details({ id }: { id?: string }) {
                                           transform: "translateY(4px)",
                                         }}
                                         fontSize="small"
-                                        color={
-                                          best === "max" ? "success" : "error"
-                                        }
+                                        color={best === "max" ? "success" : "error"}
                                       />
                                     ) : (
                                       <StatMinus1Rounded
@@ -175,9 +159,7 @@ export default function Details({ id }: { id?: string }) {
                                           transform: "translateY(4px)",
                                         }}
                                         fontSize="small"
-                                        color={
-                                          best === "max" ? "error" : "success"
-                                        }
+                                        color={best === "max" ? "error" : "success"}
                                       />
                                     )
                                   ) : (

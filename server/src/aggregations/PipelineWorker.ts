@@ -6,10 +6,7 @@ import { stages } from "../aggregations";
 import { usingTaskMessageHandler } from "../queue/usingWorker";
 import { PipelineTaskData, PipelineTaskResult } from "./PipelineTaskData";
 
-async function run({
-  stage,
-  variables,
-}: PipelineTaskData): Promise<PipelineTaskResult> {
+async function run({ stage, variables }: PipelineTaskData): Promise<PipelineTaskResult> {
   if (!(stage in stages)) return { error: "invalid stage" };
   try {
     await connectToDatabase();

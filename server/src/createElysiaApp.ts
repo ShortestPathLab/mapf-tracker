@@ -31,8 +31,8 @@ export const createElysiaApp = () => {
   const app = new Elysia({
     serve: {
       idleTimeout: 255, // 255 seconds
-      maxRequestBodySize: 1024 * 1024 * 1024 // 1 GB
-    }
+      maxRequestBodySize: 1024 * 1024 * 1024, // 1 GB
+    },
   })
     .headers(jsonHeaders)
     .options("*", ({ set }) => {

@@ -3,11 +3,7 @@ import { useSm } from "components/dialog/useSmallDisplay";
 import { useTop } from "layout/TabBar";
 import { useRef } from "react";
 
-export function Title({
-  children,
-  sticky,
-  ...props
-}: { sticky?: boolean } & TypographyProps) {
+export function Title({ children, sticky, ...props }: { sticky?: boolean } & TypographyProps) {
   const sm = useSm();
   const ref = useRef<HTMLElement>(null);
   const isTop = useTop(ref);

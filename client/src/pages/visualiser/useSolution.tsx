@@ -1,16 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  assign,
-  clamp,
-  entries,
-  fill,
-  floor,
-  head,
-  last,
-  memoize,
-  pick,
-  reduce,
-} from "lodash";
+import { assign, clamp, entries, fill, floor, head, last, memoize, pick, reduce } from "lodash";
 import memoizee from "memoizee";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";
@@ -33,7 +22,7 @@ import { optimiseGridMap } from "./optimiseGridMap";
 
 function padArray<T>(arr: T[], size: number, value: T) {
   if (arr.length >= size) return arr;
-  const padding = fill(new Array(size - arr.length), value);
+  const padding = fill(Array.from({ length: size - arr.length }), value);
   return [...arr, ...padding];
 }
 
@@ -73,56 +62,52 @@ const defaultOffsetMap = {
 function createAgentPositionGetter(
   sources: { x: number; y: number }[],
   paths: string[],
-  timespan: number
+  timespan: number,
 ) {
   const chunkSize = floor(clamp(timespan / 100, 1, 5000));
   const test = paths.map(decode);
 
-  const getAgentPositions = memoizee(
-    (t: number): { x: number; y: number }[] => {
-      if (t === 0) return sources;
-      const prev = Math.floor((t - 1) / chunkSize) * chunkSize;
-      const prevPos = getAgentPositions(prev);
-      return prevPos.map((source, i) => {
-        const countChar = (c: string) =>
-          test[i].slice(prev, t).match(new RegExp(c, "g"))?.length ?? 0;
-        const offsets = entries(defaultOffsetMap).map(([k, v]) => {
-          const count = countChar(k);
-          return { x: count * v.x, y: count * v.y };
-        });
-        return reduce(
-          offsets,
-          (a, b) => ({
-            x: a.x + b.x,
-            y: a.y + b.y,
-          }),
-          source
-        );
+  const getAgentPositions = memoizee((t: number): { x: number; y: number }[] => {
+    if (t === 0) return sources;
+    const prev = Math.floor((t - 1) / chunkSize) * chunkSize;
+    const prevPos = getAgentPositions(prev);
+    return prevPos.map((source, i) => {
+      const countChar = (c: string) =>
+        test[i].slice(prev, t).match(new RegExp(c, "g"))?.length ?? 0;
+      const offsets = entries(defaultOffsetMap).map(([k, v]) => {
+        const count = countChar(k);
+        return { x: count * v.x, y: count * v.y };
       });
-    }
-  );
+      return reduce(
+        offsets,
+        (a, b) => ({
+          x: a.x + b.x,
+          y: a.y + b.y,
+        }),
+        source,
+      );
+    });
+  });
 
   const bs = paths.map((c) => processAgentSimple(c ?? ""));
-  const getAgentPosition = memoize(
-    (n: number): { action?: string; x: number; y: number }[] => {
-      let t = 0;
-      const path: { x: number; y: number; action?: string }[] = [sources[n]];
-      while (!bs[n].done(t)) {
-        const [offset] = sumPositions(
-          [pick(last(path) ?? { x: 0, y: 0 }, "x", "y")],
-          createOffsetMap(
-            createActionMap(t, [bs[n]]).map((a) => a ?? "w"),
-            defaultOffsetMap
-          )
-        );
-        if (offset.x || offset.y) {
-          path.push({ ...offset, action: bs[n].seek(t) });
-        }
-        t++;
+  const getAgentPosition = memoize((n: number): { action?: string; x: number; y: number }[] => {
+    let t = 0;
+    const path: { x: number; y: number; action?: string }[] = [sources[n]];
+    while (!bs[n].done(t)) {
+      const [offset] = sumPositions(
+        [pick(last(path) ?? { x: 0, y: 0 }, "x", "y")],
+        createOffsetMap(
+          createActionMap(t, [bs[n]]).map((a) => a ?? "w"),
+          defaultOffsetMap,
+        ),
+      );
+      if (offset.x || offset.y) {
+        path.push({ ...offset, action: bs[n].seek(t) });
       }
-      return path;
+      t++;
     }
-  );
+    return path;
+  });
   return { getAgentPositions, getAgentPath: getAgentPosition };
 }
 
@@ -142,27 +127,23 @@ export function useSolution({
   source,
 }: SolutionParameters) {
   "use no memo";
-  const { data: instance, isLoading: isInstanceLoading } =
-    useInstance(instanceId ?? "");
-  const { data: history, isLoading: isHistoryLoading } =
-    useAlgorithmForInstanceData(instanceId ?? "");
+  const { data: instance, isLoading: isInstanceLoading } = useInstance(instanceId ?? "");
+  const { data: history, isLoading: isHistoryLoading } = useAlgorithmForInstanceData(
+    instanceId ?? "",
+  );
   const { data: solution, isLoading: isSolutionLoading } = useSolutionData(
     solutionId ?? last(head(history)?.solution_algos)?.submission_id,
-    source
+    source,
   );
 
   // Only ongoing submissions have diagnostics
   const { data: ongoingSubmission, isLoading: isDiagnosticsLoading } =
-    useOngoingSubmissionByIdQuery(
-      source === "ongoing" ? solutionId : undefined
-    );
+    useOngoingSubmissionByIdQuery(source === "ongoing" ? solutionId : undefined);
 
   const { data: scenario, isLoading: isScenarioLoading } = useScenario(
-    instance?.scen_id ?? scenarioId ?? ""
+    instance?.scen_id ?? scenarioId ?? "",
   );
-  const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(
-    instance?.map_id ?? mapId
-  );
+  const { data: mapMetaData, isLoading: isMapDataLoading } = useMapData(instance?.map_id ?? mapId);
 
   const { data: generalData, isLoading: isGeneralDataLoading } = useQuery({
     queryKey: [
@@ -176,9 +157,9 @@ export function useSolution({
     queryFn: async () => {
       const getMap = async () => {
         if (mapMetaData?.map_name) {
-          const mapData = await fetch(
-            `/assets/maps/${mapMetaData.map_name}.map`
-          ).then((r) => r.text());
+          const mapData = await fetch(`/assets/maps/${mapMetaData.map_name}.map`).then((r) =>
+            r.text(),
+          );
           const parsedMap = parseMap(mapData);
           const size = {
             width: (head(parsedMap) ?? "").length,
@@ -194,12 +175,12 @@ export function useSolution({
       const getScenario = async () => {
         if (mapMetaData?.map_name && scenario?.scen_type && scenario?.type_id) {
           const scenarioData = await fetch(
-            `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`
+            `/assets/scens/${mapMetaData.map_name}-${scenario.scen_type}-${scenario.type_id}.scen`,
           ).then((r) => r.text());
           const parsedScenario = parseScenario(
             scenarioData,
             instance?.agents,
-            solution?.join?.("\n")
+            solution?.join?.("\n"),
           );
           return { result: parsedScenario };
         }
@@ -215,12 +196,13 @@ export function useSolution({
   const { sources, paths, timespan } = result ?? {};
 
   const getters = useMemo(
-    () => createAgentPositionGetter(sources ?? [], padArray(
-      paths ?? [],
-      instance?.agents ?? 0,
-      ""
-    ), timespan ?? 0),
-    [sources, paths, timespan, instance?.agents]
+    () =>
+      createAgentPositionGetter(
+        sources ?? [],
+        padArray(paths ?? [], instance?.agents ?? 0, ""),
+        timespan ?? 0,
+      ),
+    [sources, paths, timespan, instance?.agents],
   );
 
   return {

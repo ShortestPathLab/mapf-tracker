@@ -42,13 +42,10 @@ export function useSheetHandle(close?: () => void) {
     };
     const end = (y?: number) => {
       if (isNull(initial)) return;
-      paper.style.transition = theme.transitions.create(
-        ["transform", "max-height"],
-        {
-          easing: theme.transitions.easing.easeOut,
-          duration: 500,
-        }
-      );
+      paper.style.transition = theme.transitions.create(["transform", "max-height"], {
+        easing: theme.transitions.easing.easeOut,
+        duration: 500,
+      });
       paper.style.transform = "none";
       const span = paper.getBoundingClientRect().height;
       // If the user has dragged more than half the paper height, close the drawer
@@ -99,9 +96,9 @@ export function useSheetHandle(close?: () => void) {
             }
             e.stopPropagation();
           },
-          { signal: controller.signal, passive: true }
-        )
-      )
+          { signal: controller.signal, passive: true },
+        ),
+      ),
     );
     return () => controller.abort();
   }, [handle, paper, theme, close, scroll]);

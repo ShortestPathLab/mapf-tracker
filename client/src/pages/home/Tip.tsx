@@ -1,16 +1,5 @@
-import {
-  BookRounded,
-  TableRounded,
-  UploadRounded,
-} from "@mui-symbols-material/w300";
-import {
-  alpha,
-  Box,
-  Button,
-  Stack,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
+import { BookRounded, TableRounded, UploadRounded } from "@mui-symbols-material/w300";
+import { alpha, Box, Button, Stack, ThemeProvider, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { Link } from "@mui/material";
@@ -49,11 +38,7 @@ export function Tip() {
       />
       <Stack sx={{ gap: 1 }}>
         <Typography variant="h6" sx={{ mb: 4 }}>
-          <Link
-            sx={{ textDecoration: "none" }}
-            href={publisherUrl}
-            target="_blank"
-          >
+          <Link sx={{ textDecoration: "none" }} href={publisherUrl} target="_blank">
             {publisher}
           </Link>
         </Typography>
@@ -66,20 +51,15 @@ export function Tip() {
         >
           {appName}
         </Typography>
-        <Typography
-          variant="subtitle1"
-          color="text.secondary"
-          sx={{ lineHeight: "1.25" }}
-        >
+        <Typography variant="subtitle1" color="text.secondary" sx={{ lineHeight: "1.25" }}>
           Tracking the state-of-the-art of multi-agent pathfinding algorithms
         </Typography>
       </Stack>
       {!xs && (
         <Typography variant="body2" sx={{ maxWidth: 840 }}>
-          Welcome to {appName} – a comprehensive database for tracking
-          state-of-the-art multi-agent pathfinding solutions across a range of
-          grid-based benchmarks. Easily monitor advancements, share your
-          research, and compare the performance of different algorithms.
+          Welcome to {appName} – a comprehensive database for tracking state-of-the-art multi-agent
+          pathfinding solutions across a range of grid-based benchmarks. Easily monitor
+          advancements, share your research, and compare the performance of different algorithms.
         </Typography>
       )}
       <Scroll x fadeX style={{ marginTop: -8, marginBottom: -8 }}>

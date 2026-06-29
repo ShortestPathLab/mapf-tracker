@@ -30,8 +30,7 @@ function Sheet({
   const active = shouldMount || disableAnimation;
   const styles = {
     from: {
-      transform:
-        direction === "forwards" ? "translateX(16px)" : "translateX(-16px)",
+      transform: direction === "forwards" ? "translateX(16px)" : "translateX(-16px)",
       opacity: 0,
     },
     enter: {
@@ -41,8 +40,7 @@ function Sheet({
       },
     },
     leave: {
-      transform:
-        direction === "forwards" ? "translateX(16px)" : "translateX(-16px)",
+      transform: direction === "forwards" ? "translateX(16px)" : "translateX(-16px)",
       opacity: 0,
     },
   };
@@ -59,8 +57,7 @@ function Sheet({
         ...styles[disableAnimation ? "enter" : stage],
         "&, & > div": {
           overflow: "hidden",
-          transition: (t) =>
-            t.transitions.create(["transform", "opacity"], { duration: 450 }),
+          transition: (t) => t.transitions.create(["transform", "opacity"], { duration: 450 }),
         },
       }}
     >
@@ -92,9 +89,7 @@ export function Router({
   const previous = usePrevious(pathname);
   const sm = useXs();
   const current = routes.find((r) => matchPath(r.path, pathname));
-  const prev = previous
-    ? routes.find((r) => matchPath(r.path, previous))
-    : undefined;
+  const prev = previous ? routes.find((r) => matchPath(r.path, previous)) : undefined;
 
   const directMatch = (a?: Route) => (a ? matchPath(a.path, pathname) : null);
 
@@ -136,7 +131,7 @@ export function Router({
 
   const fallback =
     _fallback === true
-      ? fallback2 ?? head(routes)
+      ? (fallback2 ?? head(routes))
       : {
           content: _fallback,
           path: "",
@@ -187,51 +182,41 @@ export function Router({
               <Fragment key={r.path}>
                 {createRoute(
                   r,
-                  <Box sx={{ height: "100%", width: "100%", display: "flex" }}>
-                    {r.content}
-                  </Box>
+                  <Box sx={{ height: "100%", width: "100%", display: "flex" }}>{r.content}</Box>,
                 )}
               </Fragment>
             ))
           : fallback?.content
         : matches.length
-        ? animationState.direction
-          ? animationState.direction === "forwards"
-            ? [
-                <Sheet
-                  direction="backwards"
-                  key={animationState.previous?.path}
-                >
-                  {animationState.previous?.content}
-                </Sheet>,
-                <Sheet in direction="forwards" key={animationState.next?.path}>
-                  {animationState.next?.content}
-                </Sheet>,
-              ]
+          ? animationState.direction
+            ? animationState.direction === "forwards"
+              ? [
+                  <Sheet direction="backwards" key={animationState.previous?.path}>
+                    {animationState.previous?.content}
+                  </Sheet>,
+                  <Sheet in direction="forwards" key={animationState.next?.path}>
+                    {animationState.next?.content}
+                  </Sheet>,
+                ]
+              : [
+                  <Sheet in direction="backwards" key={animationState.next?.path}>
+                    {animationState.next?.content}
+                  </Sheet>,
+                  <Sheet direction="forwards" key={animationState.previous?.path}>
+                    {animationState.previous?.content}
+                  </Sheet>,
+                ]
             : [
-                <Sheet in direction="backwards" key={animationState.next?.path}>
+                <Sheet key={animationState.previous?.path} />,
+                <Sheet disableAnimation in direction="forwards" key={animationState.next?.path}>
                   {animationState.next?.content}
-                </Sheet>,
-                <Sheet direction="forwards" key={animationState.previous?.path}>
-                  {animationState.previous?.content}
                 </Sheet>,
               ]
           : [
-              <Sheet key={animationState.previous?.path} />,
-              <Sheet
-                disableAnimation
-                in
-                direction="forwards"
-                key={animationState.next?.path}
-              >
-                {animationState.next?.content}
+              <Sheet direction="forwards" in disableAnimation key={fallback?.path}>
+                {fallback?.content}
               </Sheet>,
-            ]
-        : [
-            <Sheet direction="forwards" in disableAnimation key={fallback?.path}>
-              {fallback?.content}
-            </Sheet>,
-          ]}
+            ]}
     </Stack>
   );
 }

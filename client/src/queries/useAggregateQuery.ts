@@ -44,10 +44,7 @@ function aggregate(params: AggregateQuery) {
   return unwrap(api.api.queries.aggregate.get({ query: params }));
 }
 
-export type AggregateAlgorithmQuery = Omit<
-  AggregateQuery,
-  "groupBy" | "filterBy"
-> & {
+export type AggregateAlgorithmQuery = Omit<AggregateQuery, "groupBy" | "filterBy"> & {
   algorithm?: string;
   groupBy?: AggregateQuery["groupBy"] | "algorithm";
   filterBy?: AggregateQuery["filterBy"] | "best_lower" | "best_solution";

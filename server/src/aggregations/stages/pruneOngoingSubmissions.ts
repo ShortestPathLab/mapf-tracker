@@ -26,7 +26,7 @@ export const pruneOngoingSubmissions = () =>
       { $match: { $expr: { $eq: ["$status", "submitted"] } } },
       { $out: "ongoing_submissions" },
     ],
-    { allowDiskUse: true }
+    { allowDiskUse: true },
   );
 
 export const stage: PipelineStage = {

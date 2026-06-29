@@ -5,15 +5,7 @@ import { chain as _, map, sortBy, zip } from "lodash";
 import pluralize from "pluralize";
 import { useAggregate } from "queries/useAggregateQuery";
 import { useMemo } from "react";
-import {
-  Area,
-  AreaChart,
-  Label,
-  Legend,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { paper } from "theme";
 import { accentColors, tone } from "utils/colors";
 
@@ -92,14 +84,12 @@ function RenderChart({
 }
 
 export function CostChart({ scenario }: { scenario: string }) {
-  const { data: solutionCosts, isLoading: solutionCostsLoading } = useAggregate(
-    {
-      scenario,
-      groupBy: "agents",
-      value: "solution_cost",
-      operation: "max",
-    },
-  );
+  const { data: solutionCosts, isLoading: solutionCostsLoading } = useAggregate({
+    scenario,
+    groupBy: "agents",
+    value: "solution_cost",
+    operation: "max",
+  });
   const { data: lowerCosts, isLoading: lowerCostsLoading } = useAggregate({
     scenario,
     groupBy: "agents",

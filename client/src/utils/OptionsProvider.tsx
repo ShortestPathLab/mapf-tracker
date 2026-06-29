@@ -28,6 +28,6 @@ export function useOptionsState() {
   return usePersistentReducer<typeof key, Options, Options>(
     key,
     (prev, next) => ({ ...prev, ...next }),
-    storedOptionsValue
+    storedOptionsValue,
   );
 }

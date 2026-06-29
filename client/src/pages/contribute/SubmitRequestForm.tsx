@@ -31,8 +31,7 @@ export function SubmitRequestForm({
   });
 
   const { mutateAsync: submit } = useMutation({
-    mutationFn: (request: Request) =>
-      unwrap(api.api.request.create.post(request)),
+    mutationFn: (request: Request) => unwrap(api.api.request.create.post(request)),
     mutationKey: ["requestSubmissionKey"],
   });
 
@@ -51,10 +50,7 @@ export function SubmitRequestForm({
               variant="contained"
               onClick={() =>
                 open({
-                  hintText: hintText(
-                    values.algorithmName,
-                    values.requesterEmail,
-                  ),
+                  hintText: hintText(values.algorithmName, values.requesterEmail),
                   acceptLabel: "Submit request",
                   acceptProps: { color: "primary" },
                   closeLabel: "Cancel",

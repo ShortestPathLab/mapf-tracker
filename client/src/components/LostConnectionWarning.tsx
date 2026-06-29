@@ -40,7 +40,7 @@ export function LostConnectionWarning() {
                 </Typography>
               }
             />
-          )
+          ),
       )}
     </Portal>
   );

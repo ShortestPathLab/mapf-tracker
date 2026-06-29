@@ -13,9 +13,7 @@ export const env = z
     MONGO_DB_URI: z.string(),
     JWT_SECRET: z.string(),
     REGISTRATION_ENABLED: z.coerce.number().default(0),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     PORT: z.coerce.number().default(3000),
     EMAIL_CALLBACK: z.string(),
     LOG_LEVEL: z.string().default("info"),

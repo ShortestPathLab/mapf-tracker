@@ -53,15 +53,7 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { DisplayObjectEvents, FederatedPointerEvent, Rectangle } from "pixi.js";
 import pluralize from "pluralize";
-import {
-  Reducer,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { Reducer, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useFullscreen, useToggle } from "react-use";
 import AutoSize from "react-virtualized-auto-sizer";
@@ -71,16 +63,7 @@ import { lerp, lerpCircle, useLerp } from "utils/useLerp";
 import { Diagnostic } from "./Diagnostic";
 import Viewport from "./Viewport";
 import { BLACK, SCALE_SHOW_GRID_THRESHOLD, WHITE } from "./constants";
-import {
-  $agentDiagnostics,
-  $agents,
-  $bg,
-  $box,
-  $grid,
-  $map,
-  Arrow,
-  getAngle,
-} from "./draw";
+import { $agentDiagnostics, $agents, $bg, $box, $grid, $map, Arrow, getAngle } from "./draw";
 import { proportionOf } from "./proportionOf";
 import { usePlayback } from "./usePlayback";
 import { useThrottleState } from "./useThrottleState";
@@ -131,8 +114,9 @@ export function Visualisation({
   const sm = useSm();
 
   // ─────────────────────────────────────────────────────────────────────
-  const { step, backwards, forwards, play, pause, paused, restart, seek } =
-    usePlayback(timespan ?? 0);
+  const { step, backwards, forwards, play, pause, paused, restart, seek } = usePlayback(
+    timespan ?? 0,
+  );
 
   const time = useLerp(step);
 
@@ -172,18 +156,16 @@ export function Visualisation({
         theme.palette.error.main,
       )
     );
-  },
-    [
-      diagnostics,
-      step,
-      getAgentColor,
-      selection,
-      getAgentPath,
-      goals,
-      dark,
-      theme.palette.error.main,
-    ],
-  );
+  }, [
+    diagnostics,
+    step,
+    getAgentColor,
+    selection,
+    getAgentPath,
+    goals,
+    dark,
+    theme.palette.error.main,
+  ]);
 
   const drawMap = useMemo(
     () => $map(optimisedMap ?? [], dark ? WHITE : BLACK),
@@ -256,7 +238,7 @@ export function Visualisation({
       viewport.on("mousemove", f);
       return () => void viewport.off("mousemove", f);
     }
-  }, [viewport, step, getAgentPositions, container.current]);
+  }, [viewport, step, getAgentPositions]);
 
   useEffect(() => {
     if (viewport) {
@@ -338,11 +320,7 @@ export function Visualisation({
                       }}
                     >
                       <Graphics
-                        draw={$bg(
-                          theme.palette.background.paper,
-                          size.width,
-                          size.height,
-                        )}
+                        draw={$bg(theme.palette.background.paper, size.width, size.height)}
                       />
                       <Viewport {...size} onViewport={setViewport}>
                         <Container>
@@ -366,10 +344,7 @@ export function Visualisation({
                                 a2.x !== a1.x || a2.y !== a1.y,
                                 a1.x !== a0.x || a1.y !== a0.y,
                               ];
-                              const [nextAngle, prevAngle] = [
-                                getAngle(a1, a2),
-                                getAngle(a0, a1),
-                              ];
+                              const [nextAngle, prevAngle] = [getAngle(a1, a2), getAngle(a0, a1)];
                               const position = {
                                 x: lerp(a0.x, a1.x, dt),
                                 y: lerp(a0.y, a1.y, dt),
@@ -378,11 +353,7 @@ export function Visualisation({
                                 within(position, bounds) && (
                                   <Arrow
                                     opacity={
-                                      (selection.show
-                                        ? selection.agent === i
-                                          ? 1
-                                          : 0.5
-                                        : 1) *
+                                      (selection.show ? (selection.agent === i ? 1 : 0.5) : 1) *
                                       lerp(+prevDidMove, +nextDidMove, dt)
                                     }
                                     position={position}
@@ -397,9 +368,7 @@ export function Visualisation({
                                 )
                               );
                             })}
-                          {selection.show && (
-                            <Graphics draw={drawAgent || undefined} />
-                          )}
+                          {selection.show && <Graphics draw={drawAgent || undefined} />}
                           <Graphics draw={drawBox} alpha={0.1} />
                         </Container>
                       </Viewport>
@@ -425,10 +394,7 @@ export function Visualisation({
                         width: sm ? undefined : "fit-content",
                       }}
                     >
-                      <Stack
-                        direction="row"
-                        sx={{ gap: 2, alignItems: "center" }}
-                      >
+                      <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
                         {!disablePlayback && (
                           <>
                             {!sm && (
@@ -454,13 +420,9 @@ export function Visualisation({
                               {
                                 name: paused ? "Play" : "Pause",
                                 icon: paused ? (
-                                  <PlayArrowRounded
-                                    sx={{ color: "secondary.main" }}
-                                  />
+                                  <PlayArrowRounded sx={{ color: "secondary.main" }} />
                                 ) : (
-                                  <PauseRounded
-                                    sx={{ color: "secondary.main" }}
-                                  />
+                                  <PauseRounded sx={{ color: "secondary.main" }} />
                                 ),
                                 action: paused ? play : pause,
                               },
@@ -481,10 +443,7 @@ export function Visualisation({
                               },
                             ].map(({ name, icon, action, disabled }) => (
                               <Tooltip title={name} key={name} placement="top">
-                                <IconButton
-                                  disabled={disabled}
-                                  onClick={action}
-                                >
+                                <IconButton disabled={disabled} onClick={action}>
                                   {icon}
                                 </IconButton>
                               </Tooltip>
@@ -503,8 +462,7 @@ export function Visualisation({
                                 flex: 1,
                                 ".MuiSlider-rail": {
                                   opacity: 1,
-                                  bgcolor: (t) =>
-                                    alpha(t.palette.primary.main, 0.38),
+                                  bgcolor: (t) => alpha(t.palette.primary.main, 0.38),
                                   backgroundImage: (t) => {
                                     const ts = map(diagnostics, "t")
                                       .filter((c) => !isUndefined(c))
@@ -516,9 +474,7 @@ export function Visualisation({
                                           t.palette.error.main
                                         } ${c * 100 - 0.5}%, ${
                                           t.palette.error.main
-                                        } ${c * 100 + 0.5}%, transparent ${
-                                          c * 100 + 0.5
-                                        }%`,
+                                        } ${c * 100 + 0.5}%, transparent ${c * 100 + 0.5}%`,
                                     ).join(", ")})`;
                                   },
                                 },
@@ -526,9 +482,7 @@ export function Visualisation({
                             />
                           </>
                         )}
-                        {!sm && !disablePlayback && (
-                          <Divider orientation="vertical" flexItem />
-                        )}
+                        {!sm && !disablePlayback && <Divider orientation="vertical" flexItem />}
                         {!sm && (
                           <>
                             <Tooltip title="Toggle fullscreen" placement="top">
@@ -537,11 +491,7 @@ export function Visualisation({
                                   toggle();
                                 }}
                               >
-                                {isFullscreen ? (
-                                  <FullscreenExitRounded />
-                                ) : (
-                                  <FullscreenRounded />
-                                )}
+                                {isFullscreen ? <FullscreenExitRounded /> : <FullscreenRounded />}
                               </IconButton>
                             </Tooltip>
                             <PopupState variant="popover">
@@ -564,23 +514,18 @@ export function Visualisation({
                                   >
                                     {[
                                       {
-                                        getScale: () =>
-                                          (viewport?.scale.x ?? 0) * 1.2,
+                                        getScale: () => (viewport?.scale.x ?? 0) * 1.2,
                                         label: "Zoom in",
                                         icon: <ZoomInRounded />,
                                       },
                                       {
-                                        getScale: () =>
-                                          (viewport?.scale.x ?? 0) * 0.8,
+                                        getScale: () => (viewport?.scale.x ?? 0) * 0.8,
                                         label: "Zoom out",
                                         icon: <ZoomOutRounded />,
                                       },
                                       {
                                         getScale: () =>
-                                          (viewport?.findFit(
-                                            width ?? 0,
-                                            height ?? 0
-                                          ) ?? 0) * 0.9,
+                                          (viewport?.findFit(width ?? 0, height ?? 0) ?? 0) * 0.9,
                                         label: "Fit to screen",
                                         icon: <FitScreenRounded />,
                                       },
@@ -625,113 +570,98 @@ export function Visualisation({
                 >
                   {!isUndefined(selection.agent) &&
                     ((agent: number) => (
-                    <>
-                      <Stack
-                        direction="row"
-                        sx={{
-                          alignItems: "center",
-                          py: 0.5,
-                          px: 2,
-                          gap: 4,
-                        }}
-                      >
-                        <Typography sx={{ flex: 1 }}>
-                          <Dot
-                            sx={{ bgcolor: getAgentColor(agent) }}
-                          />
-                          Agent {agent}
-                        </Typography>
-                        <IconButton
-                          edge="end"
-                          onClick={() => setSelection({ show: false })}
+                      <>
+                        <Stack
+                          direction="row"
+                          sx={{
+                            alignItems: "center",
+                            py: 0.5,
+                            px: 2,
+                            gap: 4,
+                          }}
                         >
-                          <CloseRounded />
-                        </IconButton>
-                      </Stack>
-                      <Stack sx={{ p: 2, minWidth: 180 }}>
-                        <Item
-                          invert
-                          primary={getAgentPath(agent).length - 1}
-                          secondary="Cost"
-                        />
-                        <Item
-                          invert
-                          primary={thru(
-                            getAgentPositions(step)[agent],
-                            (p) => (p ? `(${p.x}, ${p.y})` : "--"),
-                          )}
-                          secondary="Position"
-                        />
-                        <Item
-                          invert
-                          primary={thru(
-                            getAgentPath(agent)[step],
-                            (p) =>
-                              ({
-                                w: "Wait",
-                                u: "Up",
-                                d: "Down",
-                                l: "Left",
-                                r: "Right",
-                              })[p?.action ?? ""] ?? "--",
-                          )}
-                          secondary="Action"
-                        />
-                        {[
-                          {
-                            name: "Moving",
-                            value: proportionOf(
-                              getAgentPath(agent),
-                              (p) => ["u", "d", "l", "r"].includes(p.action ?? ""),
-                            ),
-                          },
-                          {
-                            name: "Waiting",
-                            value: proportionOf(
-                              getAgentPath(agent),
-                              (p) => p.action === "w",
-                            ),
-                          },
-                        ].map(({ name, value }) => (
+                          <Typography sx={{ flex: 1 }}>
+                            <Dot sx={{ bgcolor: getAgentColor(agent) }} />
+                            Agent {agent}
+                          </Typography>
+                          <IconButton edge="end" onClick={() => setSelection({ show: false })}>
+                            <CloseRounded />
+                          </IconButton>
+                        </Stack>
+                        <Stack sx={{ p: 2, minWidth: 180 }}>
+                          <Item invert primary={getAgentPath(agent).length - 1} secondary="Cost" />
                           <Item
                             invert
-                            key={name}
-                            primary={
-                              <Bar
-                                values={[
-                                  {
-                                    label: name,
-                                    value,
-                                    color: getAgentColor(agent),
-                                  },
-                                ]}
-                              />
-                            }
-                            secondary={name}
+                            primary={thru(getAgentPositions(step)[agent], (p) =>
+                              p ? `(${p.x}, ${p.y})` : "--",
+                            )}
+                            secondary="Position"
                           />
-                        ))}
-                        {(() => {
-                          const errors = filter(diagnostics, ({ agents }) =>
-                            agents.includes(agent),
-                          );
-                          return (
-                            !!errors?.length && (
-                              <Item
-                                invert
-                                primary={errors.map(({ agents, label, t }) => (
-                                  <>
-                                    {capitalize(label)}:{" "}
-                                    {pluralize("agent", agents.length)}{" "}
-                                    {agents.join(", ")} at timestep {t}
-                                  </>
-                                ))}
-                                secondary="Errors"
-                              />
-                            )
-                          );
-                        })()}
-                      </Stack>
-                    </>
+                          <Item
+                            invert
+                            primary={thru(
+                              getAgentPath(agent)[step],
+                              (p) =>
+                                ({
+                                  w: "Wait",
+                                  u: "Up",
+                                  d: "Down",
+                                  l: "Left",
+                                  r: "Right",
+                                })[p?.action ?? ""] ?? "--",
+                            )}
+                            secondary="Action"
+                          />
+                          {[
+                            {
+                              name: "Moving",
+                              value: proportionOf(getAgentPath(agent), (p) =>
+                                ["u", "d", "l", "r"].includes(p.action ?? ""),
+                              ),
+                            },
+                            {
+                              name: "Waiting",
+                              value: proportionOf(getAgentPath(agent), (p) => p.action === "w"),
+                            },
+                          ].map(({ name, value }) => (
+                            <Item
+                              invert
+                              key={name}
+                              primary={
+                                <Bar
+                                  values={[
+                                    {
+                                      label: name,
+                                      value,
+                                      color: getAgentColor(agent),
+                                    },
+                                  ]}
+                                />
+                              }
+                              secondary={name}
+                            />
+                          ))}
+                          {(() => {
+                            const errors = filter(diagnostics, ({ agents }) =>
+                              agents.includes(agent),
+                            );
+                            return (
+                              !!errors?.length && (
+                                <Item
+                                  invert
+                                  primary={errors.map(({ agents, label, t }) => (
+                                    <>
+                                      {capitalize(label)}: {pluralize("agent", agents.length)}{" "}
+                                      {agents.join(", ")} at timestep {t}
+                                    </>
+                                  ))}
+                                  secondary="Errors"
+                                />
+                              )
+                            );
+                          })()}
+                        </Stack>
+                      </>
                     ))(selection.agent)}
                 </Stack>
               </Enter>

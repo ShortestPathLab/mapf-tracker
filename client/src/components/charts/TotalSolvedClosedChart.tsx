@@ -1,6 +1,6 @@
 import { alpha, Stack, useTheme } from "@mui/material";
 import { useQueries } from "@tanstack/react-query";
-import { Chart, } from "components/analysis/Chart";
+import { Chart } from "components/analysis/Chart";
 
 import { Loading } from "components/LoadingLong";
 import { Bar } from "components/data-grid";
@@ -20,9 +20,7 @@ import { formatPercentage } from "utils/format";
 import { GridChartCard } from "./GridChartCard";
 import Documentation from "docs/charts/TotalSolvedClosed.md";
 
-export function TotalSolvedClosedChartCard(
-  props: ComponentProps<typeof GridChartCard>
-) {
+export function TotalSolvedClosedChartCard(props: ComponentProps<typeof GridChartCard>) {
   return (
     <GridChartCard
       {...props}
@@ -37,10 +35,7 @@ export function TotalSolvedClosedChart() {
     { data: { result: closed = 0 } = {} },
     { data: { result: solved = 0, all: total = 1 } = {} },
   ] = useQueries({
-    queries: [
-      aggregateQueryOne({ filterBy: "closed" }),
-      aggregateQueryOne({ filterBy: "solved" }),
-    ],
+    queries: [aggregateQueryOne({ filterBy: "closed" }), aggregateQueryOne({ filterBy: "solved" })],
   });
   return (
     <GridChartCard
@@ -62,21 +57,13 @@ export function TotalSolvedClosedChart() {
     />
   );
 }
-export function TotalSolvedClosedDonutChart(
-  props: ComponentProps<typeof GridChartCard>
-) {
+export function TotalSolvedClosedDonutChart(props: ComponentProps<typeof GridChartCard>) {
   const theme = useTheme();
   const [
     { data: { result: closed = 0 } = {}, isLoading: isLoadingSolved },
-    {
-      data: { result: solved = 0, all: total = 1 } = {},
-      isLoading: isLoadingClosed,
-    },
+    { data: { result: solved = 0, all: total = 1 } = {}, isLoading: isLoadingClosed },
   ] = useQueries({
-    queries: [
-      aggregateQueryOne({ filterBy: "closed" }),
-      aggregateQueryOne({ filterBy: "solved" }),
-    ],
+    queries: [aggregateQueryOne({ filterBy: "closed" }), aggregateQueryOne({ filterBy: "solved" })],
   });
   return (
     <GridChartCard
@@ -169,12 +156,7 @@ export function DonutChart({
           content={({ viewBox }) => {
             if (viewBox && "cx" in viewBox && "cy" in viewBox) {
               return (
-                <text
-                  x={viewBox.cx}
-                  y={viewBox.cy}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                >
+                <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
                   <tspan
                     fontSize={theme.typography.subtitle1.fontSize}
                     fill={theme.palette.text.primary}

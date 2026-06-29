@@ -1,8 +1,4 @@
-import {
-  CancelRounded,
-  CheckCircleRounded,
-  PendingRounded,
-} from "@mui-symbols-material/w300";
+import { CancelRounded, CheckCircleRounded, PendingRounded } from "@mui-symbols-material/w300";
 import {
   Box,
   CircularProgress,
@@ -51,10 +47,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                   secondary={
                     <Stack>
                       {[
-                        `${prettyBytes(size ?? 0)}, ${format(
-                          dateReceived,
-                          "MMM dd HH:mm aaa",
-                        )}`,
+                        `${prettyBytes(size ?? 0)}, ${format(dateReceived, "MMM dd HH:mm aaa")}`,
                         (
                           {
                             done: pluralize("entry", result?.count, true),
@@ -62,17 +55,14 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                               <Surface
                                 title="Error details"
                                 trigger={(state) => (
-                                  <Link
-                                    {...bindTrigger(state)}
-                                    sx={{ cursor: "pointer" }}
-                                  >
+                                  <Link {...bindTrigger(state)} sx={{ cursor: "pointer" }}>
                                     Error
                                   </Link>
                                 )}
                               >
                                 <Typography>
-                                  Your file failed to pass schema validation. The
-                                  following is the error returned by the server.
+                                  Your file failed to pass schema validation. The following is the
+                                  error returned by the server.
                                 </Typography>
                                 <GenericDetailsList data={{ error }} />
                               </Surface>
@@ -94,9 +84,7 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
           ),
         )
       ) : (
-        <Typography color="text.secondary">
-          Previous uploads will appear here.
-        </Typography>
+        <Typography color="text.secondary">Previous uploads will appear here.</Typography>
       )}
     </Stack>
   );

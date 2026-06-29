@@ -15,10 +15,7 @@ import { useScenario } from "queries/useMapQuery";
 import { DATE_TIME_FORMAT, formatDate } from "utils/format";
 import { MapLabel } from "./MapLabel";
 import { ScenarioLabel } from "./ScenarioLabel";
-import {
-  SubmissionInstanceContext,
-  SubmissionInstanceProps,
-} from "./SubmissionInstanceContext";
+import { SubmissionInstanceContext, SubmissionInstanceProps } from "./SubmissionInstanceContext";
 import { getOutcomeDisplay } from "./getOutcomeDisplay";
 
 export function FullsizeDialog({ children }: { children: ReactNode }) {
@@ -97,10 +94,7 @@ export function DetailsDialog({
                 <ScenarioLabel scenarioId={scenarioId} />
                 <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
                   <Box sx={{ width: 48 }} />
-                  <Item
-                    primary={pluralize("agent", instance?.agents, true)}
-                    secondary="Instance"
-                  />
+                  <Item primary={pluralize("agent", instance?.agents, true)} secondary="Instance" />
                 </Stack>
                 <Button
                   color="primary"
@@ -124,30 +118,25 @@ export function DetailsDialog({
                   items={[
                     {
                       label: "Outcome",
-                      value: (
-                        <OutcomeDisplay
-                          outcome={submission?.validation?.outcome}
-                        />
-                      ),
+                      value: <OutcomeDisplay outcome={submission?.validation?.outcome} />,
                     },
                     ...(submission?.validation?.errors?.length
                       ? [
-                        {
-                          label: "Errors",
-                          value: map(
-                            submission.validation.errors,
-                            "label"
-                          ).map((l, i) => <Box key={i}>{capitalize(l)}</Box>),
-                        },
-                      ]
+                          {
+                            label: "Errors",
+                            value: map(submission.validation.errors, "label").map((l, i) => (
+                              <Box key={i}>{capitalize(l)}</Box>
+                            )),
+                          },
+                        ]
                       : []),
                     {
                       label: "Validation time taken",
                       value: isNumber(submission?.validation?.timeTaken)
                         ? submission.validation.timeTaken
                           ? formatDuration({
-                            seconds: submission.validation.timeTaken / 1000,
-                          })
+                              seconds: submission.validation.timeTaken / 1000,
+                            })
                           : "0 seconds"
                         : "N/A",
                     },
@@ -164,7 +153,7 @@ export function DetailsDialog({
                       label: "Submission time",
                       value: formatDate(
                         submission?.createdAt ?? submission?.updatedAt,
-                        DATE_TIME_FORMAT
+                        DATE_TIME_FORMAT,
                       ),
                     },
                     {

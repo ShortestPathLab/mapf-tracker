@@ -14,11 +14,7 @@ export function Section({ children, header }: LayoutRenderProps) {
     <SectionContent>
       <Stack sx={{ gap: 4 }}>
         {!sm && (
-          <IconButton
-            edge="start"
-            onClick={() => navigate(-1)}
-            sx={{ alignSelf: "flex-start" }}
-          >
+          <IconButton edge="start" onClick={() => navigate(-1)} sx={{ alignSelf: "flex-start" }}>
             <ArrowBackRounded />
           </IconButton>
         )}
@@ -40,9 +36,7 @@ export function SectionContent({ children }: { children?: ReactNode }) {
         maxWidth: "100%",
         mx: "auto",
         py: xs ? 2 : md ? 0 : 6,
-        minHeight: `calc(100dvh - ${
-          appbarHeight(sm) + 68 * 2 + bottomBarHeight(sm)
-        }px)`,
+        minHeight: `calc(100dvh - ${appbarHeight(sm) + 68 * 2 + bottomBarHeight(sm)}px)`,
       }}
     >
       <Stack sx={{ p: xs ? 2 : 3 }}>{children}</Stack>

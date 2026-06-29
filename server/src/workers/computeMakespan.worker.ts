@@ -16,8 +16,7 @@ export type MakespanData = {
 // disk cache keys on the single resolved id (`solutionPath ?? instance`) rather
 // than the raw body. This keeps the key canonical regardless of body
 // shape/ordering, so a precomputed entry is hit verbatim by the live request.
-const key = ({ instance, solutionPath }: MakespanData) =>
-  solutionPath ?? instance ?? "";
+const key = ({ instance, solutionPath }: MakespanData) => solutionPath ?? instance ?? "";
 
 const run = async (params: MakespanData): Promise<number | null> => {
   const id = key(params);
@@ -46,7 +45,7 @@ export const { precompute, handler } = createPrecomputeHandler(
         },
       ]) as [MakespanData][];
     },
-  }
+  },
 );
 
 const connect = once(connectToDatabase);

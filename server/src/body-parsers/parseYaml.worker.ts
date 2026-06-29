@@ -1,23 +1,21 @@
 import { loadAll } from "js-yaml";
 import { head } from "lodash";
-import {
-  usingTaskMessageHandler,
-  usingWorkerTaskReusable,
-} from "queue/usingWorker";
+import { usingTaskMessageHandler, usingWorkerTaskReusable } from "queue/usingWorker";
 export type YamlParserWorkerParams = string;
 
 export type YamlParserWorkerResult = any;
 
-export const parseYamlAsync = usingWorkerTaskReusable(
-  () => new Worker(import.meta.path)
-) as <T = YamlParserWorkerResult>(d: YamlParserWorkerParams) => Promise<T>;
+export const parseYamlAsync = usingWorkerTaskReusable(() => new Worker(import.meta.path)) as <
+  T = YamlParserWorkerResult,
+>(
+  d: YamlParserWorkerParams,
+) => Promise<T>;
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingTaskMessageHandler<
-    YamlParserWorkerParams,
-    YamlParserWorkerResult
-  >(async (d) => {
-    const data = loadAll(d);
-    return data.length > 1 ? data : head(data);
-  });
+  self.onmessage = usingTaskMessageHandler<YamlParserWorkerParams, YamlParserWorkerResult>(
+    async (d) => {
+      const data = loadAll(d);
+      return data.length > 1 ? data : head(data);
+    },
+  );
 }

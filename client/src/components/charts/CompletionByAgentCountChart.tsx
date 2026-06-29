@@ -5,15 +5,7 @@ import { chain as _, map, max, sortBy, zip } from "lodash";
 import pluralize from "pluralize";
 import { AggregateQuery, useAggregate } from "queries/useAggregateQuery";
 import { ComponentProps, useMemo } from "react";
-import {
-  Area,
-  AreaChart,
-  Label,
-  Legend,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { paper } from "theme";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
@@ -113,11 +105,7 @@ function RenderChart({
   );
 }
 
-export function CompletionByAgentCountChart({
-  partialQuery,
-}: {
-  partialQuery?: AggregateQuery;
-}) {
+export function CompletionByAgentCountChart({ partialQuery }: { partialQuery?: AggregateQuery }) {
   const { data: solved, isLoading: isSolvedLoading } = useAggregate({
     ...partialQuery,
     groupBy: "agents",
@@ -152,9 +140,7 @@ export function CompletionByAgentCountChart({
   );
 }
 
-export function CompletionByAgentCountChartCard(
-  props: ComponentProps<typeof GridChartCard>,
-) {
+export function CompletionByAgentCountChartCard(props: ComponentProps<typeof GridChartCard>) {
   return (
     <GridChartCard
       {...props}

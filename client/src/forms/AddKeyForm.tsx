@@ -14,10 +14,7 @@ export type AddKeyFormProps = {
   submit: (state: FormikProps<Key>) => ReactNode;
 } & Partial<FormikConfig<Key>>;
 
-export function AddKeyForm({
-  submit = () => <></>,
-  ...props
-}: AddKeyFormProps) {
+export function AddKeyForm({ submit = () => <></>, ...props }: AddKeyFormProps) {
   const xs = useXs();
   return (
     <Formik<Key>

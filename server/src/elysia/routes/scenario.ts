@@ -28,10 +28,7 @@ export type ScenarioRecord = {
  * (`/map`, `/id`) take precedence over `/:id` in Elysia's router.
  */
 export const scenarioRoutes = new Elysia({ prefix: "/api/scenario" })
-  .get(
-    "/",
-    async () => (await Scenario.find({})) as unknown as ScenarioRecord[],
-  )
+  .get("/", async () => (await Scenario.find({})) as unknown as ScenarioRecord[])
   .get(
     "/map/:id",
     async ({ params }) =>

@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  CardActionArea,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, CardActionArea, Stack, Typography, useTheme } from "@mui/material";
 import {
   CompletionByAlgorithmChartCard,
   formatLargeNumber,
@@ -118,11 +111,8 @@ export default function Hero({ children }: { children?: ReactNode }) {
           }}
         >
           <Tip />
-          {renderHeader(
-            "Trends",
-            "Explore trends in the dataset",
-            "See more trends",
-            () => navigate("/benchmarks", { t: "analysis" }),
+          {renderHeader("Trends", "Explore trends in the dataset", "See more trends", () =>
+            navigate("/benchmarks", { t: "analysis" }),
           )}
           <Stack
             direction="row"
@@ -186,11 +176,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                             textOverflow: "ellipsis",
                           }}
                         >
-                          {`${m.map_size}, ${pluralize(
-                            "instance",
-                            m.instances ?? 0,
-                            true,
-                          )}`}
+                          {`${m.map_size}, ${pluralize("instance", m.instances ?? 0, true)}`}
                           <br />
                           {`${m.proportion_instances_solved * 100}% solved`}
                         </Box>
@@ -295,10 +281,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                   })),
               ],
               (page) => (
-                <ArticleCard
-                  page={page}
-                  onClick={() => navigate(page?.value, page?.search)}
-                />
+                <ArticleCard page={page} onClick={() => navigate(page?.value, page?.search)} />
               ),
             )}
           </Grid>

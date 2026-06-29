@@ -1,15 +1,7 @@
-import {
-  AddRounded,
-  DeleteRounded,
-  KeyRounded,
-} from "@mui-symbols-material/w300";
+import { AddRounded, DeleteRounded, KeyRounded } from "@mui-symbols-material/w300";
 import { Box } from "@mui/material";
 import { ActionBar } from "components/ActionBar";
-import {
-  cellRendererChip,
-  DataGrid,
-  useDataGridActions,
-} from "components/data-grid";
+import { cellRendererChip, DataGrid, useDataGridActions } from "components/data-grid";
 import { GridColDef } from "components/data-grid/DataGrid";
 import { ConfirmDialog } from "components/dialog/Modal";
 import { FlatCard } from "components/FlatCard";
@@ -78,10 +70,7 @@ export default function index() {
       maxWidth: 360,
       flex: 3,
       renderCell: ({ formattedValue, row }) => (
-        <Item
-          primary={formattedValue}
-          secondary={<RequestInfo id={row.request_id} />}
-        />
+        <Item primary={formattedValue} secondary={<RequestInfo id={row.request_id} />} />
       ),
     },
     {
@@ -125,10 +114,7 @@ export default function index() {
         { name: "Sudo", url: "/sudo" },
       ]}
     >
-      <Tip
-        title="API keys (coming soon)"
-        description="Create, revoke and manage API keys."
-      />
+      <Tip title="API keys (coming soon)" description="Create, revoke and manage API keys." />
       <ActionBar
         title="Actions"
         options={[

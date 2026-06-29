@@ -50,11 +50,9 @@ const PixiComponentViewport = PixiComponent("Viewport", {
   },
 });
 
-const Viewport = forwardRef(
-  (props: ViewportProps, ref: ForwardedRef<PixiViewport>) => {
-    const app = useApp();
-    return <PixiComponentViewport ref={ref} app={app} {...props} />;
-  }
-);
+const Viewport = forwardRef((props: ViewportProps, ref: ForwardedRef<PixiViewport>) => {
+  const app = useApp();
+  return <PixiComponentViewport ref={ref} app={app} {...props} />;
+});
 
 export default Viewport;

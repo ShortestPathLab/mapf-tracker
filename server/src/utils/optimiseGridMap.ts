@@ -18,12 +18,7 @@ function get(m: BooleanMap, { x, y }: Point) {
   return !!m?.[y]?.[x];
 }
 
-export function expand(
-  m: BooleanMap,
-  mode: boolean,
-  { x, y }: Point,
-  max: Point
-) {
+export function expand(m: BooleanMap, mode: boolean, { x, y }: Point, max: Point) {
   let x1 = x;
   let y1 = y;
 
@@ -58,7 +53,7 @@ export function optimiseGridMap(
   m: BooleanMap,
   size: Size,
   offset: Point = { x: 0, y: 0 },
-  max: Point = { x: size.width - 1, y: size.height - 1 }
+  max: Point = { x: size.width - 1, y: size.height - 1 },
 ): (Point & Size)[] {
   const stack: [Point, Point][] = [[offset, max]];
   const result: (Point & Size)[] = [];
@@ -75,7 +70,7 @@ export function optimiseGridMap(
         [
           { x: b.x + 1, y: offset.y },
           { x: max.x, y: max.y },
-        ]
+        ],
       );
       if (mode) {
         result.push({

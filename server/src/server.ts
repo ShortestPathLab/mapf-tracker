@@ -12,20 +12,12 @@ const port = getPort();
 app.listen(port);
 log.info(`Server is running on port ${port}`);
 
-log.info(
-  process.env.NODE_ENV === "development"
-    ? "Development mode"
-    : "Production mode"
-);
+log.info(process.env.NODE_ENV === "development" ? "Development mode" : "Production mode");
 
-if (process.env.NODE_ENV !== 'development') {
+if (process.env.NODE_ENV !== "development") {
   log.info("Restoring");
 
-  for (const f of [
-    restoreOngoingSubmission,
-    restorePipeline,
-    restorePrecompute,
-  ]) {
+  for (const f of [restoreOngoingSubmission, restorePipeline, restorePrecompute]) {
     f();
   }
 }

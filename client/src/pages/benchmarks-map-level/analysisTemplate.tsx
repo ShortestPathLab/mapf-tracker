@@ -2,10 +2,7 @@ import { ShowChartRounded } from "@mui-symbols-material/w300";
 import { Map } from "core/types";
 import { AlgorithmByAgentChart } from "./charts/AlgorithmByAgentChart";
 import { AlgorithmByScenarioChart } from "./charts/AlgorithmByScenarioChart";
-import {
-  SuccessRateChart,
-  SuccessRateOnAgentsChart,
-} from "./charts/SuccessRateChart";
+import { SuccessRateChart, SuccessRateOnAgentsChart } from "./charts/SuccessRateChart";
 import { SuboptimalityByAgentCountChart } from "components/charts/SuboptimalityByAgentCountChart";
 import AlgorithmByScenarioDoc from "docs/charts/AlgorithmByScenario.md";
 import AlgorithmByAgentDoc from "docs/charts/AlgorithmByAgent.md";

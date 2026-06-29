@@ -1,14 +1,5 @@
 import { useTheme } from "@mui/material";
-import {
-  capitalize,
-  filter,
-  get,
-  head,
-  isNumber,
-  map,
-  max,
-  startCase,
-} from "lodash";
+import { capitalize, filter, get, head, isNumber, map, max, startCase } from "lodash";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import React from "react";
 import {
@@ -56,9 +47,7 @@ export const SliceChart = ({
   stateOfTheArt?: boolean;
 } & { data?: unknown[] }) => {
   const { data: algorithms = [] } = useAlgorithmsData();
-  const algorithmsWithSota = stateOfTheArtEnabled
-    ? [stateOfTheArt, ...algorithms]
-    : algorithms;
+  const algorithmsWithSota = stateOfTheArtEnabled ? [stateOfTheArt, ...algorithms] : algorithms;
   const { chart: Chart, series: _Series } = Charts[type];
   const Series = _Series as unknown as React.FC<Record<string, unknown>>;
   const theme = useTheme();
@@ -84,29 +73,15 @@ export const SliceChart = ({
       />
       <XAxis
         dataKey={xAxisDataKey}
-        type={
-          isNumber(get(head(props.data), xAxisDataKey)) ? "number" : "category"
-        }
-        label={
-          <Label
-            position="insideBottom"
-            value={capitalize(startCase(xAxisDataKey))}
-          />
-        }
+        type={isNumber(get(head(props.data), xAxisDataKey)) ? "number" : "category"}
+        label={<Label position="insideBottom" value={capitalize(startCase(xAxisDataKey))} />}
         angle={-45}
         textAnchor="end"
-        height={
-          (max(map(props.data, (d) => `${get(d, xAxisDataKey)}`.length)) ?? 0) *
-            4 +
-          90
-        }
+        height={(max(map(props.data, (d) => `${get(d, xAxisDataKey)}`.length)) ?? 0) * 4 + 90}
       />
       <CartesianGrid stroke={theme.palette.divider} />
       {map(
-        filter(
-          algorithmsWithSota,
-          (a) => !selected.length || selected.includes(a._id),
-        ),
+        filter(algorithmsWithSota, (a) => !selected.length || selected.includes(a._id)),
         (algorithm, i) => (
           <Series
             radius={[4, 4, 4, 4]}
@@ -126,9 +101,7 @@ export const SliceChart = ({
                   }[type],
                 })}
             isAnimationActive={false}
-            dataKey={`${
-              keyType === "name" ? algorithm.algo_name : algorithm._id
-            }.${slice?.key}`}
+            dataKey={`${keyType === "name" ? algorithm.algo_name : algorithm._id}.${slice?.key}`}
             name={algorithm.algo_name}
             stackId={stacked ? "1" : undefined}
           />

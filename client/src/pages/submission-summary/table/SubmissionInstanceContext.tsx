@@ -54,8 +54,10 @@ function useSubmissionInstance({
   index,
   slice = "total",
 }: SubmissionInstanceProps) {
-  const { data: submissions, isLoading: isSubmissionLoading } =
-    useOngoingSubmissionScenarioQuery(apiKey, scenarioId);
+  const { data: submissions, isLoading: isSubmissionLoading } = useOngoingSubmissionScenarioQuery(
+    apiKey,
+    scenarioId,
+  );
   const filtered = filter(submissions, filters[slice]);
   const submission = filtered?.[index];
   const { data: instance, isLoading: isInstanceLoading } = useInstance(

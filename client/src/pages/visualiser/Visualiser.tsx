@@ -3,8 +3,7 @@ import { SolutionVisualisation } from "./SolutionVisualisation";
 import { VisualiserLocationState } from "./VisualiserLocationState";
 
 export default function () {
-  const state =
-    useStableLocationState<VisualiserLocationState>() as VisualiserLocationState;
+  const state = useStableLocationState<VisualiserLocationState>() as VisualiserLocationState;
   return (
     <SolutionVisualisation
       instanceId={state.instanceId}

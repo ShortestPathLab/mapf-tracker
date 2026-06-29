@@ -9,14 +9,12 @@ export type DialogContentProps = {
 
 export function useDialog<T>(
   C?: (props: T & DialogContentProps) => ReactNode,
-  props?: ComponentProps<typeof Dialog>
+  props?: ComponentProps<typeof Dialog>,
 ) {
   const [isOpen, setOpen] = useState(false);
   // const isOpen = !!b[key];
   const [state, setState] = useState<T & DialogContentProps>();
-  const [modalProps, setModalProps] = useState<ComponentProps<typeof Dialog>>(
-    {}
-  );
+  const [modalProps, setModalProps] = useState<ComponentProps<typeof Dialog>>({});
   const open = (s?: T & DialogContentProps) => {
     setState(s ?? ({} as T & DialogContentProps));
     setOpen(true);
@@ -46,7 +44,7 @@ export function useDialog<T>(
             },
           },
           props ?? {},
-          modalProps
+          modalProps,
         )}
       >
         {C && (

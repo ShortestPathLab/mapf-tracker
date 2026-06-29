@@ -5,22 +5,15 @@ import { useSnackbar } from "components/Snackbar";
 import { DialogContentProps } from "hooks/useDialog";
 import { Prose } from "layout";
 import { find, startCase } from "lodash";
-import {
-  usePipelineRunMutation,
-  usePipelineStatus,
-} from "queries/usePipelineQuery";
+import { usePipelineRunMutation, usePipelineStatus } from "queries/usePipelineQuery";
 import Markdown from "react-markdown";
 import { useMeasure } from "react-use";
 import { DATE_TIME_FORMAT, formatDate, prose } from "utils/format";
 import { StageStatus } from "./StageStatus";
 
-export function StageStatusDialog({
-  onClose,
-  stage,
-}: DialogContentProps & { stage?: string }) {
+export function StageStatusDialog({ onClose, stage }: DialogContentProps & { stage?: string }) {
   const { data } = usePipelineStatus();
-  const { status, description, destructive, dependents } =
-    find(data, { key: stage }) ?? {};
+  const { status, description, destructive, dependents } = find(data, { key: stage }) ?? {};
   const { mutateAsync, isPending } = usePipelineRunMutation(stage ?? "");
   const notify = useSnackbar();
   const [ref, { width }] = useMeasure<HTMLDivElement>();
@@ -87,9 +80,7 @@ export function StageStatusDialog({
             },
             {
               label: "Dependents",
-              value: dependents?.length
-                ? dependents.map(prose).join("\n")
-                : "None",
+              value: dependents?.length ? dependents.map(prose).join("\n") : "None",
             },
           ]}
         />

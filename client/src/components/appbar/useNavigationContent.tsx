@@ -76,8 +76,7 @@ export function useNavigationContent() {
           url: "/benchmarks",
           icon: <TableRounded />,
           selectedIcon: <TableFilledRounded />,
-          description:
-            "View all benchmarks and their top-performing submissions",
+          description: "View all benchmarks and their top-performing submissions",
           showAsIcon: true,
         },
         {
@@ -101,8 +100,7 @@ export function useNavigationContent() {
           icon: <CampaignRounded />,
           labelShort: "Call",
           selectedIcon: <CampaignFilledRounded />,
-          description:
-            "Calling for all MAPF researchers to share your work with us",
+          description: "Calling for all MAPF researchers to share your work with us",
         },
         {
           primary: true,
@@ -111,8 +109,7 @@ export function useNavigationContent() {
           icon: <AddRounded />,
           labelShort: "Request",
           selectedIcon: <AddFilledRounded />,
-          description:
-            "If you want to contribute, start by requesting an API key",
+          description: "If you want to contribute, start by requesting an API key",
         },
         {
           primary: true,
@@ -120,8 +117,7 @@ export function useNavigationContent() {
           labelShort: "Keys",
           url: "/track",
           icon: <UploadRounded />,
-          description:
-            "If you have an API key, you can manage your submission here",
+          description: "If you have an API key, you can manage your submission here",
         },
       ],
     },
@@ -179,34 +175,31 @@ export function useNavigationContent() {
     {
       label: "More",
       defaultOpen: false,
-      items: [
-        ...(credentials
-          ? [
-              {
-                iconButton: true,
-                label: "Sudo",
-                icon: <LockOpenRounded />,
-                url: "/sudo",
-                description:
-                  "Review submission requests, issue submission keys, and run jobs",
-              },
-              {
-                iconButton: true,
-                label: "Account info",
-                action: showUserDialog,
-                icon: credentials ? <PersonRounded /> : undefined,
-              },
-            ]
-          : [
-              {
-                iconButton: true,
-                label: "Sudo",
-                action: showLogIn,
-                icon: <LockRounded />,
-                description: "Log in to manage this platform",
-              },
-            ]),
-      ],
+      items: credentials
+        ? [
+            {
+              iconButton: true,
+              label: "Sudo",
+              icon: <LockOpenRounded />,
+              url: "/sudo",
+              description: "Review submission requests, issue submission keys, and run jobs",
+            },
+            {
+              iconButton: true,
+              label: "Account info",
+              action: showUserDialog,
+              icon: credentials ? <PersonRounded /> : undefined,
+            },
+          ]
+        : [
+            {
+              iconButton: true,
+              label: "Sudo",
+              action: showLogIn,
+              icon: <LockRounded />,
+              description: "Log in to manage this platform",
+            },
+          ],
     },
   ];
   return { groups, userDialog, logInDialog };

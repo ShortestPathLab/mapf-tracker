@@ -32,9 +32,7 @@ export const updateSolutionPathsFromSubmissions = () => {
             lang: "js",
 
             body: function (v: string) {
-              return v
-                ? v.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d")
-                : v;
+              return v ? v.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d") : v;
             },
           },
         },

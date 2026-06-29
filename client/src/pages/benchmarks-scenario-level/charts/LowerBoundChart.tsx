@@ -2,10 +2,7 @@ import { useTheme } from "@mui/material";
 import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { useQueries } from "@tanstack/react-query";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { sample } from "components/charts/sample";
@@ -14,15 +11,7 @@ import { chain, fromPairs, keyBy, map, max, range, some } from "lodash";
 import { algorithmQuery } from "queries/useAggregateQuery";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { useInstancesByScenario } from "queries/useMapQuery";
-import {
-  Area,
-  AreaChart,
-  Label,
-  Legend,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { accentColors, tone } from "utils/colors";
 import { formatPercentage } from "utils/format";
 
@@ -34,9 +23,7 @@ export function LowerBoundChart({ scenario }: { scenario: string | number }) {
       isLoading={isLoading}
       data={map(data, (c) => ({
         ...c,
-        gap:
-          ((c.solution_cost ?? 0) - (c.lower_cost ?? 0)) /
-          Math.max(c.lower_cost ?? 0, 1)
+        gap: ((c.solution_cost ?? 0) - (c.lower_cost ?? 0)) / Math.max(c.lower_cost ?? 0, 1),
       }))}
       render={
         <AreaChart margin={{ bottom: 32, top: 32, left: 16, right: 16 }}>
@@ -89,8 +76,7 @@ export function LowerBoundComparisonChart({
 }) {
   const algorithmSelectorState = useSliceSelector(slices, scenarioMetrics);
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
-  const { data: algorithms = [], isLoading: isAlgorithmsLoading } =
-    useAlgorithmsData();
+  const { data: algorithms = [], isLoading: isAlgorithmsLoading } = useAlgorithmsData();
   const { value, filterBy } =
     scenarioMetricConfig[metric as keyof typeof scenarioMetricConfig] ??
     scenarioMetricConfig.solutionCost;
@@ -105,21 +91,15 @@ export function LowerBoundComparisonChart({
         value,
         operation: "min",
         filterBy,
-      })
+      }),
     ),
     combine: (results) => {
       const dictionaries = results.map((q) => keyBy(q.data, "_id"));
-      const maxAgents =
-        max(
-          results.flatMap((q) => (q.data ?? []).map((d) => +(d._id ?? 0)))
-        ) ?? 0;
+      const maxAgents = max(results.flatMap((q) => (q.data ?? []).map((d) => +(d._id ?? 0)))) ?? 0;
       const data = range(1, maxAgents + 1).map((agents) => ({
         agents,
         ...fromPairs(
-          algorithms.map((a, i) => [
-            a.algo_name,
-            { [key]: dictionaries[i]?.[agents]?.result },
-          ])
+          algorithms.map((a, i) => [a.algo_name, { [key]: dictionaries[i]?.[agents]?.result }]),
         ),
       }));
       return {
@@ -130,11 +110,7 @@ export function LowerBoundComparisonChart({
   });
   return (
     <>
-      <ChartOptions
-        {...algorithmSelectorState}
-        metrics={scenarioMetrics}
-        slices={slices}
-      />
+      <ChartOptions {...algorithmSelectorState} metrics={scenarioMetrics} slices={slices} />
       <Chart
         isLoading={isLoading}
         data={chain(data).sortBy("agents").thru(sample(500)).value()}

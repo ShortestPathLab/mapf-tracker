@@ -1,10 +1,7 @@
 import { Chart } from "components/analysis/Chart";
 import ChartOptions, { stateOfTheArt } from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
-import {
-  Slice,
-  useSliceSelector,
-} from "components/analysis/useAlgorithmSelector";
+import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
 import { formatLargeNumber } from "components/charts/CompletionByAlgorithmChart";
 import { metrics } from "core/metrics";
 import { capitalize, chain, find, includes, keyBy } from "lodash";
@@ -31,11 +28,7 @@ export const slices = [
 export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
   const { data: algorithms = [] } = useAlgorithmsData();
 
-  const algorithmSelectorState = useSliceSelector(
-    slices,
-    undefined,
-    algorithm ? [algorithm] : []
-  );
+  const algorithmSelectorState = useSliceSelector(slices, undefined, algorithm ? [algorithm] : []);
   const [maps, { set: setMaps }] = useList<string>();
   const { metric, slice, algorithms: selected } = algorithmSelectorState;
   const { data, isLoading } = useAlgorithmChartData(
@@ -43,7 +36,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
     selected.length
       ? selected.filter((a) => a !== stateOfTheArt._id)
       : algorithms.map((c) => c._id),
-    find(metrics, (m) => m.key === metric)?.keyAlt
+    find(metrics, (m) => m.key === metric)?.keyAlt,
   );
   const { data: mapInfo, isLoading: isInfoLoading } = useMapsData();
   return (
@@ -65,9 +58,7 @@ export function AlgorithmByMapChart({ algorithm }: { algorithm?: string }) {
         isLoading={isLoading || isInfoLoading}
         style={{ flex: 1 }}
         data={chain(data)
-          .filter((collection) =>
-            maps.length ? includes(maps, collection.id) : true
-          )
+          .filter((collection) => (maps.length ? includes(maps, collection.id) : true))
           .map((collection) => {
             const m = find(mapInfo, { id: collection.id });
             return {

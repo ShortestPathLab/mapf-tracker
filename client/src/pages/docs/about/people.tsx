@@ -2,22 +2,19 @@ export const people = [
   {
     name: "Daniel Harabor (Lab leader)",
     avatar: "/assets/photo/daniel.jpg",
-    affiliation:
-      "Associate Professor, Faculty of Information Technology, Monash University",
+    affiliation: "Associate Professor, Faculty of Information Technology, Monash University",
     group: "Advisors",
   },
   {
     name: "Peter Stuckey",
     avatar: "/assets/photo/Peter.jpg",
-    affiliation:
-      "Professor, Faculty of Information Technology, Monash University",
+    affiliation: "Professor, Faculty of Information Technology, Monash University",
     group: "Advisors",
   },
   {
     name: "Muhammad Aamir Cheema",
     avatar: "/assets/photo/Aamir.jpeg",
-    affiliation:
-      "Associate Professor, Faculty of Information Technology, Monash University",
+    affiliation: "Associate Professor, Faculty of Information Technology, Monash University",
     group: "Advisors",
   },
   {

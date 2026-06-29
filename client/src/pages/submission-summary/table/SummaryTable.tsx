@@ -30,10 +30,7 @@ import { Scroll } from "components/dialog/Scrollbars";
 import { Surface } from "components/surface";
 import { useSurface } from "components/surface/useSurface";
 import Enter from "components/transitions/Enter";
-import {
-  TreeDataGrid,
-  useBooleanMap,
-} from "components/tree-data-grid/TreeDataGrid";
+import { TreeDataGrid, useBooleanMap } from "components/tree-data-grid/TreeDataGrid";
 import { Instance, SummarySlice } from "core/types";
 import { identity, isNumber, join, map, sumBy, times } from "lodash";
 import { bindTrigger } from "material-ui-popup-state";
@@ -78,10 +75,7 @@ function getSubmissionInfoText(
     })();
 
     return capitalize(
-      [
-        showErrors && join(map(errors, "label"), ", "),
-        showImprovement && improvement,
-      ]
+      [showErrors && join(map(errors, "label"), ", "), showImprovement && improvement]
         .filter(identity)
         .join("\n"),
     );
@@ -131,8 +125,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   const { data } = useOngoingSubmissionSummaryQuery(apiKey);
   const { mutateAsync: deleteByScenarioIndex } =
     useDeleteOngoingSubmissionByScenarioIndexMutation(apiKey);
-  const { mutate: deleteSubmissions } =
-    useDeleteOngoingSubmissionMutation(apiKey ?? "");
+  const { mutate: deleteSubmissions } = useDeleteOngoingSubmissionMutation(apiKey ?? "");
 
   const [expanded, setExpanded] = useBooleanMap();
   const [slice, setSlice] = useState<keyof SummarySlice>("total");
@@ -151,8 +144,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         icon: <DeleteRounded />,
         action: (row) =>
           disambiguate(row, {
-            scenario: (row) =>
-              deleteByScenarioIndex({ scenario: row.id, index: deleteAll }),
+            scenario: (row) => deleteByScenarioIndex({ scenario: row.id, index: deleteAll }),
             instance: (row) =>
               deleteByScenarioIndex({
                 scenario: row.scenario,
@@ -163,26 +155,9 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     ],
   });
 
-  const total = (row: Models["map"] | Models["scenario"]) =>
-    row.count.total - row.count.outdated;
+  const total = (row: Models["map"] | Models["scenario"]) => row.count.total - row.count.outdated;
 
-  const summaryIcon = (row: Models["map"] | Models["scenario"]) =>
-    row.count.invalid ? (
-      <Tooltip
-        title={`${pluralize("instance", row.count.invalid, true)} of ${total(
-          row,
-        )} invalid`}
-      >
-        <CloseRounded color="error" fontSize="small" />
-      </Tooltip>
-    ) : (
-      <Tooltip title="All instances valid">
-        <CheckRounded color="success" fontSize="small" />
-      </Tooltip>
-    );
-
-  const hasRun = (row: Models["map"] | Models["scenario"]) =>
-    row.count.total - row.count.queued;
+  const hasRun = (row: Models["map"] | Models["scenario"]) => row.count.total - row.count.queued;
 
   const progressLabel = (row: Models["map"] | Models["scenario"]) =>
     formatValue(hasRun(row) / row.count.total);
@@ -190,9 +165,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
   const bar = (row: Models["map"] | Models["scenario"]) => (
     <Bar
       buffer
-      label={
-        progressLabel(row)
-      }
+      label={progressLabel(row)}
       values={[
         {
           color: "success.main",
@@ -238,15 +211,10 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
       flex: 1,
       renderCell: ({ row }) =>
         disambiguate(row, {
-          map: (row) => (
-            <MapLabel mapId={row.id} count={row.count[slice] ?? 0} />
-          ),
+          map: (row) => <MapLabel mapId={row.id} count={row.count[slice] ?? 0} />,
           scenario: (row) => (
             <Stack sx={{ pl: 2 }}>
-              <ScenarioLabel
-                scenarioId={row.id}
-                count={row.count[slice] ?? 0}
-              />
+              <ScenarioLabel scenarioId={row.id} count={row.count[slice] ?? 0} />
             </Stack>
           ),
           instance: ({ scenario, index }) => (
@@ -281,34 +249,20 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                   <Bar
                     label={
                       {
-                        valid: (
-                          <CheckRounded color="success" fontSize="small" />
-                        ),
-                        invalid: (
-                          <CloseRounded color="error" fontSize="small" />
-                        ),
-                        outdated: (
-                          <DoNotDisturbOnRounded
-                            color="disabled"
-                            fontSize="small"
-                          />
-                        ),
+                        valid: <CheckRounded color="success" fontSize="small" />,
+                        invalid: <CloseRounded color="error" fontSize="small" />,
+                        outdated: <DoNotDisturbOnRounded color="disabled" fontSize="small" />,
                         queued: (
                           <Stack sx={{ alignItems: "center" }}>
                             <CircularProgress size={24} />
                           </Stack>
                         ),
                       }[submission?.validation?.outcome ?? ""] ?? (
-                        <HourglassEmptyRounded
-                          color="disabled"
-                          fontSize="small"
-                        />
+                        <HourglassEmptyRounded color="disabled" fontSize="small" />
                       )
                     }
                     buffer
-                    values={[
-                      getOutcomeDisplay(submission?.validation?.outcome),
-                    ]}
+                    values={[getOutcomeDisplay(submission?.validation?.outcome)]}
                   />
                 )
               }
@@ -360,10 +314,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
 
   return (
     <>
-      <Stack
-        sx={{ gap: 1, alignItems: "center", flexWrap: "wrap" }}
-        direction="row"
-      >
+      <Stack sx={{ gap: 1, alignItems: "center", flexWrap: "wrap" }} direction="row">
         <Box
           sx={{
             display: "block",
@@ -382,9 +333,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
                     border: selected
                       ? (t) => `1px ${alpha(t.palette.primary.main, 0.2)}`
                       : (t) => `1px solid ${t.palette.divider}`,
-                    bgcolor: selected
-                      ? (t) => alpha(t.palette.primary.main, 0.2)
-                      : undefined,
+                    bgcolor: selected ? (t) => alpha(t.palette.primary.main, 0.2) : undefined,
                   }}
                   icon={
                     <Collapse in={selected} orientation="horizontal">
@@ -405,10 +354,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
         </Box>
         <Box sx={{ flex: 1 }} />
         <Scroll fadeX x style={{ width: "max-content" }}>
-          <Stack
-            sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }}
-            direction="row"
-          >
+          <Stack sx={{ gap: 1, alignItems: "center", minWidth: "max-content" }} direction="row">
             <Button
               color="inherit"
               disabled

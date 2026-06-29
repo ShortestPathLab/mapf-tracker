@@ -31,8 +31,7 @@ export const withTicket =
     } finally {
       pool.tickets = omitBy(
         pool.tickets,
-        ({ status, dateReceived }) =>
-          status !== "pending" && dateReceived < now() - ONE_DAY_MS
+        ({ status, dateReceived }) => status !== "pending" && dateReceived < now() - ONE_DAY_MS,
       );
     }
   };

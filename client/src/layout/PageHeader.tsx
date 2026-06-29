@@ -12,10 +12,7 @@ export type PageHeaderProps = {
   description?: ReactNode;
 };
 
-export default function PageHeader({
-  current = "",
-  description = "",
-}: PageHeaderProps) {
+export default function PageHeader({ current = "", description = "" }: PageHeaderProps) {
   const sm = useSm();
   return (
     <Stack
@@ -34,11 +31,7 @@ export default function PageHeader({
         {current}
       </Typography>
       {description && (
-        <Typography
-          color="text.secondary"
-          variant="subtitle2"
-          sx={{ maxWidth: "80%" }}
-        >
+        <Typography color="text.secondary" variant="subtitle2" sx={{ maxWidth: "80%" }}>
           {description}
         </Typography>
       )}

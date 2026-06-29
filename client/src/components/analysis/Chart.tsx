@@ -1,18 +1,9 @@
-import {
-  Box,
-  CircularProgress,
-  Fade,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, CircularProgress, Fade, Stack, Typography, useTheme } from "@mui/material";
 import { Loading } from "components/LoadingLong";
 import { ReactElement, cloneElement } from "react";
 import { useCss, useTimeout } from "react-use";
 import { ResponsiveContainer, ResponsiveContainerProps } from "recharts";
 import { fontFamily } from "theme";
-
-
 
 export function Chart<T>({
   data,
@@ -37,11 +28,7 @@ export function Chart<T>({
   ) : (
     <Fade in>
       <Box sx={{ flex: 1, width: "100%", height: "100%" }}>
-        <ResponsiveContainer
-          width="100%"
-          {...props}
-          style={{ overflow: "hidden", ...props.style }}
-        >
+        <ResponsiveContainer width="100%" {...props} style={{ overflow: "hidden", ...props.style }}>
           {cloneElement(render, {
             data,
             className: cls,

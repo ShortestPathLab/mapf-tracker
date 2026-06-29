@@ -41,10 +41,7 @@ export default function SubmissionSummary({
         }}
       >
         {summaryStats?.map?.(({ label, values, loading }) => (
-          <Stack
-            sx={{ position: "relative", p: 2, ...paper(0), overflow: "hidden" }}
-            key={label}
-          >
+          <Stack sx={{ position: "relative", p: 2, ...paper(0), overflow: "hidden" }} key={label}>
             {loading && (
               <CircularProgress
                 size={32}
@@ -56,11 +53,7 @@ export default function SubmissionSummary({
                 variant="indeterminate"
               />
             )}
-            <Typography
-              variant="overline"
-              color="text.secondary"
-              sx={{ mt: -1, mb: 1 }}
-            >
+            <Typography variant="overline" color="text.secondary" sx={{ mt: -1, mb: 1 }}>
               {label}
             </Typography>
             <Grid width={100} sx={{ gap: 1 }}>

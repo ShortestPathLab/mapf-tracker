@@ -1,8 +1,5 @@
 import { connectToDatabase } from "connection";
-import Validator, {
-  ValidationError,
-  ValidationSchema,
-} from "fastest-validator";
+import Validator, { ValidationError, ValidationSchema } from "fastest-validator";
 import { map, trimEnd, truncate } from "lodash";
 import { map as pMap } from "promise-tools";
 import { context } from "logging";
@@ -23,16 +20,11 @@ import { findInstanceByAgentScenario } from "./findInstance";
 
 const log = context("Schema Validator");
 
-export const getKey = async (
-  api_key: string | undefined,
-  ctx: RefinementCtx,
-) => {
+export const getKey = async (api_key: string | undefined, ctx: RefinementCtx) => {
   const key = await SubmissionKey.findOne({ api_key });
   if (!key) return fatal(ctx, "API key invalid");
-  if (key?.status?.type === "submitted")
-    return fatal(ctx, "API key already submitted");
-  if (new Date() > (key?.expirationDate ?? 0))
-    return fatal(ctx, "API key expired");
+  if (key?.status?.type === "submitted") return fatal(ctx, "API key already submitted");
+  if (new Date() > (key?.expirationDate ?? 0)) return fatal(ctx, "API key expired");
   return key;
 };
 
@@ -135,18 +127,14 @@ export const transformOne = async (v: One) => {
       : (v.solution_plan ?? []);
   v.solution_plan = v.flip_up_down
     ? v.solution_plan.map((s) =>
-      s.replaceAll(/u/g, "_").replaceAll(/d/g, "u").replaceAll(/_/g, "d"),
-    )
+        s.replaceAll(/u/g, "_").replaceAll(/d/g, "u").replaceAll(/_/g, "d"),
+      )
     : v.solution_plan;
   // ─── Coerce Agent Count ──────────────────────────────────────────────
   v.agent_count ??= v.agents;
   // ─── Coerce Agent Count ──────────────────────────────────────────────
   const inferredAgentCount = v.solution_plan.length;
-  if (
-    v.agent_count &&
-    v.agent_count !== inferredAgentCount &&
-    !v.skip_validation
-  )
+  if (v.agent_count && v.agent_count !== inferredAgentCount && !v.skip_validation)
     throw `Agent count mismatch, expected ${v.agent_count} got ${inferredAgentCount}`;
   v.agent_count = v.agent_count ?? inferredAgentCount;
   // ─── Validate Instance Existence ─────────────────────────────────────
@@ -171,10 +159,7 @@ export const transformOne = async (v: One) => {
   return v;
 };
 
-const submitOne = async (
-  apiKey: string,
-  data: Promise<One> | Promise<One>[] | One | One[],
-) => {
+const submitOne = async (apiKey: string, data: Promise<One> | Promise<One>[] | One | One[]) => {
   const id = { apiKey };
 
   const jobs = await pMap(data instanceof Array ? data : [data], async (d) => {
@@ -227,10 +212,7 @@ const handlers = [
   },
 ] as const;
 
-export async function run({
-  data: d,
-  apiKey,
-}: SubmissionRequestValidatorWorkerParams) {
+export async function run({ data: d, apiKey }: SubmissionRequestValidatorWorkerParams) {
   try {
     await connectToDatabase();
     for (const { schema, handler, transformer } of handlers) {
@@ -273,14 +255,14 @@ export type SubmissionRequestValidatorWorkerParams = {
 
 export type SubmissionRequestValidatorWorkerResult =
   | {
-    ids: {
-      submissionId: string;
-      apiKey: string;
-    }[];
-  }
+      ids: {
+        submissionId: string;
+        apiKey: string;
+      }[];
+    }
   | {
-    error: any;
-  };
+      error: any;
+    };
 
 if (!Bun.isMainThread) {
   self.onmessage = usingTaskMessageHandler<

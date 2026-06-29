@@ -1,11 +1,7 @@
 import { useTheme } from "@mui/material";
 import { Item } from "components/Item";
 import { PreviewCard } from "components/PreviewCard";
-import {
-  cellRendererBar,
-  cellRendererChip,
-  cellRendererText,
-} from "components/data-grid";
+import { cellRendererBar, cellRendererChip, cellRendererText } from "components/data-grid";
 import DataGrid, { GridColDef } from "components/data-grid/DataGrid";
 import { Map } from "core/types";
 import { useNavigate } from "hooks/useNavigation";
@@ -32,12 +28,7 @@ export default function Table() {
       flex: 2,
       renderCell: ({ value, row }) => (
         <Item
-          icon={
-            <PreviewCard
-              palette={{ obstacle: theme.palette.text.primary }}
-              map={row.id}
-            />
-          }
+          icon={<PreviewCard palette={{ obstacle: theme.palette.text.primary }} map={row.id} />}
           primary={startCase(value)}
           secondary={`${row.instances ?? "?"} instances`}
         />

@@ -20,8 +20,8 @@ export function Status({ apiKey }: { apiKey?: string | number }) {
   const keyStatus = someIsPending.length
     ? "receiving"
     : total("count.queued")
-    ? "validating"
-    : parseApiKeyStatus(apiKeyData);
+      ? "validating"
+      : parseApiKeyStatus(apiKeyData);
 
   return (
     <>
@@ -53,11 +53,7 @@ export function Status({ apiKey }: { apiKey?: string | number }) {
           receiving: (
             <>
               {"Processing: "}
-              <Counter
-                start={
-                  minBy(someIsPending, "dateReceived")?.dateReceived ?? now()
-                }
-              />
+              <Counter start={minBy(someIsPending, "dateReceived")?.dateReceived ?? now()} />
             </>
           ),
         } as Record<string, ReactNode>

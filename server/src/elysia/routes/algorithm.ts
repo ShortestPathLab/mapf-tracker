@@ -2,8 +2,6 @@ import { Elysia } from "elysia";
 import { Algorithm } from "models";
 import { allToJSON } from "utils/toJSON";
 
-
-
 // The bespoke best/closed/solved/lower aggregations that used to live here
 // (per map / domain / scenario / agent) are now served by the canonical
 // /api/queries/aggregate/algorithm endpoint; the client fans out one call per

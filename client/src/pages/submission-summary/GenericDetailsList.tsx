@@ -3,10 +3,7 @@ import { entries, startCase } from "lodash";
 import { CodeBlock } from "components/CodeBlock";
 import { dump } from "js-yaml";
 
-export default function GenericDetailsList({
-  data,
-  ...props
-}: { data?: object } & ListProps) {
+export default function GenericDetailsList({ data, ...props }: { data?: object } & ListProps) {
   return (
     <List {...props}>
       {entries(data).map(([k, v]) => (

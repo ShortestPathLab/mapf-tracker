@@ -4,10 +4,7 @@ import { PreviewCard } from "components/PreviewCard";
 import Enter from "components/transitions/Enter";
 import pluralize from "pluralize";
 import { DATE_TIME_FORMAT, formatDate } from "utils/format";
-import {
-  SubmissionInstanceContext,
-  SubmissionInstanceProps,
-} from "./SubmissionInstanceContext";
+import { SubmissionInstanceContext, SubmissionInstanceProps } from "./SubmissionInstanceContext";
 
 export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
   return (
@@ -32,9 +29,7 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
                     component="span"
                     sx={{
                       textDecoration:
-                        submission?.validation?.outcome === "outdated"
-                          ? "line-through"
-                          : undefined,
+                        submission?.validation?.outcome === "outdated" ? "line-through" : undefined,
                     }}
                   >
                     {pluralize("agent", instance?.agents ?? 0, true)}
@@ -42,12 +37,8 @@ export function SubmissionInstanceLabel(props: SubmissionInstanceProps) {
                 )
               }
               secondary={
-                !isSubmissionLoading &&
-                (submission?.createdAt || submission?.updatedAt) ? (
-                  formatDate(
-                    submission?.createdAt ?? submission?.updatedAt,
-                    DATE_TIME_FORMAT
-                  )
+                !isSubmissionLoading && (submission?.createdAt || submission?.updatedAt) ? (
+                  formatDate(submission?.createdAt ?? submission?.updatedAt, DATE_TIME_FORMAT)
                 ) : (
                   <Skeleton sx={{ width: 80 }} />
                 )

@@ -19,9 +19,7 @@ function layout<T extends Node>(nodes: Partial<T>[], edges: Edge[]) {
 
   graph.setGraph({ rankdir: "LR" });
   // Callers always provide `id` (e.g. `{ id: p.key, ... }`)
-  nodes.forEach((node) =>
-    graph.setNode(node.id!, { width: 500, height: 100 })
-  );
+  nodes.forEach((node) => graph.setNode(node.id!, { width: 500, height: 100 }));
   edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   dagre.layout(graph);
   return graph as dagre.graphlib.Graph<T>;
@@ -32,13 +30,10 @@ export const usePipelineStatus = () =>
   });
 
 export const usePipelineRunMutation = (stage: string) =>
-  useMutation(
-    (action: "run" | "runOne" = "run") => runRoutes[action]({ stage }).get(),
-    {
-      mutationKey: ["pipelineRun"],
-      onSettled: () => queryClient.invalidateQueries({ queryKey: ["pipeline"] }),
-    }
-  );
+  useMutation((action: "run" | "runOne" = "run") => runRoutes[action]({ stage }).get(), {
+    mutationKey: ["pipelineRun"],
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["pipeline"] }),
+  });
 
 export const usePipelineViewerData = () => {
   const { data: result, isLoading } = usePipelineStatus();
@@ -57,7 +52,7 @@ export const usePipelineViewerData = () => {
           data: { label: d },
           source: p.key,
           target: d,
-        }))
+        })),
       );
 
       const graph = layout(nodes, edges);
@@ -73,7 +68,7 @@ export const usePipelineViewerData = () => {
                 position: pick(graph.node(n.id), "x", "y"),
                 sourcePosition: Position.Right,
                 targetPosition: Position.Left,
-              } as Node<PipelineStageNodeData>)
+              }) as Node<PipelineStageNodeData>,
           ),
           edges,
         },

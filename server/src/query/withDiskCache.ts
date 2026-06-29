@@ -5,10 +5,7 @@ import { log } from "logging";
 import hash from "object-hash";
 import { basename } from "path";
 import { retry } from "promise-tools";
-import {
-  usingTaskMessageHandler,
-  usingWorkerTaskReusable,
-} from "queue/usingWorker";
+import { usingTaskMessageHandler, usingWorkerTaskReusable } from "queue/usingWorker";
 
 function createCache() {
   const cache: Record<string, () => Promise<unknown>> = {};
@@ -41,7 +38,7 @@ export function diskCached<T extends any[], U>(
     precomputeInterval,
     resolver = (...args) => args[0],
     invalidationKey = async () => ({}),
-  }: DiskCacheOptions<T> = {}
+  }: DiskCacheOptions<T> = {},
 ) {
   const g =
     (precompute = false) =>
@@ -54,9 +51,7 @@ export function diskCached<T extends any[], U>(
       const path = `${directory}/${filename}`;
       const currentVersion = hash(await invalidationKey(...args));
       try {
-        const files = new Set(
-          [...glob.scanSync({ absolute: true })].map((p) => basename(p))
-        );
+        const files = new Set([...glob.scanSync({ absolute: true })].map((p) => basename(p)));
         if (files.has(filename)) {
           if (precompute) {
             // Warm only what's missing or stale: skip when an entry already
@@ -114,17 +109,12 @@ export function diskCached<T extends any[], U>(
           log.info(`Precompute ${name} aborted`);
           return;
         }
-        log.info(
-          `Precompute ${+i + 1} of ${ps.length} ${name} ${JSON.stringify(p)}`
-        );
+        log.info(`Precompute ${+i + 1} of ${ps.length} ${name} ${JSON.stringify(p)}`);
         try {
           await retry(() => g(true)(...p));
           gc?.(true);
         } catch (e) {
-          log.error(
-            `Precompute failed: ${has(e, "message") ? e.message : ""}`,
-            e
-          );
+          log.error(`Precompute failed: ${has(e, "message") ? e.message : ""}`, e);
         }
       }
       log.info(`Precompute ${name} done`);
@@ -148,7 +138,7 @@ export const createPrecomputeHandler = <T, U>(
   path: string,
   name: string,
   run: (a: T) => Promise<U>,
-  options: DiskCacheOptions<[T]> = {}
+  options: DiskCacheOptions<[T]> = {},
 ) => {
   const handler = (precompute = false) =>
     diskCached(name, run, {
@@ -163,15 +153,13 @@ export const createPrecomputeHandler = <T, U>(
     diskCaches.register(name, precompute);
     return { precompute, handler: handler(false) };
   } else {
-    self.onmessage = usingTaskMessageHandler<T | typeof SYMBOL_PRECOMPUTE, U>(
-      async (t) => {
-        if (t === SYMBOL_PRECOMPUTE) {
-          runPrecompute();
-          return undefined as any;
-        }
-        return await run(t);
+    self.onmessage = usingTaskMessageHandler<T | typeof SYMBOL_PRECOMPUTE, U>(async (t) => {
+      if (t === SYMBOL_PRECOMPUTE) {
+        runPrecompute();
+        return undefined as any;
       }
-    );
+      return await run(t);
+    });
     return {};
   }
 };

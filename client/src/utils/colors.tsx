@@ -3,10 +3,7 @@ import convert from "color-convert";
 import { sortBy, values } from "lodash";
 
 export const { common, ...accentColors } = muiColors;
-export const colors = sortBy(
-  values(accentColors),
-  (c) => convert.hex.hsl(c[100])[0],
-);
+export const colors = sortBy(values(accentColors), (c) => convert.hex.hsl(c[100])[0]);
 
 export const tone = (
   mode: "light" | "dark" = "light",

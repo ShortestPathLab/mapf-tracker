@@ -1,16 +1,4 @@
-import {
-  chain,
-  has,
-  isInteger,
-  isNumber,
-  join,
-  map,
-  max,
-  min,
-  now,
-  once,
-  split,
-} from "lodash";
+import { chain, has, isInteger, isNumber, join, map, max, min, now, once, split } from "lodash";
 import { context } from "logging";
 import { Infer, OngoingSubmission, OngoingSubmissionSolution } from "models";
 import { Document, Types } from "mongoose";
@@ -24,37 +12,22 @@ import { SubmissionValidatorData } from "./SubmissionValidatorData";
 
 import memoize from "memoizee";
 import { asyncMap } from "utils/waitMap";
-import {
-  findInstance,
-  findMapMemo,
-  findScenarioMemo,
-} from "utils/findMemo";
+import { findInstance, findMapMemo, findScenarioMemo } from "utils/findMemo";
 import { required } from "utils/assert";
 
 type OngoingSubmission = Infer<typeof OngoingSubmission> & {
   createdAt?: number;
   updatedAt?: number;
 };
-const validationResultsKey =
-  "validation" as const satisfies keyof OngoingSubmission;
+const validationResultsKey = "validation" as const satisfies keyof OngoingSubmission;
 
 const id = customAlphabet("1234567890");
 
 const log = context(`Validation Worker ${id(6)}`);
 
-type Outcome =
-  | "valid"
-  | "skipped"
-  | "invalid"
-  | "error"
-  | "outdated"
-  | "queued";
+type Outcome = "valid" | "skipped" | "invalid" | "error" | "outdated" | "queued";
 
-type OngoingSubmissionDocument = Document<
-  unknown,
-  OngoingSubmission,
-  OngoingSubmission
-> &
+type OngoingSubmissionDocument = Document<unknown, OngoingSubmission, OngoingSubmission> &
   OngoingSubmission;
 
 type BulkOp = Parameters<typeof OngoingSubmission.bulkWrite>[0][number];
@@ -72,7 +45,7 @@ async function buildResultWrites(
   submission: OngoingSubmissionDocument,
   errors: { label: string; timesteps?: number[]; agents?: number[] }[],
   meta: { timeTaken: number },
-  extra: { cost?: number; lowerBound?: number } = {}
+  extra: { cost?: number; lowerBound?: number } = {},
 ): Promise<BulkOp[]> {
   log.info("Building result writes");
   const ops: BulkOp[] = [];
@@ -136,8 +109,7 @@ async function validateGroup({
 }): Promise<{ errors: { label: string }[]; writes: BulkOp[] }> {
   const count = solutions.length;
 
-  const errors: { label: string; timesteps?: number[]; agents?: number[] }[] =
-    [];
+  const errors: { label: string; timesteps?: number[]; agents?: number[] }[] = [];
   const errorAgents: number[][] = [];
 
   const timeStart = now();
@@ -170,19 +142,14 @@ async function validateGroup({
 
   logOutcome(errors, errorAgents, mode);
 
-  const writes = await buildResultWrites(
-    submission,
-    errors,
-    { timeTaken },
-    costUpdate
-  );
+  const writes = await buildResultWrites(submission, errors, { timeTaken }, costUpdate);
   return { errors, writes };
 }
 
 function computeSolutionCost(
   submission: OngoingSubmissionDocument,
   realCost: number,
-  errors: { label: string }[]
+  errors: { label: string }[],
 ): { cost?: number; lowerBound?: number } {
   const update: { cost?: number; lowerBound?: number } = {};
   // There's already an error, don't bother checking solution cost
@@ -201,9 +168,7 @@ function computeSolutionCost(
     update.cost = realCost;
   }
   // At this point the submission's cost is correct
-  const lowerBound = isNumber(submission.lowerBound)
-    ? min([submission.lowerBound, realCost])
-    : 0;
+  const lowerBound = isNumber(submission.lowerBound) ? min([submission.lowerBound, realCost]) : 0;
   // Check if lower bound is correct
   // If incorrect, correct it with real cost
   if (lowerBound !== submission.lowerBound) {
@@ -215,7 +180,7 @@ function computeSolutionCost(
 function logOutcome(
   errors: { label: string; timesteps?: number[]; agents?: number[] }[],
   errorAgents: number[][],
-  mode?: SubmissionValidatorData[number]["mode"]
+  mode?: SubmissionValidatorData[number]["mode"],
 ) {
   if (errors.length) {
     log.warn("Did not pass validation", map(errors, "label"));
@@ -225,8 +190,9 @@ function logOutcome(
       .value();
     if (mode === "comprehensive" && isInteger(a) && a > 0)
       log.warn(
-        `Errors began on agent ${a}, it's possible that ${a - 1
-        } agents constitutes a valid solution.`
+        `Errors began on agent ${a}, it's possible that ${
+          a - 1
+        } agents constitutes a valid solution.`,
       );
     return;
   }
@@ -239,9 +205,7 @@ const parseMapMemo = memoize(parseMap);
 const parseScenarioMemo = memoize(parseScenarioMeta);
 
 export function skip(submission: OngoingSubmissionDocument) {
-  const errors = [
-    { label: "Skipped validation because skip_validation is set" },
-  ];
+  const errors = [{ label: "Skipped validation because skip_validation is set" }];
   const writes: BulkOp[] = [
     {
       updateOne: {
@@ -280,7 +244,7 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
 
     // Can error if submission doesn't exist, this is allowed.
     const submission = (await OngoingSubmission.findById(
-      submissionId
+      submissionId,
     )) as OngoingSubmissionDocument | null;
 
     if (!submission) throw new Error("Error: submission not found");
@@ -297,12 +261,12 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
     const cells = parseMapMemo(map);
     const { sources, goals, width, height } = parseScenarioMemo(scenario);
 
-    const { solutions } =
-      (await OngoingSubmissionSolution.findById(submission._id)) ?? {};
+    const { solutions } = (await OngoingSubmissionSolution.findById(submission._id)) ?? {};
 
     log.info(
-      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${scenarioMeta.type_id
-      }, agent count ${solutions?.length ?? 0}.`
+      `Validating for ${mapMeta.map_name}-${scenarioMeta.scen_type}-${
+        scenarioMeta.type_id
+      }, agent count ${solutions?.length ?? 0}.`,
     );
 
     const { errors, writes } = await validateGroup({
@@ -332,15 +296,13 @@ export async function run(data: SubmissionValidatorData[number]): Promise<{
 export const path = import.meta.path;
 
 if (!Bun.isMainThread) {
-  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>(
-    async (d) => {
-      const outcomes = await asyncMap(d, run);
-      const writes = outcomes.flatMap((o) => o.writes);
-      if (writes.length) {
-        log.info(`Executing ${writes.length} write(s) via bulkWrite`);
-        await OngoingSubmission.bulkWrite(writes);
-      }
-      return outcomes.map((o) => o.result);
+  self.onmessage = usingTaskMessageHandler<SubmissionValidatorData, any>(async (d) => {
+    const outcomes = await asyncMap(d, run);
+    const writes = outcomes.flatMap((o) => o.writes);
+    if (writes.length) {
+      log.info(`Executing ${writes.length} write(s) via bulkWrite`);
+      await OngoingSubmission.bulkWrite(writes);
     }
-  );
+    return outcomes.map((o) => o.result);
+  });
 }

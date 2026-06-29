@@ -3,9 +3,7 @@ import { find, map } from "lodash";
 import { CollectionWithInstanceCount } from "core/types";
 import api, { unwrap } from "hooks/useQuery";
 
-const incorporateProportions = <T extends CollectionWithInstanceCount>(
-  item: T
-) => ({
+const incorporateProportions = <T extends CollectionWithInstanceCount>(item: T) => ({
   ...item,
   solved_percentage: item.instances_solved / item.instances,
   closed_percentage: item.instances_closed / item.instances,
@@ -13,8 +11,7 @@ const incorporateProportions = <T extends CollectionWithInstanceCount>(
 
 export const useMapsData = () => useQuery(mapsQuery());
 
-export const useScenariosByMap = (id: number | string) =>
-  useQuery(scenariosQuery(id));
+export const useScenariosByMap = (id: number | string) => useQuery(scenariosQuery(id));
 
 export const useScenario = (id: number | string) => useQuery(scenarioQuery(id));
 

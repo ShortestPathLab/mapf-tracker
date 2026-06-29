@@ -38,9 +38,7 @@ export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
         <Prose>
           <SubmitWithApiContent />
         </Prose>
-        <CodeBlock language="plaintext">
-          {`${url}/ongoing_submission/create/${apiKey}`}
-        </CodeBlock>
+        <CodeBlock language="plaintext">{`${url}/ongoing_submission/create/${apiKey}`}</CodeBlock>
       </Stack>
       <Stack sx={{ gap: 2 }}>
         <Typography variant="overline" color="text.secondary">
@@ -48,10 +46,7 @@ export function RestApiDialog({ apiKey }: { apiKey?: string | number }) {
         </Typography>
         <Grid width={240}>
           <Tooltip title="Open this article in a new tab">
-            <ArticleCard
-              page={page}
-              onClick={() => open(`/docs/${page?.value}`, "_blank")}
-            />
+            <ArticleCard page={page} onClick={() => open(`/docs/${page?.value}`, "_blank")} />
           </Tooltip>
         </Grid>
       </Stack>
@@ -66,8 +61,7 @@ const getFileType = (name: string) => {
       "text/csv": [".csv"],
       "application/yaml": [".yaml", ".yml"],
     },
-    (extensions) =>
-      some(extensions, (extension) => name.toLowerCase().endsWith(extension)),
+    (extensions) => some(extensions, (extension) => name.toLowerCase().endsWith(extension)),
   );
 };
 
@@ -111,18 +105,13 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
             alignItems: "center",
             justifyContent: "center",
             gap: 2,
-            border: (t) =>
-              `1px solid ${
-                dragging ? t.palette.primary.main : t.palette.divider
-              }`,
+            border: (t) => `1px solid ${dragging ? t.palette.primary.main : t.palette.divider}`,
             transition: (t) => t.transitions.create("border-color"),
           }}
         >
           <UploadFileRounded color={dragging ? "primary" : "disabled"} />
           <Typography color="text.secondary">
-            {dragging
-              ? "Drop files here"
-              : "Tap to choose files or drop them here"}
+            {dragging ? "Drop files here" : "Tap to choose files or drop them here"}
           </Typography>
         </ButtonBase>
       </FileUploader>
@@ -133,39 +122,26 @@ export function FileUploadDialog({ apiKey }: { apiKey?: string | number }) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function JsonApiDialog({ apiKey }: { apiKey?: string | number }) {
-  return (
-    <Typography color="text.secondary">This feature is coming soon.</Typography>
-  );
+  return <Typography color="text.secondary">This feature is coming soon.</Typography>;
 }
 
 export const Actions = ({ apiKey }: { apiKey?: string | number }) => {
-  const { open: openRestApiDialog, dialog: restApiDialog } = useSurface(
-    RestApiDialog,
-    {
-      title: "Submit via REST API",
-    },
-  );
-  const { open: openJsonApiDialog, dialog: jsonApiDialog } = useSurface(
-    JsonApiDialog,
-    {
-      title: "Submit via copy and paste",
-    },
-  );
-  const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useSurface(
-    FileUploadDialog,
-    {
-      title: "Submit via upload",
-    },
-  );
+  const { open: openRestApiDialog, dialog: restApiDialog } = useSurface(RestApiDialog, {
+    title: "Submit via REST API",
+  });
+  const { open: openJsonApiDialog, dialog: jsonApiDialog } = useSurface(JsonApiDialog, {
+    title: "Submit via copy and paste",
+  });
+  const { open: openSpreadSheetDialog, dialog: spreadSheetDialog } = useSurface(FileUploadDialog, {
+    title: "Submit via upload",
+  });
   return (
     <>
       <Tip
         title="Upload data"
         description="Upload data for your algorithm. First, familiarise yourself with the submission format that we support. Then, choosing one of the three data submission methods."
         actions={
-          <Button onClick={() => open("/docs/how-to-submit", "_blank")}>
-            See the docs
-          </Button>
+          <Button onClick={() => open("/docs/how-to-submit", "_blank")}>See the docs</Button>
         }
       />
       <Grid gap={2} width={240}>

@@ -1,12 +1,5 @@
 import { ExpandContentRounded, HelpRounded } from "@mui-symbols-material/w300";
-import {
-  Box,
-  IconButton,
-  Stack,
-  StackProps,
-  Tooltip,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, IconButton, Stack, StackProps, Tooltip, useMediaQuery } from "@mui/material";
 import { Item } from "components/Item";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { useSurface } from "components/surface/useSurface";
@@ -19,31 +12,21 @@ import { Prose } from "layout";
 function FullScreenCard({ primary, label }: ChartCardProps) {
   const xs = useXs();
   return (
-    <Stack
-      sx={{ height: `calc(100dvh - ${xs ? 56 + 16 * 2 : 64 + 24 * 2}px)` }}
-    >
+    <Stack sx={{ height: `calc(100dvh - ${xs ? 56 + 16 * 2 : 64 + 24 * 2}px)` }}>
       <Stack sx={{ pb: 2 }}>{label}</Stack>
       <Stack
         sx={{
           flex: 1,
         }}
       >
-        <Size>
-          {({ width, height }) => (
-            <Stack sx={{ width, height }}>{primary}</Stack>
-          )}
-        </Size>
+        <Size>{({ width, height }) => <Stack sx={{ width, height }}>{primary}</Stack>}</Size>
       </Stack>
     </Stack>
   );
 }
 
 function DocumentationDialog({ documentation }: { documentation: ReactNode }) {
-  return (
-    <Prose>
-      {documentation}
-    </Prose>
-  );
+  return <Prose>{documentation}</Prose>;
 }
 
 type ChartCardProps = {
@@ -82,7 +65,7 @@ function ChartCard({
       <Stack sx={{ p: 2, gap: 2, height: "100%", flex: 1 }}>
         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
           {label}
-          <Stack direction="row" sx={{ alignItems: "flex-start",gap:1 }}>
+          <Stack direction="row" sx={{ alignItems: "flex-start", gap: 1 }}>
             {extras}
             {documentation && (
               <Tooltip title="Documentation">
@@ -107,11 +90,7 @@ function ChartCard({
           </Stack>
         </Stack>
         <Box sx={{ flex: 1 }}>
-          <Size>
-            {({ width, height }) => (
-              <Stack sx={{ width, height }}>{primary}</Stack>
-            )}
-          </Size>
+          <Size>{({ width, height }) => <Stack sx={{ width, height }}>{primary}</Stack>}</Size>
         </Box>
       </Stack>
       {dialog}
@@ -138,9 +117,7 @@ export const GridChartCard = ({
   documentation?: ReactNode;
 } & Omit<ComponentProps<typeof ChartCard>, "content">) => (
   <ChartCard
-    label={
-      <Item disableMargin primary={primaryLabel} secondary={secondaryLabel} />
-    }
+    label={<Item disableMargin primary={primaryLabel} secondary={secondaryLabel} />}
     extras={extras}
     primary={content}
     documentation={documentation}

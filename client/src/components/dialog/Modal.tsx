@@ -80,19 +80,13 @@ export function ModalAppBar({
   const [, , isAbsoluteTop, , setTarget] = useScrollState();
   useEffect(() => {
     if (ref.current) {
-      const panel = ref.current.closest(
-        ".scrollbars div[data-overlayscrollbars-contents]",
-      );
+      const panel = ref.current.closest(".scrollbars div[data-overlayscrollbars-contents]");
       if (panel && panel instanceof HTMLDivElement) setTarget(panel);
     }
-  }, [ref.current]);
+  }, []);
 
   function renderTitle(label: ReactNode) {
-    return typeof label === "string" ? (
-      <AppBarTitle>{label}</AppBarTitle>
-    ) : (
-      label
-    );
+    return typeof label === "string" ? <AppBarTitle>{label}</AppBarTitle> : label;
   }
 
   return (
@@ -142,11 +136,7 @@ export function ModalAppBar({
               overflow: "auto",
             }}
           >
-            <Fade
-              in={!!(!elevatedChildren || isAbsoluteTop)}
-              mountOnEnter
-              unmountOnExit
-            >
+            <Fade in={!!(!elevatedChildren || isAbsoluteTop)} mountOnEnter unmountOnExit>
               <Box style={{ width: "100%" }}>{renderTitle(children)}</Box>
             </Fade>
           </div>
@@ -160,14 +150,8 @@ export function ModalAppBar({
               overflow: "auto",
             }}
           >
-            <Fade
-              in={!!(elevatedChildren && !isAbsoluteTop)}
-              mountOnEnter
-              unmountOnExit
-            >
-              <Box style={{ width: "100%" }}>
-                {renderTitle(elevatedChildren)}
-              </Box>
+            <Fade in={!!(elevatedChildren && !isAbsoluteTop)} mountOnEnter unmountOnExit>
+              <Box style={{ width: "100%" }}>{renderTitle(elevatedChildren)}</Box>
             </Fade>
           </div>
         )}
@@ -196,10 +180,7 @@ export function ConfirmDialog({
 }) {
   return (
     <Stack gap={4}>
-      <Typography
-        color="text.secondary"
-        sx={{ mt: -1, whiteSpace: "pre-line" }}
-      >
+      <Typography color="text.secondary" sx={{ mt: -1, whiteSpace: "pre-line" }}>
         {hintText}
       </Typography>
       <Stack direction="row" sx={{ gap: 2, justifyContent: "flex-end" }}>
@@ -262,9 +243,7 @@ export default function Modal({
     const callback = () => {
       const doesOverflow = window.innerHeight - 64 < contentRef.offsetHeight;
       setHasOverflowingChildren(doesOverflow);
-      setChildHeight(
-        contentRef.offsetHeight <= 1 ? 0 : Math.ceil(contentRef.offsetHeight),
-      );
+      setChildHeight(contentRef.offsetHeight <= 1 ? 0 : Math.ceil(contentRef.offsetHeight));
     };
     window.addEventListener("resize", callback);
     const ob = new ResizeSensor(contentRef, callback);
@@ -303,9 +282,7 @@ export default function Modal({
         ...props.PaperProps,
         style: {
           ...(sm && {
-            borderRadius: `${theme.shape.borderRadius * 2}px ${
-              theme.shape.borderRadius * 2
-            }px 0 0`,
+            borderRadius: `${theme.shape.borderRadius * 2}px ${theme.shape.borderRadius * 2}px 0 0`,
           }),
           background: theme.palette.background.paper,
           overflow: "hidden",
@@ -395,10 +372,7 @@ export function ManagedModal({
   padded?: boolean;
   title?: string;
   options?: ComponentProps<typeof Modal>;
-  trigger?: (
-    onClick: (e: SyntheticEvent<Element, Event>) => void,
-    isOpen: boolean,
-  ) => ReactNode;
+  trigger?: (onClick: (e: SyntheticEvent<Element, Event>) => void, isOpen: boolean) => ReactNode;
   appBar?: ModalAppBarProps;
   children?: ((state: State) => ReactNode) | ReactNode;
   popover?: boolean;
@@ -465,12 +439,7 @@ export function ManagedModal({
                   slotProps?.popover,
                 )}
               >
-                <Box
-                  {...merge(
-                    { sx: { width: 360, ...acrylic, ...paper(1) } },
-                    slotProps?.paper,
-                  )}
-                >
+                <Box {...merge({ sx: { width: 360, ...acrylic, ...paper(1) } }, slotProps?.paper)}>
                   {!!title && showTitleInPopover && (
                     <ModalAppBar
                       onClose={() => close()}
@@ -483,25 +452,15 @@ export function ManagedModal({
                 </Box>
               </Popover>
             ) : (
-              <Modal
-                open={isOpen}
-                {...slotProps?.modal}
-                onClose={() => close()}
-              >
+              <Modal open={isOpen} {...slotProps?.modal} onClose={() => close()}>
                 <ModalAppBar
                   onClose={() => close()}
-                  {...(title
-                    ? { children: <AppBarTitle>{title}</AppBarTitle> }
-                    : ModalAppBarProps)}
+                  {...(title ? { children: <AppBarTitle>{title}</AppBarTitle> } : ModalAppBarProps)}
                 />
                 {padded ? <Box sx={{ p: sm ? 2 : 3 }}>{chi2}</Box> : chi2}
               </Modal>
             )}
-            <Modal
-              variant="default"
-              open={confirmOpen}
-              onClose={() => setConfirmOpen(false)}
-            >
+            <Modal variant="default" open={confirmOpen} onClose={() => setConfirmOpen(false)}>
               <ModalAppBar onClose={() => setConfirmOpen(false)}>
                 <AppBarTitle>Close with unsaved changes?</AppBarTitle>
               </ModalAppBar>

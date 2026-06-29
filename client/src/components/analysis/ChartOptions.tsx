@@ -1,10 +1,4 @@
-import {
-  Checkbox,
-  MenuItem,
-  MenuItemProps,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Checkbox, MenuItem, MenuItemProps, Stack, TextField } from "@mui/material";
 import { renderSelectChip } from "components/analysis/renderSelectChip";
 import { Scroll } from "components/dialog/Scrollbars";
 import { BaseMetric, metrics as defaultMetrics } from "core/metrics";
@@ -71,9 +65,7 @@ export default function ChartOptions({
   disableMetrics?: boolean;
 } & Partial<ReturnType<typeof useSliceSelector>>) {
   const { data: algorithms = [] } = useAlgorithmsData();
-  const combinedAlgorithms = stateOfTheArtEnabled
-    ? [stateOfTheArt, ...algorithms]
-    : algorithms;
+  const combinedAlgorithms = stateOfTheArtEnabled ? [stateOfTheArt, ...algorithms] : algorithms;
   return (
     <Stack sx={{ mb: 2 }}>
       <Scroll x fadeX>
@@ -132,9 +124,7 @@ export default function ChartOptions({
               variant="filled"
               value={selected}
               onChange={
-                setSelected
-                  ? (e) => setSelected(e.target.value as unknown as string[])
-                  : undefined
+                setSelected ? (e) => setSelected(e.target.value as unknown as string[]) : undefined
               }
             >
               {combinedAlgorithms.map((a) => (

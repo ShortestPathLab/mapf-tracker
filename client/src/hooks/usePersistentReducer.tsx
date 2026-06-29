@@ -4,7 +4,7 @@ import { useEffect } from "react";
 export function usePersistentReducer<Key extends string, Action, State>(
   key: Key,
   reducer: Reducer<State, Action>,
-  initialState: State
+  initialState: State,
 ) {
   const [state, dispatch] = useReducer(reducer, initialState, (init) => {
     const stored = localStorage.getItem(key);

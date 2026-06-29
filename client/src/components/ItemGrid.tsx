@@ -9,9 +9,10 @@ export function ItemGrid({
 }: { items: ReactNode[] } & ComponentProps<typeof Grid>) {
   return (
     <Grid sx={{ gap: 2 }} {...props}>
-      {items?.map?.((item) => {
+      {items?.map?.((item, i) => {
         return (
           <Stack
+            key={i}
             direction="row"
             sx={{
               ...paper(),

@@ -10,8 +10,7 @@ import { defer } from "lodash";
 
 export default function index() {
   const navigate = useNavigate();
-  const { contactEmail } =
-    useLocationState<ContactEmailState>() as ContactEmailState;
+  const { contactEmail } = useLocationState<ContactEmailState>() as ContactEmailState;
   useEffect(() => {
     if (!contactEmail) navigate("/submit/1");
   }, [contactEmail]);
@@ -32,9 +31,7 @@ export default function index() {
         <SubmitRequestForm
           // The form fills the remaining fields from its default request.
           initialValues={{ requesterEmail: contactEmail } as Request}
-          onSubmit={async () =>
-            defer(() => navigate("/submit/3", {}, { contactEmail }))
-          }
+          onSubmit={async () => defer(() => navigate("/submit/3", {}, { contactEmail }))}
           disabledValues={{ requesterEmail: true }}
           floatingSubmitButton
         />

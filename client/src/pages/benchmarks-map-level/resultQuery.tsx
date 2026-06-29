@@ -12,12 +12,9 @@ export const resultQuery = async (
   limit: number,
   solutions: boolean,
   onProgress?: (p: Partial<Job>) => void,
-  onNode?: (n: unknown) => void
+  onNode?: (n: unknown) => void,
 ) => {
-  const progress = throttle<(p?: Partial<Job>) => void>(
-    onProgress ?? noop,
-    300
-  );
+  const progress = throttle<(p?: Partial<Job>) => void>(onProgress ?? noop, 300);
   const PARALLEL_LIMIT = 2;
   let count = 0;
   const chunks = ceil(limit / CHUNK_LIMIT);
@@ -68,9 +65,9 @@ export const resultQuery = async (
               parser.write(value);
             }
           });
-        })
+        }),
     ),
-    PARALLEL_LIMIT
+    PARALLEL_LIMIT,
   );
   progress.flush();
   onProgress?.({ status: "Processing", progress: 1 });

@@ -9,9 +9,7 @@ import {
   SubmissionInstanceContext,
 } from "./SubmissionInstanceContextParams";
 
-export function SubmissionInstanceLabel(
-  props: SubmissionInstanceContextParams
-) {
+export function SubmissionInstanceLabel(props: SubmissionInstanceContextParams) {
   return (
     <SubmissionInstanceContext {...props}>
       {({ isLoading, current }) => (

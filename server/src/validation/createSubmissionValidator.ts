@@ -10,25 +10,21 @@ export const createSubmissionValidator = async ({
 }: { workerCount?: number } = {}) => {
   const instances = await Promise.all(
     times(workerCount, (i) => {
-      const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(
-        () => new Worker(path)
-      );
+      const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(() => new Worker(path));
       return createPair<SubmissionValidatorData, "validate", void>(
         `${i}`,
         run,
         "validation",
-        "Validation Dispatcher"
+        "Validation Dispatcher",
       );
-    })
+    }),
   );
   let i = 0;
   return {
     add: (jobs: SubmissionValidatorData) => {
       for (const c of chunk(
         jobs,
-        process.env.VALIDATOR_BATCH_COUNT
-          ? +process.env.VALIDATOR_BATCH_COUNT || 64
-          : 64
+        process.env.VALIDATOR_BATCH_COUNT ? +process.env.VALIDATOR_BATCH_COUNT || 64 : 64,
       )) {
         const q = instances[i % workerCount].server.queue;
         assert(q, "Instance is not initialised");

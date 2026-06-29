@@ -11,20 +11,18 @@ const connect = once(connectToDatabase);
 
 const run = async (params: unknown) => {
   const data = z.object({ algorithm: z.string() }).parse(params);
-  const docs: Pick<
-    Infer<typeof Submission>,
-    "algo_id" | "instance_id" | "map_id" | "scen_id"
-  >[] = await Submission.aggregate([
-    { $match: { algo_id: new Types.ObjectId(data.algorithm) } },
-    {
-      $project: {
-        algo_id: 1,
-        instance_id: 1,
-        map_id: 1,
-        scen_id: 1,
+  const docs: Pick<Infer<typeof Submission>, "algo_id" | "instance_id" | "map_id" | "scen_id">[] =
+    await Submission.aggregate([
+      { $match: { algo_id: new Types.ObjectId(data.algorithm) } },
+      {
+        $project: {
+          algo_id: 1,
+          instance_id: 1,
+          map_id: 1,
+          scen_id: 1,
+        },
       },
-    },
-  ]);
+    ]);
 
   const count = (c: typeof docs) => ({
     total: c.length,

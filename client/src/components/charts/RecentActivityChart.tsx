@@ -58,9 +58,7 @@ function RecentActivityChart() {
   );
 }
 
-export function RecentActivityChartCard(
-  props: ComponentProps<typeof GridChartCard>
-) {
+export function RecentActivityChartCard(props: ComponentProps<typeof GridChartCard>) {
   return (
     <GridChartCard
       primaryLabel="Activity"

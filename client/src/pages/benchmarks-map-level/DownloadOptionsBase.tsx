@@ -19,10 +19,7 @@ import { GridColDef } from "components/data-grid/DataGrid";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useMd, useSm, useXs } from "components/dialog/useSmallDisplay";
 import Enter from "components/transitions/Enter";
-import {
-  TreeDataGrid,
-  useBooleanMap,
-} from "components/tree-data-grid/TreeDataGrid";
+import { TreeDataGrid, useBooleanMap } from "components/tree-data-grid/TreeDataGrid";
 import { Map, Scenario } from "core/types";
 import { floor, isUndefined, map, noop } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
@@ -173,9 +170,7 @@ export function DownloadOptionsBase<
     <Stack
       gap={2}
       sx={{
-        height: `calc(calc(100dvh - ${appbarHeight(md)}px) - ${theme.spacing(
-          (xs ? 2 : 3) * 2,
-        )})`,
+        height: `calc(calc(100dvh - ${appbarHeight(md)}px) - ${theme.spacing((xs ? 2 : 3) * 2)})`,
       }}
     >
       <Stack direction={sm ? "column" : "row"} sx={{ gap: 2, height: "100%" }}>
@@ -220,9 +215,7 @@ export function DownloadOptionsBase<
           </Stack>
           <FlatCard sx={{ flex: 1, overflow: "hidden", mt: 0 }}>
             <Scroll y style={{ height: "100%" }}>
-              <BottomBarContext.Provider
-                value={{ enabled: false, setEnabled: noop }}
-              >
+              <BottomBarContext.Provider value={{ enabled: false, setEnabled: noop }}>
                 <TreeDataGrid
                   clickable
                   isLoading={isLoading}
@@ -272,9 +265,7 @@ export function DownloadOptionsBase<
                   title="Bulk export"
                   description="Export a large quantity of data at once."
                   actions={
-                    <Button
-                      onClick={() => open("/docs/solution-format", "_blank")}
-                    >
+                    <Button onClick={() => open("/docs/solution-format", "_blank")}>
                       Data format reference
                     </Button>
                   }
@@ -308,24 +299,15 @@ export function DownloadOptionsBase<
               </Stack>
 
               {!!jobs?.length && !sm && (
-                <Stack
-                  sx={{ ...paper(0), maxHeight: "30dvh", height: 120, flex: 1 }}
-                >
+                <Stack sx={{ ...paper(0), maxHeight: "30dvh", height: 120, flex: 1 }}>
                   <Scroll y ref={scrollRef}>
-                    <Stack
-                      ref={contentRef}
-                      direction="column-reverse"
-                      sx={{ p: 2, gap: 1 }}
-                    >
+                    <Stack ref={contentRef} direction="column-reverse" sx={{ p: 2, gap: 1 }}>
                       {jobs
                         .slice(-20)
                         .reverse()
                         .map(({ id, label, status, progress }) => (
                           <Enter in axis="x" key={id}>
-                            <Stack
-                              direction="row"
-                              sx={{ gap: 2, alignItems: "center" }}
-                            >
+                            <Stack direction="row" sx={{ gap: 2, alignItems: "center" }}>
                               {progress === 1 ? (
                                 <CheckRounded color="success" />
                               ) : (
@@ -343,16 +325,12 @@ export function DownloadOptionsBase<
                                       "& circle": {
                                         strokeWidth: 4,
                                       },
-                                      color: status
-                                        ?.toLocaleLowerCase()
-                                        ?.includes?.("error")
+                                      color: status?.toLocaleLowerCase()?.includes?.("error")
                                         ? "error.main"
                                         : "text.secondary",
                                     }}
                                     variant={
-                                      isUndefined(progress)
-                                        ? "indeterminate"
-                                        : "determinate"
+                                      isUndefined(progress) ? "indeterminate" : "determinate"
                                     }
                                     value={(progress ?? 0) * 100}
                                   />
@@ -360,10 +338,7 @@ export function DownloadOptionsBase<
                               )}
                               <Stack>
                                 <Typography variant="body2">{label}</Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
+                                <Typography variant="body2" color="text.secondary">
                                   {status}
                                 </Typography>
                               </Stack>
@@ -394,9 +369,7 @@ export function DownloadOptionsBase<
                     })}
                   >
                     {isRunning
-                      ? `Exporting ${floor(progress?.current ?? 0)} of ${
-                          progress?.total ?? 0
-                        }`
+                      ? `Exporting ${floor(progress?.current ?? 0)} of ${progress?.total ?? 0}`
                       : "Export selection"}
                   </Button>
                 </Box>

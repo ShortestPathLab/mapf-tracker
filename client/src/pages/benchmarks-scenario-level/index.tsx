@@ -1,8 +1,4 @@
-import {
-  ListRounded,
-  MapRounded,
-  TableRounded,
-} from "@mui-symbols-material/w300";
+import { ListRounded, MapRounded, TableRounded } from "@mui-symbols-material/w300";
 import { CardActionArea, Stack, Tooltip } from "@mui/material";
 import { Analysis } from "components/analysis/Analysis";
 import { PreviewCard } from "components/PreviewCard";
@@ -12,10 +8,7 @@ import { useStableLocationState } from "hooks/useStableLocationState";
 import { DataInspectorLayout } from "layout/DataInspectorLayout";
 import { GalleryLayout } from "layout/GalleryLayout";
 import { startCase } from "lodash";
-import {
-  downloadInstance,
-  downloadScenario,
-} from "pages/benchmarks-map-level/download";
+import { downloadInstance, downloadScenario } from "pages/benchmarks-map-level/download";
 import { MapVisualisationDialog } from "pages/benchmarks-map-level/MapVisualisationDialog";
 import { downloadMap } from "pages/benchmarks-root-level/download";
 import { useMapData, useScenario } from "queries/useMapQuery";
@@ -24,33 +17,25 @@ import { ScenarioLevelLocationState } from "./ScenarioLevelLocationState";
 import Table from "./Table";
 
 export default function Page() {
-  const state =
-    useStableLocationState<ScenarioLevelLocationState>() as ScenarioLevelLocationState;
+  const state = useStableLocationState<ScenarioLevelLocationState>() as ScenarioLevelLocationState;
   const { mapId, scenId } = state;
   const { data: mapData } = useMapData(mapId);
   const { data: scenarioData } = useScenario(scenId);
   const notify = useSnackbarAction();
 
-  const title =
-    scenarioData && `${scenarioData?.scen_type}-${scenarioData?.type_id}`;
-  const { open: openPreview, dialog: previewDialog } = useSurface(
-    MapVisualisationDialog,
-    {
-      title:
-        mapData && title
-          ? `${startCase(mapData.map_name)}, ${startCase(title)}`
-          : "--",
-      variant: "fullscreen",
-      slotProps: {
-        appBar: {
-          sx: {
-            background: "transparent",
-            width: "fit-content",
-          },
+  const title = scenarioData && `${scenarioData?.scen_type}-${scenarioData?.type_id}`;
+  const { open: openPreview, dialog: previewDialog } = useSurface(MapVisualisationDialog, {
+    title: mapData && title ? `${startCase(mapData.map_name)}, ${startCase(title)}` : "--",
+    variant: "fullscreen",
+    slotProps: {
+      appBar: {
+        sx: {
+          background: "transparent",
+          width: "fit-content",
         },
       },
     },
-  );
+  });
   return (
     <GalleryLayout
       title={title ? startCase(title) : "--"}
@@ -96,13 +81,10 @@ export default function Page() {
           {
             label: "Export scenario file (.scen)",
             primary: true,
-            action: notify(
-              () => downloadScenario(mapData?.map_name ?? "")(scenarioData),
-              {
-                start: "Preparing...",
-                end: "Done",
-              },
-            ),
+            action: notify(() => downloadScenario(mapData?.map_name ?? "")(scenarioData), {
+              start: "Preparing...",
+              end: "Done",
+            }),
             icon: <ListRounded />,
           },
           {
@@ -115,13 +97,10 @@ export default function Page() {
           },
           {
             label: "Results (.csv)",
-            action: notify(
-              () => downloadInstance(mapData?.map_name ?? "")(scenarioData),
-              {
-                start: "Preparing",
-                end: "Done",
-              },
-            ),
+            action: notify(() => downloadInstance(mapData?.map_name ?? "")(scenarioData), {
+              start: "Preparing",
+              end: "Done",
+            }),
             icon: <TableRounded />,
           },
         ],
@@ -133,11 +112,7 @@ export default function Page() {
           dataTabName="Browse instances"
           data={<Table />}
           analysis={<Analysis template={analysisTemplate(scenarioData)} />}
-          compare={
-            <Analysis
-              template={compareTemplate(scenarioData, mapData ?? undefined)}
-            />
-          }
+          compare={<Analysis template={compareTemplate(scenarioData, mapData ?? undefined)} />}
         />
       </Stack>
       {previewDialog}

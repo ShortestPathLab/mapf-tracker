@@ -9,7 +9,7 @@ const findInstancesMemo = memoizeAsync(
   },
   {
     cacheKey: JSON.stringify,
-  }
+  },
 );
 export const findInstanceByAgentScenario = async ({
   scen_id,

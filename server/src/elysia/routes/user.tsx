@@ -42,14 +42,9 @@ async function queueMail({
     requesterEmail,
     titles[status],
     await render(
-      <ReviewOutcome
-        apiKey={apiKey}
-        status={status}
-        name={requesterName}
-        comments={comments}
-      />,
-      { pretty: true }
-    )
+      <ReviewOutcome apiKey={apiKey} status={status} name={requesterName} comments={comments} />,
+      { pretty: true },
+    ),
   );
 }
 
@@ -84,9 +79,13 @@ export const userRoutes = new Elysia({ prefix: "/api/user" }).guard(
     app.post("/notify", createKeyAndSendMail).group("/basic", (basic) =>
       basic
         .get("/", () => User.find().then(allToJSON))
-        .get("/:id", ({ params }) => (User.findById(params.id).then(toJSON)))
+        .get("/:id", ({ params }) => User.findById(params.id).then(toJSON))
         .post("/write", async ({ body }) => {
-          const { username, password: pw, id } = body as {
+          const {
+            username,
+            password: pw,
+            id,
+          } = body as {
             username: string;
             password: string;
             id?: string;

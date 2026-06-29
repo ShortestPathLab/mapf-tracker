@@ -1,11 +1,7 @@
 import { Box } from "@mui/material";
 import { useXs } from "components/dialog/useSmallDisplay";
 import { useLocationStateSeparate, useNavigate } from "hooks/useNavigation";
-import {
-  PopupState,
-  PopupState as State,
-  usePopupState,
-} from "material-ui-popup-state/hooks";
+import { PopupState, PopupState as State, usePopupState } from "material-ui-popup-state/hooks";
 import { nanoid } from "nanoid";
 import { ReactElement, ReactNode, useEffect, useReducer } from "react";
 import { usePrevious } from "react-use";
@@ -30,10 +26,7 @@ export type SurfaceProps = SurfaceGeneralProps & {
 
 export function useSurfaceHistory(state: PopupState) {
   const navigate = useNavigate();
-  const [id, newId] = useReducer(
-    () => `hidden-${nanoid()}`,
-    `hidden-${nanoid()}`,
-  );
+  const [id, newId] = useReducer(() => `hidden-${nanoid()}`, `hidden-${nanoid()}`);
   const { params, saved, session: _session } = useLocationStateSeparate();
   // Session is a record keyed by the generated surface id; the hook's default
   // return type does not expose an index signature.
@@ -56,11 +49,7 @@ export function useSurfaceHistory(state: PopupState) {
   // Sync open state
   useEffect(() => {
     if (state.isOpen && !previouslyOpen) {
-      navigate(
-        location.pathname,
-        { ...params, ...saved },
-        { ...session, [id]: 1 },
-      );
+      navigate(location.pathname, { ...params, ...saved }, { ...session, [id]: 1 });
     }
   }, [state.isOpen, previouslyOpen]);
 }
@@ -86,8 +75,7 @@ export function SurfaceBase({
   variant = "sheet",
 }: SurfaceBaseProps) {
   const xs = useXs();
-  const children =
-    typeof _children === "function" ? _children(state) : _children;
+  const children = typeof _children === "function" ? _children(state) : _children;
   const SurfaceVariant = {
     fullscreen: FullscreenSurface,
     sheet: SheetSurface,
@@ -120,9 +108,5 @@ export function SurfaceBase({
     ),
     popover: children,
   }[variant];
-  return (
-    <>
-      {<SurfaceVariant {...{ slotProps, state, children: childrenVariant }} />}
-    </>
-  );
+  return <>{<SurfaceVariant {...{ slotProps, state, children: childrenVariant }} />}</>;
 }

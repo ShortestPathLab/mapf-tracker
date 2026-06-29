@@ -37,17 +37,16 @@ export default function index(props: AppBarProps) {
   const navigate = useNavigate();
   const [{ hideSidebar, sidebarOpenMobile }, setOptions] = useOptions();
   const { groups, userDialog, logInDialog } = useNavigationContent();
-  const clickHandler =
-    (url?: string, action?: () => void, close?: () => void) => () => {
-      if (url) {
-        const same = url === pathname;
-        navigate(url, {}, { "hidden-reason": same ? "top" : "appbar" });
-        close?.();
-        setOptions({ sidebarOpenMobile: false });
-      } else {
-        action?.();
-      }
-    };
+  const clickHandler = (url?: string, action?: () => void, close?: () => void) => () => {
+    if (url) {
+      const same = url === pathname;
+      navigate(url, {}, { "hidden-reason": same ? "top" : "appbar" });
+      close?.();
+      setOptions({ sidebarOpenMobile: false });
+    } else {
+      action?.();
+    }
+  };
   const c = useCss({});
   return (
     <>
@@ -106,19 +105,13 @@ export default function index(props: AppBarProps) {
                                 >
                                   {label}
                                 </Typography>
-                                <IconButton
-                                  edge="end"
-                                  sx={{ color: "text.secondary" }}
-                                >
+                                <IconButton edge="end" sx={{ color: "text.secondary" }}>
                                   <ChevronRightRounded
                                     className={c}
                                     fontSize="small"
                                     sx={{
-                                      transition: (t) =>
-                                        t.transitions.create("transform"),
-                                      transform: isOpen
-                                        ? "rotate(90deg)"
-                                        : "rotate(0deg)",
+                                      transition: (t) => t.transitions.create("transform"),
+                                      transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
                                     }}
                                   />
                                 </IconButton>
@@ -126,74 +119,57 @@ export default function index(props: AppBarProps) {
                             )}
                             <Collapse in={isOpen}>
                               <List sx={{ mt: label ? -2 : 0 }}>
-                                {items.map(
-                                  ({ icon, label, url, action, avatar }, i) => {
-                                    const selected =
-                                      !!url && !!matchPath(`${url}/*`, pathname);
-                                    return (
-                                      <ListItemButton
-                                        key={i}
-                                        selected={selected}
+                                {items.map(({ icon, label, url, action, avatar }, i) => {
+                                  const selected = !!url && !!matchPath(`${url}/*`, pathname);
+                                  return (
+                                    <ListItemButton
+                                      key={i}
+                                      selected={selected}
+                                      sx={{
+                                        borderRadius: 1,
+                                        mx: 1.5,
+                                        color: selected ? "primary.main" : undefined,
+                                        px: 1,
+                                        // Looks more comfortable when there's space on the right
+                                        pr: 3,
+                                        py: 0.5,
+                                        bgcolor: "transparent",
+                                        "&.Mui-selected": {
+                                          bgcolor: (t) => alpha(t.palette.text.primary, 0.05),
+                                        },
+                                      }}
+                                      onClick={clickHandler(url, action, state.close)}
+                                    >
+                                      <ListItemIcon
                                         sx={{
-                                          borderRadius: 1,
-                                          mx: 1.5,
-                                          color: selected
-                                            ? "primary.main"
-                                            : undefined,
-                                          px: 1,
-                                          // Looks more comfortable when there's space on the right
-                                          pr: 3,
-                                          py: 0.5,
-                                          bgcolor: "transparent",
-                                          "&.Mui-selected": {
-                                            bgcolor: (t) =>
-                                              alpha(
-                                                t.palette.text.primary,
-                                                0.05,
-                                              ),
-                                          },
+                                          color: selected ? "primary.main" : undefined,
+                                          minWidth: 48,
+                                          mr: -1,
+                                          transform: "scale(0.9)",
                                         }}
-                                        onClick={clickHandler(
-                                          url,
-                                          action,
-                                          state.close,
-                                        )}
                                       >
-                                        <ListItemIcon
-                                          sx={{
-                                            color: selected
-                                              ? "primary.main"
-                                              : undefined,
-                                            minWidth: 48,
-                                            mr: -1,
-                                            transform: "scale(0.9)",
-                                          }}
-                                        >
-                                          {avatar ?? icon}
-                                        </ListItemIcon>
-                                        <ListItemText
-                                          primary={
-                                            <Box
-                                              component="span"
-                                              sx={{
-                                                fontWeight: 450,
-                                                fontSize: xs
-                                                  ? undefined
-                                                  : (t) =>
-                                                      t.typography.body2
-                                                        .fontSize,
-                                                color: "text.primary",
-                                                opacity: 0.8,
-                                              }}
-                                            >
-                                              {label}
-                                            </Box>
-                                          }
-                                        />
-                                      </ListItemButton>
-                                    );
-                                  },
-                                )}
+                                        {avatar ?? icon}
+                                      </ListItemIcon>
+                                      <ListItemText
+                                        primary={
+                                          <Box
+                                            component="span"
+                                            sx={{
+                                              fontWeight: 450,
+                                              fontSize: xs
+                                                ? undefined
+                                                : (t) => t.typography.body2.fontSize,
+                                              color: "text.primary",
+                                              opacity: 0.8,
+                                            }}
+                                          >
+                                            {label}
+                                          </Box>
+                                        }
+                                      />
+                                    </ListItemButton>
+                                  );
+                                })}
                               </List>
                             </Collapse>
                           </Stack>
@@ -229,11 +205,7 @@ export default function index(props: AppBarProps) {
                         height: appbarHeight(xs),
                       }}
                     >
-                      <Box
-                        component="img"
-                        sx={{ height: 24, width: 24 }}
-                        src={appIconUrl}
-                      />
+                      <Box component="img" sx={{ height: 24, width: 24 }} src={appIconUrl} />
                       <Typography variant="h6" sx={{ ml: 2 }}>
                         {appNameShort}
                       </Typography>
@@ -258,12 +230,8 @@ export default function index(props: AppBarProps) {
 
               <SwipeableDrawer
                 open={sidebarOpenMobile}
-                onOpen={() =>
-                  setOptions({ hideSidebar: false, sidebarOpenMobile: true })
-                }
-                onClose={() =>
-                  setOptions({ hideSidebar: true, sidebarOpenMobile: false })
-                }
+                onOpen={() => setOptions({ hideSidebar: false, sidebarOpenMobile: true })}
+                onClose={() => setOptions({ hideSidebar: true, sidebarOpenMobile: false })}
                 elevation={1}
                 variant="temporary"
                 ModalProps={{ keepMounted: true }}

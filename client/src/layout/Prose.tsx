@@ -32,7 +32,7 @@ export function Prose({ children, ...props }: BoxProps) {
           },
           "& a": { color: t.palette.primary.main },
         },
-        props.sx
+        props.sx,
       )}
     >
       {children}

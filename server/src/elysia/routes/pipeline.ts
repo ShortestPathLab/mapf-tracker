@@ -32,17 +32,22 @@ const runStage =
   async ({ params }: Context) => {
     const { data, success, error: zErr } = stageSchema.safeParse(params);
     if (!success) return status(400, zErr);
-    run<any>(stages[data.stage as keyof typeof stages], {}, {
-      one,
-      onProgress: async (args) => {
-        await set(args.stage, args);
+    run<any>(
+      stages[data.stage as keyof typeof stages],
+      {},
+      {
+        one,
+        onProgress: async (args) => {
+          await set(args.stage, args);
+        },
       },
-    });
+    );
     return {};
   };
 
-export const pipelineRoutes = new Elysia({ prefix: "/api/pipeline" })
-  .guard({ beforeHandle: requireAuth }, (app) =>
+export const pipelineRoutes = new Elysia({ prefix: "/api/pipeline" }).guard(
+  { beforeHandle: requireAuth },
+  (app) =>
     app
       .get("/status", () =>
         chain(stages)
@@ -59,4 +64,4 @@ export const pipelineRoutes = new Elysia({ prefix: "/api/pipeline" })
       )
       .get("/run/:stage", runStage(false))
       .get("/runOne/:stage", runStage(true)),
-  );
+);

@@ -21,28 +21,15 @@ export function createSchema<
   TStaticMethods = {},
   TSchemaOptions = DefaultSchemaOptions,
   DocType extends ApplySchemaOptions<
-    ObtainDocumentType<
-      DocType,
-      EnforcedDocType,
-      ResolveSchemaOptions<TSchemaOptions>
-    >,
+    ObtainDocumentType<DocType, EnforcedDocType, ResolveSchemaOptions<TSchemaOptions>>,
     ResolveSchemaOptions<TSchemaOptions>
   > = ApplySchemaOptions<
-    ObtainDocumentType<
-      any,
-      EnforcedDocType,
-      ResolveSchemaOptions<TSchemaOptions>
-    >,
+    ObtainDocumentType<any, EnforcedDocType, ResolveSchemaOptions<TSchemaOptions>>,
     ResolveSchemaOptions<TSchemaOptions>
   >,
-  THydratedDocumentType = HydratedDocument<
-    FlatRecord<DocType>,
-    TVirtuals & TInstanceMethods
-  >
+  THydratedDocumentType = HydratedDocument<FlatRecord<DocType>, TVirtuals & TInstanceMethods>,
 >(
-  definition?:
-    | SchemaDefinition<SchemaDefinitionType<EnforcedDocType>, EnforcedDocType>
-    | DocType,
+  definition?: SchemaDefinition<SchemaDefinitionType<EnforcedDocType>, EnforcedDocType> | DocType,
   options?:
     | SchemaOptions<
         FlatRecord<DocType>,
@@ -52,7 +39,7 @@ export function createSchema<
         TVirtuals,
         THydratedDocumentType
       >
-    | ResolveSchemaOptions<TSchemaOptions>
+    | ResolveSchemaOptions<TSchemaOptions>,
 ) {
   return new Schema<
     EnforcedDocType,

@@ -3,38 +3,18 @@ import { queryClient as client } from "App";
 import { Semaphore } from "async-mutex";
 import { useSnackbar } from "components/Snackbar";
 import { SummaryResult } from "core/types";
-import {
-  cloneDeep,
-  head,
-  keyBy,
-  memoize,
-  mergeWith,
-  now,
-  range,
-  some,
-  values,
-} from "lodash";
+import { cloneDeep, head, keyBy, memoize, mergeWith, now, range, some, values } from "lodash";
 import api, { DataOf, unwrap } from "hooks/useQuery";
 
 const REFETCH_MS = 2500;
 
-function mergeArray<T>(
-  xs: T[],
-  ys: T[],
-  key: (t: T) => string,
-  f: (a: T, b: T) => T,
-) {
+function mergeArray<T>(xs: T[], ys: T[], key: (t: T) => string, f: (a: T, b: T) => T) {
   return values(mergeWith(keyBy(xs, key), keyBy(ys, key), f));
 }
 
 function mergeValues(v1: unknown, v2: unknown): unknown {
   if (v1 instanceof Array && v2 instanceof Array) {
-    return mergeArray<unknown>(
-      v1,
-      v2,
-      (v) => (v as { id: string }).id,
-      mergeValues,
-    );
+    return mergeArray<unknown>(v1, v2, (v) => (v as { id: string }).id, mergeValues);
   }
   if (typeof v1 === "number" && typeof v2 === "number") {
     return v1 + v2;
@@ -54,8 +34,7 @@ export function useFinaliseOngoingSubmissionMutation(key: string | number) {
   const notify = useSnackbar();
   return useMutation({
     mutationKey: ["finaliseOngoingSubmission"],
-    mutationFn: () =>
-      unwrap(api.api.ongoing_submission.finalise({ key: `${key}` }).get()),
+    mutationFn: () => unwrap(api.api.ongoing_submission.finalise({ key: `${key}` }).get()),
     onMutate: () => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
     },
@@ -92,8 +71,7 @@ export function useOngoingSubmissionCountQuery(key?: string | number) {
 export function useOngoingSubmissionByIdQuery(id?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "id", id],
-    queryFn: async () =>
-      head(await unwrap(api.api.ongoing_submission.id({ id: `${id}` }).get())),
+    queryFn: async () => head(await unwrap(api.api.ongoing_submission.id({ id: `${id}` }).get())),
     enabled: !!id,
   });
 }
@@ -105,7 +83,7 @@ export const ongoingSubmissionScenarioQueryFn = (
   unwrap(
     api.api.ongoing_submission
       .scenario({ apiKey: `${key}` })({ scenario: `${scenario}` })
-      .get()
+      .get(),
   );
 
 export function useOngoingSubmissionScenarioQuery(
@@ -126,7 +104,7 @@ const summaryPageCountQuery = (key?: string | number) => ({
     unwrap(
       api.api.ongoing_submission["summary-pagecount"]({
         apiKey: `${key}`,
-      }).get()
+      }).get(),
     ),
   enabled: !!key,
   refetchInterval: REFETCH_MS,
@@ -148,7 +126,7 @@ const summaryQuery = (key?: string | number, i: number = 0) => ({
         (await unwrap(
           api.api.ongoing_submission
             .summary({ apiKey: `${key}` })({ page: `${i}` })
-            .get()
+            .get(),
         )) ?? null,
       // Each task has a weight of 1
       1,
@@ -175,11 +153,7 @@ export function useOngoingSubmissionSummaryQuery(key?: string | number) {
       return {
         data: {
           lengths,
-          processed: mergeWith(
-            {},
-            ...dataResults,
-            mergeValues,
-          ) as SummaryResult,
+          processed: mergeWith({}, ...dataResults, mergeValues) as SummaryResult,
         },
         isEmpty: lengths.every((l) => !l),
         isLoading: isLoadingPageCount || some(results, (r) => r.isLoading),
@@ -203,7 +177,7 @@ export function useOngoingSubmissionTicketQuery(key?: string | number) {
   return useQuery({
     queryKey: [ONGOING_SUBMISSION_QUERY_KEY, "ticket", key],
     queryFn: async () => [
-      ...await unwrap(api.api.ongoing_submission.status({ apiKey: `${key}` }).get()),
+      ...(await unwrap(api.api.ongoing_submission.status({ apiKey: `${key}` }).get())),
       ...cloneDeep(Array.from(optimisticQueue)),
     ],
     enabled: !!key,
@@ -223,9 +197,8 @@ export function useDeleteOngoingSubmissionMutation(key: string | number) {
         : unwrap(api.api.ongoing_submission.delete.post({ id: k })),
     onMutate: (k) => {
       client.cancelQueries({ queryKey: [ONGOING_SUBMISSION_QUERY_KEY, key] });
-      client.setQueryData<OngoingSubmission[]>(
-        [ONGOING_SUBMISSION_QUERY_KEY, key],
-        (old) => old?.filter?.((x) => x.id !== k),
+      client.setQueryData<OngoingSubmission[]>([ONGOING_SUBMISSION_QUERY_KEY, key], (old) =>
+        old?.filter?.((x) => x.id !== k),
       );
     },
     onSettled: async () => {

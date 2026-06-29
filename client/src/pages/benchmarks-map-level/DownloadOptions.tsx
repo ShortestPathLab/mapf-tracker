@@ -4,32 +4,14 @@ import byteSize from "byte-size";
 import { Item } from "components/Item";
 import { CheckboxItem } from "components/analysis/ChartOptions";
 import { GridColDef } from "components/data-grid/DataGrid";
-import {
-  chain,
-  entries,
-  flatMap,
-  map,
-  some,
-  startCase,
-  thru,
-  zip,
-} from "lodash";
+import { chain, entries, flatMap, map, some, startCase, thru, zip } from "lodash";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
 import { ScenarioLabel } from "pages/submission-summary/table/ScenarioLabel";
 import pluralize from "pluralize";
 import { scenariosQuery, useMapsData } from "queries/useMapQuery";
 import { useMemo, useState } from "react";
-import {
-  DownloadOptionsBase,
-  disambiguate,
-  Model,
-  renderPlaceholder,
-} from "./DownloadOptionsBase";
-import {
-  bulkDownloadMaps,
-  useBulkMutation,
-  useIndexAll,
-} from "./useBulkMutation";
+import { DownloadOptionsBase, disambiguate, Model, renderPlaceholder } from "./DownloadOptionsBase";
+import { bulkDownloadMaps, useBulkMutation, useIndexAll } from "./useBulkMutation";
 import { useSet } from "./useSet";
 
 export function useBenchmarksAll() {
@@ -85,9 +67,7 @@ export function DownloadOptions() {
       headerName: "Map (.map)",
       renderCell: ({ row }) =>
         disambiguate(row, {
-          all: (row) => (
-            <Checkbox {...maps.bindToggle(...map(row.maps, "id"))} />
-          ),
+          all: (row) => <Checkbox {...maps.bindToggle(...map(row.maps, "id"))} />,
           map: (row) => <Checkbox {...maps.bindToggle(row.id)} />,
         }),
       minWidth: 32,
@@ -104,15 +84,9 @@ export function DownloadOptions() {
       renderCell: ({ row }: { row: Model }) =>
         disambiguate(row, {
           all: (row) => (
-            <Checkbox
-              {...collection.bindToggle(
-                ...map(flatMap(row.maps, "scenarios"), "id")
-              )}
-            />
+            <Checkbox {...collection.bindToggle(...map(flatMap(row.maps, "scenarios"), "id"))} />
           ),
-          map: (row) => (
-            <Checkbox {...collection.bindToggle(...map(row.scenarios, "id"))} />
-          ),
+          map: (row) => <Checkbox {...collection.bindToggle(...map(row.scenarios, "id"))} />,
           scenario: (row) => <Checkbox {...collection.bindToggle(row.id)} />,
         }),
       minWidth: 32,
@@ -170,8 +144,8 @@ export function DownloadOptions() {
             },
             mapsIndex,
             scensIndex,
-            add
-          )
+            add,
+          ),
         )
       }
       options={
@@ -188,8 +162,7 @@ export function DownloadOptions() {
             selected={downloadParts}
             onClick={() => setDownloadParts(!downloadParts)}
           >
-            Download in parts (
-            {thru(byteSize(CHUNK_SIZE_B), (r) => `${r.value} ${r.unit}`)} per
+            Download in parts ({thru(byteSize(CHUNK_SIZE_B), (r) => `${r.value} ${r.unit}`)} per
             part)
           </CheckboxItem>
         </>
@@ -201,7 +174,7 @@ export function DownloadOptions() {
             primary={`${pluralize("map", maps.count, true)}, ${pluralize(
               "scenario",
               scens.count,
-              true
+              true,
             )}, ${pluralize("result", results.count, true)}`}
             secondary="Files"
           />
@@ -211,10 +184,9 @@ export function DownloadOptions() {
               byteSize(
                 maps.count * SIZE_MAP_B +
                   scens.count * SIZE_SCEN_B +
-                  results.count *
-                    ((includeSolutions ? SIZE_SOLUTION_B : 0) + SIZE_RESULT_B)
+                  results.count * ((includeSolutions ? SIZE_SOLUTION_B : 0) + SIZE_RESULT_B),
               ),
-              (r) => `${r.value} ${r.unit}`
+              (r) => `${r.value} ${r.unit}`,
             )}
             secondary="Estimated size"
           />
@@ -243,10 +215,7 @@ export function DownloadOptions() {
       renderLabel={(row) =>
         disambiguate(row, {
           all: (row) => (
-            <Item
-              primary="All benchmarks"
-              secondary={pluralize("Item", row.maps?.length, true)}
-            />
+            <Item primary="All benchmarks" secondary={pluralize("Item", row.maps?.length, true)} />
           ),
           map: (row) => (
             <Stack sx={{ pl: 2 }}>

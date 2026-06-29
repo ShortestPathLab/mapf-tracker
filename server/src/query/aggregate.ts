@@ -9,7 +9,7 @@ const agg = <T extends Operation>(
   op: T,
   cond: any = undefined,
   ifTrue: any = 1,
-  ifFalse: any = 0
+  ifFalse: any = 0,
 ) =>
   ({
     [`$${op}`]: cond
@@ -17,7 +17,7 @@ const agg = <T extends Operation>(
           $cond: [cond, ifTrue, ifFalse],
         }
       : ifTrue,
-  } as { [K in `$${T}`]: any });
+  }) as { [K in `$${T}`]: any };
 
 export const operations = {
   count: (cond?: any, _value?: unknown) => agg("sum", cond),

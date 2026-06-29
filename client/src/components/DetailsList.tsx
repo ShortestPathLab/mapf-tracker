@@ -5,10 +5,7 @@ export interface DetailsListProps {
   items?: { label: string; value: ReactNode }[];
 }
 
-export const DetailsList = ({
-  items,
-  ...rest
-}: DetailsListProps & ListProps) => {
+export const DetailsList = ({ items, ...rest }: DetailsListProps & ListProps) => {
   return (
     <List {...rest}>
       {items?.map((item, index) => (

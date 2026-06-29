@@ -30,12 +30,7 @@ export function Modal({
 
   const content = useCache<ReactNode | undefined>(children);
 
-  const {
-    overflow,
-    contentHeight,
-    setModal: setTarget,
-    setContent,
-  } = useModalOverflow(height);
+  const { overflow, contentHeight, setModal: setTarget, setContent } = useModalOverflow(height);
 
   const useVariant = variant === "submodal" && sm;
 
@@ -64,11 +59,7 @@ export function Modal({
           borderRadius: 2,
           background: theme.palette.background.paper,
           overflow: "hidden",
-          height: height
-            ? height
-            : overflow
-            ? "100%"
-            : contentHeight || "fit-content",
+          height: height ? height : overflow ? "100%" : contentHeight || "fit-content",
           position: "relative",
           mx: 2,
           marginTop: 0,

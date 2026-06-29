@@ -11,14 +11,9 @@ import {
 import { find, floor, head, map, merge, round, sumBy } from "lodash";
 import { ReactNode } from "react";
 
-export const formatValue = (v: number) =>
-  v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%";
+export const formatValue = (v: number) => (v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%");
 
-export const cellRendererText = ({
-  formattedValue,
-}: {
-  formattedValue?: ReactNode;
-}) => (
+export const cellRendererText = ({ formattedValue }: { formattedValue?: ReactNode }) => (
   <Typography
     variant="body2"
     sx={{
@@ -30,11 +25,7 @@ export const cellRendererText = ({
     {formattedValue ?? "--"}
   </Typography>
 );
-export const cellRendererCode = ({
-  formattedValue,
-}: {
-  formattedValue?: ReactNode;
-}) => (
+export const cellRendererCode = ({ formattedValue }: { formattedValue?: ReactNode }) => (
   <Typography
     variant="body2"
     sx={{
@@ -47,11 +38,9 @@ export const cellRendererCode = ({
   </Typography>
 );
 
-export const cellRendererChip = ({
-  formattedValue,
-}: {
-  formattedValue?: ReactNode;
-}) => <Chip label={formattedValue} size="small" />;
+export const cellRendererChip = ({ formattedValue }: { formattedValue?: ReactNode }) => (
+  <Chip label={formattedValue} size="small" />
+);
 
 export const cellRendererBar = ({
   value,
@@ -92,10 +81,7 @@ export const cellRendererBar = ({
           },
         ]}
       />
-      <Typography
-        variant="overline"
-        sx={{ width: labelWidth, textAlign: "right" }}
-      >
+      <Typography variant="overline" sx={{ width: labelWidth, textAlign: "right" }}>
         {label ?? formatValue(value ?? 0)}
       </Typography>
     </Stack>
@@ -139,11 +125,7 @@ export const Bar = ({
     >
       <Stack direction="row" sx={{ flex: 1 }}>
         {map(values, ({ value, color, label }) => (
-          <Tooltip
-            title={
-              typeof label === "string" ? renderLabel(label, value) : label
-            }
-          >
+          <Tooltip title={typeof label === "string" ? renderLabel(label, value) : label}>
             <LinearProgress
               sx={{
                 bgcolor: "transparent",
@@ -171,15 +153,19 @@ export const Bar = ({
           />
         )}
       </Stack>
-      {label ? <Typography variant="overline"
-        sx={{
-          width: 48,
-          textAlign: "right",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}>
-        {label}
-      </Typography> : (
+      {label ? (
+        <Typography
+          variant="overline"
+          sx={{
+            width: 48,
+            textAlign: "right",
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          {label}
+        </Typography>
+      ) : (
         <Typography
           variant="overline"
           sx={{

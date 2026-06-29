@@ -2,16 +2,7 @@ import { useTheme } from "@mui/material";
 import { useQueries } from "@tanstack/react-query";
 import { Chart } from "components/analysis/Chart";
 import { aggregateQuery, algorithmQuery } from "queries/useAggregateQuery";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Label,
-  Legend,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, CartesianGrid, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { paper } from "theme";
 import { formatPercentage, formatScientific } from "utils/format";
 import _, { isNil, max, range, round } from "lodash";
@@ -52,18 +43,12 @@ export function SuboptimalityByAgentCountChart({
 
       const minData = _.keyBy(minQuery.data, "_id");
       const maxData = _.keyBy(maxQuery.data, "_id");
-      const agents = max([
-        minQuery.data?.length ?? 0,
-        maxQuery.data?.length ?? 0,
-      ]);
+      const agents = max([minQuery.data?.length ?? 0, maxQuery.data?.length ?? 0]);
 
       return {
         isLoading: minQuery.isLoading || maxQuery.isLoading,
         data: range(agents ?? 0).flatMap((agent) => {
-          if (
-            !isNil(minData[agent]?.result) &&
-            !isNil(maxData[agent]?.result)
-          ) {
+          if (!isNil(minData[agent]?.result) && !isNil(maxData[agent]?.result)) {
             return [
               {
                 agentCount: agent,
@@ -90,9 +75,7 @@ export function SuboptimalityByAgentCountChart({
           <XAxis
             dataKey="agentCount"
             type="number"
-            label={
-              <Label position="insideBottom" value="Agent Count" offset={-10} />
-            }
+            label={<Label position="insideBottom" value="Agent Count" offset={-10} />}
           />
           <YAxis
             type="number"
@@ -112,10 +95,7 @@ export function SuboptimalityByAgentCountChart({
             contentStyle={{ border: paper(0).border({ palette } as any) }}
             formatter={(value: any) => {
               if (Array.isArray(value)) {
-                return [
-                  `${formatValue(value[0])} - ${formatValue(value[1])}`,
-                  "Range",
-                ];
+                return [`${formatValue(value[0])} - ${formatValue(value[1])}`, "Range"];
               }
               return value;
             }}

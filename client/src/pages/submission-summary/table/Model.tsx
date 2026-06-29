@@ -11,7 +11,7 @@ export function disambiguate<R>(
   m: Model,
   options: {
     [K in keyof Models]?: (m: Models[K]) => R;
-  }
+  },
 ) {
   if ("scenarios" in m) return options?.map?.(m);
   if ("count" in m) return options?.scenario?.(m);

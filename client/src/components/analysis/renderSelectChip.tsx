@@ -2,10 +2,7 @@ import { Box, Chip } from "@mui/material";
 import { map } from "lodash";
 import { ReactNode } from "react";
 
-export function renderSelectChip(
-  f: (id: string) => ReactNode,
-  max: number = 3
-) {
+export function renderSelectChip(f: (id: string) => ReactNode, max: number = 3) {
   return (value: unknown) => {
     // MUI Select renderValue passes the selected value(s) as unknown; here it is the array of selected ids
     const selected = value as string[] | undefined;

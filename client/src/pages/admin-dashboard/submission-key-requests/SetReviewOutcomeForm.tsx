@@ -11,11 +11,7 @@ export type SetReviewOutcomeFormProps = {
   onTouched?: () => void;
 } & Partial<FormikConfig<ReviewOutcome>>;
 
-export const reviewOutcomes = [
-  "not-reviewed",
-  "approved",
-  "rejected",
-] as ReviewOutcome["status"][];
+export const reviewOutcomes = ["not-reviewed", "approved", "rejected"] as ReviewOutcome["status"][];
 export function SetReviewOutcomeForm({
   submit = () => <></>,
   onTouched,
@@ -23,11 +19,7 @@ export function SetReviewOutcomeForm({
 }: SetReviewOutcomeFormProps) {
   const touch = useMemo(() => once(() => onTouched?.()), []);
   return (
-    <Formik<ReviewOutcome>
-      initialValues={{ status: "not-reviewed" }}
-      onSubmit={noop}
-      {...props}
-    >
+    <Formik<ReviewOutcome> initialValues={{ status: "not-reviewed" }} onSubmit={noop} {...props}>
       {(state) => (
         <Form onChangeCapture={touch}>
           <Stack gap={2}>
@@ -37,9 +29,7 @@ export function SetReviewOutcomeForm({
               label="Status"
               required
               SelectProps={{
-                renderValue: (v: unknown) => (
-                  <StatusChip status={v as ReviewOutcome["status"]} />
-                ),
+                renderValue: (v: unknown) => <StatusChip status={v as ReviewOutcome["status"]} />,
               }}
             >
               {reviewOutcomes.map((r) => (
@@ -48,12 +38,7 @@ export function SetReviewOutcomeForm({
                 </MenuItem>
               ))}
             </Field>
-            <Field<ReviewOutcome>
-              name="comments"
-              label="Comments"
-              multiline
-              minRows={3}
-            />
+            <Field<ReviewOutcome> name="comments" label="Comments" multiline minRows={3} />
             {submit(state)}
           </Stack>
         </Form>

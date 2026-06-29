@@ -1,9 +1,5 @@
 import { RedisMemoryServer } from "redis-memory-server";
-import {
-  Queue as BullMqQueue,
-  QueueOptions as BullMqQueueOptions,
-  QueueEvents,
-} from "bullmq";
+import { Queue as BullMqQueue, QueueOptions as BullMqQueueOptions, QueueEvents } from "bullmq";
 import { RedisMemoryServerOptsT } from "redis-memory-server/lib/RedisMemoryServer";
 import { log } from "logging";
 
@@ -13,11 +9,7 @@ type QueueOptions = {
   queue?: BullMqQueueOptions;
 };
 
-class Queue<
-  DataType = any,
-  ResultType = any,
-  NameType extends string = string
-> {
+class Queue<DataType = any, ResultType = any, NameType extends string = string> {
   server?: RedisMemoryServer;
   queue?: BullMqQueue<DataType, ResultType, NameType>;
   host?: string;
@@ -28,9 +20,7 @@ class Queue<
     this.server = new RedisMemoryServer(this.options.server);
     this.host = await this.server.getHost();
     this.port = await this.server.getPort();
-    log.info(
-      `Queue '${this.options.name}' started at ${this.host}:${this.port}`
-    );
+    log.info(`Queue '${this.options.name}' started at ${this.host}:${this.port}`);
     const options = {
       ...this.options?.queue,
       connection: { host: this.host, port: this.port },
@@ -49,9 +39,9 @@ class Queue<
 export const createQueue = async <
   DataType = any,
   ResultType = any,
-  NameType extends string = string
+  NameType extends string = string,
 >(
-  options: QueueOptions
+  options: QueueOptions,
 ) => {
   const queue = new Queue<DataType, ResultType, NameType>(options);
   await queue.setup();

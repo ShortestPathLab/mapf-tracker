@@ -32,12 +32,7 @@ ReviewOutcome.PreviewProps = {
   comments: "No comment",
 } as Props;
 
-export default function ReviewOutcome({
-  name,
-  apiKey,
-  status,
-  comments,
-}: Props) {
+export default function ReviewOutcome({ name, apiKey, status, comments }: Props) {
   return (
     <Html>
       <Head>
@@ -61,9 +56,9 @@ export default function ReviewOutcome({
             {renderText(`Hello ${name || "user"},`)}
             {renderText(
               <>
-                Thank you for using MAPF Tracker. The following is the outcome
-                of your request review:
-              </>
+                Thank you for using MAPF Tracker. The following is the outcome of your request
+                review:
+              </>,
             )}
             {renderItem("Outcome", startCase(status))}
             {status === "approved" &&
@@ -73,7 +68,7 @@ export default function ReviewOutcome({
                   <CodeInline>{apiKey}</CodeInline>
                   <br />
                   {renderLink("Use your key", env.EMAIL_CALLBACK)}
-                </>
+                </>,
               )}
             {comments && renderItem("Comments", comments)}
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />

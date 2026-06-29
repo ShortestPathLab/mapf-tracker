@@ -1,8 +1,4 @@
-import {
-  ArrowBackRounded,
-  ArrowUpwardRounded,
-  ShareRounded,
-} from "@mui-symbols-material/w300";
+import { ArrowBackRounded, ArrowUpwardRounded, ShareRounded } from "@mui-symbols-material/w300";
 import {
   Avatar,
   Box,
@@ -30,7 +26,7 @@ function useHeaders() {
       const h3s = ref.current.querySelectorAll("h1, h2, h3, h4");
       setTitles(Array.from(h3s) as HTMLElement[]);
     }
-  }, [ref.current]);
+  }, []);
   return { headers, ref };
 }
 
@@ -46,10 +42,7 @@ function Hero({
   const sm = useSm();
   return (
     <Stack sx={{ py: sm ? 2 : 4, gap: 2 }}>
-      <Typography
-        variant="h1"
-        sx={{ fontSize: sm ? "2.5rem" : "3.5rem", fontWeight: 500 }}
-      >
+      <Typography variant="h1" sx={{ fontSize: sm ? "2.5rem" : "3.5rem", fontWeight: 500 }}>
         {primary}
       </Typography>
       {secondary && (
@@ -66,9 +59,7 @@ function Hero({
   );
 }
 
-const RenderArticleLayout = ({ children }: LayoutRenderProps) => (
-  <>{children}</>
-);
+const RenderArticleLayout = ({ children }: LayoutRenderProps) => <>{children}</>;
 
 export function ArticleLayout({
   children,
@@ -90,14 +81,7 @@ export function ArticleLayout({
   const navigate = useNavigate();
   const sm = useSm();
   return (
-    <Layout
-      title={title}
-      width={1200}
-      render={RenderArticleLayout}
-      flat
-      path={path}
-      {...props}
-    >
+    <Layout title={title} width={1200} render={RenderArticleLayout} flat path={path} {...props}>
       <Box ref={top}>
         {!sm && (
           <IconButton
@@ -140,9 +124,7 @@ export function ArticleLayout({
           </Stack>
           <Stack
             direction="row"
-            onClick={() =>
-              top.current?.scrollIntoView?.({ behavior: "smooth" })
-            }
+            onClick={() => top.current?.scrollIntoView?.({ behavior: "smooth" })}
             sx={{
               gap: 1,
               alignSelf: "flex-start",

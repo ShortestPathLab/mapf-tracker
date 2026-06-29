@@ -104,9 +104,7 @@ export function SheetSurface({
                   duration: 500,
                   easing: t.transitions.easing.easeOut,
                 }),
-              transform: `translateY(${-32 * ratio}px) scale(${
-                1 - ratio * 0.025
-              })`,
+              transform: `translateY(${-32 * ratio}px) scale(${1 - ratio * 0.025})`,
             },
           } as ModalProps,
         },
@@ -124,25 +122,18 @@ export function SheetSurface({
               borderTopLeftRadius: (t) => t.shape.borderRadius * 2.5,
               borderTopRightRadius: (t) => t.shape.borderRadius * 2.5,
               maxHeight: `calc(100dvh - ${gap}px)`,
-              boxShadow: (t) =>
-                `0 ${t.spacing(4)} 0px 0px ${t.palette.background.paper} `,
+              boxShadow: (t) => `0 ${t.spacing(4)} 0px 0px ${t.palette.background.paper} `,
               border: "none",
             },
           } as PaperProps,
         },
         { PaperProps: slotProps?.paper },
-        slotProps?.sheet
+        slotProps?.sheet,
       )}
     >
       <Handle ref={setHandle} />
       <Box onTouchStart={stopPropagation} ref={ref}>
-        <Scroll
-          y
-          px={0}
-          style={{ maxHeight }}
-          ref={setScroll}
-          {...slotProps?.scroll}
-        >
+        <Scroll y px={0} style={{ maxHeight }} ref={setScroll} {...slotProps?.scroll}>
           <SurfaceSizeContext.Provider value={{ width, height: maxHeight }}>
             {children}
           </SurfaceSizeContext.Provider>

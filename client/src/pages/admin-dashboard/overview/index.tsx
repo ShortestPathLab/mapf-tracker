@@ -69,12 +69,7 @@ export default function index() {
                           {secondary}
                         </Typography>
                       </Stack>
-                      <Button
-                        color="secondary"
-                        variant="contained"
-                        sx={{ py: 2 }}
-                        onClick={action}
-                      >
+                      <Button color="secondary" variant="contained" sx={{ py: 2 }} onClick={action}>
                         {actionLabel}
                       </Button>
                     </Stack>

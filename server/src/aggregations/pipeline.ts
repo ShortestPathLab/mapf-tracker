@@ -9,7 +9,7 @@ const log = context("Pipeline");
 
 export type PipelineStage<
   T extends Record<string, any> | void = void,
-  R extends Record<string, any> | void = void
+  R extends Record<string, any> | void = void,
 > = {
   key: string;
   destructive?: boolean;
@@ -43,7 +43,7 @@ export type Options = {
 export async function run<T extends Record<string, any> | void = void>(
   stage: PipelineStage<T, any>,
   variables?: T,
-  options?: Options
+  options?: Options,
 ) {
   const l = (p: StatusType, s = stage.key, v: any = variables, e?: any) => {
     const event = {
@@ -70,7 +70,7 @@ export async function run<T extends Record<string, any> | void = void>(
     failedReason,
   } = (await Job.fromId<PipelineTaskData, PipelineTaskResult>(
     dispatcher.server.queue,
-    job.id ?? ""
+    job.id ?? "",
   )) as {
     returnvalue: PipelineTaskResult;
     failedReason?: string;

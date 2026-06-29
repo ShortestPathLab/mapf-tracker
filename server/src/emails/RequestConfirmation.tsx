@@ -1,13 +1,4 @@
-import {
-  Body,
-  Container,
-  Font,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Tailwind,
-} from "@react-email/components";
+import { Body, Container, Font, Head, Heading, Hr, Html, Tailwind } from "@react-email/components";
 import { entries, startCase } from "lodash";
 import { Infer, Request } from "models";
 import React from "react";
@@ -54,9 +45,7 @@ export default function RequestConfirmation(args: Props) {
             {description(args.requesterName ?? "User")}
             {entries(args)
               .filter(([, v]) => typeof v === "string")
-              .map(([k, v]) =>
-                renderItem(startCase(k), (v as string) || "None")
-              )}
+              .map(([k, v]) => renderItem(startCase(k), (v as string) || "None"))}
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
             {renderText(footerText, true)}
           </Container>

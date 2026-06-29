@@ -5,15 +5,7 @@ import {
   ChevronRightRounded,
   DockToRightRounded,
 } from "@mui-symbols-material/w300";
-import {
-  Box,
-  Breadcrumbs,
-  Divider,
-  IconButton,
-  Link,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Breadcrumbs, Divider, IconButton, Link, Stack, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useMd } from "components/dialog/useSmallDisplay";
 import { useHistory, useNavigate } from "hooks/useNavigation";
@@ -48,11 +40,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
             <DockToRightRounded fontSize="small" />
           </IconButton>
         </Box>
-        <Divider
-          flexItem
-          orientation="vertical"
-          sx={{ height: 24, my: "auto", ml: -1 }}
-        />
+        <Divider flexItem orientation="vertical" sx={{ height: 24, my: "auto", ml: -1 }} />
         <Scroll x fadeX>
           <Breadcrumbs
             separator={<ChevronRightRounded fontSize="small" />}
@@ -71,11 +59,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
                 </Typography>
               </Link>
             ))}
-            <Typography
-              color="text.primary"
-              variant="body1"
-              sx={{ lineHeight: 0 }}
-            >
+            <Typography color="text.primary" variant="body1" sx={{ lineHeight: 0 }}>
               {current}
             </Typography>
           </Breadcrumbs>
@@ -114,11 +98,7 @@ export const Crumbs = ({ path, current }: PageHeaderProps) => {
             <ArrowUpwardRounded fontSize="small" />
           </IconButton>
         </Stack>
-        <Divider
-          flexItem
-          orientation="vertical"
-          sx={{ height: 24, my: "auto", ml: -1 }}
-        />
+        <Divider flexItem orientation="vertical" sx={{ height: 24, my: "auto", ml: -1 }} />
         <Box sx={{ minWidth: 180, pr: 3, pl: 1 }}>
           <QuickNavigation />
         </Box>

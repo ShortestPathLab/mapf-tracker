@@ -29,37 +29,30 @@ export default function Page({
         .filter(({ label }) => label !== undefined && labels.includes(label))
         .map(({ label, items }, _, { length }) => (
           <Stack gap={2} key={label}>
-            {length > 1 && (
-              <Typography color="text.secondary">{label}</Typography>
-            )}
+            {length > 1 && <Typography color="text.secondary">{label}</Typography>}
             <List disablePadding>
-              {items.map(
-                ({ label, avatar, url, icon, action, description }) => (
-                  <ListItemButton
-                    disableGutters
-                    key={label}
-                    onClick={
-                      action
-                        ? action
-                        : url
+              {items.map(({ label, avatar, url, icon, action, description }) => (
+                <ListItemButton
+                  disableGutters
+                  key={label}
+                  onClick={
+                    action
+                      ? action
+                      : url
                         ? startsWith(url, "http")
                           ? () => window.open(url)
                           : () => navigate(url)
                         : undefined
-                    }
-                  >
-                    {icon ? (
-                      <ListItemIcon>{icon}</ListItemIcon>
-                    ) : (
-                      <ListItemAvatar>{avatar}</ListItemAvatar>
-                    )}
-                    <ListItemText
-                      primary={label}
-                      secondary={description}
-                    ></ListItemText>
-                  </ListItemButton>
-                )
-              )}
+                  }
+                >
+                  {icon ? (
+                    <ListItemIcon>{icon}</ListItemIcon>
+                  ) : (
+                    <ListItemAvatar>{avatar}</ListItemAvatar>
+                  )}
+                  <ListItemText primary={label} secondary={description}></ListItemText>
+                </ListItemButton>
+              ))}
             </List>
           </Stack>
         ))}

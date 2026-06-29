@@ -1,19 +1,14 @@
 import { merge } from "lodash";
 import { usePopupState } from "material-ui-popup-state/hooks";
 import { ReactNode, useCallback, useState } from "react";
-import {
-  SurfaceBase,
-  SurfaceBaseProps,
-  SurfaceProps,
-  useSurfaceHistory,
-} from "./Surface";
+import { SurfaceBase, SurfaceBaseProps, SurfaceProps, useSurfaceHistory } from "./Surface";
 export type SurfaceContentProps = {
   onClose?: () => void;
   onProps?: (p: SurfaceProps) => void;
 };
 export function useSurface<T>(
   Content?: (props: T & SurfaceContentProps) => ReactNode,
-  props: SurfaceProps = {}
+  props: SurfaceProps = {},
 ) {
   const popupState = usePopupState({ variant: "dialog" });
   useSurfaceHistory(popupState);

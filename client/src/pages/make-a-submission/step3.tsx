@@ -19,8 +19,7 @@ const Render = ({ children, header }: LayoutRenderProps) => (
 export default function index() {
   const xs = useXs();
   const navigate = useNavigate();
-  const { contactEmail } =
-    useLocationState<ContactEmailState>() as ContactEmailState;
+  const { contactEmail } = useLocationState<ContactEmailState>() as ContactEmailState;
   return (
     <Layout
       backBehaviour="back"
@@ -41,8 +40,8 @@ export default function index() {
           What now?
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Wait for the team to reply you with your submission (API) key. Once
-          you have your API key, you can start submitting data{" "}
+          Wait for the team to reply you with your submission (API) key. Once you have your API key,
+          you can start submitting data{" "}
           <Link sx={{ cursor: "pointer" }} onClick={() => navigate("/track")}>
             here
           </Link>
@@ -51,11 +50,7 @@ export default function index() {
       </Stack>
 
       <Floating>
-        <Button
-          fullWidth={xs}
-          onClick={() => navigate("/")}
-          variant="contained"
-        >
+        <Button fullWidth={xs} onClick={() => navigate("/")} variant="contained">
           Go home
         </Button>
       </Floating>

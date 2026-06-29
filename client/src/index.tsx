@@ -14,5 +14,5 @@ root.render(
     <Scroll y style={{ height: "100dvh" }}>
       <App />
     </Scroll>
-  </BrowserRouter>
+  </BrowserRouter>,
 );

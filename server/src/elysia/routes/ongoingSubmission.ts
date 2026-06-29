@@ -57,31 +57,18 @@ type ScenarioSubmission = {
   instance: { _id?: string; solution_cost?: number; lower_cost?: number };
 };
 
-
-
-
-const summaryByApiKeyWorker = usingWorkerTaskReusable<
-  unknown,
-  SummaryByApiKeyResult
->(() => new Worker(summaryByApiKeyWorkerPath));
-
-
-
-
-
+const summaryByApiKeyWorker = usingWorkerTaskReusable<unknown, SummaryByApiKeyResult>(
+  () => new Worker(summaryByApiKeyWorkerPath),
+);
 
 // ─── Submission Handlers ─────────────────────────────────────────────────────
-
 
 const validateSubmissionRequestAsync = usingWorkerTaskReusable<
   unknown,
   SubmissionRequestValidatorWorkerResult
 >(() => new Worker(validateSubmissionRequestWorkerPath));
 
-const processSubmission = async (
-  d: unknown,
-  apiKey: string,
-): Promise<ResultTicketStatus> => {
+const processSubmission = async (d: unknown, apiKey: string): Promise<ResultTicketStatus> => {
   log.info("Validating submission with schema...");
   const result = await validateSubmissionRequestAsync({ apiKey, data: d });
   if ("ids" in result) {
@@ -103,9 +90,6 @@ const submissionTickets = createPool<{
   label?: string;
   size?: number;
 }>();
-
-
-
 
 /** Re-queue submission validation jobs left unfinished on startup. */
 export async function restore() {
@@ -143,7 +127,7 @@ export const ongoingSubmissionRoutes = new Elysia({
       _id: new Types.ObjectId(params.id),
     }).then(allToJSON),
   )
-  .post("/delete", (async ({ body }: Context) => {
+  .post("/delete", async ({ body }: Context) => {
     const { id } = z
       .object({
         id: z
@@ -156,66 +140,77 @@ export const ongoingSubmissionRoutes = new Elysia({
       _id: { $in: id },
     });
     return { count: out.deletedCount };
-  }))
-  .get("/status/:apiKey", (async ({ params }: Context) => filter(
-    values(submissionTickets.pool.tickets),
-    (c) => c.apiKey === params.apiKey
-  )))
-  .post("/status", (async ({ body }: Context) => {
+  })
+  .get("/status/:apiKey", async ({ params }: Context) =>
+    filter(values(submissionTickets.pool.tickets), (c) => c.apiKey === params.apiKey),
+  )
+  .post("/status", async ({ body }: Context) => {
     const { ticket } = z.object({ ticket: z.string() }).parse(body);
     return submissionTickets.pool.tickets[ticket] || { status: "unknown" };
-  }))
-  .get("/summary-pagecount/:apiKey", aggregate(
-    ({ params }, p) => p.match({ apiKey: params.apiKey }).count("count"),
-    {
-      handler: async (p: [{ count: number; }]) => ceil((p[0]?.count ?? 0) / CHUNK), maxAge: 300,
-    }
-  ))
-  .get("/summary/:apiKey", cached(
-    ({ params }: Context) => summaryByApiKeyWorker(params),
-    { cacheKey: (ctx) => ctx.params, maxAge: 2 * 1000, maxSize: 1000 }
-  ))
-  .get("/summary/:apiKey/:page", cached(
-    ({ params }: Context) => summaryByApiKeyWorker(params),
-    { cacheKey: (ctx) => ctx.params, maxAge: 2 * 1000, maxSize: 1000 }
-  ))
-  .get("/scenario/:apiKey/:scenario", cached(
-    async ({ params }: Context) => {
-      const { apiKey, scenario } = params as { apiKey: string; scenario: string; };
-      const indexes = await generateIndexes();
-      const ids = await Instance.aggregate(
-        new AggregateBuilder()
-          .match({ scen_id: new Types.ObjectId(scenario) })
-          .project({ _id: 1 })
-          .build()
-      );
-      const result = await OngoingSubmission.aggregate(
-        new AggregateBuilder()
-          .match({
-            instance: { $in: ids.map((c) => new Types.ObjectId(c._id)) },
-            apiKey,
-          })
-          .addFields(toString("_id", "id"))
-          .project({
-            createdAt: 1,
-            lowerBound: 1,
-            cost: 1,
-            instance: 1,
-            apiKey: 1,
-            updatedAt: 1,
-            validation: 1,
-            id: 1,
-          })
-          .build()
-      );
-      return result.map((r) => ({
-        ...r,
-        instance: pick(indexes.instances[r.instance], ["_id", "solution_cost", "lower_cost"])
-      })) as ScenarioSubmission[];
-    },
-    { watch: [OngoingSubmission, Instance] }
-  ))
-  .get("/finalise/:key", (async ({ params }: Context) => {
+  })
+  .get(
+    "/summary-pagecount/:apiKey",
+    aggregate(({ params }, p) => p.match({ apiKey: params.apiKey }).count("count"), {
+      handler: async (p: [{ count: number }]) => ceil((p[0]?.count ?? 0) / CHUNK),
+      maxAge: 300,
+    }),
+  )
+  .get(
+    "/summary/:apiKey",
+    cached(({ params }: Context) => summaryByApiKeyWorker(params), {
+      cacheKey: (ctx) => ctx.params,
+      maxAge: 2 * 1000,
+      maxSize: 1000,
+    }),
+  )
+  .get(
+    "/summary/:apiKey/:page",
+    cached(({ params }: Context) => summaryByApiKeyWorker(params), {
+      cacheKey: (ctx) => ctx.params,
+      maxAge: 2 * 1000,
+      maxSize: 1000,
+    }),
+  )
+  .get(
+    "/scenario/:apiKey/:scenario",
+    cached(
+      async ({ params }: Context) => {
+        const { apiKey, scenario } = params as { apiKey: string; scenario: string };
+        const indexes = await generateIndexes();
+        const ids = await Instance.aggregate(
+          new AggregateBuilder()
+            .match({ scen_id: new Types.ObjectId(scenario) })
+            .project({ _id: 1 })
+            .build(),
+        );
+        const result = await OngoingSubmission.aggregate(
+          new AggregateBuilder()
+            .match({
+              instance: { $in: ids.map((c) => new Types.ObjectId(c._id)) },
+              apiKey,
+            })
+            .addFields(toString("_id", "id"))
+            .project({
+              createdAt: 1,
+              lowerBound: 1,
+              cost: 1,
+              instance: 1,
+              apiKey: 1,
+              updatedAt: 1,
+              validation: 1,
+              id: 1,
+            })
+            .build(),
+        );
+        return result.map((r) => ({
+          ...r,
+          instance: pick(indexes.instances[r.instance], ["_id", "solution_cost", "lower_cost"]),
+        })) as ScenarioSubmission[];
+      },
+      { watch: [OngoingSubmission, Instance] },
+    ),
+  )
+  .get("/finalise/:key", async ({ params }: Context) => {
     const data = await z
       .object({ key: apiKeySchema })
       .transform(({ key }, ctx) => getKey(key, ctx))
@@ -225,58 +220,52 @@ export const ongoingSubmissionRoutes = new Elysia({
       onProgress: (args) => set(args.stage, args),
     });
     return { status: "submitted" };
-  }))
-  .post("/create/:apiKey", (async ({ body, params }: Context) => {
+  })
+  .post("/create/:apiKey", async ({ body, params }: Context) => {
     const { apiKey, label } = await z
       .object({ apiKey: apiKeyValidationSchema, label: z.string().optional() })
       .parseAsync(params);
     const key = randomUUIDv7();
-    submissionTickets.withTicket(
-      key,
-      () => processSubmission(body, apiKey.api_key!),
-      {
-        apiKey: apiKey.api_key!,
-        size: await estimateSizeAsync(body),
-        label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
-      }
-    );
+    submissionTickets.withTicket(key, () => processSubmission(body, apiKey.api_key!), {
+      apiKey: apiKey.api_key!,
+      size: await estimateSizeAsync(body),
+      label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
+    });
     return { message: "submission received", ticket: key };
-  }))
-  .post("/create/:apiKey/:label", (async ({ body, params }: Context) => {
+  })
+  .post("/create/:apiKey/:label", async ({ body, params }: Context) => {
     const { apiKey, label } = await z
       .object({ apiKey: apiKeyValidationSchema, label: z.string().optional() })
       .parseAsync(params);
     const key = randomUUIDv7();
-    submissionTickets.withTicket(
-      key,
-      () => processSubmission(body, apiKey.api_key!),
-      {
-        apiKey: apiKey.api_key!,
-        size: await estimateSizeAsync(body),
-        label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
-      }
-    );
+    submissionTickets.withTicket(key, () => processSubmission(body, apiKey.api_key!), {
+      apiKey: apiKey.api_key!,
+      size: await estimateSizeAsync(body),
+      label: label ?? `Submission ${randomUUIDv7().slice(-6)}`,
+    });
     return { message: "submission received", ticket: key };
-  }))
-  .get("/:apiKey", aggregate(
-    ({ params }, p) => p
-      .match({ apiKey: params.apiKey })
-      .project({
-        "validation.outcome": { $ifNull: ["$validation.outcome", "running"] },
-      })
-      .group({ _id: "$validation.outcome", count: { $sum: 1 } }),
-    {
-      handler: async (
-        p: { _id: string; count: number }[],
-      ): Promise<Record<string, number>> =>
-        reduce(
-          p,
-          (prev, { _id, count }) => ({ ...prev, [_id]: count }),
-          {} as Record<string, number>,
-        ),
-    }
-  ))
-  .delete("/:apiKey", (async ({ params }: Context) => {
+  })
+  .get(
+    "/:apiKey",
+    aggregate(
+      ({ params }, p) =>
+        p
+          .match({ apiKey: params.apiKey })
+          .project({
+            "validation.outcome": { $ifNull: ["$validation.outcome", "running"] },
+          })
+          .group({ _id: "$validation.outcome", count: { $sum: 1 } }),
+      {
+        handler: async (p: { _id: string; count: number }[]): Promise<Record<string, number>> =>
+          reduce(
+            p,
+            (prev, { _id, count }) => ({ ...prev, [_id]: count }),
+            {} as Record<string, number>,
+          ),
+      },
+    ),
+  )
+  .delete("/:apiKey", async ({ params }: Context) => {
     const out = await OngoingSubmission.deleteMany({ apiKey: params.apiKey });
     return { count: out.deletedCount };
-  }));
+  });

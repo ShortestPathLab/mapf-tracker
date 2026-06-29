@@ -1,11 +1,4 @@
-import {
-  Shadows,
-  SxProps,
-  TextFieldProps,
-  Theme,
-  alpha,
-  createTheme,
-} from "@mui/material";
+import { Shadows, SxProps, TextFieldProps, Theme, alpha, createTheme } from "@mui/material";
 import { constant, times } from "lodash";
 
 export const shadow = `
@@ -104,10 +97,7 @@ export const theme = (t: "light" | "dark") =>
       MuiPaper: {
         styleOverrides: {
           elevation: {
-            border: `1px solid ${alpha(
-              t === "light" ? "#000000" : "#f4f4f5",
-              0.12,
-            )}`,
+            border: `1px solid ${alpha(t === "light" ? "#000000" : "#f4f4f5", 0.12)}`,
           },
           elevation1: { backdropFilter: "blur(16px)" },
           elevation2: { backdropFilter: "blur(16px)" },
@@ -133,9 +123,8 @@ export const theme = (t: "light" | "dark") =>
     },
   });
 
-
-export const lightTheme = theme('light');
-export const darkTheme = theme('dark');
+export const lightTheme = theme("light");
+export const darkTheme = theme("dark");
 
 export function useAcrylic(color?: string): SxProps<Theme> {
   return {
@@ -151,8 +140,7 @@ export const paper = (elevation: number = 1, backdropFilter: boolean = false) =>
     boxSizing: "border-box",
     borderRadius: 1,
     backdropFilter: backdropFilter ? "blur(16px)" : "none",
-    transition: ({ transitions }) =>
-      transitions.create(["background-color", "box-shadow"]),
+    transition: ({ transitions }) => transitions.create(["background-color", "box-shadow"]),
     boxShadow: ({ shadows }) => shadows[elevation],
     backgroundImage: ({ palette }) =>
       `${solid(

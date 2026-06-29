@@ -9,7 +9,6 @@ const schema = z.object({
   limit: z.number().default(Infinity),
 });
 
-export const bulkRoutes = new Elysia({ prefix: "/api/bulk" }).post(
-  "/results",
-  async ({ body }) => bulkAsync!(schema.parse(body)),
+export const bulkRoutes = new Elysia({ prefix: "/api/bulk" }).post("/results", async ({ body }) =>
+  bulkAsync!(schema.parse(body)),
 );

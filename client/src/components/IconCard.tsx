@@ -4,10 +4,6 @@ import { ReactNode } from "react";
 
 export function IconCard({ icon = <FolderRounded /> }: { icon?: ReactNode }) {
   return (
-    <Stack
-      sx={{ height: 72, color: "text.secondary", justifyContent: "center" }}
-    >
-      {icon}
-    </Stack>
+    <Stack sx={{ height: 72, color: "text.secondary", justifyContent: "center" }}>{icon}</Stack>
   );
 }

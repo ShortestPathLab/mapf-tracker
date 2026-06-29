@@ -1,8 +1,5 @@
 import { Chart } from "components/analysis/Chart";
-import {
-  aggregateInstances,
-  getInstanceAggregateProportions,
-} from "components/analysis/reducers";
+import { aggregateInstances, getInstanceAggregateProportions } from "components/analysis/reducers";
 import { capitalize, chain } from "lodash";
 import { CompletionByAgentCountChart } from "components/charts/CompletionByAgentCountChart";
 import { CategoryChart } from "components/charts/CompletionByAlgorithmChart";
@@ -35,12 +32,6 @@ export function SuccessRateChart({ map }: { map: string }) {
   );
 }
 
-export function SuccessRateOnAgentsChart({
-  map,
-  scenario,
-}: {
-  map: string;
-  scenario?: string;
-}) {
+export function SuccessRateOnAgentsChart({ map, scenario }: { map: string; scenario?: string }) {
   return <CompletionByAgentCountChart partialQuery={{ map, scenario }} />;
 }

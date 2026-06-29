@@ -10,18 +10,15 @@ export type PreviewOptions = {
 
 const mutex = new Mutex();
 
-export const usePreviewData = ({
-  map,
-  instance,
-  scenario,
-}: PreviewOptions = {}) => {
+export const usePreviewData = ({ map, instance, scenario }: PreviewOptions = {}) => {
   const key = ["visualisation-preview", map, instance, scenario];
   return useQuery({
     queryKey: key,
     staleTime: Infinity,
-    queryFn: ({ signal }) => mutex.runExclusive(() => unwrap(
-      api.api.map.preview.post({ map, instance, scenario, $fetch: { signal } })
-    )),
+    queryFn: ({ signal }) =>
+      mutex.runExclusive(() =>
+        unwrap(api.api.map.preview.post({ map, instance, scenario, $fetch: { signal } })),
+      ),
     enabled: !(!map && !instance && !scenario),
   });
 };

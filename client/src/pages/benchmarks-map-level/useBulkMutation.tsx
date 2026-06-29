@@ -1,39 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  BlobWriter,
-  TextReader,
-  ZipWriter,
-  ZipWriterConstructorOptions,
-} from "@zip.js/zip.js";
+import { BlobWriter, TextReader, ZipWriter, ZipWriterConstructorOptions } from "@zip.js/zip.js";
 import { queryClient } from "App";
 import { AlgorithmDetails, Map, Scenario } from "core/types";
 import download from "downloadjs";
 import { json2csv } from "json-2-csv";
-import {
-  delay,
-  find,
-  flatMap,
-  has,
-  kebabCase,
-  keyBy,
-  last,
-  once,
-  sumBy,
-} from "lodash";
+import { delay, find, flatMap, has, kebabCase, keyBy, last, once, sumBy } from "lodash";
 import { nanoid } from "nanoid";
 import prettyBytes from "pretty-bytes";
 import { parallel } from "promise-tools";
-import {
-  algorithmDetailsQuery,
-  algorithmScenarioQuery,
-} from "queries/useAlgorithmQuery";
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { algorithmDetailsQuery, algorithmScenarioQuery } from "queries/useAlgorithmQuery";
+import { createContext, PropsWithChildren, useContext, useMemo, useState } from "react";
 import bulkWorkerUrl from "./bulkResults.worker?worker&url";
 import { CHUNK_SIZE_B, useBenchmarksAll } from "./DownloadOptions";
 import { decodeAlgorithmResource } from "./encodeAlgorithmResource";
@@ -50,10 +26,7 @@ const PARALLEL_LIMIT = 5;
 export function useIndexAll() {
   const { data: all, isLoading } = useBenchmarksAll();
   const mapsIndex = useMemo(() => keyBy(flatMap(all, "maps"), "id"), [all]);
-  const scensIndex = useMemo(
-    () => keyBy(flatMap(flatMap(all, "maps"), "scenarios"), "id"),
-    [all]
-  );
+  const scensIndex = useMemo(() => keyBy(flatMap(flatMap(all, "maps"), "scenarios"), "id"), [all]);
   return { all, mapsIndex, scensIndex, isLoading };
 }
 
@@ -71,24 +44,16 @@ class Zip {
       name: string;
       part: number;
     },
-    public size: number = 0
+    public size: number = 0,
   ) {}
 
   flush = once(async () => {
     await Promise.all(this.jobs);
     const data = await this.writer.close();
-    download(
-      data,
-      `${this.options.name}-${this.options.part}.zip`,
-      "application/zip"
-    );
+    download(data, `${this.options.name}-${this.options.part}.zip`, "application/zip");
   });
 
-  async write(
-    path: string,
-    reader: TextReader | ReadableStream,
-    estimatedSize?: number
-  ) {
+  async write(path: string, reader: TextReader | ReadableStream, estimatedSize?: number) {
     this.size += estimatedSize ?? ("size" in reader ? reader.size : Infinity);
     const job = this.writer.add(path, reader);
     this.jobs.push(job);
@@ -118,7 +83,7 @@ function createZipWriter({
         new Zip(new ZipWriter(new BlobWriter(), zipOptions), {
           name,
           part: zips.length,
-        })
+        }),
       );
       return acquire();
     }
@@ -130,11 +95,7 @@ function createZipWriter({
     const reader = new TextReader(contents);
     return await zip.write(path, reader);
   };
-  const streamOne = async (
-    path: string,
-    contents: ReadableStream,
-    estimatedSize?: number
-  ) => {
+  const streamOne = async (path: string, contents: ReadableStream, estimatedSize?: number) => {
     const zip = await acquire();
     return await zip.write(path, contents, estimatedSize);
   };
@@ -154,7 +115,7 @@ export const bulkDownloadAlgorithms = async (
 
   mapsIndex: Record<string, Map>,
   scensIndex: Record<string, Scenario>,
-  addJob: R2
+  addJob: R2,
 ) => {
   const { writeOne, close } = createZipWriter({
     chunkSize: CHUNK_SIZE_B,
@@ -164,14 +125,11 @@ export const bulkDownloadAlgorithms = async (
 
   // ─── Export Summaries ────────────────────────────────────────────────
 
-  const algorithmsDetails = await queryClient.fetchQuery(
-    algorithmDetailsQuery()
-  );
+  const algorithmsDetails = await queryClient.fetchQuery(algorithmDetailsQuery());
 
   const algorithmIndex = keyBy(algorithmsDetails, "id");
 
-  const getAlgoName = (a: AlgorithmDetails) =>
-    `${kebabCase(a.algo_name)}-${a.id}`;
+  const getAlgoName = (a: AlgorithmDetails) => `${kebabCase(a.algo_name)}-${a.id}`;
 
   const details = summaries.flatMap((id) => find(algorithmsDetails, { id }) ?? []);
 
@@ -199,18 +157,13 @@ export const bulkDownloadAlgorithms = async (
         status: "Downloading",
       });
       set({ progress: 0.25, status: "Downloading" });
-      const result = await queryClient.fetchQuery(
-        algorithmScenarioQuery(algorithm, scenario)
-      );
+      const result = await queryClient.fetchQuery(algorithmScenarioQuery(algorithm, scenario));
       set({ progress: 0.5, status: "Compressing" });
       const csv = json2csv(result, { emptyFieldValue: "" });
-      const meta = await writeOne(
-        `submission/${getAlgoName(details)}/${fullName}`,
-        csv
-      );
+      const meta = await writeOne(`submission/${getAlgoName(details)}/${fullName}`, csv);
       set({ progress: 1, status: `Done, ${prettyBytes(meta.compressedSize)}` });
     }),
-    PARALLEL_LIMIT
+    PARALLEL_LIMIT,
   );
 
   await close();
@@ -226,7 +179,7 @@ export const bulkDownloadMaps = async (
   }: UseBulkMutationArgs,
   mapsIndex: Record<string, Map>,
   scensIndex: Record<string, Scenario>,
-  addJob: R2
+  addJob: R2,
 ) => {
   const { writeOne, close, streamOne } = createZipWriter({
     chunkSize: CHUNK_SIZE_B,
@@ -242,9 +195,7 @@ export const bulkDownloadMaps = async (
       const fullName = `${name}.map`;
       const { set } = addJob({ label: fullName, status: "Downloading" });
       try {
-        const contents = await fetch(`/assets/maps/${fullName}`).then((r) =>
-          r.text()
-        );
+        const contents = await fetch(`/assets/maps/${fullName}`).then((r) => r.text());
         set({ progress: 0.75, status: "Compressing" });
         const meta = await writeOne(`maps/${fullName}`, contents);
         set({
@@ -257,7 +208,7 @@ export const bulkDownloadMaps = async (
         });
       }
     }),
-    PARALLEL_LIMIT
+    PARALLEL_LIMIT,
   );
 
   // ─── Export Scenarios ────────────────────────────────
@@ -272,9 +223,7 @@ export const bulkDownloadMaps = async (
         status: "Downloading",
       });
       try {
-        const contents = await fetch(`./assets/scens/${fullName}`).then((r) =>
-          r.text()
-        );
+        const contents = await fetch(`./assets/scens/${fullName}`).then((r) => r.text());
         set({ progress: 0.75, status: "Compressing" });
         const meta = await writeOne(`scenarios/${fullName}`, contents);
         set({
@@ -287,7 +236,7 @@ export const bulkDownloadMaps = async (
         });
       }
     }),
-    PARALLEL_LIMIT
+    PARALLEL_LIMIT,
   );
 
   // ─── Export Results ──────────────────────────────────
@@ -332,7 +281,7 @@ export const bulkDownloadMaps = async (
           `results/${fullName}`,
           stream,
           // Estimate that file will be 1.5MB per instance
-          scen.instances * 1024 * (includeSolutions ? 1024 * 1.5 : 1)
+          scen.instances * 1024 * (includeSolutions ? 1024 * 1.5 : 1),
         );
         set({
           progress: 1,
@@ -344,7 +293,7 @@ export const bulkDownloadMaps = async (
         });
       }
     }),
-    PARALLEL_LIMIT
+    PARALLEL_LIMIT,
   );
 
   await close();
@@ -374,10 +323,7 @@ function useBulkMutationProvider() {
     setProgress: dispatch,
     add: (s: Partial<Job>) => {
       const id = nanoid();
-      dispatch((p) => [
-        ...p,
-        { id, label: "Job", status: "Queued", progress: 0.1, ...s },
-      ]);
+      dispatch((p) => [...p, { id, label: "Job", status: "Queued", progress: 0.1, ...s }]);
       return {
         id,
         remove: (d = 2000) => {
@@ -399,11 +345,7 @@ export const BulkDownloadContext = createContext<R1 | null>(null);
 
 export const BulkDownloadProvider = ({ children }: PropsWithChildren) => {
   const value = useBulkMutationProvider();
-  return (
-    <BulkDownloadContext.Provider value={value}>
-      {children}
-    </BulkDownloadContext.Provider>
-  );
+  return <BulkDownloadContext.Provider value={value}>{children}</BulkDownloadContext.Provider>;
 };
 
 export function useBulkMutation() {

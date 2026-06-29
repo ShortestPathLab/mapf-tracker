@@ -19,13 +19,9 @@ import { Counter } from "../../../components/Counter";
 
 const sentenceCase = (id: string) => capitalize(startCase(id));
 
-export function StageStatus({
-  stage,
-  ...props
-}: { stage: string } & ListItemProps) {
+export function StageStatus({ stage, ...props }: { stage: string } & ListItemProps) {
   const { data } = usePipelineStatus();
-  const { timestamp = undefined, type = "invalidated" } =
-    find(data, { key: stage })?.status ?? {};
+  const { timestamp = undefined, type = "invalidated" } = find(data, { key: stage })?.status ?? {};
   return (
     <ListItem {...props}>
       <ListItemIcon sx={{ mr: -2 }}>
@@ -33,12 +29,7 @@ export function StageStatus({
           {
             error: <ErrorRounded color="error" />,
             pending: <PendingRounded color="warning" />,
-            running: (
-              <CircularProgress
-                sx={{ maxWidth: 24, maxHeight: 24 }}
-                color="warning"
-              />
-            ),
+            running: <CircularProgress sx={{ maxWidth: 24, maxHeight: 24 }} color="warning" />,
             invalidated: <RemoveRounded color="disabled" />,
             done: <CheckCircleRounded color="success" />,
           }[type]

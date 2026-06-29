@@ -107,7 +107,7 @@ export const SuccessRateBarChart = ({
             opacity: 0.8,
             stroke: tone(theme.palette.mode, color),
             fill: tone(theme.palette.mode, color),
-          })
+          }),
       )}
     </Chart>
   );

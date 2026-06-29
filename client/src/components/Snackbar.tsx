@@ -1,14 +1,7 @@
 import { CloseRounded as CloseIcon } from "@mui-symbols-material/w300";
 import { Button, IconButton, Snackbar } from "@mui/material";
 import { noop } from "lodash";
-import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
 import usePortal from "react-useportal";
 import { Label } from "./Label";
 
@@ -44,12 +37,9 @@ export function useSnackbar() {
 export function useSnackbarAction<T extends []>() {
   const push = useSnackbar();
   return (
-      f: (...args: T) => Promise<unknown>,
-      {
-        start = "Preparing...",
-        end = "Done",
-      }: { start?: string; end?: string },
-    ) =>
+    f: (...args: T) => Promise<unknown>,
+    { start = "Preparing...", end = "Done" }: { start?: string; end?: string },
+  ) =>
     async (...params: T) => {
       if (start) push(start);
       try {
@@ -66,9 +56,7 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
   const { Portal } = usePortal({ bindTo: document.body });
   const [snackPack, setSnackPack] = useState<readonly SnackbarMessage[]>([]);
   const [open, setOpen] = useState(false);
-  const [current, setCurrent] = useState<SnackbarMessage | undefined>(
-    undefined,
-  );
+  const [current, setCurrent] = useState<SnackbarMessage | undefined>(undefined);
 
   useEffect(() => {
     if (snackPack.length && !current) {
@@ -108,9 +96,7 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
 
   return (
     <>
-      <SnackbarContext.Provider value={handleMessage}>
-        {children}
-      </SnackbarContext.Provider>
+      <SnackbarContext.Provider value={handleMessage}>{children}</SnackbarContext.Provider>
       <Portal>
         <Snackbar
           sx={{
@@ -139,12 +125,7 @@ export function SnackbarProvider({ children }: { children?: ReactNode }) {
                   {current?.actionLabel}
                 </Button>
               )}
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleClose}
-              >
+              <IconButton aria-label="close" color="inherit" sx={{ p: 0.5 }} onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
             </>

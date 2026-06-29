@@ -3,53 +3,23 @@ import { useQueries } from "@tanstack/react-query";
 import byteSize from "byte-size";
 import { CheckboxItem } from "components/analysis/ChartOptions";
 import { Item } from "components/Item";
-import {
-  chain,
-  entries,
-  filter,
-  find,
-  flatMap,
-  map,
-  some,
-  startCase,
-  thru,
-  zip,
-} from "lodash";
+import { chain, entries, filter, find, flatMap, map, some, startCase, thru, zip } from "lodash";
 import { AlgorithmPreview } from "pages/algorithms/AlgorithmPreview";
 import { MapLabel } from "pages/submission-summary/table/MapLabel";
 import { ScenarioLabel } from "pages/submission-summary/table/ScenarioLabel";
 import pluralize from "pluralize";
-import {
-  algorithmSummaryQuery,
-  useAlgorithmsData,
-} from "queries/useAlgorithmQuery";
+import { algorithmSummaryQuery, useAlgorithmsData } from "queries/useAlgorithmQuery";
 import { useMemo, useState } from "react";
 import { CHUNK_SIZE_B } from "./DownloadOptions";
-import {
-  DownloadOptionsBase,
-  disambiguate,
-  Model,
-  renderPlaceholder,
-} from "./DownloadOptionsBase";
-import {
-  decodeAlgorithmResource,
-  encodeAlgorithmResource,
-} from "./encodeAlgorithmResource";
-import {
-  bulkDownloadAlgorithms,
-  useBulkMutation,
-  useIndexAll,
-} from "./useBulkMutation";
+import { DownloadOptionsBase, disambiguate, Model, renderPlaceholder } from "./DownloadOptionsBase";
+import { decodeAlgorithmResource, encodeAlgorithmResource } from "./encodeAlgorithmResource";
+import { bulkDownloadAlgorithms, useBulkMutation, useIndexAll } from "./useBulkMutation";
 import { useSet } from "./useSet";
 
 const SIZE_SUMMARY_B = 900;
 const SIZE_SUBMISSION_B = 5520;
 
-export function AlgorithmDownloadOptions({
-  algorithm,
-}: {
-  algorithm?: string;
-}) {
+export function AlgorithmDownloadOptions({ algorithm }: { algorithm?: string }) {
   const {
     mutation: { mutateAsync: startDownload, isPending },
     add,
@@ -61,9 +31,7 @@ export function AlgorithmDownloadOptions({
 
   const { mapsIndex, scensIndex, isLoading: isLoading3 } = useIndexAll();
   const { data: _algorithms, isLoading } = useAlgorithmsData();
-  const algorithms = algorithm
-    ? filter(_algorithms, (a) => a._id === algorithm)
-    : _algorithms;
+  const algorithms = algorithm ? filter(_algorithms, (a) => a._id === algorithm) : _algorithms;
   const { data, isLoading: isLoading2 } = useQueries({
     queries: map(algorithms, (a) => algorithmSummaryQuery(a._id)),
     combine: (result) => ({
@@ -95,7 +63,7 @@ export function AlgorithmDownloadOptions({
           })),
         })),
       })),
-    [data, mapsIndex, scensIndex]
+    [data, mapsIndex, scensIndex],
   );
 
   // ─── Selection State ─────────────────────────────────────────────────
@@ -133,17 +101,9 @@ export function AlgorithmDownloadOptions({
       renderCell: ({ row }: { row: Model }) =>
         disambiguate(row, {
           all: (row) => (
-            <Checkbox
-              {...submissions.bindToggle(
-                ...map(flatMap(row.maps, "scenarios"), "id")
-              )}
-            />
+            <Checkbox {...submissions.bindToggle(...map(flatMap(row.maps, "scenarios"), "id"))} />
           ),
-          map: (row) => (
-            <Checkbox
-              {...submissions.bindToggle(...map(row.scenarios, "id"))}
-            />
-          ),
+          map: (row) => <Checkbox {...submissions.bindToggle(...map(row.scenarios, "id"))} />,
           scenario: (row) => <Checkbox {...submissions.bindToggle(row.id)} />,
         }),
       minWidth: 32,
@@ -207,8 +167,8 @@ export function AlgorithmDownloadOptions({
             },
             mapsIndex,
             scensIndex,
-            add
-          )
+            add,
+          ),
         )
       }
       options={
@@ -218,8 +178,7 @@ export function AlgorithmDownloadOptions({
             selected={downloadParts}
             onClick={() => setDownloadParts(!downloadParts)}
           >
-            Download in parts (
-            {thru(byteSize(CHUNK_SIZE_B), (r) => `${r.value} ${r.unit}`)} per
+            Download in parts ({thru(byteSize(CHUNK_SIZE_B), (r) => `${r.value} ${r.unit}`)} per
             part)
           </CheckboxItem>
         </>
@@ -233,18 +192,15 @@ export function AlgorithmDownloadOptions({
             primary={`${pluralize(
               "summary",
               summaries.count,
-              true
+              true,
             )}, ${pluralize("scenario", submissions.count, true)}`}
             secondary="Files"
           />
           <Item
             invert
             primary={thru(
-              byteSize(
-                summaries.count * SIZE_SUMMARY_B +
-                  submissions.count * SIZE_SUBMISSION_B
-              ),
-              (r) => `${r.value} ${r.unit}`
+              byteSize(summaries.count * SIZE_SUMMARY_B + submissions.count * SIZE_SUBMISSION_B),
+              (r) => `${r.value} ${r.unit}`,
             )}
             secondary="Estimated size"
           />
