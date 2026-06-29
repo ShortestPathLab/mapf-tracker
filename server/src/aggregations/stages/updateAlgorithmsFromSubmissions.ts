@@ -1,4 +1,4 @@
-import { Algorithm, Instance, Submission } from "models";
+import { Instance, Submission } from "models";
 import { PipelineStage } from "../pipeline";
 import { stage as updateInstancesSubmissionHistoryFromSubmissions } from "./updateInstancesSubmissionHistory";
 import { map } from "lodash";

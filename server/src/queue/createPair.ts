@@ -1,5 +1,4 @@
 import { Worker as BullmqWorker, Job } from "bullmq";
-import { context } from "logging";
 import { createQueue } from "queue/createQueue";
 
 export async function createPair<D, N extends string, O>(

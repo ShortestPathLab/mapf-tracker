@@ -1,5 +1,4 @@
-import { OngoingSubmission, Submission } from "models";
-import { Expression } from "mongoose";
+import { OngoingSubmission } from "models";
 import { PipelineStage } from "../pipeline";
 
 /**

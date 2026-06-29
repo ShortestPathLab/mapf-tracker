@@ -1,5 +1,4 @@
-import { Status } from "aggregations";
-import { model as createModel, Schema } from "mongoose";
+import { model as createModel } from "mongoose";
 import { createSchema } from "./createSchema";
 import memoize from "p-memoize";
 import ExpiryMap from "expiry-map";
