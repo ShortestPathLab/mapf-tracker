@@ -96,7 +96,8 @@ const run = async (params: unknown) => {
     lb_best: 0,
     lb_tie: 0,
     lb_dominated: 0,
-    ...countBy(c, (d) => d.submission.validation?.outcome),
+    running: 0,
+    ...countBy(c, (d) => d.submission.validation?.outcome ?? 'queued'),
     ...novelty(c),
     total: c.length,
   });

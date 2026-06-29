@@ -45,7 +45,6 @@ export default function SubmissionSummaryPage() {
   const { data: requestData } = useRequestData(apiKey);
   const { mutate: finalise } = useFinaliseOngoingSubmissionMutation(apiKey);
   const { data: isPending } = useOngoingSubmissionTicketQuery(apiKey);
-  const { data: total } = useOngoingSubmissionCountQuery(apiKey);
   const someIsPending = !!filter(isPending, (p) => p.status === "pending")
     .length;
   const { open, close, dialog } = useSurface(ConfirmDialog, {
@@ -130,15 +129,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Received",
-              count: sum(values(total)),
+              count: sumBy(data?.processed?.maps, 'count.total'),
             },
             {
-              name: "Running",
-              count: total?.running,
+              name: "Queued",
+              count: sumBy(data?.processed?.maps, 'count.queued'),
             },
             {
               name: "Run",
-              count: total?.valid + total?.invalid + total?.outdated,
+              count: sumBy(data?.processed?.maps, 'count.total') - sumBy(data?.processed?.maps, 'count.queued'),
             },
           ],
         },
@@ -147,15 +146,15 @@ export default function SubmissionSummaryPage() {
           values: [
             {
               name: "Valid",
-              count: total?.valid,
+              count: sumBy(data?.processed?.maps, 'count.valid'),
             },
             {
               name: "Invalid",
-              count: total?.invalid,
+              count: sumBy(data?.processed?.maps, 'count.invalid'),
             },
             {
               name: "Duplicate",
-              count: total?.outdated,
+              count: sumBy(data?.processed?.maps, 'count.outdated'),
             },
           ],
         },
