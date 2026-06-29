@@ -7,5 +7,4 @@ export const dispatcher = await createPair<PipelineTaskData, "run", PipelineTask
   "default",
   usingWorkerTaskReusable<PipelineTaskData, PipelineTaskResult>(() => new Worker(path)),
   "pipeline",
-  "Pipeline Dispatcher",
 );

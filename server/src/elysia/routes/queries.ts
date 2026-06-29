@@ -2,17 +2,12 @@ import { isClosedCond, isSolvedCond } from "aggregations/stages/updateScenariosF
 import { Elysia, type Context } from "elysia";
 import { isUndefined, omitBy } from "lodash";
 import { Instance, algorithms, instances, submissions } from "models";
-import { AggregateBuilder, dateToString } from "mongodb-aggregate-builder";
+import { AggregateBuilder } from "mongodb-aggregate-builder";
 import { Types } from "mongoose";
 import { z } from "zod";
 import { operations } from "../../query/aggregate";
 
 const metrics = ["instances_closed", "instances_solved"] as const;
-
-const series = ["lower_algos", "solution_algos"] as const;
-
-/** Monthly bucket count for the `/series/instances/:series` trend. */
-type SeriesResult = { _id: string; count: number };
 
 /**
  * A grouped aggregate row. `_id` is the group key — a serialised ObjectId or a
@@ -158,28 +153,6 @@ export const queriesRoutes = new Elysia({ prefix: "/api/queries" })
         return p.project({ algo_name: 1, [metric]: 1 });
       },
       { name: "algorithms-metric" },
-    ),
-  )
-  .get(
-    "/series/instances/:series",
-    instances.aggregate<SeriesResult[]>(
-      (ctx, p) => {
-        const { series: s } = z.object({ series: z.enum(series) }).parse(ctx.params);
-        return p
-          .match({ solution_date: { $ne: null } })
-          .group({
-            _id: {
-              $cond: {
-                if: { $eq: [{ $type: "$solution_date" }, "string"] },
-                then: { $substr: ["$solution_date", 0, 7] },
-                else: dateToString("$solution_date", "%Y-%m"),
-              },
-            },
-            count: { $count: {} },
-          })
-          .sort({ _id: 1 });
-      },
-      { name: "series-instances-series" },
     ),
   )
   .get(

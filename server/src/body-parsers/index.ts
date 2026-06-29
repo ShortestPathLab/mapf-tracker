@@ -19,7 +19,7 @@ const createParser = <T extends (input: string) => Promise<unknown>>(
         try {
           req.body = await callback(data);
           next();
-        } catch  {
+        } catch {
           res.status(400).send(`Invalid ${name} format`);
         }
       });

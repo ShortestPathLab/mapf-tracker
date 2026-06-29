@@ -5,7 +5,6 @@ export async function createPair<D, N extends string, O>(
   id: string,
   r: (d: D) => Promise<O>,
   queueName: string,
-  workerName: string,
 ) {
   const name = `${queueName}-${id}`;
   const server = await createQueue<D, {}, N>({

@@ -1,4 +1,3 @@
-
 export async function waitMap<T, U>(t: Iterable<T>, f: (t: T, i: number) => Promise<U>) {
   const out: U[] = [];
   let i = 0;

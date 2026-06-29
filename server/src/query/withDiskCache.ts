@@ -35,7 +35,6 @@ export function diskCached<T extends any[], U>(
   f: (...args: T) => Promise<U>,
   {
     precompute,
-    precomputeInterval,
     resolver = (...args) => args[0],
     invalidationKey = async () => ({}),
   }: DiskCacheOptions<T> = {},

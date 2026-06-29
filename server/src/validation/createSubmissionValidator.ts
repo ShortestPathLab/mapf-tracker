@@ -11,12 +11,7 @@ export const createSubmissionValidator = async ({
   const instances = await Promise.all(
     times(workerCount, (i) => {
       const run = usingWorkerTaskReusable<SubmissionValidatorData, any>(() => new Worker(path));
-      return createPair<SubmissionValidatorData, "validate", void>(
-        `${i}`,
-        run,
-        "validation",
-        "Validation Dispatcher",
-      );
+      return createPair<SubmissionValidatorData, "validate", void>(`${i}`, run, "validation");
     }),
   );
   let i = 0;
