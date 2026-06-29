@@ -14,7 +14,7 @@ import { z } from "zod";
 const findByEmail = async ({ params }: Context) =>
   Request.find({ requesterEmail: params.email }).then(allToJSON);
 
-const findAll = async () => Request.find({});
+const findAll = async () => Request.find({}).then(allToJSON);
 
 const findByKey = async ({ params }: Context) => {
   const { request_id } = (await SubmissionKey.findOne({ api_key: params.key })) ?? {};
@@ -33,7 +33,7 @@ const findByKey = async ({ params }: Context) => {
 const findByInstance_id = async ({ params }: Context) => {
   const data = await Request.findById(params.id);
   if (!data) return status(404, { message: `Not found request with id ${params.id}` });
-  return data.toJSON();
+  return toJSON(data);
 };
 
 async function queueMail(args: Infer<typeof Request>) {
@@ -67,7 +67,7 @@ const create = async ({ body }: Context) => {
   const request = new Request(field);
   const data = await request.save();
   await queueMail(field as Infer<typeof Request>);
-  return data.toJSON();
+  return toJSON(data);
 };
 
 const requestSchema = {

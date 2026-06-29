@@ -178,7 +178,7 @@ export default function Hero({ children }: { children?: ReactNode }) {
                         >
                           {`${m.map_size}, ${pluralize("instance", m.instances ?? 0, true)}`}
                           <br />
-                          {`${m.proportion_instances_solved * 100}% solved`}
+                          {`${(m.proportion_instances_solved ?? 0) * 100}% solved`}
                         </Box>
                       }
                     />

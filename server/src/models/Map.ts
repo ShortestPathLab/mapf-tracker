@@ -6,6 +6,8 @@ const schema = createSchema({
   map_name: { type: String, index: true },
   map_size: String,
   map_type: String,
+  original_link: String,
+  papers: String,
   scens: Number,
   instances: Number,
   instances_closed: Number,

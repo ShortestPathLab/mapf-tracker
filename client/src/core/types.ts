@@ -1,36 +1,18 @@
 import api, { DataOf } from "hooks/useQuery";
 
 export type CollectionWithInstanceCount = {
-  instances: number;
-  instances_closed: number;
-  instances_solved: number;
-  id: string;
+  instances?: number | null;
+  instances_closed?: number | null;
+  instances_solved?: number | null;
+  id?: string | null;
 };
 
-export type CollectionWithProportions = {
-  proportion_instances_closed: number;
-  proportion_instances_solved: number;
-};
+// Derived from the server route (like Instance/Algorithm below) so the wire
+// type is the single source of truth. `id`/`_id` are non-null strings (added by
+// the toJSON helper); numeric/proportion fields are optional per the schema.
+export type Map = DataOf<typeof api.api.map.get>[number];
 
-export type Map = {
-  map_size: string;
-  map_type: string;
-  map_name: string;
-  // scen_type/type_id are scenario fields; the /api/map endpoint does not
-  // return them, so they are optional on a map record.
-  scen_type?: string;
-  type_id?: number;
-  scens: number;
-  original_link?: string;
-  papers?: string;
-} & CollectionWithInstanceCount &
-  CollectionWithProportions;
-
-export type Scenario = {
-  type_id: number;
-  scen_type: string;
-  map_id: string;
-} & CollectionWithInstanceCount;
+export type Scenario = DataOf<ReturnType<typeof api.api.scenario.id>["get"]>;
 
 // A single instance document (`/api/instance/id/:id`), inferred from the server.
 export type Instance = DataOf<ReturnType<typeof api.api.instance.id>["get"]>;

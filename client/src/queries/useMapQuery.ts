@@ -5,12 +5,11 @@ import api, { unwrap } from "hooks/useQuery";
 
 const incorporateProportions = <T extends CollectionWithInstanceCount>(item: T) => ({
   ...item,
-  solved_percentage: item.instances_solved / item.instances,
-  closed_percentage: item.instances_closed / item.instances,
+  solved_percentage: (item.instances_solved ?? 0) / (item.instances ?? 0),
+  closed_percentage: (item.instances_closed ?? 0) / (item.instances ?? 0),
 });
 
 export const useMapsData = () => useQuery(mapsQuery());
-
 export const useScenariosByMap = (id: number | string) => useQuery(scenariosQuery(id));
 
 export const useScenario = (id: number | string) => useQuery(scenarioQuery(id));

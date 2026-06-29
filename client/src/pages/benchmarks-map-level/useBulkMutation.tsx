@@ -150,7 +150,7 @@ export const bulkDownloadAlgorithms = async (
       const { algorithm, resource: scenario } = decodeAlgorithmResource(id);
       const details = algorithmIndex[algorithm];
       const scenarioDetails = scensIndex[scenario];
-      const mapDetails = mapsIndex[scenarioDetails.map_id];
+      const mapDetails = mapsIndex[scenarioDetails.map_id ?? ""];
       const fullName = `${mapDetails.map_name}-${scenarioDetails.scen_type}-${scenarioDetails.type_id}.csv`;
       const { set } = addJob({
         label: `${details.algo_name}: ${fullName}`,
@@ -216,7 +216,7 @@ export const bulkDownloadMaps = async (
   await parallel(
     scens.map((s) => async () => {
       const { scen_type, type_id, map_id } = scensIndex[s];
-      const mapName = mapsIndex[map_id]?.map_name;
+      const mapName = mapsIndex[map_id ?? ""]?.map_name;
       const fullName = `${mapName}-${scen_type}-${type_id}.scen`;
       const { set } = addJob({
         label: fullName,
@@ -244,7 +244,7 @@ export const bulkDownloadMaps = async (
   await parallel(
     results.map((name) => async () => {
       const scen = scensIndex[name];
-      const map = mapsIndex[scen.map_id];
+      const map = mapsIndex[scen.map_id ?? ""];
       const fullName = `${map.map_name}-${scen.scen_type}-${scen.type_id}.csv`;
       const { set } = addJob({
         label: fullName,
@@ -281,7 +281,7 @@ export const bulkDownloadMaps = async (
           `results/${fullName}`,
           stream,
           // Estimate that file will be 1.5MB per instance
-          scen.instances * 1024 * (includeSolutions ? 1024 * 1.5 : 1),
+          (scen.instances ?? 0) * 1024 * (includeSolutions ? 1024 * 1.5 : 1),
         );
         set({
           progress: 1,
