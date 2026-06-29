@@ -5,7 +5,7 @@ import { connect } from "mongoose";
 
 const url = env.MONGO_DB_URI;
 
-export const connectToDatabase = once(async (pool = 48) => {
+export const connectToDatabase = once(async (pool = 128) => {
   try {
     const connection = await connect(url, {
       maxPoolSize: pool,

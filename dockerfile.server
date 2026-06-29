@@ -1,8 +1,17 @@
 # Start with the official Bun image
 FROM oven/bun:debian
 
-# Install make and build essentials
-RUN apt-get update && apt-get install -y build-essential
+
+# ─── Setup ────────────────────────────────────────────────────────────────────
+
+RUN apt-get update && apt-get upgrade -y
+
+RUN apt-get install -y mailutils ssmtp build-essential
+
+RUN echo 'mailhub=host.docker.internal' >> /etc/ssmtp/ssmtp.conf
+RUN echo 'FromLineOverride=YES' >> /etc/ssmtp/ssmtp.conf
+
+# ──────────────────────────────────────────────────────────────────────────────
 
 # Verify make is installed
 RUN make --version
@@ -24,17 +33,6 @@ RUN bun install
 
 # Copy all files
 COPY . .
-
-# ─── Setup Mail ───────────────────────────────────────────────────────────────
-
-RUN apt-get update && apt-get upgrade -y
-
-RUN apt-get install -y mailutils ssmtp
-
-RUN echo 'mailhub=host.docker.internal' >> /etc/ssmtp/ssmtp.conf
-RUN echo 'FromLineOverride=YES' >> /etc/ssmtp/ssmtp.conf
-
-# ──────────────────────────────────────────────────────────────────────────────
 
 ENV PORT=80
 

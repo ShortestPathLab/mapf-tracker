@@ -59,24 +59,24 @@ export function Tickets({ apiKey }: { apiKey?: string | number }) {
                           {
                             done: pluralize("entry", result?.count, true),
                             error: (
-                            <Surface
-                              title="Error details"
-                              trigger={(state) => (
-                                <Link
-                                  {...bindTrigger(state)}
-                                  sx={{ cursor: "pointer" }}
-                                >
-                                  Error
-                                </Link>
-                              )}
-                            >
-                              <Typography>
-                                Your file failed to pass schema validation. The
-                                following is the error returned by the server.
-                              </Typography>
-                              <GenericDetailsList data={{ error }} />
-                            </Surface>
-                          ),
+                              <Surface
+                                title="Error details"
+                                trigger={(state) => (
+                                  <Link
+                                    {...bindTrigger(state)}
+                                    sx={{ cursor: "pointer" }}
+                                  >
+                                    Error
+                                  </Link>
+                                )}
+                              >
+                                <Typography>
+                                  Your file failed to pass schema validation. The
+                                  following is the error returned by the server.
+                                </Typography>
+                                <GenericDetailsList data={{ error }} />
+                              </Surface>
+                            ),
                             pending: "Processing",
                             uploading: "Uploading",
                           } as Record<string, ReactNode>

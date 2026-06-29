@@ -8,7 +8,7 @@ export function parseApiKeyStatus(apiKeyData?: ApiKey) {
     ? apiKeyData?.status?.type === "submitted"
       ? "submitted"
       : tryChain(
-        () => apiKeyData.expirationDate && isBefore(now(), parseISO(apiKeyData.expirationDate)),
+        () => apiKeyData.expirationDate && isBefore(now(), apiKeyData.expirationDate),
         () => false
       )
         ? "in-progress"

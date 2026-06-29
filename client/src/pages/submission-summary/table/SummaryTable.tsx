@@ -182,7 +182,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     );
 
   const hasRun = (row: Models["map"] | Models["scenario"]) =>
-    row.count.valid + row.count.invalid + row.count.outdated;
+    row.count.total - row.count.queued;
 
   const progressLabel = (row: Models["map"] | Models["scenario"]) =>
     formatValue(hasRun(row) / row.count.total);
@@ -191,7 +191,7 @@ export default function Table({ apiKey }: { apiKey?: string | number }) {
     <Bar
       buffer
       label={
-        hasRun(row) === row.count.total ? summaryIcon(row) : progressLabel(row)
+        progressLabel(row)
       }
       values={[
         {

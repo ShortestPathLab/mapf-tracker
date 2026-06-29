@@ -171,11 +171,19 @@ export const Bar = ({
           />
         )}
       </Stack>
-      {label && (
+      {label ? <Typography variant="overline"
+        sx={{
+          width: 48,
+          textAlign: "right",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}>
+        {label}
+      </Typography> : (
         <Typography
           variant="overline"
           sx={{
-            width: 32,
+            width: 48,
             textAlign: "right",
             display: "flex",
             justifyContent: "flex-end",

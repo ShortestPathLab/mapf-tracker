@@ -6,7 +6,7 @@ import { app } from "./createElysiaApp";
 import { getPort } from "./getPort";
 import { log } from "./logging";
 
-await connectToDatabase(64);
+await connectToDatabase();
 
 const port = getPort();
 app.listen(port);

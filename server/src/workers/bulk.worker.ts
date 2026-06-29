@@ -18,7 +18,7 @@ async function run({
   skip,
   limit,
 }: BulkOptions) {
-  await connectToDatabase(64);
+  await connectToDatabase();
   const instances = await Instance.find({ scen_id: id })
     .skip(skip)
     .limit(limit);
@@ -71,7 +71,7 @@ export const { precompute, handler } = createPrecomputeHandler(
   {
     invalidationKey: () => get("diskCache"),
     precompute: async () => {
-      await connectToDatabase(64);
+      await connectToDatabase();
       const scenarios = await Scenario.find({}, { _id: 1, instances: 1 });
       const chunkSize = 500;
       return flatMap(scenarios, ({ _id, instances }) => {

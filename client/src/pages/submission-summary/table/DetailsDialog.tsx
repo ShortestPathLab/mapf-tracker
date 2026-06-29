@@ -132,22 +132,22 @@ export function DetailsDialog({
                     },
                     ...(submission?.validation?.errors?.length
                       ? [
-                          {
-                            label: "Errors",
-                            value: map(
-                              submission.validation.errors,
-                              "label"
-                            ).map((l, i) => <Box key={i}>{capitalize(l)}</Box>),
-                          },
-                        ]
+                        {
+                          label: "Errors",
+                          value: map(
+                            submission.validation.errors,
+                            "label"
+                          ).map((l, i) => <Box key={i}>{capitalize(l)}</Box>),
+                        },
+                      ]
                       : []),
                     {
                       label: "Validation time taken",
                       value: isNumber(submission?.validation?.timeTaken)
                         ? submission.validation.timeTaken
                           ? formatDuration({
-                              seconds: submission.validation.timeTaken / 1000,
-                            })
+                            seconds: submission.validation.timeTaken / 1000,
+                          })
                           : "0 seconds"
                         : "N/A",
                     },

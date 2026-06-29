@@ -167,9 +167,6 @@ export const transformOne = async (v: One) => {
   if (v.skip_validation) return v;
   // ─── Coerce Solution Plan ────────────────────────────────────────────
   v.solution_plan = v.solution_plan.map(encode).map(processSolution);
-  v.solution_plan = v.solution_plan.map((s) =>
-    s.replace(/u/g, "t").replace(/d/g, "u").replace(/t/g, "d"),
-  );
   v.solution_plan = v.solution_plan.join("\n");
   return v;
 };
