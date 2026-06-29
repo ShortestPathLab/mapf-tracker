@@ -6,7 +6,6 @@ import {
   isNaN,
   isNull,
   isUndefined,
-  map,
   mapValues,
   startsWith,
 } from "lodash";
@@ -22,9 +21,7 @@ import {
 import {
   createSearchParams,
   Location,
-  NavigateOptions,
   useLocation,
-  useParams,
   useLocation as useRouterLocation,
   useNavigate as useRouterNavigate,
   useSearchParams,
@@ -95,7 +92,15 @@ export function useHistoryProvider<T extends object, U extends object>() {
         canForward: false,
       });
     }
-  }, [previous?.key, location.key, push]);
+  }, [
+    previous?.key,
+    location.key,
+    push,
+    list.length,
+    list,
+    filter,
+    location
+  ]);
   return out;
 }
 
@@ -126,7 +131,6 @@ export function useHistory() {
 
 export function useNavigate() {
   const navigate = useRouterNavigate();
-  const [, setParams] = useSearchParams();
   return useCallback(
     <T extends object = object, U extends object = object>(
       url: string | number,

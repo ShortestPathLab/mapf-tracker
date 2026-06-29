@@ -51,7 +51,7 @@ import {
 } from "lodash";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { Viewport as PixiViewport } from "pixi-viewport";
-import { DisplayObjectEvents, FederatedPointerEvent, Rectangle } from "pixi.js";
+import { DisplayObjectEvents, Rectangle } from "pixi.js";
 import pluralize from "pluralize";
 import { Reducer, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -201,7 +201,12 @@ export function Visualisation({
       setBounds(viewport.getVisibleBounds());
       setShowGrid(viewport.scale.x > SCALE_SHOW_GRID_THRESHOLD);
     }
-  }, [viewport, width, setShowGrid]);
+  }, [
+	viewport,
+	width,
+	setShowGrid,
+	setBounds
+]);
 
   useEffect(() => {
     if (viewport) {

@@ -8,11 +8,10 @@ import { useSurface } from "components/surface/useSurface";
 import { useNavigate } from "hooks/useNavigation";
 import { useStableLocationState } from "hooks/useStableLocationState";
 import { BentoLayout } from "layout/BentoLayout";
-import { filter, sum, sumBy, values } from "lodash";
+import { filter, sumBy } from "lodash";
 import { SubmissionLocationState } from "pages/submissions/SubmissionLocationState";
 import {
   useFinaliseOngoingSubmissionMutation,
-  useOngoingSubmissionCountQuery,
   useOngoingSubmissionSummaryQuery,
   useOngoingSubmissionTicketQuery,
 } from "queries/useOngoingSubmissionQuery";
@@ -65,7 +64,12 @@ export default function SubmissionSummaryPage() {
       notify(error.toString());
       navigate("/track");
     }
-  }, [isLoading, error]);
+  }, [
+	isLoading,
+	error,
+	notify,
+	navigate
+]);
 
   const contentBottom = [
     <Button

@@ -55,7 +55,7 @@ export function SubmissionKeyRequestForm({
   initialValues,
   ...props
 }: SubmissionKeyRequestFormProps) {
-  const touch = useMemo(() => once(() => onTouched?.()), []);
+  const touch = useMemo(() => once(() => onTouched?.()), [onTouched]);
   const { data: options = [] } = useQuery({
     queryKey: ["universities"],
     queryFn: async () =>

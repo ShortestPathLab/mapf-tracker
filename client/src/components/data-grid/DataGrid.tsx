@@ -99,7 +99,15 @@ function ButtonRow(props: GridRowProps) {
       controller.abort();
       clearInterval(interval);
     };
-  }, [root, props.index, props.rowHeight, setVisible, dataGrid]);
+  }, [
+	root,
+	props.index,
+	props.rowHeight,
+	setVisible,
+	dataGrid,
+	props.dimensions.rowHeight,
+	props.offsetTop
+]);
   return (
     <Box ref={ref} sx={{ height: props.rowHeight, width: "100%" }}>
       {visible && <ButtonRowBase {...props} />}

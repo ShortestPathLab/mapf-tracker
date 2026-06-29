@@ -1,5 +1,5 @@
 import { FolderZipRounded, MapRounded, TableRounded } from "@mui-symbols-material/w300";
-import { CardActionArea, Divider, Stack, Tooltip, useTheme } from "@mui/material";
+import { CardActionArea, Stack, Tooltip, useTheme } from "@mui/material";
 import { PreviewCard } from "components/PreviewCard";
 import { useSnackbarAction } from "components/Snackbar";
 import { Analysis } from "components/analysis/Analysis";

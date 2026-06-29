@@ -13,7 +13,7 @@ export default function index() {
   const { contactEmail } = useLocationState<ContactEmailState>() as ContactEmailState;
   useEffect(() => {
     if (!contactEmail) navigate("/submit/1");
-  }, [contactEmail]);
+  }, [contactEmail, navigate]);
   return (
     !!contactEmail && (
       <Layout

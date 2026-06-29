@@ -54,7 +54,11 @@ export function TreeDataGrid<T extends GridValidRowModel>({
     if (rows?.length === 1) {
       onExpandedChange?.({ [rows[0].id]: true });
     }
-  }, [rows, getChildren]);
+  }, [
+	rows,
+	getChildren,
+	onExpandedChange
+]);
   return (
     <DataGrid
       {...props}

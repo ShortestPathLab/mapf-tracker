@@ -14,7 +14,7 @@ import { AddKeyForm, Key } from "forms/AddKeyForm";
 import { FormikHelpers } from "formik";
 import { useNavigate } from "hooks/useNavigation";
 import Layout from "layout/Layout";
-import { some, zipWith } from "lodash";
+import { zipWith } from "lodash";
 import { Status } from "pages/submission-summary/Status";
 import api from "hooks/useQuery";
 import { Request, useRequestsData } from "queries/useRequestQuery";
@@ -94,7 +94,7 @@ export default function TrackSubmission() {
     id: key,
   })).filter((c) => c.key);
 
-  const isLoading = some(results, "isLoading");
+  
 
   const notify = useSnackbar();
 

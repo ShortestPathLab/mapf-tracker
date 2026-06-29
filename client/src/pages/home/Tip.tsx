@@ -1,11 +1,10 @@
 import { BookRounded, TableRounded, UploadRounded } from "@mui-symbols-material/w300";
-import { alpha, Box, Button, Stack, ThemeProvider, Typography } from "@mui/material";
+import { alpha, Box, Button, Stack, Typography } from "@mui/material";
 import { Scroll } from "components/dialog/Scrollbars";
 import { useSm, useXs } from "components/dialog/useSmallDisplay";
 import { Link } from "@mui/material";
 import { appName, publisher, publisherUrl } from "core/config";
 import { useNavigate } from "hooks/useNavigation";
-import { darkTheme, paper } from "theme";
 
 export function Tip() {
   const xs = useXs();

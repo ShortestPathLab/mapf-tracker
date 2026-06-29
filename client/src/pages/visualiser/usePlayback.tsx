@@ -15,7 +15,12 @@ export function usePlayback(span: number) {
     };
     requestAnimationFrame(f);
     return () => void (cancelled = true);
-  }, [step, setStep, paused]);
+  }, [
+	step,
+	setStep,
+	paused,
+	span
+]);
   return {
     forwards: () => setStep((p) => min([p + 1, span])!),
     backwards: () => setStep((p) => max([p - 1, 0])!),

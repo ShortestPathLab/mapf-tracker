@@ -1,6 +1,5 @@
 import {
   AutocompleteProps,
-  CheckboxProps,
   Autocomplete as MuiAutocomplete,
   SxProps,
   Checkbox as MuiCheckbox,

@@ -38,20 +38,40 @@ export function useSurfaceHistory(state: PopupState) {
       navigate(-1);
       newId();
     }
-  }, [session[id], state.isOpen, previouslyOpen]);
+  }, [
+	session[id],
+	state.isOpen,
+	previouslyOpen,
+	session,
+	id,
+	navigate
+]);
   // Read close state from session
   useEffect(() => {
     if (!session[id]) {
       state.close();
       newId();
     }
-  }, [session[id]]);
+  }, [
+	session[id],
+	session,
+	id,
+	state
+]);
   // Sync open state
   useEffect(() => {
     if (state.isOpen && !previouslyOpen) {
       navigate(location.pathname, { ...params, ...saved }, { ...session, [id]: 1 });
     }
-  }, [state.isOpen, previouslyOpen]);
+  }, [
+	state.isOpen,
+	previouslyOpen,
+	navigate,
+	saved,
+	session,
+	id,
+	params
+]);
 }
 
 export function Surface(props: SurfaceProps) {

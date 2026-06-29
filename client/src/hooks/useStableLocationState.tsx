@@ -1,5 +1,5 @@
 import { useLocationState, useLocationStateSeparate } from "hooks/useNavigation";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePreviousDistinct } from "react-use";
 import { isEqual } from "lodash";
 
@@ -11,7 +11,12 @@ export function useStableLocationState<T extends object>() {
       ...previous,
       ...state,
     }),
-    [JSON.stringify(state), JSON.stringify(previous)],
+    [
+	JSON.stringify(state),
+	JSON.stringify(previous),
+	previous,
+	state
+],
   );
   return cache;
 }
@@ -24,7 +29,12 @@ export function useStableLocationStateSeparate<T extends object>() {
       ...previous,
       ...state,
     }),
-    [JSON.stringify(state), JSON.stringify(previous)],
+    [
+	JSON.stringify(state),
+	JSON.stringify(previous),
+	previous,
+	state
+],
   );
   return cache;
 }

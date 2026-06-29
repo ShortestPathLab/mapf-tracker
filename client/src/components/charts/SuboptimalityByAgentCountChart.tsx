@@ -4,9 +4,9 @@ import { Chart } from "components/analysis/Chart";
 import { aggregateQuery, algorithmQuery } from "queries/useAggregateQuery";
 import { Area, AreaChart, CartesianGrid, Label, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { paper } from "theme";
-import { formatPercentage, formatScientific } from "utils/format";
+import { formatScientific } from "utils/format";
 import _, { isNil, max, range, round } from "lodash";
-import { accentColors, colors, tone } from "utils/colors";
+import { accentColors, tone } from "utils/colors";
 import { sample } from "./sample";
 
 export function SuboptimalityByAgentCountChart({

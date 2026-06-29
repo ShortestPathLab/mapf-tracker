@@ -15,7 +15,6 @@ import {
   Collapse,
   Divider,
   Stack,
-  Tooltip,
   Typography,
   alpha,
   capitalize,
@@ -31,10 +30,9 @@ import { Surface } from "components/surface";
 import { useSurface } from "components/surface/useSurface";
 import Enter from "components/transitions/Enter";
 import { TreeDataGrid, useBooleanMap } from "components/tree-data-grid/TreeDataGrid";
-import { Instance, SummarySlice } from "core/types";
+import { SummarySlice } from "core/types";
 import { identity, isNumber, join, map, sumBy, times } from "lodash";
 import { bindTrigger } from "material-ui-popup-state";
-import pluralize from "pluralize";
 import {
   OngoingSubmission,
   deleteAll,

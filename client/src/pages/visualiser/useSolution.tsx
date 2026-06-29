@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { assign, clamp, entries, fill, floor, head, last, memoize, pick, reduce } from "lodash";
+import { clamp, entries, fill, floor, head, last, memoize, pick, reduce } from "lodash";
 import memoizee from "memoizee";
 import { parseMap, parseScenario } from "parser";
 import { useAlgorithmForInstanceData } from "queries/useAlgorithmQuery";

@@ -21,7 +21,7 @@ export function useSurface<T>(
   const close = useCallback(() => {
     popupState.close();
     setModalProps({});
-  }, []);
+  }, [popupState]);
   return {
     open,
     close,

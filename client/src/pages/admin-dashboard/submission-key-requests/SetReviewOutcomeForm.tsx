@@ -17,7 +17,7 @@ export function SetReviewOutcomeForm({
   onTouched,
   ...props
 }: SetReviewOutcomeFormProps) {
-  const touch = useMemo(() => once(() => onTouched?.()), []);
+  const touch = useMemo(() => once(() => onTouched?.()), [onTouched]);
   return (
     <Formik<ReviewOutcome> initialValues={{ status: "not-reviewed" }} onSubmit={noop} {...props}>
       {(state) => (

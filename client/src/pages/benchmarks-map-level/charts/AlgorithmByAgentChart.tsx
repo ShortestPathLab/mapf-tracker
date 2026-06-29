@@ -2,27 +2,16 @@ import { Chart } from "components/analysis/Chart";
 import ChartOptions from "components/analysis/ChartOptions";
 import { SliceChart } from "components/analysis/SliceChart";
 import { Slice, useSliceSelector } from "components/analysis/useAlgorithmSelector";
-import { sample } from "components/charts/sample";
 import { BaseMetric } from "core/metrics";
 import {
-  chain,
-  flatMap,
   fromPairs,
   keyBy,
-  keys,
-  map,
   max,
   range,
-  startCase,
-  uniq,
-  zip,
 } from "lodash";
 import {
   AggregateAlgorithmQuery,
-  AggregateQuery,
   algorithmQuery,
-  useAggregate,
-  useAggregateAlgorithm,
 } from "queries/useAggregateQuery";
 import { useQueries } from "@tanstack/react-query";
 import { useAlgorithmsData } from "queries/useAlgorithmQuery";

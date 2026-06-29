@@ -22,7 +22,6 @@ import { ReactNode, createElement, useEffect } from "react";
 import { Crumbs } from "./Crumbs";
 import PageHeader, { PageHeaderProps } from "./PageHeader";
 import {
-  useStableLocationState,
   useStableLocationStateSeparate,
 } from "hooks/useStableLocationState";
 export const RenderChildrenOnly = ({
@@ -86,7 +85,11 @@ export default function Layout({
     if (location?.state?.session?.["hidden-reason"] === "top" && action === "forward") {
       panel?.scrollTo?.({ top: 0, behavior: "smooth" });
     }
-  }, [location, action]);
+  }, [
+	location,
+	action,
+	panel
+]);
   const navigate = useNavigate();
   const header = <PageHeader {...{ current: title, path, description }} />;
   const content = (

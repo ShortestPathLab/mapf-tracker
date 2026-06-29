@@ -83,7 +83,7 @@ export function ModalAppBar({
       const panel = ref.current.closest(".scrollbars div[data-overlayscrollbars-contents]");
       if (panel && panel instanceof HTMLDivElement) setTarget(panel);
     }
-  }, []);
+  }, [setTarget]);
 
   function renderTitle(label: ReactNode) {
     return typeof label === "string" ? <AppBarTitle>{label}</AppBarTitle> : label;
