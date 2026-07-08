@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { find, floor, head, map, merge, round, sumBy } from "lodash";
+import { floor, map, merge, round, sumBy } from "lodash";
 import { ReactNode } from "react";
 
 export const formatValue = (v: number) => (v ? (v < 0.01 ? "<1%" : `${floor(v * 100)}%`) : "0%");
@@ -107,7 +107,6 @@ export const Bar = ({
   buffer?: boolean;
   label?: ReactNode;
 } & StackProps) => {
-  const primary = find(values, "primary") ?? head(values);
   const slack = 1 - sumBy(values, "value");
   return (
     <Stack
@@ -153,7 +152,7 @@ export const Bar = ({
           />
         )}
       </Stack>
-      {label ? (
+      {label && (
         <Typography
           variant="overline"
           sx={{
@@ -164,18 +163,6 @@ export const Bar = ({
           }}
         >
           {label}
-        </Typography>
-      ) : (
-        <Typography
-          variant="overline"
-          sx={{
-            width: 48,
-            textAlign: "right",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          {formatValue(primary?.value ?? 0)}
         </Typography>
       )}
     </Stack>
