@@ -6,3 +6,4 @@ lib
 /data
 .env.*
 dump.archive
+lacam-ltm-workspace
