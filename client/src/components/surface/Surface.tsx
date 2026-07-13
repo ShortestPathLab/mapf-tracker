@@ -3,7 +3,7 @@ import { useXs } from "components/dialog/useSmallDisplay";
 import { useLocationStateSeparate, useNavigate } from "hooks/useNavigation";
 import { PopupState, PopupState as State, usePopupState } from "material-ui-popup-state/hooks";
 import { nanoid } from "nanoid";
-import { ReactElement, ReactNode, useEffect, useReducer } from "react";
+import { ReactElement, ReactNode, useEffect, useReducer, useRef } from "react";
 import { usePrevious } from "react-use";
 import { FullscreenSurface } from "./FullscreenSurface";
 import { ModalAppBar } from "./ModalAppBar";
@@ -32,46 +32,33 @@ export function useSurfaceHistory(state: PopupState) {
   // return type does not expose an index signature.
   const session = _session as Record<string, number | undefined>;
   const previouslyOpen = usePrevious(state.isOpen);
+  // Whether this surface currently owns a history entry. Guards must not read
+  // `session[id]` directly: the effects below regenerate `id`, so an id-derived
+  // guard re-arms itself and loops.
+  const pushed = useRef(false);
   // Sync close state
   useEffect(() => {
-    if (previouslyOpen && !state.isOpen && session[id]) {
+    if (previouslyOpen && !state.isOpen && pushed.current) {
+      pushed.current = false;
       navigate(-1);
       newId();
     }
-  }, [
-	session[id],
-	state.isOpen,
-	previouslyOpen,
-	session,
-	id,
-	navigate
-]);
+  }, [state.isOpen, previouslyOpen, navigate]);
   // Read close state from session
   useEffect(() => {
-    if (!session[id]) {
+    if (pushed.current && !session[id]) {
+      pushed.current = false;
       state.close();
       newId();
     }
-  }, [
-	session[id],
-	session,
-	id,
-	state
-]);
+  }, [session, id, state]);
   // Sync open state
   useEffect(() => {
     if (state.isOpen && !previouslyOpen) {
+      pushed.current = true;
       navigate(location.pathname, { ...params, ...saved }, { ...session, [id]: 1 });
     }
-  }, [
-	state.isOpen,
-	previouslyOpen,
-	navigate,
-	saved,
-	session,
-	id,
-	params
-]);
+  }, [state.isOpen, previouslyOpen, navigate, saved, session, id, params]);
 }
 
 export function Surface(props: SurfaceProps) {
